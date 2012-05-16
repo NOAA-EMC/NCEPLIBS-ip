@@ -11,7 +11,7 @@ machine=$(hostname)
 
 if [[ $machine == "f" ]];then    # zeus
   export REG_DIR=${REG_DIR:-../..}
-  export WORK_DIR=${WORK_DIR:-/scratch2/portfolios/NCEPDEV/stmp/$LOGNAME}
+  export WORK_DIR=${WORK_DIR:-/scratch2/portfolios/NCEPDEV/stmp/$LOGNAME/regression}
 else   # cirrus/stratus
   export REG_DIR=${REG_DIR:-../..}
   export WORK_DIR=${WORK_DIR:-/stmp/$LOGNAME/regression}
