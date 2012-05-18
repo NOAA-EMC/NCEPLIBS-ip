@@ -13,12 +13,11 @@ ln -fs /scratch1/portfolios/NCEPDEV/da/save/George.Gayno/iplib_g2/lib/libip_r191
 ln -fs /scratch1/portfolios/NCEPDEV/da/save/George.Gayno/iplib_g2/lib/libip_r19144_4.a  libip_test_4.a
 ln -fs /scratch1/portfolios/NCEPDEV/da/save/George.Gayno/iplib_g2/lib/libip_r19144_8.a  libip_test_8.a
 ln -fs /scratch1/portfolios/NCEPDEV/da/save/George.Gayno/iplib_g2/lib/libip_r19144_d.a  libip_test_d.a
-exit 0
 
-cd ../reg_tests/copygb/scripts
+cd ../copygb/scripts
 makeall.ksh
 
-cd ../gausslat/scripts
+cd ../../gausslat/scripts
 makeall.ksh
 
 cd ../../gcdist/scripts
@@ -48,5 +47,4 @@ makeall.ksh
 cd ../../makgds/scripts
 makeall.ksh
 
-#cd ../polateg
-#makeall.ksh
+exit 0

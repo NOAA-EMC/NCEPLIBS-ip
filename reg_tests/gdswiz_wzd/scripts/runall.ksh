@@ -8,16 +8,16 @@ echo
 echo BEGIN GDSWIZ/WZD REGRESSION TEST
 echo
 
-typeset -L1 machine
-machine=$(hostname)
+typeset -L4 machine
+machine=$(dnsdomainname)
 
-if [[ $machine == "f" ]];then    # zeus
-  export REG_DIR=${REG_DIR:-../..}
-  export WORK_DIR=${WORK_DIR:-/scratch2/portfolios/NCEPDEV/stmp/$LOGNAME}
+if [[ $machine == "zeus" ]];then    # zeus
+  WORK_DIR=${WORK_DIR:-/scratch2/portfolios/NCEPDEV/stmp/$LOGNAME/regression}
 else   # cirrus/stratus
-  export REG_DIR=${REG_DIR:-../..}
-  export WORK_DIR=${WORK_DIR:-/stmp/$LOGNAME/regression}
+  WORK_DIR=${WORK_DIR:-/stmp/$LOGNAME/regression}
 fi
+
+REG_DIR=${REG_DIR:-../..}
 
 EXEC_DIR=$REG_DIR/gdswiz_wzd/exec
 

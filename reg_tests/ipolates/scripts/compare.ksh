@@ -8,13 +8,13 @@ echo
 echo "ENSURE SINGLE AND MULTIPLE THREAD IPOLATES FILES ARE BIT IDENTICAL"
 echo
 
-typeset -L1 machine
-machine=$(hostname)
+typeset -L4 machine
+machine=$(dnsdomainname)
 
-if [[ $machine == "f" ]];then    # zeus
-  export WORK_DIR=${WORK_DIR:-/scratch2/portfolios/NCEPDEV/stmp/$LOGNAME/regression}
+if [[ $machine == "zeus" ]];then    # zeus
+  WORK_DIR=${WORK_DIR:-/scratch2/portfolios/NCEPDEV/stmp/$LOGNAME/regression}
 else   # cirrus/stratus
-  export WORK_DIR=${WORK_DIR:-/stmp/$LOGNAME/regression}
+  WORK_DIR=${WORK_DIR:-/stmp/$LOGNAME/regression}
 fi
 
 WORK1=$WORK_DIR/ipolates.1threads/ctl
