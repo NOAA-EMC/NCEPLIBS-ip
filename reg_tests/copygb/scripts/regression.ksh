@@ -4,14 +4,7 @@
 
 #set -x 
 
-typeset -L4 machine
-machine=$(dnsdomainname)
-
-if [[ $machine == "zeus" ]];then    # zeus
-  WORK_DIR=${WORK_DIR:-/scratch2/portfolios/NCEPDEV/stmp/$LOGNAME/regression}
-else   # cirrus/stratus
-  WORK_DIR=${WORK_DIR:-/stmp/$LOGNAME/regression}
-fi
+WORK_DIR=${WORK_DIR:-/stmp/$LOGNAME/regression}
 
 WORK=${WORK_DIR}/copygb
 mkdir -p $WORK

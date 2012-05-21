@@ -6,18 +6,11 @@ echo
 echo BEGIN GAUSSLAT REGRESSION TEST
 echo
 
-typeset -L4 machine
-machine=$(dnsdomainname)
-
 REG_DIR=${REG_DIR:-../..}
 
-if [[ $machine == "zeus" ]];then    # zeus
-  WORK_DIR=${WORK_DIR:-/scratch2/portfolios/NCEPDEV/stmp/$LOGNAME/regression}
-else   # cirrus/stratus
-  WORK_DIR=${WORK_DIR:-/stmp/$LOGNAME/regression}
-fi 
-
 EXEC_DIR=$REG_DIR/gausslat/exec
+
+WORK_DIR=${WORK_DIR:-/stmp/$LOGNAME/regression}
 
 WORK=${WORK_DIR}/gausslat
 rm -fr $WORK

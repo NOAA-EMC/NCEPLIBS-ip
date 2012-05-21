@@ -6,16 +6,9 @@ echo
 echo BEGIN GCDIST/MOVECT REGRESSION TEST
 echo
 
-typeset -L4 machine
-machine=$(dnsdomainname)
-
 REG_DIR=${REG_DIR:-../..}
 
-if [[ $machine == "zeus" ]];then    # zeus
-  WORK_DIR=${WORK_DIR:-/scratch2/portfolios/NCEPDEV/stmp/$LOGNAME/regression}
-else   # cirrus/stratus
-  WORK_DIR=${WORK_DIR:-/stmp/$LOGNAME/regression}
-fi
+WORK_DIR=${WORK_DIR:-/stmp/$LOGNAME/regression}
 
 EXEC_DIR=$REG_DIR/gcdist/exec
 

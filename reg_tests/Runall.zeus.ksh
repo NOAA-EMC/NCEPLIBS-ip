@@ -4,15 +4,7 @@ set -x
 
 export REG_DIR=$(pwd)
 
-typeset -L4 machine
-machine=$(dnsdomainname)
-
-if [[ $machine == "zeus" ]];then    # zeus
-  export WORK_DIR=${WORK_DIR:-/scratch2/portfolios/NCEPDEV/stmp/$LOGNAME/regression}
-else   # cirrus/stratus
-  export WORK_DIR=${WORK_DIR:-/stmp/$LOGNAME/regression}
-fi
-
+export WORK_DIR=/ptmp/$LOGNAME/junk2
 rm -fr $WORK_DIR
 mkdir -p $WORK_DIR
 

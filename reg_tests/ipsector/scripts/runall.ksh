@@ -6,14 +6,7 @@ echo
 echo BEGIN IPSECTOR/IPSPASTE REGRESSION TEST
 echo
 
-typeset -L4 machine
-machine=$(dnsdomainname)
-
-if [[ $machine == "zeus" ]];then    # zeus
-  WORK_DIR=${WORK_DIR:-/scratch2/portfolios/NCEPDEV/stmp/$LOGNAME/regression}
-else   # cirrus/stratus
-  WORK_DIR=${WORK_DIR:-/stmp/$LOGNAME/regression}
-fi
+WORK_DIR=${WORK_DIR:-/stmp/$LOGNAME/regression}
 
 REG_DIR=${REG_DIR:-../..}
 

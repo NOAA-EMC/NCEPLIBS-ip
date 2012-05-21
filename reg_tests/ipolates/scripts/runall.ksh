@@ -12,18 +12,12 @@ else
   exit 99
 fi
 
-typeset -L4 machine
-machine=$(dnsdomainname)
-
-if [[ $machine == "zeus" ]];then    # zeus
-  WORK_DIR=${WORK_DIR:-/scratch2/portfolios/NCEPDEV/stmp/$LOGNAME/regression}
-else   # cirrus/stratus
-  WORK_DIR=${WORK_DIR:-/stmp/$LOGNAME/regression}
-fi
+WORK_DIR=${WORK_DIR:-/stmp/$LOGNAME/regression}
 
 REG_DIR=${REG_DIR:-../..}
 
 EXEC_DIR=$REG_DIR/ipolates/exec
+
 INPUT_DATA=$REG_DIR/ipolates/data/global_tg3clim.1x1.grb
 
 WORK=$WORK_DIR/ipolates.${num_threads}threads

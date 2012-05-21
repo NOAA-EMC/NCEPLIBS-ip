@@ -8,14 +8,7 @@ echo
 echo "ENSURE SINGLE AND MULTIPLE THREAD IPOLATEV FILES ARE BIT IDENTICAL"
 echo
 
-typeset -L4 machine
-machine=$(dnsdomainname)
-
-if [[ $machine == "zeus" ]];then    # zeus
-  WORK_DIR=${WORK_DIR:-/scratch2/portfolios/NCEPDEV/stmp/$LOGNAME/regression}
-else   # cirrus/stratus
-  WORK_DIR=${WORK_DIR:-/stmp/$LOGNAME/regression}
-fi
+WORK_DIR=${WORK_DIR:-/stmp/$LOGNAME/regression}
 
 WORK1=$WORK_DIR/ipolatev.1threads/test
 WORK2=$WORK_DIR/ipolatev.4threads/test
