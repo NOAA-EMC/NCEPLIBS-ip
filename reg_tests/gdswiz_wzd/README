@@ -1,4 +1,49 @@
-test the following routines:
+Test gdswiz and gdswzd and all of their child routines
+to calculate lat/lon and other map-related fields for several
+grids of various map projections.
+
+The following grids are tested:
+
+grid #       description
+======       ===========
+003          one-degree global lat/lon (ncep grid 3)
+008          mercator (ncep grid 8)
+127          t254 gaussian (ncep grid 127)
+201          rotated lat/lon e-staggered (number refers to gds octet 6)
+             tests routines gdswizc9 and gdswzdc9
+202          rotated lat/lon b-staggered (number refers to gds octet 6)
+             tests routines gdswizca and gdswzdca
+203          rotated lat/lon e-staggered (number refers to gds octet 6)
+             tests routines gdswizcb and gdswzdcb
+205          rotated lat/lon b-staggered (number refers to gds octet 6)
+             tests routines gdswizcd and gdswzdcd
+212          nh polar stereographic, spherical earth (number meaningless)
+213          sh polar stereographic, spherical earth (number meaningless)
+218          lambert conformal (ncep grid 218)
+222          nh polar stereographic, elliptical earth (number meaningless)
+
+The routines are called twice to test both the 1) i/j to lat/lon
+and 2) lat/lon to i/j conversions.  This operation should be reversable.
+If it is not reversable within floating point differences, a warning
+message is printed to standard output.
+
+The latitude, longitude and all other computed map fields (such as 
+grid box area and rotation factors) are output to a binary file.
+These files may be visualized in grads using the control files in the
+./grads subdirectory.  The binary files from a 'control' and 'test'
+are compared in the runall.ksh script.  If bit identical, the test
+'passes'.
+
+The fortran source code is located in the ./src subdirectory.
+
+The program is compiled by invoking the makeall.ksh script
+located in the ./scripts subdirectory.  See the script
+comments for more information.
+
+The regression test may be run 'stand-alone' by invoking
+the runall.ksh script in the ./scripts subdirectory.
+
+List of routines tested:
 
 gdswiz           
 gdswiz00        

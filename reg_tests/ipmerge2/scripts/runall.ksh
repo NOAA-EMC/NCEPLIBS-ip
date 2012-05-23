@@ -1,5 +1,21 @@
 #!/bin/ksh
 
+#--------------------------------------------------------------
+# Test iplib routine ipmerge2, which merges two bitmap 
+# fields.
+# 
+# Output from the 'control' and 'test' is placed in its
+# own text log file.  If the log files are not identical,
+# the test is considered 'failed'.  If a test fails, the
+# log file is stored in the work directory with a ".failed"
+# extension.
+# 
+# All three versions of the library are tested:
+#  > 4 byte integer/4 byte float  (libip_4.a)
+#  > 8 byte integer/8 byte float  (libip_8.a)
+#  > 8 byte float/4 byte integer  (libip_d.a)
+#--------------------------------------------------------------
+
 #set -x
 
 echo
@@ -10,6 +26,7 @@ REG_DIR=${REG_DIR:-../..}
 
 WORK_DIR=${WORK_DIR:-/stmp/$LOGNAME/regression}
 
+# where the executables are located.
 EXEC_DIR=$REG_DIR/ipmerge2/exec
 
 WORK=${WORK_DIR}/ipmerge2
@@ -22,7 +39,7 @@ WORK_TEST=${WORK}/test
 mkdir -p $WORK_TEST
 cp $EXEC_DIR/test/*exe $WORK_TEST
 
-for bytesize in "4" "8" "d"
+for bytesize in "4" "8" "d"  # test all versions of library
 do
   echo TEST ${bytesize}-BYTE FLOAT VERSION OF ROUTINE IPMERGE2
   cd $WORK_CTL

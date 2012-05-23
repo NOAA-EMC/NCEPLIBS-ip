@@ -1,4 +1,29 @@
-routines tested
+Test iplib routines ipsector, which creates a subset of a 
+larger two-dimensional field, and routine ipspaste, which
+does the opposite.
+
+More specifically, read in a global lat/lon grid of
+soil substrate temperature (with bitmap).  Call routine
+ipsector to 'chop out' north america.  Write the
+subsectored data to a binary file.  Then do the inverse:
+call routine ipspaste to 'paste' north america back into the
+global grid.  Write the merged data to another binary file.
+The binary files may be viewed in Grads using the ".ctl"
+files in the ./grads subdirectory.
+
+The input file of global substrate temperature is located 
+in the ./data subdirectory.
+
+The fortran source code is located in the ./src subdirectory.
+
+The program is compiled by invoking the makeall.ksh script
+located in the ./scripts subdirectory.  See the script
+comments for more information.
+
+The regression test may be run 'stand-alone' by invoking
+the runall.ksh script in the ./scripts subdirectory.
+
+List of routines tested:
 
 ipsector
 ipspaste

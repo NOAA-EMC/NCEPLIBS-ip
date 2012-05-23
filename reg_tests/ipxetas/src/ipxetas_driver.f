@@ -1,17 +1,24 @@
  program ipxetas_driver     
 
 !------------------------------------------------------------------------
-! test routine ipxetas.  note: i don't think this routine works 
-! for full grids with an even number of points in the x-direction.  so,
-! the input test data (full grid) has an odd number of points.
+! Test routine ipxetas, which transforms between staggered eta (rotated
+! lat/lon) grids.
 !
-! the routine is called four times:
+! Reads an input file of vegetation greenness on a 'filled'
+! 12km eta grid, then calls routine ipxetas to do the following:
 !
 ! 1) create a staggered mass grid from the full grid.
 ! 2) create a staggered velocity grid from the full grid.
 ! 3) create a full grid from the staggered mass grid created by step (1)
 ! 4) create a full grid from the staggered vel grid created by step (2)
 !
+! The output from the first two steps is written to binary file,
+! "staggered.bin".  The output from the last two steps is written to
+! binary file, "full.bin".
+!
+! Note: I don't think this routine works for full grids with an even
+! number of points in the x-direction.  So, the input test 
+! data (full grid) has an odd number of points.
 !------------------------------------------------------------------------
 
  implicit none
@@ -32,7 +39,7 @@
  real, allocatable              :: data_stag_m_2d(:,:), data_stag_v_2d(:,:)
 
 !-------------------------------------------------------------------------------
-! read in global grid of vegetation greenness.  data is on the full 
+! read in eta grid of vegetation greenness.  data is on the full 
 ! (not staggered) grid.
 !-------------------------------------------------------------------------------
 

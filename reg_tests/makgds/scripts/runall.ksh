@@ -1,5 +1,20 @@
 #!/bin/ksh
 
+#-------------------------------------------------------------------
+# Regression test for iplib routine makgds.
+#
+# Routine is tested as follows:
+#  1) create gds and kgds arrays for ncep grid 3.  arrays hold grid
+#     description information used by w3 grib library.
+#  2) make kgds array for grid 3 from gds array
+#  3) make gds array for grid 3 from kgds array
+#
+# Output from the control and test executables is placed in a
+# ascii log file.  If the log files are not bit identical, the
+# test fails. If a test fails, the log file is saved in 
+# WORK_DIR with a ".failed" extension.
+#-------------------------------------------------------------------
+
 #set -x
 
 echo
@@ -22,7 +37,7 @@ WORK_TEST=${WORK}/test
 mkdir -p $WORK_TEST
 cp $EXEC_DIR/test/*exe $WORK_TEST
 
-for bytesize in "4" "8" "d"
+for bytesize in "4" "8" "d"  # all three byte versions of the library.
 do
   save_ctl_log=0
   save_test_log=0

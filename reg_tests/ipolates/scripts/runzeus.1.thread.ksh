@@ -1,4 +1,10 @@
 #!/bin/ksh --login
+
+#------------------------------------------------------------------
+# Sample script to run the ipolates regression test on
+# zeus using 1 thread.  Modify path names as necessary.
+#------------------------------------------------------------------
+
 #PBS -l nodes=1
 #PBS -l walltime=0:30:00
 # the account number. rm is regional model

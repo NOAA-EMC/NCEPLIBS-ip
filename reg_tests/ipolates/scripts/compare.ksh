@@ -1,6 +1,10 @@
 #!/bin/ksh
 
-# ensure single and multiple thread files are bit identical
+#--------------------------------------------------------------------
+# Part 2 of the ipolates regression test.
+#
+# Ensure single and multiple thread files are bit identical.
+#--------------------------------------------------------------------
 
 #set -x
 
@@ -10,7 +14,7 @@ echo
 
 WORK_DIR=${WORK_DIR:-/stmp/$LOGNAME/regression}
 
-WORK1=$WORK_DIR/ipolates.1threads/ctl
+WORK1=$WORK_DIR/ipolates.1threads/test
 WORK2=$WORK_DIR/ipolates.4threads/test
 
 cd $WORK1

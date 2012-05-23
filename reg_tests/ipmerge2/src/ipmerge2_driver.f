@@ -1,7 +1,14 @@
  program ipmerge2_driver
 
-! test routine ipmerge2 which does not seem to be called
-! by any iplib routines.  is this routine even used anymore?
+!-----------------------------------------------------------------
+! test routine ipmerge2, which merges two bitmaps.
+!
+! output is piped to standard outoput.
+!
+! the two fields to be merged are stored in f1 and f2.  their
+! corresponding bitmaps are l1 and l2.  The output field and
+! bitmap are fo and lo.
+!-----------------------------------------------------------------
 
  implicit none
 

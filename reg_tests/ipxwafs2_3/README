@@ -1,4 +1,28 @@
-routines tested
+Test ip routines ipxwafs2 and ipxwafs3 by transforming a global grid of
+600 mb temperature (on ncep grid 3) to wafs grids 37 thru 44 using copygb.
+A similar transform is done by gfs job JGFS_WAFS.sms.prod.
+
+After the global to wafs grid transforms are completed, copygb is
+invoked again to interpolate files of 600 mb temperature on each wafs grid
+back to ncep grid 3.
+
+Note: routine ipxwafs2 is invoked for interpolation option '0' (bilinear)
+and routine ipxwafs3 is invoked for interpolation option '2' (neighbor)
+also, routine ipxwaf is invoked as well.  However, only part of the
+routine is used, so a separate regression test for ipxwafs is
+required.
+
+The input data for these tests is located in the ./data subdirectory.
+It is in grib 1 format.
+
+This regression uses the copygb source code that is part of the 
+copygb regression test (located in the /copygb/src subdirectory).
+See the README file in the copygb subdirectory for more details.
+
+The regression test may be run 'stand-alone' by invoking
+the runall.ksh script in the ./scripts subdirectory.
+
+List of routines tested:
 
 gdswiz          
 gdswiz00       

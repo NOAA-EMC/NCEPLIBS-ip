@@ -1,5 +1,21 @@
 #!/bin/ksh
 
+#--------------------------------------------------------------
+# Test iplib routines ipsector and ipspaste, which
+# creates a subset of a larger two-dimensional field,
+# and routine ipspaste, which does the opposite.
+#
+# Output from each step of the 'control' and 'test' is placed
+# in its own binary file (named ipsector.bin and ipspaste.bin).  
+# If the files are not identical, the test is considered 'failed'.
+# And the binary files are saved with a ".failed" extension.
+#
+# All three versions of the library are tested:
+#  > 4 byte integer/4 byte float  (libip_4.a)
+#  > 8 byte integer/8 byte float  (libip_8.a)
+#  > 8 byte float/4 byte integer  (libip_d.a)
+#--------------------------------------------------------------
+
 #set -x
 
 echo
@@ -25,7 +41,7 @@ mkdir -p $WORK_TEST
 cp $EXEC_DIR/test/*exe $WORK_TEST
 cp $INPUT_DATA $WORK_TEST/fort.9
 
-for bytesize in "4" "8" "d"
+for bytesize in "4" "8" "d"  # the byte version of the ip library
 do
 
   echo TEST ${bytesize}-BYTE VERSION OF IPSECTOR/IPSPASTE

@@ -1,9 +1,9 @@
 #!/bin/ksh
 
 #------------------------------------------------------------------------
-# test iplib routine ipxetas.  
-#
-# the routine is called four times:
+# Test iplib routine ipxetas as follows: read an input file 
+# of vegetation greenness on a 'filled' 12km eta grid,
+# then call routine ipxetas to:
 #
 # 1) create a staggered mass grid from the full grid.
 # 2) create a staggered velocity grid from the full grid.
@@ -13,6 +13,8 @@
 # output from steps (1) and (2) is in the file named "staggered.bin"
 # output from steps (3) and (4) is in the file named "full.bin"
 #
+# If the binary files are not bit identical, the test has "failed".
+# And the binary files are saved in WORK_DIR with a ".failed" extension.
 #------------------------------------------------------------------------
 
 #set -x
@@ -40,7 +42,7 @@ mkdir -p $WORK_TEST
 cp $EXEC_DIR/test/*exe $WORK_TEST
 cp $INPUT_DATA $WORK_TEST/fort.9
 
-for bytesize in "4" "8" "d"
+for bytesize in "4" "8" "d"  # the three byte versions of the library
 do
 
   echo TEST ${bytesize}-BYTE VERSION OF IPXETAS

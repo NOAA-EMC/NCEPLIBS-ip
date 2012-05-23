@@ -1,9 +1,12 @@
  program ipsector_driver     
 
 !------------------------------------------------------------------------
-! test routine ipsector, which creates a subset of a larger 
+! Test routine ipsector, which creates a subset of a larger 
 ! two-dimensional field, and routine ipspaste, which does the
 ! opposite.
+!
+! The results from both steps is placed in its own binary file:
+! "ipsector.bin", and "ipspaste.bin"
 !------------------------------------------------------------------------
 
  implicit none

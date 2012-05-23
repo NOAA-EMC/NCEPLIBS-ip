@@ -1,20 +1,22 @@
 #!/bin/ksh
 
 #-------------------------------------------------------------------------------
-# test ip routines ipxwafs2 and ipxwafs3 by transforming a global grid of
-# scalars (on ncep grid 3) to wafs grids 37 thru 44 using copygb.
-# a similar transform is done by gfs job JGFS_WAFS.sms.prod.
-# the input dataset is a field of 600 mb temperature from the 1-degree
-# GFS pgb file (ncep grid 3)
+# Test ip routines ipxwafs2 and ipxwafs3 by transforming a global grid of
+# 600 mb temperature (on ncep grid 3) to wafs grids 37 thru 44 using copygb.
+# A similar transform is done by gfs job JGFS_WAFS.sms.prod.
 #
-# after the global to wafs grid transforms are completed, copygb is 
-# invoked again to go from each wafs grid back to ncep grid 3.
+# After the global to wafs grid transforms are completed, copygb is 
+# invoked again to interpolate files of 600 mb temperature on each wafs grid 
+# back to ncep grid 3.
 #
-# note: routine ipxwafs2 is invoked for interpolation option '0' (bilinear)
+# The copygb executables are located under the ./copygb subdirectory.
+#
+# Note: routine ipxwafs2 is invoked for interpolation option '0' (bilinear)
 # and routine ipxwafs3 is invoked for interpolation option '2' (neighbor)
-# also, routine ipxwaf is invoked as well.  however, only part of the
-# routine is used, so a separate regression test for ipxwafs is 
-# required.
+#
+# If the output files from the control and test are not bit identical,
+# then the test has failed.  if a test fails, the output file is saved
+# in WORK_DIR with a ".failed" extension.
 #-------------------------------------------------------------------------------
 
 #set -x
@@ -46,7 +48,7 @@ cp $TEST_EXEC_DIR/copygb_test* $WORK_TEST
 
 echo
 echo CONVERT FROM REGULAR GRID TO WAFS GRIDS.
-for bytesize in "4" "8" "d"
+for bytesize in "4" "8" "d"  # loop over each byte version of the library.
 do
   echo
   echo TEST $bytesize BYTE VERSION OF LIBRARY.

@@ -3,7 +3,8 @@
 !--------------------------------------------------------------
 ! test iplib routine gausslat. 
 !
-! is this routine even used anymore?
+! call routine gausslat to calculate the gaussian latitudes for
+! a t382 grid.  output is piped to standard output.
 !--------------------------------------------------------------
 
  implicit none

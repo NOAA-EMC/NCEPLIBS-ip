@@ -1,6 +1,10 @@
 #!/bin/ksh
 
-# ensure single and multiple thread files are bit identical
+#--------------------------------------------------------------------
+# Part 2 of the ipolatev regression test.
+#
+# Ensure single and multiple thread files are bit identical.
+#--------------------------------------------------------------------
 
 #set -x
 

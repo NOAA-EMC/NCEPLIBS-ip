@@ -1,10 +1,16 @@
 #!/bin/ksh --login
 
-set -x
+#----------------------------------------------------------------------------
+# Run the entire suite of regression tests on zeus.
+#
+# Type  "Runall.zeus.ksh"
+#
+# Test results will be in "regression.log" located in $WORK_DIR
+#----------------------------------------------------------------------------
 
 export REG_DIR=$(pwd)
 
-export WORK_DIR=/ptmp/$LOGNAME/junk2
+export WORK_DIR=/stmp/$LOGNAME/regression
 rm -fr $WORK_DIR
 mkdir -p $WORK_DIR
 

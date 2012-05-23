@@ -4,7 +4,18 @@
 ! test gdswiz and gdswzd routines for all map projections.  
 !
 ! routines are called twice to test both the (1) i/j to lat/lon 
-! and the (2) lat/lon to i/j conversions.
+! and the (2) lat/lon to i/j conversions.  this should be
+! reversable.  If not, a warning message is printed to
+! standard output.
+!
+! all computed fields are output to a direct access file so
+! they may be compared for bit-idenicalness with other test runs,
+! or so they may be visualized.
+!
+! this program takes two arguments.  The first is 'WIZ' or 'WZD'
+! to run either the gdswiz or gdswzd set of routines.  The second is
+! the grid number.  The valid grids are defined by data statements
+! below.
 !------------------------------------------------------------------
 
  implicit none
@@ -25,6 +36,8 @@
  real, allocatable :: crot(:,:), srot(:,:)
  real, allocatable :: xlon(:,:), xlat(:,:)
  real, allocatable :: ylon(:,:), ylat(:,:), area(:,:)
+
+! the grids that will be tested.
 
  integer :: grd3(200)    ! one-degree lat/lon, for gdswiz00 and gdswzd00 routines
  data grd3 / 0, 360, 181, 90000, 0, 128, -90000,  &

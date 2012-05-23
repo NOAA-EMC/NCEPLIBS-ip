@@ -14,6 +14,10 @@
 # the specially modified version calls ipxwafs instead.  since the
 # test dataset does not have a bitmap (a field of 600 mb temperatures)
 # the specially modified copygb and ops copygb give the same answer.
+#
+# if the output files from the control and test are not bit identical,
+# then the test has failed.  if a test fails, the output file is saved
+# in WORK_DIR with a ".failed" extension.
 #-------------------------------------------------------------------------------
 
 #set -x
@@ -45,7 +49,7 @@ cp $TEST_EXEC_DIR/copygb_test* $WORK_TEST
 
 echo
 echo CONVERT FROM REGULAR GRID TO WAFS GRIDS.
-for bytesize in "4" "8" "d"
+for bytesize in "4" "8" "d"  # test all byte versions of iplib
 do
   echo
   echo TEST $bytesize VERSION OF LIBRARY.

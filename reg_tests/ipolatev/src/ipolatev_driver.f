@@ -1,8 +1,13 @@
  program ipolatev_driver
 
-! interpolate a global lat/lon grid of vector wind to several
+!-----------------------------------------------------------------------
+! Interpolate a global lat/lon grid of vector wind to several
 ! grids of various projections using all ipolatev 
 ! interpolation options.
+!
+! The ipolatev series of routines is threaded.  Therefore, this
+! program is compiled and run with threads.
+!-----------------------------------------------------------------------
 
  use omp_lib
  use get_input_data

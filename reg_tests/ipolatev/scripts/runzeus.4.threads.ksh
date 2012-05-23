@@ -1,4 +1,10 @@
 #!/bin/ksh --login
+
+#------------------------------------------------------------------
+# Sample script to run the ipolatev regression test on
+# zeus using 4 threads.  Modify path names as necessary.
+#------------------------------------------------------------------
+
 #PBS -l nodes=1
 #PBS -l walltime=1:00:00
 # the account number. rm is regional model

@@ -1,3 +1,27 @@
-routines tested
+Regression test for routine ipxetas.  Reads an input file
+of vegetation greenness on a 'filled' 12km eta grid.  Then
+calls ipxetas to:   
+
+ 1) create a staggered mass grid from the full grid.
+ 2) create a staggered velocity grid from the full grid.
+ 3) create a full grid from the staggered mass grid created by step (1)
+ 4) create a full grid from the staggered vel grid created by step (2)
+
+Output from the control and test programs is written to binary files.
+(Steps 1 and 2 written to "staggered.bin", and steps 3 and 4 written
+to "full.bin").  These files may be viewed in Grads
+with the ".ctl" files, located in the ./grads subdirectory.
+
+The fortran source code is located in the ./src subdirectory.
+
+The program is compiled by invoking the makeall.ksh script
+located in the ./scripts subdirectory.  See the script
+comments for more information before compiling.  The executables reside
+in the ./exec/ctl and ./exec/test subdirectories.
+
+The regression test may be run 'stand-alone' by invoking
+the runall.ksh script in the ./scripts subdirectory.
+
+List of routines tested:
 
 ipxetas

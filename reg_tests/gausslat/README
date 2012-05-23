@@ -1,3 +1,16 @@
-test the following routines:
+Regression test for routine gausslat.  Routine is called 
+from a simple fortran program to calculate the gaussian
+latitudes for a t382 grid.  
 
-gausslat  (is this even used anymore?)
+The fortran source code is located in the ./src subdirectory.
+
+The program is compiled by invoking the makeall.ksh script
+located in the ./scripts subdirectory.  See the script 
+comments for more information.
+
+The regression test may be run 'stand-alone' by invoking
+the runall.ksh script in the ./scripts subdirectory.
+
+List of routines tested:
+
+gausslat 

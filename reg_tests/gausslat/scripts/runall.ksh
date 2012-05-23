@@ -1,5 +1,18 @@
 #!/bin/ksh
 
+#--------------------------------------------------------------
+# Compute the gaussian latitudes for a t382 grid using the
+# 'control' and 'test' ip libraries.  Output from the 
+# 'control' and 'test' is placed in its own text log file.
+# If the log files are not identical, the test is 
+# considered 'failed'.  
+#
+# All three versions of the library are tested:
+#  > 4 byte integer/4 byte float  (libip_4.a)
+#  > 8 byte integer/8 byte float  (libip_8.a)
+#  > 8 byte float/4 byte integer  (libip_d.a)
+#--------------------------------------------------------------
+
 #set -x
 
 echo
@@ -8,6 +21,7 @@ echo
 
 REG_DIR=${REG_DIR:-../..}
 
+# where the control and test executables are located
 EXEC_DIR=$REG_DIR/gausslat/exec
 
 WORK_DIR=${WORK_DIR:-/stmp/$LOGNAME/regression}
@@ -22,7 +36,7 @@ WORK_TEST=${WORK}/test
 mkdir -p $WORK_TEST
 cp $EXEC_DIR/test/*exe $WORK_TEST
 
-for bytesize in "4" "8" "d"
+for bytesize in "4" "8" "d"  # the three versions of the library
 do
   echo TEST ${bytesize}-BYTE FLOAT VERSION OF ROUTINE GAUSSLAT
   cd $WORK_CTL

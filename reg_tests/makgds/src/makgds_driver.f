@@ -2,6 +2,13 @@
 
 !--------------------------------------------------------------
 ! test iplib routine makgds.
+!
+! routine is called three times:
+! 1) to make gds and kgds arrays for ncep grid3.
+! 2) make kgds array for grid 3 from the gds array.
+! 3) make gds array for grid 3 from kgds array.
+!
+! output is piped to standard output.
 !--------------------------------------------------------------
 
  implicit none

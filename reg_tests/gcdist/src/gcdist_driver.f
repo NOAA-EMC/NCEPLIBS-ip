@@ -2,7 +2,9 @@
 
 !---------------------------------------------------------------
 ! test iplib routines gcdist and movect.  both perform
-! calculations related to great circle routes.
+! calculations related to great circle routes (distance
+! and rotational parameters.  output is piped to 
+! standard output.
 !---------------------------------------------------------------
 
  implicit none

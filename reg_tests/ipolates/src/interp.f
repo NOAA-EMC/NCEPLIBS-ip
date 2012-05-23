@@ -1,9 +1,33 @@
  subroutine interp
 
 !-------------------------------------------------------------------------
-! call the scalar polates routines to interpolate the input data
+! Call the scalar polates routines to interpolate the input data
 ! using all available interpolation methods (neighbor, bilinear, etc.)
 ! several output grids of various map projections are tested.
+!
+! The routine reads in two arguments from stnd input.  The first is
+! the grid to which you want to interpolate the data.
+! The valid choices are:
+!
+!    3 -  one-degree global lat/lon (ncep grid 3)
+!    8 -  mercator (ncep grid 8)
+!  127 -  t254 gaussian (ncep grid 127)
+!  203 -  rotated lat/lon e-staggered (number refers to gds octet 6)
+!  205 -  rotated lat/lon b-staggered (number refers to gds octet 6)
+!  212 -  nh polar stereographic, spherical earth (number meaningless)
+!  218 -  lambert conformal (ncep grid 218)
+!
+! The second argument is the interpolation option.  The valid choices:
+!
+!  0 - bilinear
+!  1 - bicubic
+!  2 - neighbor
+!  3 - budget
+!  4 - spectral
+!  6 - budget-neighbor
+!
+! The interpolated data is output in a binary file with the following
+! naming convention:  "grid${grid_num}.opt${interp_opt}.bin"
 !-------------------------------------------------------------------------
 
  use get_input_data, only : input_data, &
@@ -177,4 +201,4 @@
  deallocate (output_rlat, output_rlon, output_data, output_bitmap)
 
  return
- end subroutine interP
+ end subroutine interp

@@ -1,5 +1,57 @@
 #!/bin/ksh
 
+#------------------------------------------------------------------------
+# Run part 1 of the ipolates regression test to exercise the ipolates suite
+# of routines.
+#
+# Interpolate a global grid of substrate temperature to several 
+# grids of various map projections.  The grids are:
+#
+#    3 - one-degree global lat/lon (ncep grid 3)
+#    8 - mercator (ncep grid 8)
+#  127 - t254 gaussian (ncep grid 127)
+#  203 - rotated lat/lon e-staggered (number refers to gds octet 6)
+#  205 - rotated lat/lon b-staggered (number refers to gds octet 6)
+#  212 - nh polar stereographic, spherical earth (number meaningless)
+#  218 - lambert conformal (ncep grid 218)
+#
+#  Use all possible ipolates interpolation options:
+#
+#    0 - bilinear
+#    1 - bicubic
+#    2 - neighbor
+#    3 - budget
+#    4 - spectral
+#    6 - budget-neighbor
+#
+# The ipolates suite of routines contain threads.  Therefore, this 
+# script is run twice, with 1 and 4 threads.  The number of 
+# threads is passed in as an argument.  This is only used to
+# name the work directory, and does not cause the regression test to
+# run with that number of threads. The number of threads is determined
+# from the driver script.  You can run this script stand-alone. 
+# However, the default on ccs and zeus is to run with the maximum
+# number of threads on a node.  
+#
+# The control and test executables interpolate the data for 
+# a single grid and interpolation option.  Hence, they are invoked
+# numerous times for all combinations of grids/interp options.
+#
+# The interpolated temperature data is output in a direct access
+# binary file under WORK_DIR.  These files may be viewed in Grads
+# using the control files in the ./grads subdirectory.  The file
+# naming convention is "grid${grid_num}.opt${interp_opt_num}.bin"
+#
+# Binary files of the interpolated data from the control and test
+# are check for bit-identicalness.  If not identical, the test
+# is considered failed and the script will save the file in the
+# working directory with a ".failed" extension.
+#
+# This is part 1 of the regression test.  After completion of this
+# script, the compare.ksh script is run to compare the binary
+# files from the 1 and 4 thread runs.
+#------------------------------------------------------------------------
+
 #set -x
 
 if (($# > 0))
@@ -37,7 +89,7 @@ do
   echo
   for option in "0" "1" "2" "3" "4" "6"  # interpolation option
   do
-    for bytesize in "4" "8" "d"
+    for bytesize in "4" "8" "d"   # bytesize version of library.
     do
       echo TEST ${bytesize}-BYTE VERSION FOR GRID $grids AND INTERP OPTION $option
       cd $WORK_CTL
