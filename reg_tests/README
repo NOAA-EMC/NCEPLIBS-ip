@@ -45,7 +45,7 @@ gdsawt and ijkgds, which I think are obsolete.
     ipxwafs and ipxwafs2 are the same except the latter accounts for bitmaps.
 11) makgds - a fortran program to test routine makgds.  Routine is called
     three times.
-      1) create gds and kgds arrays for ncep grid 3.  arrays hold grid
+      1) create gds and kgds arrays for ncep grid 3. these arrays hold grid
          description information used by w3 grib library.
       2) make kgds array for grid 3 from gds array
       3) make gds array for grid 3 from kgds array
@@ -61,32 +61,42 @@ gdsawt and ijkgds, which I think are obsolete.
     routines as other regression tests, it is not currently called
     from the regression driver scripts.  However, it may be run stand-alone.
 
-Within each subdirectory, the ./src subdirectory will contain any
-source code required for the test.  Scripts to compile and run each
-test are under the ./scripts subdirectory.  Executables will be
-stored under the ./exec subdirectory.
-
 In OPS, there are three versions of IPLIB:
+
   1) 4 byte integer/4 byte float (libip_4.a)
   2) 4 byte integer/8 byte float (libip_d.a)
   3) 8 byte integer/8 byte float (libip_8.a)
-Each regression test compares the 'control' version of each library with
-its correpsonding 'test' version.  The 'control' and 'test' versions
-are determined by the user.
+
+Each regression test is compiled with all versions of a 'control' and
+'test' iplib (for a total of six executables).  The 'control' and 'test'
+library versions are determined by the user in the "Makeall.ksh" script 
+described below.
+
+Within each regression directory, the ./src subdirectory will contain the
+source code required for the regression test.  Scripts to compile and run 
+are under the ./scripts subdirectory.  Makefiles and executables 
+stored under the ./exec subdirectory.  Any input data is stored in the
+./data subdirectory. Grads control files to view output data are 
+stored in the ./grads subdirectory.  More detailed information about
+each regression test is described in a README file and in the comment
+sections of the scripts.
 
 The entire suite of tests is compiled on zeus or ccs with the "Makeall.ksh"
-script. See the script comments for more details on setup and compiling.
-Each regression test will have six executables, one for each version of
-IPLIB. The executables for the control library will be in ./exec/ctl and
-those for the test library will be in ./exec/test.  To compile just a 
+script. You must modify this script to link the 'control' and 'test'
+ip libraries to the ./lib subdirectory, or copy them manually.  The naming
+convention is:  libip_ctl_4.a, libip_ctl_8.a, libip_ctl_d.a, libip_test_4.a,
+libip_test_8.a, and libip_test_d.a.  See the script comments for more
+details before compiling.  The executables for the control/test libraries will
+be in the ./exec/ctl and ./exec/test subdirectories.  To compile just a
 single regression test, invoke the "makeall.ksh" script located in that
-particular test's ./scripts subdirectory.
+particular test's ./scripts subdirectory (only after you copy or link the
+libraries to the ./lib subdirectory).
 
 After compilation, run the entire suite of tests on the ccs by
 typing "llsubmit Runall.ccs.ksh".  On zeus, type "Runall.zeus.ksh"
 Results are stored in "regression.log" in $WORK_DIR.  See the script
-comments for more details.  To run just a single test, invoke the runall.ksh
-script located in the ./scripts subdirectory.
+comments for more details.  To run an individual regression test, 
+invoke the runall.ksh script located in the ./scripts subdirectory.
 
 Below is a table of each routine in iplib and which regression test(s) invoke it.
 
