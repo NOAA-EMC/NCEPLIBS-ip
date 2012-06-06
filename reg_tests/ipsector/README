@@ -4,15 +4,18 @@ does the opposite.
 
 More specifically, read in a global lat/lon grid of
 soil substrate temperature (with bitmap).  Call routine
-ipsector to 'chop out' north america.  Write the
+ipsector to subset north america.  Write the
 subsectored data to a binary file.  Then do the inverse:
 call routine ipspaste to 'paste' north america back into the
-global grid.  Write the merged data to another binary file.
+original global grid.  Write the merged data to another binary file.
+The data output from ipspaste should match the original data.
 The binary files may be viewed in Grads using the ".ctl"
 files in the ./grads subdirectory.
 
-The input file of global substrate temperature is located 
-in the ./data subdirectory.
+The routines have differing logic for different Grib 1 scan
+modes.  So there are two input files of global substrate
+temperature - one for scan mode '0' and one for scan mode '32'.
+Both datasets are located in the ./data subdirectory.
 
 The fortran source code is located in the ./src subdirectory.
 

@@ -6,7 +6,8 @@
 ! opposite.
 !
 ! The results from both steps is placed in its own binary file:
-! "ipsector.bin", and "ipspaste.bin"
+! "ipsector.bin", and "ipspaste.bin".   The original input
+! data is placed in binaray file "input.bin".
 !------------------------------------------------------------------------
 
  implicit none
@@ -79,10 +80,14 @@
    print*,"- SUCCESSFULL DEGRIB OF DATA."
  end if
 
- allocate(input_data_sav(i_input,j_input))
- input_data_sav=input_data
-
  call baclose (iunit, iret)
+
+ allocate(input_data_sav(i_input,j_input))
+ input_data_sav = input_data
+
+ open (24, file="./input.bin", access='direct', recl=i_input*j_input*4)
+ write (24, rec=1) real(input_data_sav,4)
+ close (24)
 
 !--------------------------------------------------------------------------------
 ! call ipsector to chop out north america.
@@ -144,8 +149,7 @@
  end if
 
  open (21, file="./ipspaste.bin", access='direct', recl=m*4)
- write (21, rec=1) real(input_data_sav,4)
- write (21, rec=2) real(input_data,4)
+ write (21, rec=1) real(input_data,4)   ! data returned from ipspaste
  close (21)
 
  deallocate (output_bitmap, output_data)
