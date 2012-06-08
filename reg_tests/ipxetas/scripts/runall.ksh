@@ -42,6 +42,8 @@ mkdir -p $WORK_TEST
 cp $EXEC_DIR/test/*exe $WORK_TEST
 cp $INPUT_DATA $WORK_TEST/fort.9
 
+failed=0
+
 for bytesize in "4" "8" "d"  # the three byte versions of the library
 do
 
@@ -65,6 +67,7 @@ do
     mv $WORK_TEST/staggered.bin $WORK_TEST/staggered.${bytesize}byte.bin.failed
     save_ctl_log=1
     save_test_log=1
+    failed=1
   fi
 
   cmp $WORK_CTL/full.bin $WORK_TEST/full.bin
@@ -76,6 +79,7 @@ do
     mv $WORK_TEST/full.bin $WORK_TEST/full.${bytesize}byte.bin.failed
     save_ctl_log=1
     save_test_log=1
+    failed=1
   fi
 
   grep -Eq 'BAD|ERROR' $WORK_CTL/$CTL_LOG
@@ -83,6 +87,7 @@ do
   if ((status == 0)); then
     echo PROBLEM WITH CTL RUN. CHECK LOG FILE.
     save_ctl_log=1
+    failed=1
   fi
 
   grep -Eq 'BAD|ERROR' $WORK_TEST/$TEST_LOG
@@ -90,6 +95,7 @@ do
   if ((status == 0)); then
     echo PROBLEM WITH TEST RUN. CHECK LOG FILE.
     save_test_log=1
+    failed=1
   fi
 
   if ((save_ctl_log == 1)); then
@@ -105,8 +111,15 @@ do
 
 done
 
-echo
-echo IPXETAS REGRESSION TEST COMPLETED.
-echo
+if ((failed == 0));then
+  echo
+  echo "<<< IPXETAS REGRESSION TEST PASSED. >>>"
+  echo
+else
+  echo
+  echo "<<< IPXETAS REGRESSION TEST FAILED. >>>"
+  echo
+fi
+
 
 exit 0

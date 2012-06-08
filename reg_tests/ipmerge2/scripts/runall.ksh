@@ -39,6 +39,8 @@ WORK_TEST=${WORK}/test
 mkdir -p $WORK_TEST
 cp $EXEC_DIR/test/*exe $WORK_TEST
 
+failed=0
+
 for bytesize in "4" "8" "d"  # test all versions of library
 do
   echo TEST ${bytesize}-BYTE FLOAT VERSION OF ROUTINE IPMERGE2
@@ -56,11 +58,18 @@ do
     echo CHECK LOG FILES SAVED IN WORK DIRECTORY.
     mv $WORK_CTL/$CTL_LOG  $WORK_CTL/${CTL_LOG}.failed
     mv $WORK_TEST/$TEST_LOG $WORK_TEST/${TEST_LOG}.failed
+    failed=1
   fi
 done
 
-echo
-echo IPMERGE2 REGRESSION TEST COMPLETED.
-echo
+if ((failed == 0));then
+  echo
+  echo "<<< IPMERGE2 REGRESSION TEST PASSED. >>>"
+  echo
+else
+  echo
+  echo "<<< IPMERGE2 REGRESSION TEST FAILED. >>>"
+  echo
+fi
 
 exit 0

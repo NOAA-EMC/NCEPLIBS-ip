@@ -6,6 +6,7 @@
 # Type  "Runall.zeus.ksh"
 #
 # Test results will be in "regression.log" located in $WORK_DIR
+# A summary of the results will be placed in "summary.log" in $WORK_DIR
 #----------------------------------------------------------------------------
 
 export REG_DIR=$(pwd)
@@ -15,6 +16,7 @@ rm -fr $WORK_DIR
 mkdir -p $WORK_DIR
 
 LOG_FILE=${WORK_DIR}/regression.log
+SUM_FILE=${WORK_DIR}/summary.log
 
 ulimit -s 1024000
 
@@ -71,5 +73,8 @@ IPOLATEV_4=$(qsub -l nodes=1 -l walltime=0:30:00 -A rm -N iplib2 -o $LOG_FILE -e
 
 IPOLATEV_CMP=$(qsub -l nodes=1 -l walltime=0:05:00 -A rm -N iplib2 -o $LOG_FILE -e $LOG_FILE \
       -v WORK_DIR -W depend=afterok:$IPOLATEV_4 $REG_DIR/ipolatev/scripts/compare.ksh)
+
+SUMMARY=$(echo "grep '<<<' $LOG_FILE > $SUM_FILE" | qsub -l nodes=1 -l walltime=0:01:00 -A rm -N iplib -o $LOG_FILE -e $LOG_FILE \
+      -v REG_DIR,WORK_DIR -W depend=afterok:$IPOLATEV_CMP)
 
 exit 0

@@ -77,6 +77,8 @@ INPUT_DATA=$REG_DIR/ipsector/data/global_tg3clim.1x1.scan.32.grb
 cp $INPUT_DATA $WORK_CTL
 cp $INPUT_DATA $WORK_TEST
 
+failed=0
+
 for scan in "0" "32"   # grib 1 scanning mode 
 do
 
@@ -99,6 +101,7 @@ do
     then
       echo "CONTROL RUN FAILED."
       save_ctl=1
+      failed=1
     fi
 
     cd $WORK_TEST
@@ -109,6 +112,7 @@ do
     then
       echo "TEST RUN FAILED."
       save_test=1
+      failed=1
     fi
 
     cmp $WORK_CTL/ipsector.namer.bin $WORK_TEST/ipsector.namer.bin
@@ -118,6 +122,7 @@ do
       echo "N AMERICA IPSECTOR BINARY FILES NOT BIT IDENTICAL. TEST FAILED."
       save_ctl=1
       save_test=1
+      failed=1
     fi
 
     cmp $WORK_CTL/ipsector.no.sect.bin $WORK_TEST/ipsector.no.sect.bin
@@ -127,6 +132,7 @@ do
       echo "NON-OVERLAP IPSECTOR BINARY FILES NOT BIT IDENTICAL. TEST FAILED."
       save_ctl=1
       save_test=1
+      failed=1
     fi
 
     cmp $WORK_CTL/ipsector.ovlp.sect.bin $WORK_TEST/ipsector.ovlp.sect.bin
@@ -136,6 +142,7 @@ do
       echo "OVERLAP IPSECTOR BINARY FILES NOT BIT IDENTICAL. TEST FAILED."
       save_ctl=1
       save_test=1
+      failed=1
     fi
 
     cmp $WORK_TEST/orig.bin $WORK_TEST/ipspaste.namer.bin
@@ -144,6 +151,7 @@ do
     then
       echo "N AMERICA IPSPASTE BINARY FILE AND INPUT FILE NOT BIT IDENTICAL. TEST FAILED."
       save_test=1
+      failed=1
     fi
 
     cmp $WORK_TEST/orig.bin $WORK_TEST/ipspaste.no.sect.bin
@@ -152,6 +160,7 @@ do
     then
       echo "NON-OVERLAP IPSPASTE BINARY FILE AND INPUT FILE NOT BIT IDENTICAL. TEST FAILED."
       save_test=1
+      failed=1
     fi
 
     cmp $WORK_TEST/orig.bin $WORK_TEST/ipspaste.ovlp.sect.bin
@@ -160,6 +169,7 @@ do
     then
       echo "OVERLAP IPSPASTE BINARY FILE AND INPUT FILE NOT BIT IDENTICAL. TEST FAILED."
       save_test=1
+      failed=1
     fi
 
     cmp $WORK_CTL/$CTL_LOG $WORK_TEST/$TEST_LOG
@@ -169,6 +179,7 @@ do
       echo "KGDS ARRAY NOT IDENTICAL. TEST FAILED."
       save_ctl=1
       save_test=1
+      failed=1
     fi
 
     grep -Eq 'BAD|ERROR' $WORK_CTL/$CTL_LOG
@@ -176,6 +187,7 @@ do
     if ((status == 0)); then
       echo "PROBLEM WITH CTL RUN. TEST FAILED."
       save_ctl=1
+      failed=1
     fi
 
     grep -Eq 'BAD|ERROR' $WORK_TEST/$TEST_LOG
@@ -183,6 +195,7 @@ do
     if ((status == 0)); then
       echo "PROBLEM WITH TEST RUN. TEST FAILED."
       save_test=1
+      failed=1
     fi
 
     if ((save_ctl == 1)); then
@@ -208,8 +221,14 @@ do
 
 done # scan mode loop
 
-echo
-echo "IPSECTOR/IPSPASTE REGRESSION TEST COMPLETED."
-echo
+if ((failed == 0));then
+  echo
+  echo "<<< IPSECTOR/IPSPASTE REGRESSION TEST PASSED. >>>"
+  echo
+else
+  echo
+  echo "<<< IPSECTOR/IPSPASTE REGRESSION TEST FAILED. >>>"
+  echo
+fi
 
 exit 0

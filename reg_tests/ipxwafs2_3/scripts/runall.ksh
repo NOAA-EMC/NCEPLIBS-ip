@@ -46,6 +46,8 @@ WORK_TEST=${WORK}/test
 mkdir -p $WORK_TEST
 cp $TEST_EXEC_DIR/copygb_test* $WORK_TEST
 
+failed=0
+
 echo
 echo CONVERT FROM REGULAR GRID TO WAFS GRIDS.
 for bytesize in "4" "8" "d"  # loop over each byte version of the library.
@@ -66,6 +68,7 @@ do
       if ((status != 0))
       then
         echo "** TEST FAILED **"
+        failed=1
         continue
       fi
 
@@ -75,6 +78,7 @@ do
       if ((status != 0))
       then
         echo "** TEST FAILED **"
+        failed=1
         continue
       fi
 
@@ -85,6 +89,7 @@ do
         echo "** GRIB FILES NOT BIT IDENTICAL. TEST FAILED."
         mv $WORK_CTL/wafs.grb $WORK_CTL/wafs.grid${grid}.${bytesize}byte.ip${ipopt}.grb.failed
         mv $WORK_TEST/wafs.grb $WORK_TEST/wafs.grid${grid}.${bytesize}byte.ip${ipopt}.grb.failed
+        failed=1
       else
         rm -f $WORK_CTL/wafs.grb $WORK_TEST/wafs.grb
       fi
@@ -113,6 +118,7 @@ do
       if ((status != 0))
       then
         echo "** TEST FAILED **"
+        failed=1
         continue
       fi
 
@@ -122,6 +128,7 @@ do
       if ((status != 0))
       then
         echo "** TEST FAILED **"
+        failed=1
         continue
       fi
 
@@ -132,6 +139,7 @@ do
         echo "** GRIB FILES NOT BIT IDENTICAL. TEST FAILED."
         mv $WORK_CTL/reg.grb $WORK_CTL/reg.grid${grid}.${bytesize}byte.ip${ipopt}.grb.failed
         mv $WORK_TEST/reg.grb $WORK_TEST/reg.grid${grid}.${bytesize}byte.ip${ipopt}.grb.failed
+        failed=1
       else
         rm -f $WORK_CTL/reg.grb $WORK_TEST/reg.grb
       fi
@@ -140,8 +148,14 @@ do
   done
 done
 
-echo
-echo IPXWAFS2_3 REGRESSION TEST COMPLETED.
-echo
+if ((failed == 0));then
+  echo
+  echo "<<< IPXWAFS2_3 REGRESSION TEST PASSED. >>>"
+  echo
+else
+  echo
+  echo "<<< IPXWAFS2_3 REGRESSION TEST FAILED. >>>"
+  echo
+fi
 
 exit 0

@@ -37,6 +37,8 @@ WORK_TEST=${WORK}/test
 mkdir -p $WORK_TEST
 cp $EXEC_DIR/test/*exe $WORK_TEST
 
+failed=0
+
 for bytesize in "4" "8" "d"  # all three byte versions of the library.
 do
   save_ctl_log=0
@@ -49,6 +51,7 @@ do
   if ((status == 0)); then
     echo PROBLEM WITH CTL RUN. CHECK LOG FILE.
     save_ctl_log=1
+    failed=1
   fi
   cd $WORK_TEST
   makgds_test_${bytesize}.exe > test.log
@@ -57,6 +60,7 @@ do
   if ((status == 0)); then
     echo PROBLEM WITH TEST RUN. CHECK LOG FILE.
     save_test_log=1
+    failed=1
   fi
   cmp $WORK_CTL/ctl.log $WORK_TEST/test.log
   status=$?
@@ -65,6 +69,7 @@ do
     echo LOG FILES NOT BIT IDENTIAL. TEST FAILED.
     save_ctl_log=1
     save_test_log=1
+    failed=1
   fi
 
   if ((save_ctl_log == 1)); then
@@ -77,8 +82,14 @@ do
 
 done
 
-echo
-echo MAKGDS REGRESSION TEST COMPLETED.
-echo
+if ((failed == 0)); then
+  echo
+  echo "<<< MAKGDS REGRESSION TEST PASSED. >>>"
+  echo
+else
+  echo
+  echo "<<< MAKGDS REGRESSION TEST FAILED. >>>"
+  echo
+fi
 
 exit 0

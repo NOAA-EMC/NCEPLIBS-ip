@@ -16,7 +16,7 @@
 #set -x
 
 echo
-echo BEGIN GAUSSLAT REGRESSION TEST
+echo "BEGIN GAUSSLAT REGRESSION TEST"
 echo
 
 REG_DIR=${REG_DIR:-../..}
@@ -36,9 +36,11 @@ WORK_TEST=${WORK}/test
 mkdir -p $WORK_TEST
 cp $EXEC_DIR/test/*exe $WORK_TEST
 
+failed=0
+
 for bytesize in "4" "8" "d"  # the three versions of the library
 do
-  echo TEST ${bytesize}-BYTE FLOAT VERSION OF ROUTINE GAUSSLAT
+  echo "TEST ${bytesize}-BYTE FLOAT VERSION OF ROUTINE GAUSSLAT"
   cd $WORK_CTL
   CTL_LOG=ctl.${bytesize}byte.log
   gausslat_ctl_${bytesize}.exe  > $CTL_LOG
@@ -49,15 +51,23 @@ do
   status=$?
   if ((status != 0))
   then
-    echo LOG FILES NOT BIT IDENTIAL. TEST FAILED.
-    echo CHECK LOG FILE SAVED IN WORK DIRECTORY.
+    echo "LOG FILES NOT BIT IDENTIAL. TEST FAILED."
+    echo "CHECK LOG FILE SAVED IN WORK DIRECTORY."
     mv $WORK_CTL/$CTL_LOG $WORK_CTL/${CTL_LOG}.failed
     mv $WORK_TEST/$TEST_LOG $WORK_TEST/${TEST_LOG}.failed
+    failed=1
   fi
 done
 
-echo
-echo GAUSSLAT REGRESSION TEST COMPLETED.
-echo
+if ((failed == 0))
+then
+  echo
+  echo "<<< GAUSSLAT REGRESSION TEST PASSED. >>>"
+  echo
+else
+  echo
+  echo "<<< GAUSSLAT REGRESSION TEST FAILED. >>>"
+  echo
+fi
 
 exit 0

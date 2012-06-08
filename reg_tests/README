@@ -94,7 +94,8 @@ libraries to the ./lib subdirectory).
 
 After compilation, run the entire suite of tests on the ccs by
 typing "llsubmit Runall.ccs.ksh".  On zeus, type "Runall.zeus.ksh"
-Results are stored in "regression.log" in $WORK_DIR.  See the script
+Results are stored in "regression.log" in $WORK_DIR.  A summary of
+results is stored in "summary.log" in $WORK_DIR.  See the script
 comments for more details.  To run an individual regression test, 
 invoke the runall.ksh script located in the ./scripts subdirectory.
 

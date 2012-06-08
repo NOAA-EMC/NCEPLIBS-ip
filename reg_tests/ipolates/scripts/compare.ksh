@@ -19,6 +19,8 @@ WORK2=$WORK_DIR/ipolates.4threads/test
 
 cd $WORK1
 
+failed=0
+
 for binfile in *.bin
 do
   echo "COMPARE FILE " $binfile
@@ -26,12 +28,19 @@ do
   status=$?
   if ((status != 0))
   then
-    echo $binfile "NOT BIT IDENTIAL. TEST FAILED."
+    echo $binfile "NOT BIT IDENTICAL. TEST FAILED."
+    failed=1
   fi
 done
 
-echo
-echo TEST COMPLETED
-echo
+if ((failed == 0));then
+  echo
+  echo "<<< IPOLATES FILE THREAD TEST PASSED. >>>"
+  echo
+else
+  echo
+  echo "<<< IPOLATES FILE THREAD TEST FAILED. >>>"
+  echo
+fi
 
 exit 0

@@ -37,6 +37,8 @@ WORK_TEST=${WORK}/test
 mkdir -p $WORK_TEST
 cp $EXEC_DIR/test/*exe $WORK_TEST
 
+failed=0
+
 for routine in "WIZ" "WZD"  # test gdswiz and gdswzd separately
 do
   echo
@@ -68,6 +70,7 @@ do
         mv $WORK_TEST/grid${grids}.bin $WORK_TEST/grid${grids}.${routine}.${bytesize}byte.bin.failed
         save_ctl_log=1
         save_test_log=1
+        failed=1
       fi
 
 # did the i/j to lat/lon transform fail for the control?
@@ -76,6 +79,7 @@ do
       if ((status == 0)); then
         echo "** PROBLEM WITH CTL RUN. CHECK LOG FILE."
         save_ctl_log=1
+        failed=1
       fi
 
 # did the i/j to lat/lon transform fail for the test?
@@ -84,6 +88,7 @@ do
       if ((status == 0)); then
         echo "** PROBLEM WITH TEST RUN. CHECK LOG FILE."
         save_test_log=1
+        failed=1
       fi
 
       if ((save_ctl_log == 1));then
@@ -101,8 +106,14 @@ do
   done
 done
 
-echo
-echo GDSWIZ/WZD REGRESSION TEST COMPLETED.
-echo
+if ((failed == 0)); then
+  echo
+  echo "<<< GDSWIZ/WZD REGRESSION TEST PASSED. >>>"
+  echo
+else
+  echo
+  echo "<<< GDSWIZ/WZD REGRESSION TEST FAILED. >>>"
+  echo
+fi
 
 exit 0

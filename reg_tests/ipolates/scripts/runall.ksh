@@ -84,6 +84,8 @@ mkdir -p $WORK_TEST
 cp $EXEC_DIR/test/*.exe $WORK_TEST
 cp $INPUT_DATA  $WORK_TEST/fort.9
 
+failed=0
+
 for grids in "3" "8" "127" "203" "205" "212" "218" 
 do
   echo
@@ -109,6 +111,7 @@ do
         mv $WORK_TEST/grid${grids}.opt${option}.bin $WORK_TEST/grid${grids}.opt${option}.${bytesize}byte.bin.failed
         save_ctl_log=1
         save_test_log=1
+        failed=1
       else
         mv $WORK_CTL/grid${grids}.opt${option}.bin $WORK_CTL/grid${grids}.opt${option}.${bytesize}byte.bin
         mv $WORK_TEST/grid${grids}.opt${option}.bin $WORK_TEST/grid${grids}.opt${option}.${bytesize}byte.bin
@@ -119,6 +122,7 @@ do
       if ((status == 0));then
         echo PROBLEM WITH CTL RUN. CHECK LOG FILE.
         save_ctl_log=1
+        failed=1
       fi
 
       grep -Eq 'BAD|ERROR' $WORK_TEST/test.log
@@ -126,6 +130,7 @@ do
       if ((status == 0));then
         echo PROBLEM WITH TEST RUN. CHECK LOG FILE.
         save_test_log=1
+        failed=1
       fi
 
       if ((save_ctl_log == 1));then
@@ -144,8 +149,14 @@ do
   done
 done
 
-echo
-echo "IPOLATES REGRESSION TEST WITH " $num_threads "THREADS COMPLETED."
-echo
+if ((failed == 0));then
+  echo
+  echo "<<< IPOLATES REGRESSION TEST WITH " $num_threads "THREADS PASSED. >>>"
+  echo
+else
+  echo
+  echo "<<< IPOLATES REGRESSION TEST WITH " $num_threads "THREADS FAILED. >>>"
+  echo
+fi
 
 exit 0
