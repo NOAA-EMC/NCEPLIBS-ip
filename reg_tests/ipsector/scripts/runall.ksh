@@ -1,35 +1,41 @@
 #!/bin/ksh
 
 #--------------------------------------------------------------
-# Test iplib routines ipsector and ipspaste, which
-# creates a subset of a larger two-dimensional field,
+# Test iplib routine ipsector, which creates
+# a subsector of a larger two-dimensional field,
 # and routine ipspaste, which does the opposite.
 #
-# Read in a global dataset of substrate
-# temperature, then call ipsector to create a subset of 
+# Read in a global dataset of substrate temperature,
+# then call ipsector to create a subsector of 
 # the original grid.  Then call ipspaste to 'paste'
-# the subset data (created by call to ipsector) back
+# the subsectored data (created by call to ipsector) back
 # to the original grid.  The data returned from ipsector
 # should match the original data.
+#
+# Three sets of calls to ipsector/ipspaste are made:
+# - for a North America subsector
+# - for a non-overlapping subsector
+# - for an overlapping subsector
 #
 # Regression test passes if...
 #  - The 'control' and 'test' runs to completion
 #    with no errors. 
-#  - The output from the call to ipsector is stored in
-#    file ipsector.bin. The 'control' and 'test' 
+#  - The output from the three calls to ipsector are stored in
+#    files "ipsector.namer.bin", "ipsector.no.sect.bin" and
+#    "ipsector.ovlp.sect.bin". The 'control' and 'test'
 #    files must be bit identical.
-#  - The output from the call to ipspaste is stored in
-#    file ipspaste.bin. The 'control' and 'test' 
-#    files must be bit identical.
-#  - The output from ipspaste must be bit identical
-#    to the input data (stored in input.bin).
-#    Check performed for 'test' files only.
+#  - The output from the three calls to ipspaste are stored in
+#    files "ipspaste.namer.bin", "ipspaste.no.sect.bin" and
+#    "ipspaste.ovlp.sect.bin". These files must
+#    be bit identical to the original input data
+#    (stored in file "orig.bin"). Check performed for 
+#    'test' files only.
 #  - The kgds array values from the 'control' and
 #    'test' are stored to log files.  The log
 #    files must be identical.
 #
 # If anything fails, the log and binary data are stored
-# in the work directory with a 'failed' extension.
+# in a $WORK_DIR subdirectory with a 'failed' extension.
 #
 # These ip routines have separate logic for differing
 # Grib 1 scanning modes.  So there are two versions
@@ -105,29 +111,54 @@ do
       save_test=1
     fi
 
-    cmp $WORK_CTL/ipsector.bin $WORK_TEST/ipsector.bin
+    cmp $WORK_CTL/ipsector.namer.bin $WORK_TEST/ipsector.namer.bin
     status=$?
     if ((status != 0))
     then
-      echo "IPSECTOR BINARY FILES NOT BIT IDENTICAL. TEST FAILED."
+      echo "N AMERICA IPSECTOR BINARY FILES NOT BIT IDENTICAL. TEST FAILED."
       save_ctl=1
       save_test=1
     fi
 
-    cmp $WORK_CTL/ipspaste.bin $WORK_TEST/ipspaste.bin
+    cmp $WORK_CTL/ipsector.no.sect.bin $WORK_TEST/ipsector.no.sect.bin
     status=$?
     if ((status != 0))
     then
-      echo "IPSPASTE BINARY FILES NOT BIT IDENTICAL. TEST FAILED."
+      echo "NON-OVERLAP IPSECTOR BINARY FILES NOT BIT IDENTICAL. TEST FAILED."
       save_ctl=1
       save_test=1
     fi
 
-    cmp $WORK_TEST/input.bin $WORK_TEST/ipspaste.bin
+    cmp $WORK_CTL/ipsector.ovlp.sect.bin $WORK_TEST/ipsector.ovlp.sect.bin
     status=$?
     if ((status != 0))
     then
-      echo "IPSPASTE BINARY FILE AND INPUT FILE NOT BIT IDENTICAL. TEST FAILED."
+      echo "OVERLAP IPSECTOR BINARY FILES NOT BIT IDENTICAL. TEST FAILED."
+      save_ctl=1
+      save_test=1
+    fi
+
+    cmp $WORK_TEST/orig.bin $WORK_TEST/ipspaste.namer.bin
+    status=$?
+    if ((status != 0))
+    then
+      echo "N AMERICA IPSPASTE BINARY FILE AND INPUT FILE NOT BIT IDENTICAL. TEST FAILED."
+      save_test=1
+    fi
+
+    cmp $WORK_TEST/orig.bin $WORK_TEST/ipspaste.no.sect.bin
+    status=$?
+    if ((status != 0))
+    then
+      echo "NON-OVERLAP IPSPASTE BINARY FILE AND INPUT FILE NOT BIT IDENTICAL. TEST FAILED."
+      save_test=1
+    fi
+
+    cmp $WORK_TEST/orig.bin $WORK_TEST/ipspaste.ovlp.sect.bin
+    status=$?
+    if ((status != 0))
+    then
+      echo "OVERLAP IPSPASTE BINARY FILE AND INPUT FILE NOT BIT IDENTICAL. TEST FAILED."
       save_test=1
     fi
 
@@ -155,31 +186,20 @@ do
     fi
 
     if ((save_ctl == 1)); then
-      if [ -s $WORK_CTL/$CTL_LOG ];then
-        mv $WORK_CTL/$CTL_LOG $WORK_CTL/${CTL_LOG}.${bytesize}byte.${scan}scan.failed
-      fi
-      if [ -s $WORK_CTL/ipspaste.bin ];then
-        mv $WORK_CTL/ipspaste.bin $WORK_CTL/ipspaste.${bytesize}byte.${scan}scan.failed.bin
-      fi
-      if [ -s $WORK_CTL/ipsector.bin ];then
-        mv $WORK_CTL/ipsector.bin $WORK_CTL/ipsector.${bytesize}byte.${scan}scan.failed.bin
-      fi
+      FAILED_DIR=$WORK_CTL/failed.${bytesize}byte.scan${scan}
+      mkdir -p $FAILED_DIR
+      cp $WORK_CTL/$CTL_LOG  $FAILED_DIR
+      cp $WORK_CTL/*.bin     $FAILED_DIR
     fi
 
     if ((save_test == 1)); then
-      if [ -s $WORK_TEST/$TEST_LOG ];then
-        mv $WORK_TEST/$TEST_LOG $WORK_TEST/${TEST_LOG}.${bytesize}byte.${scan}scan.failed
-      fi 
-      if [ -s $WORK_TEST/ipspaste.bin ];then
-        mv $WORK_TEST/ipspaste.bin $WORK_TEST/ipspaste.${bytesize}byte.${scan}scan.failed.bin
-      fi
-      if [ -s $WORK_TEST/ipsector.bin ];then
-        mv $WORK_TEST/ipsector.bin $WORK_TEST/ipsector.${bytesize}byte.${scan}scan.failed.bin
-      fi
+      FAILED_DIR=$WORK_TEST/failed.${bytesize}byte.scan${scan}
+      mkdir -p $FAILED_DIR
+      cp $WORK_TEST/$TEST_LOG  $FAILED_DIR
+      cp $WORK_TEST/*.bin      $FAILED_DIR
     fi
 
-    rm -f $WORK_CTL/ipsector.bin $WORK_TEST/ipsector.bin
-    rm -f $WORK_CTL/ipspaste.bin $WORK_TEST/ipspaste.bin
+    rm -f $WORK_CTL/*.bin $WORK_TEST/*.bin
 
   done  # library byte size loop
 

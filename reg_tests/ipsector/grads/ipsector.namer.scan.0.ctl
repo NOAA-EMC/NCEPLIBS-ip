@@ -1,4 +1,4 @@
-dset ^/scratch2/portfolios/NCEPDEV/stmp/George.Gayno/regression/ipsector/test/ipsector.bin
+dset ^/stmp/George.Gayno/regression/ipsector/test/ipsector.namer.bin
 undef 0.0E+0
 options yrev
 xdef 180 linear 0.000000 1.0

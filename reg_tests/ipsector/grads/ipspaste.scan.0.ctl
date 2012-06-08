@@ -1,4 +1,6 @@
-dset ^/scratch2/portfolios/NCEPDEV/stmp/George.Gayno/regression/ipsector/test/ipspaste.bin
+* this control file may be used for any ipspaste file
+* they are all the same dimension.
+dset ^/stmp/George.Gayno/regression/ipsector/test/ipspaste.namer.bin
 undef 0.0E+0
 options yrev
 xdef 360 linear 0.000000 1.0

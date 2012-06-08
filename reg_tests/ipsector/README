@@ -1,16 +1,25 @@
-Test iplib routines ipsector, which creates a subset of a 
+Test iplib routines ipsector, which creates a subsector of a 
 larger two-dimensional field, and routine ipspaste, which
 does the opposite.
 
-More specifically, read in a global lat/lon grid of
-soil substrate temperature (with bitmap).  Call routine
-ipsector to subset north america.  Write the
-subsectored data to a binary file.  Then do the inverse:
-call routine ipspaste to 'paste' north america back into the
-original global grid.  Write the merged data to another binary file.
-The data output from ipspaste should match the original data.
-The binary files may be viewed in Grads using the ".ctl"
-files in the ./grads subdirectory.
+More specically, read in a global dataset of substrate
+temperature, then call ipsector to create a subsector of
+the original grid.  Then call ipspaste to 'paste'
+the subsectored data (created by call to ipsector) back
+to the original grid.  The data returned from ipsector
+should match the original data.
+
+Three sets of calls to ipsector/ipspaste are made:
+- for a North America subsector
+- for a non-overlapping subsector
+- for an overlapping subsector
+
+Output from each step is written to binary files.  These file
+may be viewed in Grads using the control files in the ./grads subdirectory.
+
+The regression test fails if the 'control' and 'test' subsectored
+data is not bit identical, or if the 'test' data from the
+ipspaste step does not match the original data.
 
 The routines have differing logic for different Grib 1 scan
 modes.  So there are two input files of global substrate
