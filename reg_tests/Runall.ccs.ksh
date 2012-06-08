@@ -6,6 +6,7 @@
 # To run, type: "llsubmit Runall.ccs.ksh"
 #
 # The log output, "regression.log" is stored in $WORK_DIR.  
+# A summary of the results will be placed in "summary.log" in $WORK_DIR.
 #------------------------------------------------------------------------
 
 set -x
@@ -165,11 +166,22 @@ set -x
 #@dependency=(gdswiz == 0)
 #@queue
 
+#@step_name=summary
+#@resources=ConsumableMemory(500Mb)
+#@job_type=serial
+#@task_affinity=cpu(1)
+#@parallel_threads=1
+#@wall_clock_limit=00:03:00
+#@node_usage=shared
+#@dependency=(makgds == 0)
+#@queue
+
 # directory where regression tests reside
 export REG_DIR=$(pwd)
 
 export WORK_DIR=/ptmp/$LOGNAME/regression
 LOG_FILE=$WORK_DIR/regression.log
+SUM_FILE=${WORK_DIR}/summary.log
 
 case $LOADL_STEP_NAME in
 gausslat)
@@ -205,6 +217,8 @@ ipolatev_compare)
 makgds)
   $REG_DIR/makgds/scripts/runall.ksh >> $LOG_FILE
   echo "ALL REGRESSION TESTS COMPLETED" >> $LOG_FILE;;
+summary)
+  grep '<<<' $LOG_FILE > $SUM_FILE;;
 esac
 
 exit 0
