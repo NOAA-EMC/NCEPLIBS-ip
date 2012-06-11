@@ -206,18 +206,18 @@
  print*,'LAT/LON POINT(IM,JM): ',rlat(imdl,jmdl),rlon(imdl,jmdl)
 
  outfile = "./grid" // trim(grid) // ".bin"
- open (9, file=trim(outfile), access='direct', recl=imdl*jmdl*4)
- write(9, rec=1) real(rlat,4)
- write(9, rec=2) real(rlon,4)
- write(9, rec=3) real(xpts,4)
- write(9, rec=4) real(ypts,4)
- write(9, rec=5) real(crot,4)
- write(9, rec=6) real(srot,4)
- write(9, rec=7) real(xlon,4)
- write(9, rec=8) real(xlat,4)
- write(9, rec=9) real(ylon,4)
- write(9, rec=10) real(ylat,4)
- write(9, rec=11) real(area,4)
+ open (9, file=trim(outfile), access='direct', err=55, recl=imdl*jmdl*4)
+ write(9, rec=1, err=55) real(rlat,4)
+ write(9, rec=2, err=55) real(rlon,4)
+ write(9, rec=3, err=55) real(xpts,4)
+ write(9, rec=4, err=55) real(ypts,4)
+ write(9, rec=5, err=55) real(crot,4)
+ write(9, rec=6, err=55) real(srot,4)
+ write(9, rec=7, err=55) real(xlon,4)
+ write(9, rec=8, err=55) real(xlat,4)
+ write(9, rec=9, err=55) real(ylon,4)
+ write(9, rec=10, err=55) real(ylat,4)
+ write(9, rec=11, err=55) real(area,4)
  close (9)
 
 ! the first call to gdswzd computed the lat/lon at each point.  now,
@@ -237,7 +237,7 @@
 
  if (nret /= npts) then
    print*,'ERROR. WRONG NUMBER OF POINTS RETURNED ',nret,npts
-!  stop 34
+   stop 34
  endif
 
 !------------------------------------------------------------------------------
@@ -313,8 +313,14 @@
 
  98 continue
 
- print*,'DONE'
+ print*,'NORMAL TERMINATION'
+
  stop
+
+ 55 continue
+ print*,'ERROR WRITING OUTPUT FILE.'
+ stop 44
+
  end program gdswiz_wzd
 
  subroutine grid_201(wzd)
@@ -409,7 +415,7 @@
 
  if (nret /= npts) then
    print*,'ERROR. WRONG NUMBER OF POINTS RETURNED ',nret,npts
-   stop 33
+   stop 38
  endif
 
  print*,'LAT/LON FIRST POINT: ', rlat(1), rlon(1)
@@ -483,18 +489,18 @@
  enddo
 
  outfile = "./grid201.bin"
- open (9, file=trim(outfile), access='direct', recl=ims*jms*4)
- write(9, rec=1) real(rlat_2d,4)
- write(9, rec=2) real(rlon_2d,4)
- write(9, rec=3) real(xpts_2d,4)
- write(9, rec=4) real(ypts_2d,4)
- write(9, rec=5) real(crot_2d,4)
- write(9, rec=6) real(srot_2d,4)
- write(9, rec=7) real(xlon_2d,4)
- write(9, rec=8) real(xlat_2d,4)
- write(9, rec=9) real(ylon_2d,4)
- write(9, rec=10) real(ylat_2d,4)
- write(9, rec=11) real(area_2d,4)
+ open (9, file=trim(outfile), access='direct', err=77, recl=ims*jms*4)
+ write(9, rec=1, err=77) real(rlat_2d,4)
+ write(9, rec=2, err=77) real(rlon_2d,4)
+ write(9, rec=3, err=77) real(xpts_2d,4)
+ write(9, rec=4, err=77) real(ypts_2d,4)
+ write(9, rec=5, err=77) real(crot_2d,4)
+ write(9, rec=6, err=77) real(srot_2d,4)
+ write(9, rec=7, err=77) real(xlon_2d,4)
+ write(9, rec=8, err=77) real(xlat_2d,4)
+ write(9, rec=9, err=77) real(ylon_2d,4)
+ write(9, rec=10, err=77) real(ylat_2d,4)
+ write(9, rec=11, err=77) real(area_2d,4)
  close (9)
 
  deallocate(rlat_2d, rlon_2d, xpts_2d, ypts_2d, crot_2d, srot_2d)
@@ -519,7 +525,7 @@
 
  if (nret /= npts) then
    print*,'ERROR. WRONG NUMBER OF POINTS RETURNED ',nret,npts
-   stop 34
+   stop 44
  endif
 
  maxdiffx = -99999.
@@ -546,6 +552,10 @@
  deallocate(rlat, rlon, xpts, ypts, crot, srot)
  deallocate(xlon, xlat, ylon, ylat, area)
 
- return
+ return 
+
+ 77 continue
+ print*,'-ERROR WRITING OUTPUT BINARY FILE.'
+ stop 56
 
  end subroutine grid_201

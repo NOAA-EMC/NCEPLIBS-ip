@@ -41,13 +41,29 @@ failed=0
 
 for bytesize in "4" "8" "d"  # the version of the library
 do
+
   echo "TEST ${bytesize}-BYTE FLOAT VERSION OF ROUTINES GCDIST/MOVECT"
+
   cd $WORK_CTL
   CTL_LOG=ctl.${bytesize}byte.log
   gcdist_ctl_${bytesize}.exe  > $CTL_LOG
+  status=$?
+  if ((status != 0))
+  then
+    echo CONTROL FAILED.
+    failed=1
+  fi
+
   cd $WORK_TEST
   TEST_LOG=test.${bytesize}byte.log
   gcdist_test_${bytesize}.exe > $TEST_LOG
+  status=$?
+  if ((status != 0))
+  then
+    echo TEST FAILED.
+    failed=1
+  fi
+
   cmp $WORK_CTL/$CTL_LOG $WORK_TEST/$TEST_LOG
   status=$?
   if ((status != 0))
@@ -58,6 +74,7 @@ do
     mv $WORK_TEST/$TEST_LOG $WORK_TEST/${TEST_LOG}.failed
     failed=1
   fi
+
 done
 
 if ((failed == 0))

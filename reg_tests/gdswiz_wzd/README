@@ -25,7 +25,8 @@ grid #       description
 The routines are called twice to test both the 1) i/j to lat/lon
 and 2) lat/lon to i/j conversions.  This operation should be reversable.
 If it is not reversable within floating point differences, a warning
-message is printed to standard output.
+message is printed to standard output and the regression test is
+considered failed.
 
 The latitude, longitude and all other computed map fields (such as 
 grid box area and rotation factors) are output to a binary file.
