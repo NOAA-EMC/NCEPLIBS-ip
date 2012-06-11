@@ -43,23 +43,37 @@ failed=0
 
 for bytesize in "4" "8" "d"  # test all versions of library
 do
+
   echo TEST ${bytesize}-BYTE FLOAT VERSION OF ROUTINE IPMERGE2
+
   cd $WORK_CTL
   CTL_LOG=ctl.${bytesize}byte.log
   ipmerge2_ctl_${bytesize}.exe  > $CTL_LOG
+  status=$?
+  if ((status != 0)); then
+    echo CONTROL RUN FAILED.
+    failed=1
+  fi
+
   cd $WORK_TEST
   TEST_LOG=test.${bytesize}byte.log
   ipmerge2_test_${bytesize}.exe > $TEST_LOG
+  status=$?
+  if ((status != 0)); then
+    echo TEST RUN FAILED.
+    failed=1
+  fi
+
   cmp $WORK_CTL/$CTL_LOG $WORK_TEST/$TEST_LOG
   status=$?
-  if ((status != 0))
-  then
+  if ((status != 0)); then
     echo LOG FILES NOT BIT IDENTIAL. TEST FAILED.
     echo CHECK LOG FILES SAVED IN WORK DIRECTORY.
     mv $WORK_CTL/$CTL_LOG  $WORK_CTL/${CTL_LOG}.failed
     mv $WORK_TEST/$TEST_LOG $WORK_TEST/${TEST_LOG}.failed
     failed=1
   fi
+
 done
 
 if ((failed == 0));then
