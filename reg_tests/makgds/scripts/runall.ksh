@@ -41,27 +41,30 @@ failed=0
 
 for bytesize in "4" "8" "d"  # all three byte versions of the library.
 do
+
   save_ctl_log=0
   save_test_log=0
+
   echo TEST ${bytesize}-BYTE FLOAT VERSION OF ROUTINE MAKGDS
+
   cd $WORK_CTL
   makgds_ctl_${bytesize}.exe  > ctl.log
-  grep -Eq 'BAD|ERROR' $WORK_CTL/ctl.log
   status=$?
-  if ((status == 0)); then
+  if ((status != 0)); then
     echo PROBLEM WITH CTL RUN. CHECK LOG FILE.
     save_ctl_log=1
     failed=1
   fi
+
   cd $WORK_TEST
   makgds_test_${bytesize}.exe > test.log
-  grep -Eq 'BAD|ERROR' $WORK_TEST/test.log
   status=$?
-  if ((status == 0)); then
+  if ((status != 0)); then
     echo PROBLEM WITH TEST RUN. CHECK LOG FILE.
     save_test_log=1
     failed=1
   fi
+
   cmp $WORK_CTL/ctl.log $WORK_TEST/test.log
   status=$?
   if ((status != 0))

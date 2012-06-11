@@ -29,6 +29,7 @@
 
  if (iret /= 0) then
    print*,"** ERROR IN MAKGDS **"
+   stop 1
  endif
 
  print*,'LENGDS: ',lengds
@@ -53,6 +54,7 @@
 
  if (iret /= 0) then
    print*,"** ERROR IN MAKGDS **"
+   stop 2
  endif
 
  print*,'KGDS:   ',kgds(1:25)
@@ -69,6 +71,7 @@
 
  if (iret /= 0) then
    print*,"** ERROR IN MAKGDS **"
+   stop 3
  endif
 
  do i = 1, lengds
@@ -77,5 +80,7 @@
 
  print*,''
  print*,"NORMAL TERMINATION"
+
+ stop
 
  end program makgds_driver
