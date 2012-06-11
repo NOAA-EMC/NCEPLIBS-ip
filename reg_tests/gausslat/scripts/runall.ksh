@@ -40,27 +40,39 @@ failed=0
 
 for bytesize in "4" "8" "d"  # the three versions of the library
 do
+
   echo "TEST ${bytesize}-BYTE FLOAT VERSION OF ROUTINE GAUSSLAT"
+
   cd $WORK_CTL
   CTL_LOG=ctl.${bytesize}byte.log
   gausslat_ctl_${bytesize}.exe  > $CTL_LOG
+  status=$?
+  if ((status != 0)); then
+    echo CONTROL FAILED.
+    failed=1
+  fi 
+
   cd $WORK_TEST
   TEST_LOG=test.${bytesize}byte.log
   gausslat_test_${bytesize}.exe > $TEST_LOG
+  if ((status != 0)); then
+    echo TEST FAILED.
+    failed=1
+  fi 
+
   cmp $WORK_CTL/$CTL_LOG $WORK_TEST/$TEST_LOG
   status=$?
-  if ((status != 0))
-  then
+  if ((status != 0)); then
     echo "LOG FILES NOT BIT IDENTIAL. TEST FAILED."
     echo "CHECK LOG FILE SAVED IN WORK DIRECTORY."
     mv $WORK_CTL/$CTL_LOG $WORK_CTL/${CTL_LOG}.failed
     mv $WORK_TEST/$TEST_LOG $WORK_TEST/${TEST_LOG}.failed
     failed=1
   fi
+
 done
 
-if ((failed == 0))
-then
+if ((failed == 0)); then
   echo
   echo "<<< GAUSSLAT REGRESSION TEST PASSED. >>>"
   echo
