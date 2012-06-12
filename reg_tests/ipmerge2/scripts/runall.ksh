@@ -53,6 +53,7 @@ do
   if ((status != 0)); then
     echo CONTROL RUN FAILED.
     failed=1
+    continue
   fi
 
   cd $WORK_TEST
@@ -62,12 +63,13 @@ do
   if ((status != 0)); then
     echo TEST RUN FAILED.
     failed=1
+    continue
   fi
 
   cmp $WORK_CTL/$CTL_LOG $WORK_TEST/$TEST_LOG
   status=$?
   if ((status != 0)); then
-    echo LOG FILES NOT BIT IDENTIAL. TEST FAILED.
+    echo LOG FILES NOT BIT IDENTIAL. REGRESSION TEST FAILED.
     echo CHECK LOG FILES SAVED IN WORK DIRECTORY.
     mv $WORK_CTL/$CTL_LOG  $WORK_CTL/${CTL_LOG}.failed
     mv $WORK_TEST/$TEST_LOG $WORK_TEST/${TEST_LOG}.failed
