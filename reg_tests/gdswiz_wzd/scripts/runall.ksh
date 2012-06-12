@@ -40,7 +40,7 @@ WORK_TEST=${WORK}/test
 mkdir -p $WORK_TEST
 cp $EXEC_DIR/test/*exe $WORK_TEST
 
-failed=0
+reg_test_failed=0
 
 for routine in "WIZ" "WZD"  # test gdswiz and gdswzd separately
 do
@@ -52,40 +52,31 @@ do
     for bytesize in "4" "8" "d"  # test each library version
     do
 
-      save_ctl=0
-      save_test=0
+      ctl_failed=0
+      test_failed=0
 
       echo TEST GRID $grids ${bytesize}-BYTE FLOAT VERSION
 
       cd $WORK_CTL
       CTL_LOG=ctl.${routine}.${bytesize}byte.grid${grids}.log
       gdswiz_wzd_ctl_${bytesize}.exe "$routine" "$grids" > $CTL_LOG
-# did 'control' executable run without error?
       status=$?
+# did 'control' executable run without error?
       if ((status != 0));then
         echo "** CONTROL RUN FAILED."
-        save_ctl=1
-        failed=1
+        ctl_failed=1
+        reg_test_failed=1
       fi
 
       cd $WORK_TEST
       TEST_LOG=test.${routine}.${bytesize}byte.grid${grids}.log
       gdswiz_wzd_test_${bytesize}.exe "$routine" "$grids" > $TEST_LOG
+      status=$?
 # did 'test' executable run without error?
       if ((status != 0));then
         echo "** TEST RUN FAILED."
-        save_test=1
-        failed=1
-      fi
-
-# are binary files bit identical?
-      cmp $WORK_CTL/grid${grids}.bin $WORK_TEST/grid${grids}.bin
-      status=$?
-      if ((status != 0));then
-        echo "** BINARY FILES NOT BIT IDENTICAL. TEST FAILED."
-        save_ctl=1
-        save_test=1
-        failed=1
+        test_failed=1
+        reg_test_failed=1
       fi
 
 # did the i/j to lat/lon transform fail for the control?
@@ -93,8 +84,8 @@ do
       status=$?
       if ((status == 0)); then
         echo "** PROBLEM WITH CTL RUN. CHECK LOG FILE."
-        save_ctl=1
-        failed=1
+        ctl_failed=1
+        reg_test_failed=1
       fi
 
 # did the i/j to lat/lon transform fail for the test?
@@ -102,14 +93,26 @@ do
       status=$?
       if ((status == 0)); then
         echo "** PROBLEM WITH TEST RUN. CHECK LOG FILE."
-        save_test=1
-        failed=1
+        test_failed=1
+        reg_test_failed=1
+      fi
+
+# are binary files bit identical?
+      if ((test_failed == 0 && ctl_failed == 0)); then
+        cmp $WORK_CTL/grid${grids}.bin $WORK_TEST/grid${grids}.bin
+        status=$?
+        if ((status != 0));then
+          echo "** BINARY FILES NOT BIT IDENTICAL. REGRESSION TEST FAILED."
+          ctl_failed=1
+          test_failed=1
+          reg_test_failed=1
+        fi
       fi
 
 # if any step of regression test fails, save data in a subdirectory.
 
-      if ((save_ctl == 1));then
-        FAILED_DIR=$WORK_CTL/failed.${bytesize}byte.grid${grids}.${routine}
+      if ((ctl_failed == 1));then
+        FAILED_DIR=$WORK_CTL/failed.${routine}.${bytesize}byte.grid${grids}
         mkdir -p $FAILED_DIR
         if [ -s $WORK_CTL/$CTL_LOG ]; then
           mv $WORK_CTL/$CTL_LOG $FAILED_DIR
@@ -122,8 +125,8 @@ do
         fi 
       fi
 
-      if ((save_test == 1));then
-        FAILED_DIR=$WORK_TEST/failed.${bytesize}byte.grid${grids}.${routine}
+      if ((test_failed == 1));then
+        FAILED_DIR=$WORK_TEST/failed.${routine}.${bytesize}byte.grid${grids}
         mkdir -p $FAILED_DIR
         if [ -s $WORK_TEST/$TEST_LOG ];then
           mv $WORK_TEST/$TEST_LOG $FAILED_DIR
@@ -144,7 +147,7 @@ do
   done
 done
 
-if ((failed == 0)); then
+if ((reg_test_failed == 0)); then
   echo
   echo "<<< GDSWIZ/WZD REGRESSION TEST PASSED. >>>"
   echo
