@@ -207,13 +207,18 @@
  endif
 
  output_file = "./grid" // trim(grid) // ".opt" // interp_opt // ".bin" 
- open (12, file=output_file, access="direct", recl=mo*4)
- write (12, rec=1) real(output_u_data,4)
- write (12, rec=2) real(output_v_data,4)
+ open (12, file=output_file, access="direct", recl=mo*4, err=88)
+ write (12, rec=1, err=88) real(output_u_data,4)
+ write (12, rec=2, err=88) real(output_v_data,4)
  close (12)
 
  deallocate (output_rlat, output_rlon, output_u_data, output_bitmap)
  deallocate (output_v_data, output_crot, output_srot)
 
  return
+
+ 88 continue
+ print*,'- ERROR WRITING BINARY OUTPUT FILE.'
+ stop 87
+
  end subroutine interp
