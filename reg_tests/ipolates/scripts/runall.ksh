@@ -44,15 +44,15 @@
 #
 # Binary files of the interpolated data from the control and test
 # are check for bit-identicalness.  If not identical, the test
-# is considered failed and the script will save the file in the
-# working directory with a ".failed" extension.
+# is considered failed and the script will save the file in a
+# working sub-directory with a "failed" extension.
 #
 # This is part 1 of the regression test.  After completion of this
 # script, the compare.ksh script is run to compare the binary
 # files from the 1 and 4 thread runs.
 #------------------------------------------------------------------------
 
-#set -x
+set -x
 
 if (($# > 0))
 then
@@ -84,7 +84,7 @@ mkdir -p $WORK_TEST
 cp $EXEC_DIR/test/*.exe $WORK_TEST
 cp $INPUT_DATA  $WORK_TEST/fort.9
 
-failed=0
+reg_test_failed=0
 
 for grids in "3" "8" "127" "203" "205" "212" "218" 
 do
@@ -93,63 +93,80 @@ do
   do
     for bytesize in "4" "8" "d"   # bytesize version of library.
     do
+
+      ctl_failed=0
+      test_failed=0
+
       echo TEST ${bytesize}-BYTE VERSION FOR GRID $grids AND INTERP OPTION $option
+
       cd $WORK_CTL
       ipolates_ctl_${bytesize}.exe "$grids" "$option" > ctl.log
+      status=$?
+      if ((status != 0));then
+        echo "** CONTROL RUN FAILED"
+        ctl_failed=1
+        reg_test_failed=1
+      fi
+
       cd $WORK_TEST
       ipolates_test_${bytesize}.exe "$grids" "$option" > test.log
-
-      save_ctl_log=0
-      save_test_log=0
-
-      cmp $WORK_CTL/grid${grids}.opt${option}.bin $WORK_TEST/grid${grids}.opt${option}.bin
       status=$?
-      if ((status != 0))
-      then
-        echo BINARY FILES NOT BIT IDENTIAL. TEST FAILED.
-        mv $WORK_CTL/grid${grids}.opt${option}.bin $WORK_CTL/grid${grids}.opt${option}.${bytesize}byte.bin.failed
-        mv $WORK_TEST/grid${grids}.opt${option}.bin $WORK_TEST/grid${grids}.opt${option}.${bytesize}byte.bin.failed
-        save_ctl_log=1
-        save_test_log=1
-        failed=1
+      if ((status != 0));then
+        echo "** TEST RUN FAILED"
+        test_failed=1
+        reg_test_failed=1
+      fi
+
+      if ((test_failed == 0 && ctl_failed == 0)); then
+        cmp $WORK_CTL/grid${grids}.opt${option}.bin $WORK_TEST/grid${grids}.opt${option}.bin
+        status=$?
+        if ((status != 0));then
+          echo "** BINARY FILES NOT BIT IDENTIAL."
+          ctl_failed=1
+          test_failed=1
+          reg_test_failed=1
+        fi
+      fi
+
+      if ((ctl_failed == 1));then
+        FAILED_DIR=$WORK_CTL/failed.grid${grids}.opt${option}.${bytesize}byte
+        mkdir -p $FAILED_DIR
+        if [ -s $WORK_CTL/ctl.log ]; then
+          mv $WORK_CTL/ctl.log $FAILED_DIR
+        fi
+        if [ -s $WORK_CTL/grid${grids}.opt${option}.bin ];then
+          mv $WORK_CTL/grid${grids}.opt${option}.bin  $FAILED_DIR
+        fi
+        if [ -s $WORK_CTL/core* ];then
+          mv $WORK_CTL/core*  $FAILED_DIR
+        fi
       else
         mv $WORK_CTL/grid${grids}.opt${option}.bin $WORK_CTL/grid${grids}.opt${option}.${bytesize}byte.bin
+      fi
+
+      if ((test_failed == 1));then
+        FAILED_DIR=$WORK_TEST/failed.grid${grids}.opt${option}.${bytesize}byte
+        mkdir -p $FAILED_DIR
+        if [ -s $WORK_TEST/test.log ]; then
+          mv $WORK_TEST/test.log $FAILED_DIR
+        fi
+        if [ -s $WORK_TEST/grid${grids}.opt${option}.bin ];then
+          mv $WORK_TEST/grid${grids}.opt${option}.bin  $FAILED_DIR
+        fi
+        if [ -s $WORK_TEST/core* ];then
+          mv $WORK_TEST/core*  $FAILED_DIR
+        fi
+      else
         mv $WORK_TEST/grid${grids}.opt${option}.bin $WORK_TEST/grid${grids}.opt${option}.${bytesize}byte.bin
       fi
 
-      grep -Eq 'BAD|ERROR' $WORK_CTL/ctl.log
-      status=$?
-      if ((status == 0));then
-        echo PROBLEM WITH CTL RUN. CHECK LOG FILE.
-        save_ctl_log=1
-        failed=1
-      fi
-
-      grep -Eq 'BAD|ERROR' $WORK_TEST/test.log
-      status=$?
-      if ((status == 0));then
-        echo PROBLEM WITH TEST RUN. CHECK LOG FILE.
-        save_test_log=1
-        failed=1
-      fi
-
-      if ((save_ctl_log == 1));then
-        mv $WORK_CTL/ctl.log $WORK_CTL/ctl.grid${grids}.opt${option}.${bytesize}byte.log.failed
-      else
-        rm -f $WORK_CTL/ctl.log
-      fi
-
-      if ((save_test_log == 1));then
-        mv $WORK_TEST/test.log $WORK_TEST/test.grid${grids}.opt${option}.${bytesize}byte.log.failed
-      else
-        rm -f $WORK_TEST/test.log
-      fi
+      rm -f $WORK_CTL/ctl.log  $WORK_TEST/test.log
 
     done
   done
 done
 
-if ((failed == 0));then
+if ((reg_test_failed == 0));then
   echo
   echo "<<< IPOLATES REGRESSION TEST WITH " $num_threads "THREADS PASSED. >>>"
   echo

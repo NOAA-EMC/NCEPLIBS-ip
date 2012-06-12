@@ -194,11 +194,18 @@
  enddo
 
  output_file = "./grid" // trim(grid) // ".opt" // interp_opt // ".bin" 
- open (12, file=output_file, access="direct", recl=mo*4)
- write (12, rec=1) real(output_data,4)
+ open (12, file=output_file, access="direct", err=38, recl=mo*4)
+ write (12, err=38, rec=1) real(output_data,4)
  close (12)
 
  deallocate (output_rlat, output_rlon, output_data, output_bitmap)
 
  return
+
+ 38 continue
+
+ print*,'-ERROR WRITING BINARY FILE.'
+ stop 77
+
+
  end subroutine interp
