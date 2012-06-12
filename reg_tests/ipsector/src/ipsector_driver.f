@@ -95,8 +95,8 @@
 
  call baclose (iunit, iret)
 
- open (24, file="./orig.bin", access='direct', recl=i_orig*j_orig*4)
- write (24, rec=1) real(orig_data,4)
+ open (24, file="./orig.bin", access='direct', err=77, recl=i_orig*j_orig*4)
+ write (24, rec=1, err=77) real(orig_data,4)
  close (24)
 
 !--------------------------------------------------------------------------------
@@ -134,8 +134,8 @@
  print*,"- ORIGINAL GRID KGDS: ",orig_kgds(1:20)
  print*,"- IPSECTOR GRID KGDS: ",sector_kgds(1:20)
 
- open (11, file="./ipsector.namer.bin", access='direct', recl=ms*4)
- write (11, rec=1) real(sector_data,4)
+ open (11, file="./ipsector.namer.bin", access='direct', err=77, recl=ms*4)
+ write (11, rec=1, err=77) real(sector_data,4)
  close (11)
 
 !--------------------------------------------------------------------------------
@@ -168,8 +168,8 @@
    print*,"- SUCCESSFULL CALL TO IPSPASTE."
  end if
 
- open (21, file="./ipspaste.namer.bin", access='direct', recl=m*4)
- write (21, rec=1) real(paste_data,4)   ! data returned from ipspaste
+ open (21, file="./ipspaste.namer.bin", access='direct', recl=m*4, err=77)
+ write (21, rec=1, err=77) real(paste_data,4)   ! data returned from ipspaste
  close (21)
 
 !--------------------------------------------------------------------------------
@@ -226,8 +226,8 @@
  print*,"- ORIGINAL GRID KGDS: ",orig_kgds(1:20)
  print*,"- IPSECTOR GRID KGDS: ",sector_kgds(1:20)
 
- open (35, file="./ipsector.no.sect.bin", access='direct', recl=ms*4)
- write (35, rec=1) real(sector_data,4)
+ open (35, file="./ipsector.no.sect.bin", access='direct', recl=ms*4, err=77)
+ write (35, rec=1, err=77) real(sector_data,4)
  close (35)
 
 !--------------------------------------------------------------------------------
@@ -253,8 +253,8 @@
    print*,"- SUCCESSFULL CALL TO IPSPASTE."
  end if
 
- open (21, file="./ipspaste.no.sect.bin", access='direct', recl=m*4)
- write (21, rec=1) real(paste_data,4)   ! data returned from ipspaste
+ open (21, file="./ipspaste.no.sect.bin", access='direct', recl=m*4, err=77)
+ write (21, rec=1, err=77) real(paste_data,4)   ! data returned from ipspaste
  close (21)
 
 !--------------------------------------------------------------------------------
@@ -311,8 +311,8 @@
  print*,"- ORIGINAL GRID KGDS: ",orig_kgds(1:20)
  print*,"- IPSECTOR GRID KGDS: ",sector_kgds(1:20)
 
- open (35, file="./ipsector.ovlp.sect.bin", access='direct', recl=ms*4)
- write (35, rec=1) real(sector_data,4)
+ open (35, file="./ipsector.ovlp.sect.bin", access='direct', recl=ms*4, err=77)
+ write (35, rec=1, err=77) real(sector_data,4)
  close (35)
 
 !--------------------------------------------------------------------------------
@@ -338,8 +338,8 @@
    print*,"- SUCCESSFULL CALL TO IPSPASTE."
  end if
 
- open (21, file="./ipspaste.ovlp.sect.bin", access='direct', recl=m*4)
- write (21, rec=1) real(paste_data,4)   ! data returned from ipspaste
+ open (21, file="./ipspaste.ovlp.sect.bin", access='direct', recl=m*4, err=77)
+ write (21, rec=1, err=77) real(paste_data,4)   ! data returned from ipspaste
  close (21)
 
  deallocate (paste_bitmap, paste_data)
@@ -349,5 +349,9 @@
  print*,'- NORMAL TERMINATION'
 
  stop
+
+ 77 continue
+ print*,'- ERROR WRITING A BINARY FILE.'
+ stop 1
 
  end program ipsector_driver

@@ -77,7 +77,7 @@ INPUT_DATA=$REG_DIR/ipsector/data/global_tg3clim.1x1.scan.32.grb
 cp $INPUT_DATA $WORK_CTL
 cp $INPUT_DATA $WORK_TEST
 
-failed=0
+reg_test_failed=0
 
 for scan in "0" "32"   # grib 1 scanning mode 
 do
@@ -90,8 +90,8 @@ do
 
     echo "TEST ${bytesize}-BYTE VERSION OF IPSECTOR/IPSPASTE FOR SCAN MODE ${scan}"
 
-    save_ctl=0
-    save_test=0
+    ctl_failed=0
+    test_failed=0
 
     cd $WORK_CTL
     CTL_LOG=ctl.${bytesize}byte.log
@@ -99,9 +99,9 @@ do
     status=$?
     if ((status != 0))
     then
-      echo "CONTROL RUN FAILED."
-      save_ctl=1
-      failed=1
+      echo "** CONTROL RUN FAILED."
+      ctl_failed=1
+      reg_test_failed=1
     fi
 
     cd $WORK_TEST
@@ -110,106 +110,105 @@ do
     status=$?
     if ((status != 0))
     then
-      echo "TEST RUN FAILED."
-      save_test=1
-      failed=1
+      echo "** TEST RUN FAILED."
+      test_failed=1
+      reg_test_failed=1
     fi
+
+# if control and test ran to completion without error, then proceed to
+# compare binary files.
+
+    if ((test_failed == 0 && ctl_failed == 0));then
 
     cmp $WORK_CTL/ipsector.namer.bin $WORK_TEST/ipsector.namer.bin
     status=$?
     if ((status != 0))
     then
-      echo "N AMERICA IPSECTOR BINARY FILES NOT BIT IDENTICAL. TEST FAILED."
-      save_ctl=1
-      save_test=1
-      failed=1
+      echo "** N AMERICA IPSECTOR BINARY FILES NOT BIT IDENTICAL. TEST FAILED."
+      ctl_failed=1
+      test_failed=1
+      reg_test_failed=1
     fi
 
     cmp $WORK_CTL/ipsector.no.sect.bin $WORK_TEST/ipsector.no.sect.bin
     status=$?
     if ((status != 0))
     then
-      echo "NON-OVERLAP IPSECTOR BINARY FILES NOT BIT IDENTICAL. TEST FAILED."
-      save_ctl=1
-      save_test=1
-      failed=1
+      echo "** NON-OVERLAP IPSECTOR BINARY FILES NOT BIT IDENTICAL. TEST FAILED."
+      ctl_failed=1
+      test_failed=1
+      reg_test_failed=1
     fi
 
     cmp $WORK_CTL/ipsector.ovlp.sect.bin $WORK_TEST/ipsector.ovlp.sect.bin
     status=$?
     if ((status != 0))
     then
-      echo "OVERLAP IPSECTOR BINARY FILES NOT BIT IDENTICAL. TEST FAILED."
-      save_ctl=1
-      save_test=1
-      failed=1
+      echo "** OVERLAP IPSECTOR BINARY FILES NOT BIT IDENTICAL. TEST FAILED."
+      ctl_failed=1
+      test_failed=1
+      reg_test_failed=1
     fi
 
     cmp $WORK_TEST/orig.bin $WORK_TEST/ipspaste.namer.bin
     status=$?
     if ((status != 0))
     then
-      echo "N AMERICA IPSPASTE BINARY FILE AND INPUT FILE NOT BIT IDENTICAL. TEST FAILED."
-      save_test=1
-      failed=1
+      echo "** N AMERICA IPSPASTE BINARY FILE AND INPUT FILE NOT BIT IDENTICAL. TEST FAILED."
+      test_failed=1
+      reg_test_failed=1
     fi
 
     cmp $WORK_TEST/orig.bin $WORK_TEST/ipspaste.no.sect.bin
     status=$?
     if ((status != 0))
     then
-      echo "NON-OVERLAP IPSPASTE BINARY FILE AND INPUT FILE NOT BIT IDENTICAL. TEST FAILED."
-      save_test=1
-      failed=1
+      echo "** NON-OVERLAP IPSPASTE BINARY FILE AND INPUT FILE NOT BIT IDENTICAL. TEST FAILED."
+      test_failed=1
+      reg_test_failed=1
     fi
 
     cmp $WORK_TEST/orig.bin $WORK_TEST/ipspaste.ovlp.sect.bin
     status=$?
     if ((status != 0))
     then
-      echo "OVERLAP IPSPASTE BINARY FILE AND INPUT FILE NOT BIT IDENTICAL. TEST FAILED."
-      save_test=1
-      failed=1
+      echo "** OVERLAP IPSPASTE BINARY FILE AND INPUT FILE NOT BIT IDENTICAL. TEST FAILED."
+      test_failed=1
+      reg_test_failed=1
     fi
 
     cmp $WORK_CTL/$CTL_LOG $WORK_TEST/$TEST_LOG
     status=$?
     if ((status != 0))
     then
-      echo "KGDS ARRAY NOT IDENTICAL. TEST FAILED."
-      save_ctl=1
-      save_test=1
-      failed=1
+      echo "** KGDS ARRAY NOT IDENTICAL. TEST FAILED."
+      ctl_failed=1
+      test_failed=1
+      reg_test_failed=1
     fi
 
-    grep -Eq 'BAD|ERROR' $WORK_CTL/$CTL_LOG
-    status=$?
-    if ((status == 0)); then
-      echo "PROBLEM WITH CTL RUN. TEST FAILED."
-      save_ctl=1
-      failed=1
-    fi
+    fi   # did test and control run without errors?
 
-    grep -Eq 'BAD|ERROR' $WORK_TEST/$TEST_LOG
-    status=$?
-    if ((status == 0)); then
-      echo "PROBLEM WITH TEST RUN. TEST FAILED."
-      save_test=1
-      failed=1
-    fi
-
-    if ((save_ctl == 1)); then
+    if ((ctl_failed == 1)); then
       FAILED_DIR=$WORK_CTL/failed.${bytesize}byte.scan${scan}
       mkdir -p $FAILED_DIR
-      cp $WORK_CTL/$CTL_LOG  $FAILED_DIR
-      cp $WORK_CTL/*.bin     $FAILED_DIR
+      if [ -s $WORK_CTL/$CTL_LOG ];then
+        cp $WORK_CTL/$CTL_LOG  $FAILED_DIR
+      fi
+      if [ -s $WORK_CTL/*.bin ];then
+        cp $WORK_CTL/*.bin     $FAILED_DIR
+      fi 
     fi
 
-    if ((save_test == 1)); then
+    if ((test_failed == 1)); then
       FAILED_DIR=$WORK_TEST/failed.${bytesize}byte.scan${scan}
       mkdir -p $FAILED_DIR
-      cp $WORK_TEST/$TEST_LOG  $FAILED_DIR
-      cp $WORK_TEST/*.bin      $FAILED_DIR
+      if [ -s $WORK_TEST/$TEST_LOG ];then
+        cp $WORK_TEST/$TEST_LOG  $FAILED_DIR
+      fi 
+      if [ -s $WORK_TEST/*.bin ];then
+        cp $WORK_TEST/*.bin      $FAILED_DIR
+      fi
     fi
 
     rm -f $WORK_CTL/*.bin $WORK_TEST/*.bin
@@ -221,7 +220,7 @@ do
 
 done # scan mode loop
 
-if ((failed == 0));then
+if ((reg_test_failed == 0));then
   echo
   echo "<<< IPSECTOR/IPSPASTE REGRESSION TEST PASSED. >>>"
   echo
