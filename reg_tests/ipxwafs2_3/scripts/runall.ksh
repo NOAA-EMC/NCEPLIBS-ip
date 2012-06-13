@@ -15,8 +15,8 @@
 # and routine ipxwafs3 is invoked for interpolation option '2' (neighbor)
 #
 # If the output files from the control and test are not bit identical,
-# then the test has failed.  if a test fails, the output file is saved
-# in WORK_DIR with a ".failed" extension.
+# then the regression test has failed.  When this happens, the output file is 
+# saved in a $WORK_DIR subdirectory with a "failed" extension.
 #-------------------------------------------------------------------------------
 
 #set -x
@@ -46,7 +46,7 @@ WORK_TEST=${WORK}/test
 mkdir -p $WORK_TEST
 cp $TEST_EXEC_DIR/copygb_test* $WORK_TEST
 
-failed=0
+reg_test_failed=0
 
 echo
 echo CONVERT FROM REGULAR GRID TO WAFS GRIDS.
@@ -60,16 +60,20 @@ do
     echo CONVERT TO WAFS GRID ${grid}.
     for ipopt in "0" "2"
     do
+
       echo TEST INTERPOLATION OPTION $ipopt
+
+      ctl_failed=0
+      test_failed=0
 
       cd $WORK_TEST
       copygb_test_${bytesize} -g${grid} -i${ipopt} -x ../input_data/600mb.temp.grb wafs.grb
       status=$?
       if ((status != 0))
       then
-        echo "** TEST FAILED **"
-        failed=1
-        continue
+        echo "** TEST RUN FAILED **"
+        reg_test_failed=1
+        test_failed=1
       fi
 
       cd $WORK_CTL
@@ -77,22 +81,28 @@ do
       status=$?
       if ((status != 0))
       then
-        echo "** TEST FAILED **"
-        failed=1
-        continue
+        echo "** CONTROL RUN FAILED **"
+        reg_test_failed=1
+        ctl_failed=1
       fi
 
-      cmp $WORK_CTL/wafs.grb $WORK_TEST/wafs.grb
-      status=$?
-      if ((status != 0))
-      then
-        echo "** GRIB FILES NOT BIT IDENTICAL. TEST FAILED."
-        mv $WORK_CTL/wafs.grb $WORK_CTL/wafs.grid${grid}.${bytesize}byte.ip${ipopt}.grb.failed
-        mv $WORK_TEST/wafs.grb $WORK_TEST/wafs.grid${grid}.${bytesize}byte.ip${ipopt}.grb.failed
-        failed=1
-      else
-        rm -f $WORK_CTL/wafs.grb $WORK_TEST/wafs.grb
+      if ((ctl_failed == 0 && test_failed == 0));then
+        cmp $WORK_CTL/wafs.grb $WORK_TEST/wafs.grb
+        status=$?
+        if ((status != 0))
+        then
+          echo "** GRIB FILES NOT BIT IDENTICAL. REGRESSION TEST FAILED."
+          FAILED_DIR=$WORK_CTL/failed.regl.to.wafs
+          mkdir -p $FAILED_DIR
+          mv $WORK_CTL/wafs.grb $FAILED_DIR/${grid}.${bytesize}byte.ip${ipopt}.grb
+          FAILED_DIR=$WORK_TEST/failed.regl.to.wafs
+          mkdir -p $FAILED_DIR
+          mv $WORK_TEST/wafs.grb $FAILED_DIR/${grid}.${bytesize}byte.ip${ipopt}.grb
+          reg_test_failed=1
+        fi
       fi
+
+      rm -f $WORK_CTL/wafs.grb $WORK_TEST/wafs.grb
 
     done
   done
@@ -103,7 +113,7 @@ echo CONVERT FROM WAFS GRIDS TO REGULAR GRIDS.
 for bytesize in "4" "8" "d"
 do
   echo
-  echo TEST $bytesize VERSION OF LIBRARY.
+  echo TEST $bytesize BYTE VERSION OF LIBRARY.
   echo
   for grid in "37" "38" "39" "40" "41" "42" "43" "44"
   do
@@ -112,14 +122,17 @@ do
     do
       echo TEST INTERPOLATION OPTION $ipopt
 
+      ctl_failed=0
+      test_failed=0
+
       cd $WORK_TEST
       copygb_test_${bytesize} -g3 -i${ipopt} -x ../input_data/wafs.${grid}.grb  reg.grb
       status=$?
       if ((status != 0))
       then
-        echo "** TEST FAILED **"
-        failed=1
-        continue
+        echo "** TEST RUN FAILED **"
+        reg_test_failed=1
+        test_failed=1
       fi
 
       cd $WORK_CTL
@@ -127,28 +140,34 @@ do
       status=$?
       if ((status != 0))
       then
-        echo "** TEST FAILED **"
-        failed=1
-        continue
+        echo "** CONTROL RUN FAILED **"
+        reg_test_failed=1
+        ctl_failed=1
       fi
 
-      cmp $WORK_CTL/reg.grb $WORK_TEST/reg.grb
-      status=$?
-      if ((status != 0))
-      then
-        echo "** GRIB FILES NOT BIT IDENTICAL. TEST FAILED."
-        mv $WORK_CTL/reg.grb $WORK_CTL/reg.grid${grid}.${bytesize}byte.ip${ipopt}.grb.failed
-        mv $WORK_TEST/reg.grb $WORK_TEST/reg.grid${grid}.${bytesize}byte.ip${ipopt}.grb.failed
-        failed=1
-      else
-        rm -f $WORK_CTL/reg.grb $WORK_TEST/reg.grb
+      if ((ctl_failed == 0 && test_failed == 0));then
+        cmp $WORK_CTL/reg.grb $WORK_TEST/reg.grb
+        status=$?
+        if ((status != 0))
+        then
+          echo "** GRIB FILES NOT BIT IDENTICAL. REGRESSION TEST FAILED."
+          FAILED_DIR=$WORK_CTL/failed.wafs.to.regl
+          mkdir -p $FAILED_DIR
+          mv $WORK_CTL/reg.grb $FAILED_DIR/grid3.from${grid}.${bytesize}byte.ip${ipopt}.grb
+          FAILED_DIR=$WORK_TEST/failed.wafs.to.regl
+          mkdir -p $FAILED_DIR
+          mv $WORK_TEST/reg.grb $FAILED_DIR/grid3.from${grid}.${bytesize}byte.ip${ipopt}.grb
+          reg_test_failed=1
+        fi
       fi
+
+      rm -f $WORK_CTL/reg.grb $WORK_TEST/reg.grb
 
     done
   done
 done
 
-if ((failed == 0));then
+if ((reg_test_failed == 0));then
   echo
   echo "<<< IPXWAFS2_3 REGRESSION TEST PASSED. >>>"
   echo
