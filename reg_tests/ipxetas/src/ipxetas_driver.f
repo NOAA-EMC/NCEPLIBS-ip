@@ -81,14 +81,14 @@
  call getgb(iunit, lugi, numpts, lskip, jpds, jgds, &
             numpts, lskip, kpds, kgds_full, bitmap_full, data_full, iret)
 
+ deallocate (bitmap_full)
+
  if (iret /= 0) then
    print*,"- BAD DEGRIB OF DATA. IRET IS ", iret
    stop 4
  else
    print*,"- SUCCESSFULL DEGRIB OF DATA."
  end if
-
- deallocate (bitmap_full)
 
  call baclose (iunit, iret)
 
@@ -172,9 +172,9 @@
  enddo
  enddo
 
- open (33, file="./staggered.bin", access='direct', recl=i_stag*j_stag*4)
- write (33, rec=1) real(data_stag_m_2d,4)
- write (33, rec=2) real(data_stag_v_2d,4)
+ open (33, file="./staggered.bin", access='direct', recl=i_stag*j_stag*4, err=77)
+ write (33, rec=1, err=77) real(data_stag_m_2d,4)
+ write (33, rec=2, err=77) real(data_stag_v_2d,4)
  close (33)
 
  deallocate (data_stag_m_2d, data_stag_v_2d)
@@ -223,9 +223,9 @@
  print*,'- KGDS_FULL ',kgds_full(1:20)
  print*,'- KGDS_STAG ',kgds_stag(1:20)
 
- open (38, file="./full.bin", access='direct', recl=i_full*j_full*4)
- write (38, rec=1) real(data_full_m,4)
- write (38, rec=2) real(data_full_v,4)
+ open (38, file="./full.bin", access='direct', recl=i_full*j_full*4, err=77)
+ write (38, rec=1, err=77) real(data_full_m,4)
+ write (38, rec=2, err=77) real(data_full_v,4)
  close (38)
 
  deallocate (data_full_m, data_full_v)
@@ -233,5 +233,9 @@
  print*,'- NORMAL TERMINATION'
 
  stop 
+
+ 77 continue
+ print*,'- ERROR WRITING BINARY FILE'
+ stop 88
 
  end program ipxetas_driver

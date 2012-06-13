@@ -7,10 +7,17 @@ calls ipxetas to:
  3) create a full grid from the staggered mass grid created by step (1)
  4) create a full grid from the staggered vel grid created by step (2)
 
-Output from the control and test programs is written to binary files.
+Output from the control and test is written to binary files.
 (Steps 1 and 2 written to "staggered.bin", and steps 3 and 4 written
 to "full.bin").  These files may be viewed in Grads
 with the ".ctl" files, located in the ./grads subdirectory.
+
+The routine also outputs a kgds array used by the grib 1 (w3)
+library.  The contents of the kgds array are output to a text
+log file.  
+
+The binary and log files from the 'control' and 'test' are
+expected to be bit identical for the regression test to pass.
 
 The fortran source code is located in the ./src subdirectory.
 
