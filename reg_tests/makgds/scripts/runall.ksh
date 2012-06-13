@@ -37,13 +37,13 @@ WORK_TEST=${WORK}/test
 mkdir -p $WORK_TEST
 cp $EXEC_DIR/test/*exe $WORK_TEST
 
-failed=0
+reg_test_failed=0
 
 for bytesize in "4" "8" "d"  # all three byte versions of the library.
 do
 
-  save_ctl_log=0
-  save_test_log=0
+  ctl_failed=0
+  test_failed=0
 
   echo TEST ${bytesize}-BYTE FLOAT VERSION OF ROUTINE MAKGDS
 
@@ -51,41 +51,49 @@ do
   makgds_ctl_${bytesize}.exe  > ctl.log
   status=$?
   if ((status != 0)); then
-    echo PROBLEM WITH CTL RUN. CHECK LOG FILE.
-    save_ctl_log=1
-    failed=1
+    echo "** PROBLEM WITH CTL RUN. CHECK LOG FILE."
+    ctl_failed=1
+    reg_test_failed=1
   fi
 
   cd $WORK_TEST
   makgds_test_${bytesize}.exe > test.log
   status=$?
   if ((status != 0)); then
-    echo PROBLEM WITH TEST RUN. CHECK LOG FILE.
-    save_test_log=1
-    failed=1
+    echo "** PROBLEM WITH TEST RUN. CHECK LOG FILE."
+    test_failed=1
+    reg_test_failed=1
   fi
 
-  cmp $WORK_CTL/ctl.log $WORK_TEST/test.log
-  status=$?
-  if ((status != 0))
-  then
-    echo LOG FILES NOT BIT IDENTIAL. TEST FAILED.
-    save_ctl_log=1
-    save_test_log=1
-    failed=1
+  if ((ctl_failed == 0 && test_failed == 0));then
+    cmp $WORK_CTL/ctl.log $WORK_TEST/test.log
+    status=$?
+    if ((status != 0))
+    then
+      echo "** LOG FILES NOT BIT IDENTICAL. REGRESSION TEST FAILED."
+      reg_test_failed=1
+      ctl_failed=1
+      test_failed=1
+    fi
   fi
 
-  if ((save_ctl_log == 1)); then
-    mv $WORK_CTL/ctl.log $WORK_CTL/ctl.${bytesize}byte.log.failed
+  if ((ctl_failed == 1));then
+    if [ -s $WORK_CTL/ctl.log ];then
+      mv $WORK_CTL/ctl.log $WORK_CTL/ctl.${bytesize}byte.log.failed
+    fi
   fi
 
-  if ((save_test_log == 1)); then
-    mv $WORK_TEST/test.log $WORK_TEST/test.${bytesize}byte.log.failed
+  if ((test_failed == 1));then
+    if [ -s $WORK_TEST/test.log ];then
+      mv $WORK_TEST/test.log $WORK_TEST/test.${bytesize}byte.log.failed
+    fi
   fi
+
+  rm -f $WORK_TEST/test.log  $WORK_CTL/ctl.log
 
 done
 
-if ((failed == 0)); then
+if ((reg_test_failed == 0)); then
   echo
   echo "<<< MAKGDS REGRESSION TEST PASSED. >>>"
   echo
