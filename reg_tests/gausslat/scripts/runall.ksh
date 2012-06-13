@@ -36,21 +36,24 @@ WORK_TEST=${WORK}/test
 mkdir -p $WORK_TEST
 cp $EXEC_DIR/test/*exe $WORK_TEST
 
-failed=0
+reg_test_failed=0
 
 for bytesize in "4" "8" "d"  # the three versions of the library
 do
 
   echo "TEST ${bytesize}-BYTE FLOAT VERSION OF ROUTINE GAUSSLAT"
 
+  ctl_failed=0
+  test_failed=0
+
   cd $WORK_CTL
   CTL_LOG=ctl.${bytesize}byte.log
   gausslat_ctl_${bytesize}.exe  > $CTL_LOG
   status=$?
   if ((status != 0)); then
-    echo CONTROL FAILED.
-    failed=1
-    continue
+    echo "** PROBLEM WITH CONTROL RUN."
+    reg_test_failed=1
+    ctl_failed=1
   fi 
 
   cd $WORK_TEST
@@ -58,24 +61,40 @@ do
   gausslat_test_${bytesize}.exe > $TEST_LOG
   status=$?
   if ((status != 0)); then
-    echo TEST FAILED.
-    failed=1
-    continue
+    echo "** PROBLEM WITH TEST RUN."
+    reg_test_failed=1
+    test_failed=1
   fi 
 
-  cmp $WORK_CTL/$CTL_LOG $WORK_TEST/$TEST_LOG
-  status=$?
-  if ((status != 0)); then
-    echo "LOG FILES NOT BIT IDENTIAL. REGRESSION TEST FAILED."
-    echo "CHECK LOG FILE SAVED IN WORK DIRECTORY."
-    mv $WORK_CTL/$CTL_LOG $WORK_CTL/${CTL_LOG}.failed
-    mv $WORK_TEST/$TEST_LOG $WORK_TEST/${TEST_LOG}.failed
-    failed=1
+  if ((ctl_failed == 0 && test_failed == 0));then
+    cmp $WORK_CTL/$CTL_LOG $WORK_TEST/$TEST_LOG
+    status=$?
+    if ((status != 0)); then
+      echo "** LOG FILES NOT BIT IDENTIAL. REGRESSION TEST FAILED."
+      echo "** CHECK LOG FILES SAVED IN WORK DIRECTORY."
+      reg_test_failed=1
+      ctl_failed=1
+      test_failed=1
+    fi
   fi
+
+  if ((ctl_failed == 1));then
+    if [ -s $WORK_CTL/$CTL_LOG ];then
+      mv $WORK_CTL/$CTL_LOG $WORK_CTL/${CTL_LOG}.failed
+    fi
+  fi
+
+  if ((test_failed == 1));then
+    if [ -s $WORK_TEST/$TEST_LOG ];then
+      mv $WORK_TEST/$TEST_LOG $WORK_TEST/${TEST_LOG}.failed
+    fi
+  fi
+
+  rm -f $WORK_TEST/$TEST_LOG  $WORK_CTL/$CTL_LOG
 
 done
 
-if ((failed == 0)); then
+if ((reg_test_failed == 0)); then
   echo
   echo "<<< GAUSSLAT REGRESSION TEST PASSED. >>>"
   echo
