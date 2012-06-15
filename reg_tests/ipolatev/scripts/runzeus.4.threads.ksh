@@ -3,6 +3,8 @@
 #------------------------------------------------------------------
 # Sample script to run the ipolatev regression test on
 # zeus using 4 threads.  Modify path names as necessary.
+#
+# To run, type "qsub runzeus.4.threads.ksh"
 #------------------------------------------------------------------
 
 #PBS -l nodes=1
@@ -10,17 +12,20 @@
 # the account number. rm is regional model
 #PBS -A rm
 #PBS -N test
-#PBS -o /scratch1/portfolios/NCEPDEV/da/save/George.Gayno/gayno_ip_reg_tests/reg_tests/ipolatev/scripts/log.4.threads
-#PBS -e /scratch1/portfolios/NCEPDEV/da/save/George.Gayno/gayno_ip_reg_tests/reg_tests/ipolatev/scripts/log.4.threads
+#PBS -o ./log.4.threads
+#PBS -e ./log.4.threads
 
-ulimit -s 1024000
+ulimit -s 2048000
 
 export OMP_NUM_THREADS=4
 
-cd /scratch1/portfolios/NCEPDEV/da/save/George.Gayno/gayno_ip_reg_tests/reg_tests/ipolatev/scripts
-
 module load intel
 
-./runall.ksh 4
+export REG_DIR=$PBS_O_WORKDIR/../../
+
+export WORK_DIR=/stmp/$LOGNAME/regression
+mkdir -p $WORK_DIR
+
+$PBS_O_WORKDIR/runall.ksh 4
 
 exit 0
