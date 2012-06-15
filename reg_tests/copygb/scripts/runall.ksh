@@ -7,13 +7,16 @@
 # 6-neighbor-budget.
 #
 # The ncep standard grid numbers are defined in the official
-# ncep grib documentation.
+# ncep grib documentation.  Not all standard grids are tested. 
+# For example, there is an error with how W3 routine w3fi71 
+# specifies the GDS for NCEP grid 174.  This causes copygb to
+# fail on Zeus.
 #
 # If the output files from the test and control are not bit identical,
 # the regression test fails.
 #
 # This is considered a 'supplemental' regression test and it not
-# run as part of the full suite of tests from the "Runall" 
+# run as part of the full suite of tests from the main "Runall" 
 # driver script.
 #--------------------------------------------------------------------
 
@@ -59,7 +62,7 @@ do
              27 28 29 30 33 34 45 53 55 56 85 90 91 92 \
              93 94 95 96 97 98 99 100 101 103 104  \
              106 107 110 126 127 130 138 145 146 147 148 \
-             150 151 160 161 163 170 171 172 173 174 175 176 \
+             150 151 160 161 163 170 171 172 173 175 176 \
              180 181 182 183 190 192 194 195 196 197 198 \
              201 202 203 204 205 206 207 208 209 210 211 212 \
              214 215 216 217 218 219 220 221 222 223 224 \
