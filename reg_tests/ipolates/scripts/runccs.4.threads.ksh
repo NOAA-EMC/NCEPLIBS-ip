@@ -2,14 +2,16 @@
 
 #------------------------------------------------------------------
 # Sample script to run the ipolates regression test on
-# zeus using 4 threads.  Modify path names as necessary.
+# ccs using 4 threads.  Modify path names as necessary.
+#
+# To run, type "llsubmit runccs.4.threads.ksh"
 #------------------------------------------------------------------
 
 #@job_name=ipolates_4threads
-#@output=ipolates_4threads.out
-#@error=ipolates_4threads.out
+#@output=./log.4.threads
+#@error=./log.4.threads
 #@class=dev
-#@group=devonprod
+#@group=dev
 #@account_no=GDAS-MTN
 #@resources=ConsumableMemory(1000Mb)
 #@job_type=parallel
@@ -20,13 +22,11 @@
 #@queue
 
 # directory where regression tests reside
-export REG_DIR=/global/save/wx20gg/gayno_ip_reg_tests/reg_tests
+export REG_DIR=../..
 
 export WORK_DIR=/ptmp/$LOGNAME/regression
-LOG_FILE=$WORK_DIR/ipolates_4threads.log
-
 mkdir -p $WORK_DIR
 
-$REG_DIR/ipolates/scripts/runall.ksh 4 >> $LOG_FILE
+./runall.ksh 4
 
 exit 0

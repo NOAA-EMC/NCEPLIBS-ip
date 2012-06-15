@@ -3,30 +3,30 @@
 #------------------------------------------------------------------
 # Sample script to run the ipolatev regression test on
 # ccs using 1 thread.  Modify path names as necessary.
+#
+# To run, type "llsubmit runccs.1.thread.ksh"
 #------------------------------------------------------------------
 
 #@job_name=ipolatev_1thread
-#@output=ipolatev_1thread.out
-#@error=ipolatev_1thread.out
+#@output=./log.1.thread
+#@error=./log.1.thread
 #@class=dev
-#@group=devonprod
+#@group=dev
 #@account_no=GDAS-MTN
 #@resources=ConsumableMemory(1000Mb)
 #@job_type=parallel
 #@task_affinity=cpu(1)
 #@parallel_threads=1
-#@wall_clock_limit=00:45:00
+#@wall_clock_limit=01:15:00
 #@node_usage=shared
 #@queue
 
 # directory where regression tests reside
-export REG_DIR=/global/save/wx20gg/gayno_ip_reg_tests/reg_tests
+export REG_DIR=../..
 
 export WORK_DIR=/ptmp/$LOGNAME/regression
-LOG_FILE=$WORK_DIR/ipolatev_1thread.log
-
 mkdir -p $WORK_DIR
 
-$REG_DIR/ipolatev/scripts/runall.ksh 1 >> $LOG_FILE
+./runall.ksh 1
 
 exit 0
