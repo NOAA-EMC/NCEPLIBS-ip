@@ -86,6 +86,8 @@ mkdir -p $WORK_TEST
 cp $EXEC_DIR/test/*.exe $WORK_TEST
 cp $INPUT_DATA  $WORK_TEST/fort.9
 
+ulimit -s 2048000
+
 reg_test_failed=0
 
 for grids in "3" "8" "127" "203" "205" "212" "218" 
