@@ -61,7 +61,7 @@ set -x
 #@job_type=parallel
 #@task_affinity=cpu(1)
 #@parallel_threads=1
-#@wall_clock_limit=00:30:00
+#@wall_clock_limit=01:30:00
 #@node_usage=shared
 #@dependency=(ipolates_compare == 0)
 #@queue
@@ -71,7 +71,7 @@ set -x
 #@job_type=parallel
 #@task_affinity=cpu(4)
 #@parallel_threads=4
-#@wall_clock_limit=00:20:00
+#@wall_clock_limit=01:20:00
 #@node_usage=shared
 #@dependency=(ipolatev_1thread == 0)
 #@queue
