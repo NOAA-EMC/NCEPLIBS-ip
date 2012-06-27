@@ -10,7 +10,10 @@
 # ncep grib documentation.  Not all standard grids are tested. 
 # For example, there is an error with how W3 routine w3fi71 
 # specifies the GDS for NCEP grid 174.  This causes copygb to
-# fail on Zeus.
+# fail on Zeus. Also grids 90, 91 and 92 are very high-res, which
+# will cause copygb to run very slow, especially for the spectral
+# interpolation.  Running the spectral test just for grid 90
+# took 44 minutes on Zeus.  
 #
 # If the output files from the test and control are not bit identical,
 # the regression test fails.
@@ -44,9 +47,6 @@ cp $EXEC_DIR/test/copygb_test_* $WORK_TEST
 output_ctl=$WORK_CTL/ctl.grb
 output_test=$WORK_TEST/test.grb
 
-# file that will be interpolated
-input="/nwprod/fix/global_shdmax.0.144x0.144.grb"
-
 reg_test_failed=0
 
 for bytesize in 4 8 d  # test all three byte versions of library.
@@ -54,12 +54,21 @@ do
 
   echo TEST $bytesize BYTE VERSION OF LIBRARY.
 
-  for option in 0 1 2 3 4 6  # interpolation option
+  for option in "0" "1" "2" "3" "4 0 -1" "6"  # interpolation option
   do  
+
+# The spectral interpolation option can run very slow. To speed things
+# up, use a lower-res input data.
+
+    if [[ $option == "4 0 -1" ]];then
+      input="/nwprod/fix/global_snoalb.1x1.grb"
+    else
+      input="/nwprod/fix/global_shdmax.0.144x0.144.grb"
+    fi
 
    # ncep standard grid, see ncep grib 1 doc for details
     for grid in 1 2 3 4 5 6 8 10 11 12 13 14 15 16 17 18 \
-             27 28 29 30 33 34 45 53 55 56 85 90 91 92 \
+             27 28 29 30 33 34 45 53 55 56 85 \
              93 94 95 96 97 98 99 100 101 103 104  \
              106 107 110 126 127 130 138 145 146 147 148 \
              150 151 160 161 163 170 171 172 173 175 176 \
@@ -76,7 +85,7 @@ do
       test_failed=0
 
       cd $WORK_CTL
-      copygb_ctl_${bytesize} -g$grid -i${option} -x $input $output_ctl
+      copygb_ctl_${bytesize} -g$grid -i"${option}" -x $input $output_ctl
       status=$?
       if ((status != 0)); then
         echo "** PROBLEM WITH CONTROL RUN."
@@ -84,11 +93,23 @@ do
         ctl_failed=1
       fi
 
+      if [[ ! -s $output_ctl ]];then
+        echo "** CONTROL RUN CREATED ZERO BYTE FILE"
+        reg_test_failed=1
+        ctl_failed=1
+      fi
+
       cd $WORK_TEST
-      copygb_test_${bytesize} -g$grid -i${option} -x $input $output_test
+      copygb_test_${bytesize} -g$grid -i"${option}" -x $input $output_test
       status=$?
       if ((status != 0)); then
         echo "** PROBLEM WITH TEST RUN."
+        reg_test_failed=1
+        test_failed=1
+      fi
+
+      if [[ ! -s $output_test ]];then
+        echo "** TEST RUN CREATED ZERO BYTE FILE"
         reg_test_failed=1
         test_failed=1
       fi

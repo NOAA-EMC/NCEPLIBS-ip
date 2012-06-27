@@ -3,12 +3,12 @@
 #-----------------------------------------------------------------------------
 # Script to run the copygb regression test on Zeus.
 #
-# Invoke script by typing its name on the command line: "run.zeus.ksh"
+# Invoke script by typing its name on the command line: "qsub run.zeus.ksh"
 #-----------------------------------------------------------------------------
 #
 #PBS -l procs=1
 #PBS -l mem=2500Mb
-#PBS -l walltime=1:30:00
+#PBS -l walltime=4:00:00
 #PBS -A rm
 #PBS -N iplib
 #PBS -o ./regression.log
