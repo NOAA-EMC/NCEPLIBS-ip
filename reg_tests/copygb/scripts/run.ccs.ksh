@@ -14,7 +14,7 @@
 #@account_no=GDAS-MTN
 #@resources=ConsumableCpus(1)ConsumableMemory(2500Mb)
 #@job_type=serial
-#@wall_clock_limit=01:30:00
+#@wall_clock_limit=04:00:00
 #@node_usage=shared
 #@queue
 
