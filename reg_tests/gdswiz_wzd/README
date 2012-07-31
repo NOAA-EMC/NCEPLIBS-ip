@@ -22,18 +22,20 @@ grid #       description
 218          lambert conformal (ncep grid 218)
 222          nh polar stereographic, elliptical earth (number meaningless)
 
-The routines are called twice to test both the 1) i/j to lat/lon
-and 2) lat/lon to i/j conversions.  This operation should be reversable.
-If it is not reversable within floating point differences, a warning
-message is printed to standard output and the regression test is
-considered failed.
+The routines are called twice to test both the (1) i/j to lat/lon
+and (2) lat/lon to i/j conversions.  (1) is invoked by setting the IOPT
+argument to '0' and (2) is invoked by setting it to '-1'. This operation
+should be reversable.  If it is not reversable within floating point
+differences, a warning message is printed to standard output and the 
+regression test is considered failed.
 
 The latitude, longitude and all other computed map fields (such as 
-grid box area and rotation factors) are output to a binary file.
-These files may be visualized in grads using the control files in the
-./grads subdirectory.  The binary files from a 'control' and 'test'
-are compared in the runall.ksh script.  If bit identical, the test
-'passes'.
+grid box area and rotation factors) are output to separate binary files
+after each call to gdswiz/wzd.  The file naming convention is:
+grid${gridnum}.iopt${0/m1}.bin.  These files may be visualized
+in GRADS using the control files in the ./grads subdirectory.
+The binary files from a 'control' and 'test' are compared
+in the runall.ksh script.  If not bit identical, the test fails.
 
 The fortran source code is located in the ./src subdirectory.
 

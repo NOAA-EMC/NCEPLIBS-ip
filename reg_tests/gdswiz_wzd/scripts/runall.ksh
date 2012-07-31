@@ -6,14 +6,18 @@
 # Binary files from the 'control' and 'test' containing gdswiz
 # and gdswwzd related fields, such as lat/lon, are checked for
 # bit-identicalness.  If not identical, the regression test is 
-# considered failed.
+# considered failed.  Each run outputs two binary files -
+# one with fields computed with the gdswiz/wzd iopt option
+# set to '0', and one with the iopt option set to '-1'.
+# (The files contain "iopt0/m1" in their name.)
+# See comments in the source code for more details.
 #
 # The i/j to lat/lon transform should be reversable.
 # If not, an error message is printed to the text log file.
 # When this happens, the regression test is considered failed.
 #
 # If any step in the regression test fails, the log file and
-# any binary files will be stored in a "failed" directory under
+# any binary files will be stored in a "failed" sub-directory under
 # $WORK_DIR.
 #--------------------------------------------------------------------
 
@@ -99,7 +103,15 @@ do
 
 # are binary files bit identical?
       if ((test_failed == 0 && ctl_failed == 0)); then
-        cmp $WORK_CTL/grid${grids}.bin $WORK_TEST/grid${grids}.bin
+        cmp $WORK_CTL/grid${grids}.iopt0.bin $WORK_TEST/grid${grids}.iopt0.bin
+        status=$?
+        if ((status != 0));then
+          echo "** BINARY FILES NOT BIT IDENTICAL. REGRESSION TEST FAILED."
+          ctl_failed=1
+          test_failed=1
+          reg_test_failed=1
+        fi
+        cmp $WORK_CTL/grid${grids}.ioptm1.bin $WORK_TEST/grid${grids}.ioptm1.bin
         status=$?
         if ((status != 0));then
           echo "** BINARY FILES NOT BIT IDENTICAL. REGRESSION TEST FAILED."
@@ -117,8 +129,11 @@ do
         if [ -s $WORK_CTL/$CTL_LOG ]; then
           mv $WORK_CTL/$CTL_LOG $FAILED_DIR
         fi
-        if [ -s $WORK_CTL/grid${grids}.bin ];then
-          mv $WORK_CTL/grid${grids}.bin $FAILED_DIR
+        if [ -s $WORK_CTL/grid${grids}.iopt0.bin ];then
+          mv $WORK_CTL/grid${grids}.iopt0.bin $FAILED_DIR
+        fi
+        if [ -s $WORK_CTL/grid${grids}.ioptm1.bin ];then
+          mv $WORK_CTL/grid${grids}.ioptm1.bin $FAILED_DIR
         fi
         if [ -s $WORK_CTL/core* ];then
           mv $WORK_CTL/core*  $FAILED_DIR
@@ -131,15 +146,19 @@ do
         if [ -s $WORK_TEST/$TEST_LOG ];then
           mv $WORK_TEST/$TEST_LOG $FAILED_DIR
         fi
-        if [ -s $WORK_TEST/grid${grids}.bin ];then
-          mv $WORK_TEST/grid${grids}.bin $FAILED_DIR
+        if [ -s $WORK_TEST/grid${grids}.iopt0.bin ];then
+          mv $WORK_TEST/grid${grids}.iopt0.bin $FAILED_DIR
+        fi
+        if [ -s $WORK_TEST/grid${grids}.ioptm1.bin ];then
+          mv $WORK_TEST/grid${grids}.ioptm1.bin $FAILED_DIR
         fi
         if [ -s $WORK_TEST/core* ];then
           mv $WORK_TEST/core*  $FAILED_DIR
         fi
       fi
 
-      rm -f $WORK_CTL/grid${grids}.bin $WORK_TEST/grid${grids}.bin
+      rm -f $WORK_CTL/grid${grids}.iopt0.bin  $WORK_TEST/grid${grids}.iopt0.bin
+      rm -f $WORK_CTL/grid${grids}.ioptm1.bin $WORK_TEST/grid${grids}.ioptm1.bin
       rm -f $WORK_CTL/$CTL_LOG $WORK_TEST/$TEST_LOG
       rm -f $WORK_CTL/core*  $WORK_TEST/core*
 

@@ -1,21 +1,26 @@
  program gdswiz_wzd
  
 !------------------------------------------------------------------
-! test gdswiz and gdswzd routines for all map projections.  
+! Test gdswiz and gdswzd routines for all map projections.  
 !
-! routines are called twice to test both the (1) i/j to lat/lon 
-! and the (2) lat/lon to i/j conversions.  this should be
+! Routines are called twice to test both the (1) i/j to lat/lon 
+! and the (2) lat/lon to i/j conversions.  This should be
 ! reversable.  If not, a warning message is printed to
-! standard output.
+! standard output.  (1) is invoked by setting the IOPT argument
+! to '0' and (2) is invoked by setting it to '-1'.
 !
-! all computed fields are output to a direct access file so
-! they may be compared for bit-idenicalness with other test runs,
-! or so they may be visualized.
-!
-! this program takes two arguments.  The first is 'WIZ' or 'WZD'
+! This program takes two arguments.  The first is 'WIZ' or 'WZD'
 ! to run either the gdswiz or gdswzd set of routines.  The second is
 ! the grid number.  The valid grids are defined by data statements
-! below.
+! below.  The grid numbers have no special meaning.
+!
+! All computed fields are output to a direct access file so
+! they may be compared for bit-idenicalness with other test runs,
+! or so they may be visualized.  Separate files are written
+! to output the data from each call to gdswiz/wzd.  The
+! file naming convention is:
+!
+! grid${gridnum}.iopt${0 or m1}.bin
 !------------------------------------------------------------------
 
  implicit none
@@ -205,7 +210,7 @@
  print*,'LAT/LON POINT(IM,1):  ',rlat(imdl,1),rlon(imdl,1)
  print*,'LAT/LON POINT(IM,JM): ',rlat(imdl,jmdl),rlon(imdl,jmdl)
 
- outfile = "./grid" // trim(grid) // ".bin"
+ outfile = "./grid" // trim(grid) // ".iopt0.bin"
  open (9, file=trim(outfile), access='direct', err=55, recl=imdl*jmdl*4)
  write(9, rec=1, err=55) real(rlat,4)
  write(9, rec=2, err=55) real(rlon,4)
@@ -239,6 +244,21 @@
    print*,'ERROR. WRONG NUMBER OF POINTS RETURNED ',nret,npts
    stop 34
  endif
+
+ outfile = "./grid" // trim(grid) // ".ioptm1.bin"
+ open (49, file=trim(outfile), access='direct', err=55, recl=imdl*jmdl*4)
+ write(49, rec=1, err=55) real(rlat,4)
+ write(49, rec=2, err=55) real(rlon,4)
+ write(49, rec=3, err=55) real(xpts,4)
+ write(49, rec=4, err=55) real(ypts,4)
+ write(49, rec=5, err=55) real(crot,4)
+ write(49, rec=6, err=55) real(srot,4)
+ write(49, rec=7, err=55) real(xlon,4)
+ write(49, rec=8, err=55) real(xlat,4)
+ write(49, rec=9, err=55) real(ylon,4)
+ write(49, rec=10, err=55) real(ylat,4)
+ write(49, rec=11, err=55) real(area,4)
+ close (49)
 
 !------------------------------------------------------------------------------
 ! did the second call to gdswzd work?
@@ -336,9 +356,10 @@
 
  integer   :: nret, lrot, lmap, iopt, npts, im, jm, ims, jms
  integer   :: i, j, n, iret, kgds(200), nscan, kscan
- integer   :: nn, badpts
+ integer   :: badpts
 
  logical, intent(in) :: wzd
+
  real              :: fill, maxdiffx, maxdiffy
  real, allocatable :: xpts(:), ypts(:), xpts_save(:), ypts_save(:)
  real, allocatable :: xpts_2d(:,:), ypts_2d(:,:)
@@ -452,29 +473,9 @@
  area_2d=99999.
 
  nscan=mod(kgds(11)/32,2)
+
  do n=1, npts
-   nn=2*n-1+kscan
-   if(nscan.eq.0) then
-     j=(nn-1)/im+1
-     i=nn-im*(j-1)
-   else
-     i=(nn-1)/jm+1
-     j=nn-jm*(i-1)
-   endif
-! alternate rows have one less point.
-   if (kscan == 0)then
-     if (mod(j,2)==0) then
-       i = i/2
-     else
-       i = i/2 + 1
-     endif
-   else
-     if (mod(j,2)==0) then
-       i = i/2 + 1
-     else
-       i = i/2
-     endif
-   endif
+   call n2ij(n,kscan,nscan,im,jm,i,j)
    rlat_2d(i,j)=rlat(n)
    rlon_2d(i,j)=rlon(n)
    xpts_2d(i,j)=xpts(n)
@@ -488,7 +489,7 @@
    area_2d(i,j)=area(n)
  enddo
 
- outfile = "./grid201.bin"
+ outfile = "./grid201.iopt0.bin"
  open (9, file=trim(outfile), access='direct', err=77, recl=ims*jms*4)
  write(9, rec=1, err=77) real(rlat_2d,4)
  write(9, rec=2, err=77) real(rlon_2d,4)
@@ -502,9 +503,6 @@
  write(9, rec=10, err=77) real(ylat_2d,4)
  write(9, rec=11, err=77) real(area_2d,4)
  close (9)
-
- deallocate(rlat_2d, rlon_2d, xpts_2d, ypts_2d, crot_2d, srot_2d)
- deallocate(xlon_2d, xlat_2d, ylon_2d, ylat_2d, area_2d)
 
  allocate(xpts_save(npts))
  allocate(ypts_save(npts))
@@ -527,6 +525,51 @@
    print*,'ERROR. WRONG NUMBER OF POINTS RETURNED ',nret,npts
    stop 44
  endif
+
+ rlat_2d=99999.
+ rlon_2d=99999.
+ xpts_2d=99999.
+ ypts_2d=99999.
+ crot_2d=99999.
+ srot_2d=99999.
+ xlon_2d=99999.
+ xlat_2d=99999.
+ ylon_2d=99999.
+ ylat_2d=99999.
+ area_2d=99999.
+
+ do n=1, npts
+   call n2ij(n,kscan,nscan,im,jm,i,j)
+   rlat_2d(i,j)=rlat(n)
+   rlon_2d(i,j)=rlon(n)
+   xpts_2d(i,j)=xpts(n)
+   ypts_2d(i,j)=ypts(n)
+   crot_2d(i,j)=crot(n)
+   srot_2d(i,j)=srot(n)
+   xlon_2d(i,j)=xlon(n)
+   xlat_2d(i,j)=xlat(n)
+   ylon_2d(i,j)=ylon(n)
+   ylat_2d(i,j)=ylat(n)
+   area_2d(i,j)=area(n)
+ enddo
+
+ outfile = "./grid201.ioptm1.bin"
+ open (59, file=trim(outfile), access='direct', err=77, recl=ims*jms*4)
+ write(59, rec=1, err=77) real(rlat_2d,4)
+ write(59, rec=2, err=77) real(rlon_2d,4)
+ write(59, rec=3, err=77) real(xpts_2d,4)
+ write(59, rec=4, err=77) real(ypts_2d,4)
+ write(59, rec=5, err=77) real(crot_2d,4)
+ write(59, rec=6, err=77) real(srot_2d,4)
+ write(59, rec=7, err=77) real(xlon_2d,4)
+ write(59, rec=8, err=77) real(xlat_2d,4)
+ write(59, rec=9, err=77) real(ylon_2d,4)
+ write(59, rec=10, err=77) real(ylat_2d,4)
+ write(59, rec=11, err=77) real(area_2d,4)
+ close(59)
+
+ deallocate(rlat_2d, rlon_2d, xpts_2d, ypts_2d, crot_2d, srot_2d)
+ deallocate(xlon_2d, xlat_2d, ylon_2d, ylat_2d, area_2d)
 
  maxdiffx = -99999.
  maxdiffy = -99999.
@@ -559,3 +602,37 @@
  stop 56
 
  end subroutine grid_201
+
+ subroutine n2ij(n,kscan,nscan,im,jm,i,j)
+
+ implicit none
+
+ integer, intent(in)    :: n, kscan, nscan, im, jm
+ integer, intent(out)   :: i, j
+ integer                :: nn
+
+ nn=2*n-1+kscan
+ if(nscan.eq.0) then
+   j=(nn-1)/im+1
+   i=nn-im*(j-1)
+ else
+   i=(nn-1)/jm+1
+   j=nn-jm*(i-1)
+ endif
+! alternate rows have one less point.
+ if (kscan == 0)then
+   if (mod(j,2)==0) then
+     i = i/2
+   else
+     i = i/2 + 1
+   endif
+ else
+   if (mod(j,2)==0) then
+     i = i/2 + 1
+   else
+     i = i/2
+   endif
+ endif
+
+ return
+ end subroutine n2ij
