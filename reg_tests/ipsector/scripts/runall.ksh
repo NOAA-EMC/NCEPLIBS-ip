@@ -198,6 +198,9 @@ do
       if [ -s $WORK_CTL/*.bin ];then
         cp $WORK_CTL/*.bin     $FAILED_DIR
       fi 
+      if [ -s $WORK_CTL/core* ];then
+        mv $WORK_CTL/core*     $FAILED_DIR
+      fi
     fi
 
     if ((test_failed == 1)); then
@@ -208,6 +211,9 @@ do
       fi 
       if [ -s $WORK_TEST/*.bin ];then
         cp $WORK_TEST/*.bin      $FAILED_DIR
+      fi
+      if [ -s $WORK_TEST/core* ];then
+        mv $WORK_TEST/core*      $FAILED_DIR
       fi
     fi
 
