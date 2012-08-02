@@ -26,7 +26,7 @@
 
 #
 #     Generate a list of object files that corresponds to the
-#     list of Fortran ( .f ) files in the current directory
+#     list of Fortran ( .f90 ) files in the current directory
 #
 for i in `ls *.f`
 do
@@ -48,10 +48,18 @@ fi
 cat > make.libip << EOF
 SHELL=/bin/sh
 
+.SUFFIXES:
+.SUFFIXES: .f90 .f .a
+
 \$(LIB):	\$(LIB)( ${OBJS} )
 
+.f90.a:
+	\$(FCOMP) -c \$(FFLAGS) \$<
+	ar -ruv \$(AFLAGS) \$@ \$*.o
+	rm -f \$*.o
+
 .f.a:
-	ncepxlf -c \$(FFLAGS) \$<
+	\$(FCOMP) -c \$(FFLAGS) \$<
 	ar -ruv \$(AFLAGS) \$@ \$*.o
 	rm -f \$*.o
 
@@ -59,29 +67,44 @@ EOF
 #
 #     Update 4-byte version of libip_4.a
 #
-#BSM export LIB="./libip_4.a"
-export LIB="../../libip_4.a"
-export FFLAGS=" -O3 -qsmp=noauto -qnosave"
-export AFLAGS=" -X64"
-export CFLAGS=" -O3 -q64"
+export LIB="./libip_4.a"
+if [ `uname -s` == "Linux" ];then
+  export FCOMP="ifort"
+  export FFLAGS="-check all -traceback -fpe0 -ftrapuv -g -r4 -i4 -openmp"
+  export AFLAGS=" "
+elif [ `uname -s` == "AIX" ];then
+  export FCOMP="xlf90_r"
+  export FFLAGS=" -O3 -qsmp=noauto -qnosave -qfixed"
+  export AFLAGS=" -X64"
+fi
 make -f make.libip
 #
 #     Update 8-byte version of libip_8.a
 #
-#BSM export LIB="./libip_8.a"
-export LIB="../../libip_8.a"
-export FFLAGS=" -O3 -qsmp=noauto -qnosave -qintsize=8 -qrealsize=8"
-export AFLAGS=" -X64"
-export CFLAGS=" -O3 -q64"
+export LIB="./libip_8.a"
+if [ `uname -s` == "Linux" ];then
+  export FCOMP="ifort"
+  export FFLAGS="-check all -traceback -fpe0 -ftrapuv -g -r8 -i8 -openmp"
+  export AFLAGS=" "
+elif [ `uname -s` == "AIX" ];then
+  export FCOMP="xlf90_r"
+  export FFLAGS=" -O3 -qsmp=noauto -qnosave -qintsize=8 -qrealsize=8 -qfixed"
+  export AFLAGS=" -X64"
+fi
 make -f make.libip
 #
 #     Update Double Precision (Size of Real 8-byte and default Integer) version
 #     of libip_d.a
 #
-#BSM export LIB="./libip_d.a"
-export LIB="../../libip_d.a"
-export FFLAGS=" -O3 -qsmp=noauto -qnosave -qintsize=4 -qrealsize=8"
-export AFLAGS=" -X64"
-export CFLAGS=" -O3 -q64"
+export LIB="./libip_d.a"
+if [ `uname -s` == "Linux" ];then
+  export FCOMP="ifort"
+  export FFLAGS="-check all -traceback -fpe0 -ftrapuv -g -r8 -i4 -openmp"
+  export AFLAGS=" "
+elif [ `uname -s` == "AIX" ];then
+  export FCOMP="xlf90_r"
+  export FFLAGS=" -O3 -qsmp=noauto -qnosave -qintsize=4 -qrealsize=8 -qfixed"
+  export AFLAGS=" -X64"
+fi
 make -f make.libip
 rm -f make.libip
