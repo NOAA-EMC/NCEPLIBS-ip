@@ -43,6 +43,8 @@ C 1999-04-08  IREDELL  SPLIT IJKGDS INTO TWO PIECES
 C 2001-06-18  IREDELL  INCLUDE SPIRAL SEARCH OPTION
 C 2006-01-04  GAYNO    MINOR BUG FIX
 C 2007-10-30  IREDELL  SAVE WEIGHTS AND THREAD FOR PERFORMANCE
+C 2012-06-26  GAYNO    FIX OUT-OF-BOUNDS ERROR. SEE NCEPLIBS
+C                      TICKET #9.
 C
 C USAGE:    CALL POLATES2(IPOPT,KGDSI,KGDSO,MI,MO,KM,IBI,LI,GI,
 C    &                    NO,RLAT,RLON,IBO,LO,GO,IRET)
@@ -204,10 +206,12 @@ C SPIRAL AROUND UNTIL VALID DATA IS FOUND.
                   JX=J1+JXS*(KXS/4-KXT)
                 END SELECT
                 NX=IJKGDS1(IX,JX,IJKGDSA)
-                IF(NX.GT.0.AND.LI(NX,K)) THEN
-                  GO(N,K)=GI(NX,K)
-                  LO(N,K)=.TRUE.
-                  EXIT
+                IF(NX.GT.0) THEN
+                  IF(LI(NX,K)) THEN
+                    GO(N,K)=GI(NX,K)
+                    LO(N,K)=.TRUE.
+                    EXIT
+                  ENDIF
                 ENDIF
               ENDDO
             ENDIF
