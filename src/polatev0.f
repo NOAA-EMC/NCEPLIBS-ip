@@ -46,6 +46,8 @@ C 2001-06-18  IREDELL  INCLUDE MINIMUM MASK PERCENTAGE OPTION
 C 2002-01-17  IREDELL  SAVE DATA FROM LAST CALL FOR OPTIMIZATION
 C 2007-05-22  IREDELL  EXTRAPOLATE UP TO HALF A GRID CELL
 C 2007-10-30  IREDELL  SAVE WEIGHTS AND THREAD FOR PERFORMANCE
+C 2012-06-26  GAYNO    FIX OUT-OF-BOUNDS ERROR.  SEE NCEPLIBS
+C                      TICKET #9.
 C
 C USAGE:    CALL POLATEV0(IPOPT,KGDSI,KGDSO,MI,MO,KM,IBI,LI,UI,VI,
 C    &                    NO,RLAT,RLON,CROT,SROT,IBO,LO,UO,VO,IRET)
@@ -223,15 +225,16 @@ C$OMP&PRIVATE(NK,K,N,U,V,W,UROT,VROT,J,I)
           W=0
           DO J=1,2
             DO I=1,2
-              IF(NXY(I,J,N).GT.0.AND.
-     &           (IBI(K).EQ.0.OR.LI(NXY(I,J,N),K))) THEN
-                UROT=CXY(I,J,N)*UI(NXY(I,J,N),K)-
-     &               SXY(I,J,N)*VI(NXY(I,J,N),K)
-                VROT=SXY(I,J,N)*UI(NXY(I,J,N),K)+
-     &               CXY(I,J,N)*VI(NXY(I,J,N),K)
-                U=U+WXY(I,J,N)*UROT
-                V=V+WXY(I,J,N)*VROT
-                W=W+WXY(I,J,N)
+              IF(NXY(I,J,N).GT.0) THEN
+                IF(IBI(K).EQ.0.OR.LI(NXY(I,J,N),K)) THEN
+                  UROT=CXY(I,J,N)*UI(NXY(I,J,N),K)-
+     &                 SXY(I,J,N)*VI(NXY(I,J,N),K)
+                  VROT=SXY(I,J,N)*UI(NXY(I,J,N),K)+
+     &                 CXY(I,J,N)*VI(NXY(I,J,N),K)
+                  U=U+WXY(I,J,N)*UROT
+                  V=V+WXY(I,J,N)*VROT
+                  W=W+WXY(I,J,N)
+                ENDIF
               ENDIF
             ENDDO
           ENDDO

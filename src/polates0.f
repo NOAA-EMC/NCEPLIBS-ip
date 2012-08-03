@@ -42,6 +42,8 @@ C 2001-06-18  IREDELL  INCLUDE MINIMUM MASK PERCENTAGE OPTION
 C 2007-05-22  IREDELL  EXTRAPOLATE UP TO HALF A GRID CELL
 C 2008-06-04  GAYNO    ADDED SPIRAL SEARCH OPTION
 C 2009-10-19  IREDELL  SAVE WEIGHTS AND THREAD FOR PERFORMANCE
+C 2012-06-26  GAYNO    FIX OUT-OF-BOUNDS ERROR.  SEE NCEPLIBS
+C                      TICKET #9.
 C
 C USAGE:    CALL POLATES0(IPOPT,KGDSI,KGDSO,MI,MO,KM,IBI,LI,GI,
 C    &                    NO,RLAT,RLON,IBO,LO,GO,IRET)
@@ -195,10 +197,11 @@ C$OMP&PRIVATE(I1,J1,IXS,JXS,MX,KXS,KXT,IX,JX,NX)
           W=0
           DO J=1,2
             DO I=1,2
-              IF(NXY(I,J,N).GT.0.AND.
-     &           (IBI(K).EQ.0.OR.LI(NXY(I,J,N),K))) THEN
-                G=G+WXY(I,J,N)*GI(NXY(I,J,N),K)
-                W=W+WXY(I,J,N)
+              IF(NXY(I,J,N).GT.0)THEN
+                IF(IBI(K).EQ.0.OR.LI(NXY(I,J,N),K)) THEN
+                  G=G+WXY(I,J,N)*GI(NXY(I,J,N),K)
+                  W=W+WXY(I,J,N)
+                ENDIF
               ENDIF
             ENDDO
           ENDDO

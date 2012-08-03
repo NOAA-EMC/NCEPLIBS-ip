@@ -55,6 +55,8 @@ C 2007-05-22  IREDELL  EXTRAPOLATE UP TO HALF A GRID CELL
 C 2007-10-30  IREDELL  CORRECT NORTH POLE INDEXING PROBLEM,
 C                      UNIFY MASKED AND NON-MASKED ALGORITHMS,
 C                      AND SAVE WEIGHTS FOR PERFORMANCE.
+C 2012-06-26  GAYNO    FIX OUT-OF-BOUNDS ERROR.  SEE NCEPLIBS
+C                      TICKET #9.
 C
 C USAGE:    CALL POLATEV1(IPOPT,KGDSI,KGDSO,MI,MO,KM,IBI,LI,UI,VI,
 C    &                    NO,RLAT,RLON,CROT,SROT,IBO,LO,UO,VO,IRET)
@@ -264,19 +266,20 @@ C$OMP&PRIVATE(NK,K,N,U,V,W,UMIN,UMAX,VMIN,VMAX,UROT,VROT,J,I)
             IF(MCON.GT.0) VMAX=-HUGE(VMAX)
             DO J=NC(N),5-NC(N)
               DO I=NC(N),5-NC(N)
-                IF(NXY(I,J,N).GT.0.AND.
-     &             (IBI(K).EQ.0.OR.LI(NXY(I,J,N),K))) THEN
-                  UROT=CXY(I,J,N)*UI(NXY(I,J,N),K)-
-     &                 SXY(I,J,N)*VI(NXY(I,J,N),K)
-                  VROT=SXY(I,J,N)*UI(NXY(I,J,N),K)+
-     &                 CXY(I,J,N)*VI(NXY(I,J,N),K)
-                  U=U+WXY(I,J,N)*UROT
-                  V=V+WXY(I,J,N)*VROT
-                  W=W+WXY(I,J,N)
-                  IF(MCON.GT.0) UMIN=MIN(UMIN,UROT)
-                  IF(MCON.GT.0) UMAX=MAX(UMAX,UROT)
-                  IF(MCON.GT.0) VMIN=MIN(VMIN,VROT)
-                  IF(MCON.GT.0) VMAX=MAX(VMAX,VROT)
+                IF(NXY(I,J,N).GT.0) THEN
+                  IF(IBI(K).EQ.0.OR.LI(NXY(I,J,N),K)) THEN
+                    UROT=CXY(I,J,N)*UI(NXY(I,J,N),K)-
+     &                   SXY(I,J,N)*VI(NXY(I,J,N),K)
+                    VROT=SXY(I,J,N)*UI(NXY(I,J,N),K)+
+     &                   CXY(I,J,N)*VI(NXY(I,J,N),K)
+                    U=U+WXY(I,J,N)*UROT
+                    V=V+WXY(I,J,N)*VROT
+                    W=W+WXY(I,J,N)
+                    IF(MCON.GT.0) UMIN=MIN(UMIN,UROT)
+                    IF(MCON.GT.0) UMAX=MAX(UMAX,UROT)
+                    IF(MCON.GT.0) VMIN=MIN(VMIN,VROT)
+                    IF(MCON.GT.0) VMAX=MAX(VMAX,VROT)
+                  ENDIF
                 ENDIF
               ENDDO
             ENDDO

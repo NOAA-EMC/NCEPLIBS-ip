@@ -45,6 +45,8 @@ C 2007-05-22  IREDELL  EXTRAPOLATE UP TO HALF A GRID CELL
 C 2007-10-30  IREDELL  CORRECT NORTH POLE INDEXING PROBLEM,
 C                      UNIFY MASKED AND NON-MASKED ALGORITHMS,
 C                      AND SAVE WEIGHTS FOR PERFORMANCE.
+C 2012-06-26  GAYNO    FIX OUT-OF-BOUNDS ERROR.  SEE NCEPLIBS
+C                      TICKET #9.
 C
 C USAGE:    CALL POLATES1(IPOPT,KGDSI,KGDSO,MI,MO,KM,IBI,LI,GI,
 C    &                    NO,RLAT,RLON,IBO,LO,GO,IRET)
@@ -223,12 +225,13 @@ C$OMP&PRIVATE(NK,K,N,G,W,GMIN,GMAX,J,I)
             IF(MCON.GT.0) GMAX=-HUGE(GMAX)
             DO J=NC(N),5-NC(N)
               DO I=NC(N),5-NC(N)
-                IF(NXY(I,J,N).GT.0.AND.
-     &             (IBI(K).EQ.0.OR.LI(NXY(I,J,N),K))) THEN
-                  G=G+WXY(I,J,N)*GI(NXY(I,J,N),K)
-                  W=W+WXY(I,J,N)
-                  IF(MCON.GT.0) GMIN=MIN(GMIN,GI(NXY(I,J,N),K))
-                  IF(MCON.GT.0) GMAX=MAX(GMAX,GI(NXY(I,J,N),K))
+                IF(NXY(I,J,N).GT.0)THEN
+                  IF(IBI(K).EQ.0.OR.LI(NXY(I,J,N),K))THEN
+                    G=G+WXY(I,J,N)*GI(NXY(I,J,N),K)
+                    W=W+WXY(I,J,N)
+                    IF(MCON.GT.0) GMIN=MIN(GMIN,GI(NXY(I,J,N),K))
+                    IF(MCON.GT.0) GMAX=MAX(GMAX,GI(NXY(I,J,N),K))
+                  ENDIF
                 ENDIF
               ENDDO
             ENDDO
