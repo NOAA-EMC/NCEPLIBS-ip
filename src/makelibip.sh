@@ -67,7 +67,7 @@ EOF
 #
 #     Update 4-byte version of libip_4.a
 #
-export LIB="./libip_4.a"
+export LIB="../lib/libip_4.a"
 if [ `uname -s` == "Linux" ];then
   export FCOMP="ifort"
   export FFLAGS="-check all -traceback -fpe0 -ftrapuv -g -r4 -i4 -openmp"
@@ -81,7 +81,7 @@ make -f make.libip
 #
 #     Update 8-byte version of libip_8.a
 #
-export LIB="./libip_8.a"
+export LIB="../lib/libip_8.a"
 if [ `uname -s` == "Linux" ];then
   export FCOMP="ifort"
   export FFLAGS="-check all -traceback -fpe0 -ftrapuv -g -r8 -i8 -openmp"
@@ -96,7 +96,7 @@ make -f make.libip
 #     Update Double Precision (Size of Real 8-byte and default Integer) version
 #     of libip_d.a
 #
-export LIB="./libip_d.a"
+export LIB="../lib/libip_d.a"
 if [ `uname -s` == "Linux" ];then
   export FCOMP="ifort"
   export FFLAGS="-check all -traceback -fpe0 -ftrapuv -g -r8 -i4 -openmp"
