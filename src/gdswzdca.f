@@ -77,7 +77,7 @@ C$$$
       REAL(KIND=KD):: SLATR,CLATR
       REAL(KIND=KD):: SLAT,SLON,CLAT,CLON
       REAL(KIND=KD):: DENOM,SLAT0,CLAT0
-      REAL(KIND=KD):: TERM1,TERM2
+      REAL(KIND=KD):: TERM1,TERM2,DIFF
       REAL(KIND=KD):: XMIN,XMAX,YMIN,YMAX
       PARAMETER(RERTH=6.3712E6_KD)
       PARAMETER(PI=3.14159265358979_KD,DPR=180._KD/PI)
@@ -136,7 +136,8 @@ C  TRANSLATE GRID COORDINATES TO EARTH COORDINATES
           DO N=1,NPTS
             IF(XPTS(N).GE.XMIN.AND.XPTS(N).LE.XMAX.AND.
      &         YPTS(N).GE.YMIN.AND.YPTS(N).LE.YMAX) THEN
-              HS=HI*SIGN(1._KD,XPTS(N)-FLOAT((IM+1)/2))
+              DIFF=XPTS(N)-FLOAT((IM+1)/2)
+              HS=HI*SIGN(1._KD,DIFF)
               RLONR=(XPTS(N)-FLOAT((IM+1)/2))*DLONS
               RLATR=(YPTS(N)-FLOAT((JM+1)/2))*DLATS
               CLONR=COS(RLONR/DPR)
@@ -164,7 +165,7 @@ C  TRANSLATE GRID COORDINATES TO EARTH COORDINATES
               IF(LROT.EQ.1) THEN
                 IF(IROT.EQ.1) THEN
                   IF(CLATR.LE.0) THEN
-                    CROT(N)=-SIGN(1.,SLATR*SLAT0)
+                    CROT(N)=-SIGN(1._KD,SLATR*SLAT0)
                     SROT(N)=0
                   ELSE
                     SLON=SIN((RLON(N)-RLON0)/DPR)
@@ -233,7 +234,7 @@ C  TRANSLATE EARTH COORDINATES TO GRID COORDINATES
                 IF(LROT.EQ.1) THEN
                   IF(IROT.EQ.1) THEN
                     IF(CLATR.LE.0) THEN
-                      CROT(N)=-SIGN(1.,SLATR*SLAT0)
+                      CROT(N)=-SIGN(1._KD,SLATR*SLAT0)
                       SROT(N)=0.
                     ELSE
                       SLON=SIN((RLON(N)-RLON0)/DPR)
