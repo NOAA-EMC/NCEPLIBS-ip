@@ -167,7 +167,7 @@ C  TRANSLATE GRID COORDINATES TO EARTH COORDINATES
               IF(LROT.EQ.1) THEN
                 IF(IROT.EQ.1) THEN
                   IF(CLATR.LE.0) THEN
-                    CROT(N)=-SIGN(1.0,SLATR*SLAT0)
+                    CROT(N)=-SIGN(1._KD,SLATR*SLAT0)
                     SROT(N)=0.0
                   ELSE
                     SLON=SIN((RLON(N)-RLON0)/DPR)
@@ -220,7 +220,7 @@ C  TRANSLATE EARTH COORDINATES TO GRID COORDINATES
                 IF(LROT.EQ.1) THEN
                   IF(IROT.EQ.1) THEN
                     IF(CLATR.LE.0) THEN
-                      CROT(N)=-SIGN(1.0,SLATR*SLAT0)
+                      CROT(N)=-SIGN(1._KD,SLATR*SLAT0)
                       SROT(N)=0.0
                     ELSE
                       SLON=SIN((RLON(N)-RLON0)/DPR)
