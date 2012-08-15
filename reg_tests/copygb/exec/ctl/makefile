@@ -10,7 +10,7 @@ all:
 	export CMD=copygb_ctl_4 ; \
 	if [ `uname -s` == "Linux" ];then  \
 	  export FCOMP="ifort" ; \
-	  export FOPTS="-check all -traceback -fpe0 -ftrapuv -assume byterecl -g -r4 -i4" ; \
+	  export FOPTS="-check all -traceback -fpe0 -ftrapuv -assume byterecl -g -i4" ; \
 	  export LOPTS="-openmp" ; \
 	  export LIBIP="../../../lib/libip_ctl_4.a" ; \
 	  export LIBSP="/scratch1/portfolios/NCEPDEV/da/save/George.Gayno/sp_from_georgev/libsp_4.a" ; \

@@ -44,7 +44,7 @@ d_byte:
 	export EXE=ipsector_ctl_4.exe ; \
 	if [ `uname -s` == "Linux" ];then  \
 	  export FCOMP=ifort ; \
-	  export FFLAGS="-check all -traceback -fpe0 -ftrapuv -assume byterecl -g -r4 -i4 -FR" ; \
+	  export FFLAGS="-check all -traceback -fpe0 -ftrapuv -assume byterecl -g -i4 -FR" ; \
 	  export LIBIP="../../../lib/libip_ctl_4.a"  ; \
 	  export LIBSP="/scratch1/portfolios/NCEPDEV/da/save/George.Gayno/sp_from_georgev/libsp_4.a"  ; \
 	  export LIBS="-L/scratch1/portfolios/NCEPDEV/da/save/Michael.Lueken/nwprod/lib -lbacio_4 -lw3lib-2.0_4"  ; \
