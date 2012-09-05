@@ -21,8 +21,11 @@ C           SECTION 1, OCTET 17, BIT 2.  NOTE: ELLIPTICAL EARTH
 C           CALCULATIONS ARE BASED ON THE WGS84 DATUM.
 C
 C PROGRAM HISTORY LOG:
-C   96-04-10  IREDELL
-C   06-01-10  GAYNO    CALCULATIONS FOR ELLIPTICAL EARTH.
+C   1996-04-10  IREDELL
+C   2006-01-10  GAYNO    CALCULATIONS FOR ELLIPTICAL EARTH.
+C   2012-08-14  GAYNO    COMPUTE E AND E_OVER_2 AS EXECUTABLE
+C                        STATEMENTS.  SOME COMPILERS CAN'T
+C                        HANDLE INTRINSICS IN PARAMETER STMTS. 
 C
 C USAGE:    CALL GDSWIZ05(KGDS,IOPT,NPTS,FILL,XPTS,YPTS,RLON,RLAT,NRET,
 C     &                   LROT,CROT,SROT)
@@ -71,15 +74,13 @@ C$$$
       REAL, PARAMETER :: PI2=PI/2.0
       REAL, PARAMETER :: PI4=PI/4.0
       REAL, PARAMETER :: E2=.00669437999013  ! wgs84 datum
-      REAL, PARAMETER :: E=SQRT(E2)
-      REAL, PARAMETER :: E_OVER_2=E*0.5
       REAL, PARAMETER :: SLAT=60.0  ! standard latitude according
                                     ! to grib standard
       REAL, PARAMETER :: SLATR=SLAT/DPR
       REAL            :: MC, RLAT1, RLON1, ORIENT, DX, DY, H, HI, HJ
       REAL            :: DXS, DYS, DE, DR, XP, YP, DE2, ALAT, ALONG
       REAL            :: T, RHO, TC, XMIN, XMAX, YMIN, YMAX, DI, DJ
-      REAL            :: ALAT1, DR2, DIFF, FILL
+      REAL            :: ALAT1, DR2, DIFF, FILL, E, E_OVER_2
       LOGICAL         :: ELLIPTICAL
 C - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
       IF(KGDS(1).EQ.005) THEN
@@ -111,6 +112,8 @@ C FIND X/Y OF POLE
           YP=1+COS((RLON1-ORIENT)/DPR)*DR/DYS
           DE2=DE**2
         ELSE
+          E=SQRT(E2)
+          E_OVER_2=E*0.5
           ALAT=H*RLAT1/DPR
           ALONG = (RLON1-ORIENT)/DPR
           T=TAN(PI4-ALAT/2.)/((1.-E*SIN(ALAT))/
