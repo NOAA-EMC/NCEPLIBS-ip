@@ -23,14 +23,18 @@
 #              archive libraries.
 #
 ###############################################################
-
+if (($# == 1));then
+  mode=$1
+else
+  mode="no_debug"
+fi
 #
 #     Generate a list of object files that corresponds to the
 #     list of Fortran ( .f90 ) files in the current directory
 #
-for i in `ls *.f`
+for i in *.f
 do
-  obj=`basename $i .f`
+  obj=$(basename $i .f)
   OBJS="$OBJS ${obj}.o"
 done
 #
@@ -65,46 +69,44 @@ SHELL=/bin/sh
 
 EOF
 #
+#     Read information about compiler and options
+#
+. ./makefile.conf
+#
 #     Update 4-byte version of libip_4.a
 #
-export LIB="../lib/libip_4.a"
-if [ `uname -s` == "Linux" ];then
-  export FCOMP="ifort"
-  export FFLAGS="-check all -traceback -fpe0 -ftrapuv -g -r4 -i4 -openmp"
-  export AFLAGS=" "
-elif [ `uname -s` == "AIX" ];then
-  export FCOMP="xlf90_r"
-  export FFLAGS=" -O3 -qsmp=noauto -qnosave -qfixed"
-  export AFLAGS=" -X64"
+export LIB="../reg_tests/lib/libip_4.a"
+export FCOMP
+export AFLAGS
+if [ $mode == "debug" ];then
+  export FFLAGS=$FFLAGS_4_DEBUG
+else
+  export FFLAGS=$FFLAGS_4
 fi
 make -f make.libip
 #
 #     Update 8-byte version of libip_8.a
 #
-export LIB="../lib/libip_8.a"
-if [ `uname -s` == "Linux" ];then
-  export FCOMP="ifort"
-  export FFLAGS="-check all -traceback -fpe0 -ftrapuv -g -r8 -i8 -openmp"
-  export AFLAGS=" "
-elif [ `uname -s` == "AIX" ];then
-  export FCOMP="xlf90_r"
-  export FFLAGS=" -O3 -qsmp=noauto -qnosave -qintsize=8 -qrealsize=8 -qfixed"
-  export AFLAGS=" -X64"
+export LIB="../reg_tests/lib/libip_8.a"
+export FCOMP
+export AFLAGS
+if [ $mode == "debug" ];then
+  export FFLAGS=$FFLAGS_8_DEBUG
+else
+  export FFLAGS=$FFLAGS_8
 fi
 make -f make.libip
 #
 #     Update Double Precision (Size of Real 8-byte and default Integer) version
 #     of libip_d.a
 #
-export LIB="../lib/libip_d.a"
-if [ `uname -s` == "Linux" ];then
-  export FCOMP="ifort"
-  export FFLAGS="-check all -traceback -fpe0 -ftrapuv -g -r8 -i4 -openmp"
-  export AFLAGS=" "
-elif [ `uname -s` == "AIX" ];then
-  export FCOMP="xlf90_r"
-  export FFLAGS=" -O3 -qsmp=noauto -qnosave -qintsize=4 -qrealsize=8 -qfixed"
-  export AFLAGS=" -X64"
+export LIB="../reg_tests/lib/libip_d.a"
+export FCOMP
+export AFLAGS
+if [ $mode == "debug" ];then
+  export FFLAGS=$FFLAGS_D_DEBUG
+else
+  export FFLAGS=$FFLAGS_D
 fi
 make -f make.libip
 rm -f make.libip
