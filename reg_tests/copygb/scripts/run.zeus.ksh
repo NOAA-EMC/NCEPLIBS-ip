@@ -19,7 +19,6 @@ set -x
 export REG_DIR=$PBS_O_WORKDIR/../../
 
 export WORK_DIR=/stmp/$LOGNAME/regression
-rm -fr $WORK_DIR
 mkdir -p $WORK_DIR
 
 module load intel
