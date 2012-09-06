@@ -75,7 +75,7 @@ EOF
 #
 #     Update 4-byte version of libip_4.a
 #
-export LIB="../reg_tests/lib/libip_4.a"
+export LIB="../lib/libip_4.a"
 export FCOMP
 export AFLAGS
 if [ $mode == "debug" ];then
@@ -87,7 +87,7 @@ make -f make.libip
 #
 #     Update 8-byte version of libip_8.a
 #
-export LIB="../reg_tests/lib/libip_8.a"
+export LIB="../lib/libip_8.a"
 export FCOMP
 export AFLAGS
 if [ $mode == "debug" ];then
@@ -100,7 +100,7 @@ make -f make.libip
 #     Update Double Precision (Size of Real 8-byte and default Integer) version
 #     of libip_d.a
 #
-export LIB="../reg_tests/lib/libip_d.a"
+export LIB="../lib/libip_d.a"
 export FCOMP
 export AFLAGS
 if [ $mode == "debug" ];then
