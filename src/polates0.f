@@ -109,10 +109,11 @@ C$$$
       REAL,PARAMETER:: FILL=-9999.
       INTEGER MP,N,I,J,K,NK,NV,IJKGDS1
       INTEGER MSPIRAL,I1,J1,IXS,JXS,MX,KXS,KXT,IX,JX,NX
-      REAL PMP,XIJ,YIJ,XF,YF,G,W,DUM
+      REAL PMP,XIJ,YIJ,XF,YF,G,W
       INTEGER,SAVE:: KGDSIX(200)=-1,KGDSOX(200)=-1,NOX=-1,IRETX=-1
       INTEGER,ALLOCATABLE,SAVE:: NXY(:,:,:)
       REAL,ALLOCATABLE,SAVE:: RLATX(:),RLONX(:),WXY(:,:,:)
+      REAL,ALLOCATABLE:: CROT(:),SROT(:)
 C - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 C  SET PARAMETERS
       IRET=0
@@ -128,12 +129,20 @@ C  SAVE OR SKIP WEIGHT COMPUTATION
 C - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 C  COMPUTE NUMBER OF OUTPUT POINTS AND THEIR LATITUDES AND LONGITUDES.
         IF(KGDSO(1).GE.0) THEN
-          CALL GDSWIZ(KGDSO, 0,MO,FILL,XPTS,YPTS,RLON,RLAT,NO,0,DUM,DUM)
+          ALLOCATE (CROT(MO))
+          ALLOCATE (SROT(MO))
+          CALL GDSWIZ(KGDSO, 0,MO,FILL,XPTS,YPTS,RLON,RLAT,NO,0,
+     &                CROT,SROT)
+          DEALLOCATE (CROT,SROT)
           IF(NO.EQ.0) IRET=3
         ENDIF
 C - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 C  LOCATE INPUT POINTS
-        CALL GDSWIZ(KGDSI,-1,NO,FILL,XPTS,YPTS,RLON,RLAT,NV,0,DUM,DUM)
+        ALLOCATE (CROT(NO))
+        ALLOCATE (SROT(NO))
+        CALL GDSWIZ(KGDSI,-1,NO,FILL,XPTS,YPTS,RLON,RLAT,NV,0,
+     &              CROT,SROT)
+        DEALLOCATE (CROT,SROT)
         IF(IRET.EQ.0.AND.NV.EQ.0) IRET=2
 C - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 C  ALLOCATE AND SAVE GRID DATA

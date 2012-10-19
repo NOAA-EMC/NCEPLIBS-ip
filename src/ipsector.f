@@ -62,6 +62,7 @@ C$$$
       REAL FS(MS,NF)
       INTEGER IRET
       REAL XPTS(2),YPTS(2),RLON(2),RLAT(2)
+      REAL CROT(2),SROT(2)
       INTEGER I1A,I2A,INA,J1A,J2A,JNA,K,KS,NS,NSCAN
 C - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 C  COMPUTE ACTUAL SECTOR BOUNDARIES

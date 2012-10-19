@@ -94,10 +94,20 @@ C ATTRIBUTES:
 C   LANGUAGE: FORTRAN 77
 C
 C$$$
-      INTEGER KGDS(200)
-      REAL XPTS(NPTS),YPTS(NPTS),RLON(NPTS),RLAT(NPTS)
-      REAL CROT(NPTS),SROT(NPTS)
-      REAL XLON(NPTS),XLAT(NPTS),YLON(NPTS),YLAT(NPTS),AREA(NPTS)
+      IMPLICIT NONE
+C
+      INTEGER,  INTENT(IN   ) :: IOPT, KGDS(200), LMAP, LROT, NPTS
+      INTEGER,  INTENT(  OUT) :: NRET
+C
+      REAL,     INTENT(IN   ) :: FILL
+      REAL,     INTENT(INOUT) :: RLON(NPTS),RLAT(NPTS)
+      REAL,     INTENT(INOUT) :: XPTS(NPTS),YPTS(NPTS)
+      REAL,     INTENT(  OUT) :: CROT(NPTS),SROT(NPTS)
+      REAL,     INTENT(  OUT) :: XLON(NPTS),XLAT(NPTS)
+      REAL,     INTENT(  OUT) :: YLON(NPTS),YLAT(NPTS),AREA(NPTS)
+C
+      INTEGER                 :: IS1, IM, JM, NM, KSCAN, NSCAN, N
+      INTEGER                 :: IOPF, NN, I, J
 C - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 C  COMPUTE GRID COORDINATES FOR ALL GRID POINTS
       IF(IOPT.EQ.0) THEN
@@ -238,7 +248,6 @@ C  2-D B-STAGGERED ROTATED EQUIDISTANT CYLINDRICAL
 C - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 C  PROJECTION UNRECOGNIZED
       ELSE
-        IRET=-1
         IF(IOPT.GE.0) THEN
           DO N=1,NPTS
             RLON(N)=FILL
