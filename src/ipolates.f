@@ -138,7 +138,7 @@
 !   N-BUDGET    6   -1,-1           0.18
 !
 ! ATTRIBUTES:
-!   LANGUAGE: FORTRAN 77
+!   LANGUAGE: FORTRAN 90
 !
 !$$$
  IMPLICIT NONE
