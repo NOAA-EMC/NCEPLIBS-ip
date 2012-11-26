@@ -13,11 +13,11 @@ set -x
 
 . /usrx/local/Modules/3.2.9/init/ksh
 module load ics/12.1
-module load lsf/8.0 
+module load lsf/8.3
 
 export REG_DIR=$(pwd)
 
-export WORK_DIR="/u/George.Gayno/stmp/regression"
+export WORK_DIR="/stmp/George.Gayno/regression"
 rm -fr $WORK_DIR
 mkdir -p $WORK_DIR
 

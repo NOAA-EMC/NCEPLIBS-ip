@@ -14,8 +14,8 @@ d_byte:
 	  export FCOMP=ifort ; \
 	  export FFLAGS="-check all -traceback -fpe0 -ftrapuv -assume byterecl -g -r8 -i4 -FR"; \
 	  export LIBIP="../../../lib/libip_test_d.a"  ; \
-	  export LIBSP="/u/Eugene.Mirvis/sp_merge/SP_MERGED/lib/libsp_d.a"  ; \
-	  export LIBS="-L/nwprod/lib -lbacio_4 -lw3_d"  ; \
+          export LIBSP="/nwprod/lib/libsp_v2.0.0_d.a"  ; \
+          export LIBS="-L/nwprod/lib -lbacio_v2.0.1_4 -lw3nco_v2.0.3_d"  ; \
 	elif [ `uname -s` == "AIX" ];then \
 	  export FCOMP=xlf90_r ; \
 	  export FFLAGS="-C -g -qrealsize=8 -qextchk" ; \
@@ -30,8 +30,8 @@ d_byte:
 	  export FFLAGS="-check all -traceback -fpe0 -ftrapuv -assume byterecl -g -r8 -i8 -FR" ; \
 	  export LIBIP="../../../lib/libip_test_8.a"  ; \
 	  export LIBSP="/scratch1/portfolios/NCEPDEV/da/save/George.Gayno/sp_from_georgev/libsp_8.a"  ; \
-	  export LIBSP="/u/Eugene.Mirvis/sp_merge/SP_MERGED/lib/libsp_8.a"  ; \
-	  export LIBS="-L/nwprod/lib -lbacio_8 -lw3_8"  ; \
+          export LIBSP="/nwprod/lib/libsp_v2.0.0_8.a"  ; \
+          export LIBS="-L/nwprod/lib -lbacio_v2.0.1_8 -lw3nco_v2.0.3_8"  ; \
 	elif [ `uname -s` == "AIX" ];then \
 	  export FCOMP=xlf90_r ; \
 	  export FFLAGS="-C -g -qrealsize=8 -qintsize=8 -qextchk" ; \
@@ -45,8 +45,8 @@ d_byte:
 	  export FCOMP=ifort ; \
 	  export FFLAGS="-check all -traceback -fpe0 -ftrapuv -assume byterecl -g -i4 -FR" ; \
 	  export LIBIP="../../../lib/libip_test_4.a"  ; \
-	  export LIBSP="/u/Eugene.Mirvis/sp_merge/SP_MERGED/lib/libsp_4.a"  ; \
-	  export LIBS="-L/nwprod/lib -lbacio_4 -lw3_4"  ; \
+          export LIBSP="/nwprod/lib/libsp_v2.0.0_4.a"  ; \
+          export LIBS="-L/nwprod/lib -lbacio_v2.0.1_4 -lw3nco_v2.0.3_4"  ; \
 	elif [ `uname -s` == "AIX" ];then \
 	  export FCOMP=xlf90_r ; \
 	  export FFLAGS="-C -g -qextchk" ; \
