@@ -345,4 +345,4 @@
  ENDDO KM_LOOP
  IF(KGDSO(1).EQ.0) CALL POLFIXS(NO,MO,KM,RLAT,RLON,IBO,LO,GO)
 ! - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
- END
+ END SUBROUTINE POLATES3
