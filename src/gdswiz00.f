@@ -53,9 +53,22 @@
 !   LANGUAGE: FORTRAN 90
 !
 !$$$
- INTEGER KGDS(200)
- REAL XPTS(NPTS),YPTS(NPTS),RLON(NPTS),RLAT(NPTS)
- REAL CROT(NPTS),SROT(NPTS)
+ IMPLICIT NONE
+!
+ INTEGER,           INTENT(IN   ) :: KGDS(200)
+ INTEGER,           INTENT(IN   ) :: IOPT, NPTS, LROT
+ INTEGER,           INTENT(  OUT) :: NRET
+!
+ REAL,              INTENT(IN   ) :: FILL
+ REAL,              INTENT(INOUT) :: RLON(NPTS), RLAT(NPTS)
+ REAL,              INTENT(INOUT) :: XPTS(NPTS), YPTS(NPTS)
+ REAL,              INTENT(  OUT) :: CROT(NPTS), SROT(NPTS)
+!
+ INTEGER                          :: IM, JM, ISCAN, N
+!
+ REAL                             :: DLAT, DLON, HI
+ REAL                             :: RLAT1, RLON1, RLAT2, RLON2
+ REAL                             :: XMIN, XMAX, YMIN, YMAX
 ! - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
  IF(KGDS(1).EQ.000) THEN
    IM=KGDS(2)
@@ -65,9 +78,7 @@
    RLAT2=KGDS(7)*1.E-3
    RLON2=KGDS(8)*1.E-3
    ISCAN=MOD(KGDS(11)/128,2)
-   JSCAN=MOD(KGDS(11)/64,2)
    HI=(-1.)**ISCAN
-   HJ=(-1.)**(1-JSCAN)
    DLON=HI*(MOD(HI*(RLON2-RLON1)-1+3600,360.)+1)/(IM-1)
    DLAT=(RLAT2-RLAT1)/(JM-1)
    XMIN=0

@@ -54,18 +54,33 @@
 !   LANGUAGE: FORTRAN 90
 !
 !$$$
- INTEGER KGDS(200)
- REAL XPTS(NPTS),YPTS(NPTS),RLON(NPTS),RLAT(NPTS)
- REAL CROT(NPTS),SROT(NPTS)
- PARAMETER(RERTH=6.3712E6)
- PARAMETER(PI=3.14159265358979,DPR=180./PI)
+ IMPLICIT NONE
+!
+ INTEGER,       INTENT(IN   ) :: IOPT, LROT
+ INTEGER,       INTENT(IN   ) :: KGDS(200), NPTS
+ INTEGER,       INTENT(  OUT) :: NRET
+!
+ REAL,          INTENT(IN   ) :: FILL
+!
+ REAL,          INTENT(INOUT) :: RLON(NPTS),RLAT(NPTS)
+ REAL,          INTENT(INOUT) :: XPTS(NPTS),YPTS(NPTS)
+ REAL,          INTENT(  OUT) :: CROT(NPTS),SROT(NPTS)
+!
+ REAL,          PARAMETER     :: RERTH=6.3712E6
+ REAL,          PARAMETER     :: PI=3.14159265358979
+ REAL,          PARAMETER     :: DPR=180./PI
+!
+ INTEGER                      :: IM, JM, ISCAN, JSCAN, N
+!
+ REAL                         :: DLAT, DLON, DY, HI, HJ
+ REAL                         :: RLAT1, RLON1, RLON2, RLATI
+ REAL                         :: YE, XMAX, XMIN, YMAX, YMIN
 ! - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
  IF(KGDS(1).EQ.001) THEN
    IM=KGDS(2)
    JM=KGDS(3)
    RLAT1=KGDS(4)*1.E-3
    RLON1=KGDS(5)*1.E-3
-   RLAT2=KGDS(7)*1.E-3
    RLON2=KGDS(8)*1.E-3
    RLATI=KGDS(9)*1.E-3
    ISCAN=MOD(KGDS(11)/128,2)

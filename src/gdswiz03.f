@@ -57,11 +57,30 @@
 !   LANGUAGE: FORTRAN 90
 !
 !$$$
- INTEGER KGDS(200)
- REAL XPTS(NPTS),YPTS(NPTS),RLON(NPTS),RLAT(NPTS)
- REAL CROT(NPTS),SROT(NPTS)
- PARAMETER(RERTH=6.3712E6)
- PARAMETER(PI=3.14159265358979,DPR=180./PI)
+ IMPLICIT NONE
+!
+ INTEGER,           INTENT(IN   ) :: IOPT, LROT, NPTS
+ INTEGER,           INTENT(IN   ) :: KGDS(200)
+ INTEGER,           INTENT(  OUT) :: NRET
+!
+ REAL,              INTENT(IN   ) :: FILL
+ REAL,              INTENT(INOUT) :: RLON(NPTS),RLAT(NPTS)
+ REAL,              INTENT(INOUT) :: XPTS(NPTS),YPTS(NPTS)
+ REAL,              INTENT(  OUT) :: CROT(NPTS),SROT(NPTS)
+!
+ REAL,              PARAMETER     :: RERTH=6.3712E6
+ REAL,              PARAMETER     :: PI=3.14159265358979
+ REAL,              PARAMETER     :: DPR=180./PI
+!
+ INTEGER                          :: ISCAN, JSCAN, IPROJ
+ INTEGER                          :: IM, JM, IROT, N
+!
+ REAL                             :: AN, ANTR, DX, DY, DXS, DYS
+ REAL                             :: DI, DJ, DR2
+ REAL                             :: DE, DE2, DLON, DLON1, DR
+ REAL                             :: H, HI, HJ, ORIENT
+ REAL                             :: RLAT1, RLON1, RLATI1, RLATI2
+ REAL                             :: XP, YP, XMIN, XMAX, YMIN, YMAX
 ! - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
  IF(KGDS(1).EQ.003) THEN
    IM=KGDS(2)
