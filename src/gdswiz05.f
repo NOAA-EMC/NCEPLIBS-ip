@@ -1,5 +1,5 @@
-      SUBROUTINE GDSWIZ05(KGDS,IOPT,NPTS,FILL,XPTS,YPTS,RLON,RLAT,NRET, &
-                          LROT,CROT,SROT)
+ SUBROUTINE GDSWIZ05(KGDS,IOPT,NPTS,FILL,XPTS,YPTS,RLON,RLAT,NRET, &
+                     LROT,CROT,SROT)
 !$$$  SUBPROGRAM DOCUMENTATION BLOCK
 !
 ! SUBPROGRAM:  GDSWIZ05   GDS WIZARD FOR POLAR STEREOGRAPHIC AZIMUTHAL
@@ -62,28 +62,38 @@
 !
 !$$$
  IMPLICIT NONE
- INTEGER         :: IM, JM, IROT, KGDS(200), IPROJ
- INTEGER         :: ISCAN, JSCAN, NRET
- INTEGER         :: ITER, NPTS, IOPT, N, LROT
 !
- REAL            :: XPTS(NPTS),YPTS(NPTS),RLON(NPTS),RLAT(NPTS)
- REAL            :: CROT(NPTS),SROT(NPTS)
- REAL, PARAMETER :: RERTH=6.3712E6
- REAL, PARAMETER :: RERTH_WGS84=6.378137E6
- REAL, PARAMETER :: PI=3.14159265358979
- REAL, PARAMETER :: DPR=180./PI
- REAL, PARAMETER :: PI2=PI/2.0
- REAL, PARAMETER :: PI4=PI/4.0
- REAL, PARAMETER :: E2=.00669437999013  ! wgs84 datum
- REAL, PARAMETER :: SLAT=60.0  ! standard latitude according
-                               ! to grib standard
- REAL, PARAMETER :: SLATR=SLAT/DPR
- REAL            :: MC, RLAT1, RLON1, ORIENT, DX, DY, H, HI, HJ
- REAL            :: DXS, DYS, DE, DR, XP, YP, DE2, ALAT, ALONG
- REAL            :: T, RHO, TC, XMIN, XMAX, YMIN, YMAX, DI, DJ
- REAL            :: ALAT1, DR2, DIFF, FILL, E, E_OVER_2
+ INTEGER,       INTENT(IN   ) :: KGDS(200)
+ INTEGER,       INTENT(IN   ) :: IOPT, LROT, NPTS
+ INTEGER,       INTENT(  OUT) :: NRET
 !
- LOGICAL         :: ELLIPTICAL
+ REAL,          INTENT(IN   ) :: FILL
+ REAL,          INTENT(INOUT) :: RLON(NPTS),RLAT(NPTS)
+ REAL,          INTENT(INOUT) :: XPTS(NPTS),YPTS(NPTS)
+ REAL,          INTENT(  OUT) :: CROT(NPTS),SROT(NPTS)
+!
+ REAL,          PARAMETER     :: RERTH=6.3712E6
+ REAL,          PARAMETER     :: RERTH_WGS84=6.378137E6
+ REAL,          PARAMETER     :: PI=3.14159265358979
+ REAL,          PARAMETER     :: DPR=180./PI
+ REAL,          PARAMETER     :: PI2=PI/2.0
+ REAL,          PARAMETER     :: PI4=PI/4.0
+ REAL,          PARAMETER     :: E2=.00669437999013  ! wgs84 datum
+ REAL,          PARAMETER     :: SLAT=60.0  ! standard latitude according
+                                            ! to grib 1 standard
+ REAL,          PARAMETER     :: SLATR=SLAT/DPR
+!
+ INTEGER                      :: IM, JM, IROT, IPROJ
+ INTEGER                      :: ISCAN, JSCAN, ITER, N
+!
+ LOGICAL                      :: ELLIPTICAL
+!
+ REAL                         :: ALAT1, DR2, DIFF, E, E_OVER_2
+ REAL                         :: DX, DY, DI, DJ, H, HI, HJ
+ REAL                         :: DXS, DYS, DE, DR
+ REAL                         :: MC, RLAT1, RLON1, ORIENT
+ REAL                         :: XP, YP, DE2, ALAT, ALONG
+ REAL                         :: T, RHO, TC, XMIN, XMAX, YMIN, YMAX
 !
  IF(KGDS(1).EQ.005) THEN
    ELLIPTICAL=MOD(KGDS(6)/64,2).EQ.1

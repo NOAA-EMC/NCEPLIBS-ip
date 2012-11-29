@@ -95,18 +95,18 @@
 !$$$
  IMPLICIT NONE
 !
- INTEGER,  INTENT(IN   ) :: IOPT, KGDS(200), LMAP, LROT, NPTS
- INTEGER,  INTENT(  OUT) :: NRET
+ INTEGER,        INTENT(IN   ) :: IOPT, KGDS(200), LMAP, LROT, NPTS
+ INTEGER,        INTENT(  OUT) :: NRET
 !
- REAL,     INTENT(IN   ) :: FILL
- REAL,     INTENT(INOUT) :: RLON(NPTS),RLAT(NPTS)
- REAL,     INTENT(INOUT) :: XPTS(NPTS),YPTS(NPTS)
- REAL,     INTENT(  OUT) :: CROT(NPTS),SROT(NPTS)
- REAL,     INTENT(  OUT) :: XLON(NPTS),XLAT(NPTS)
- REAL,     INTENT(  OUT) :: YLON(NPTS),YLAT(NPTS),AREA(NPTS)
+ REAL,           INTENT(IN   ) :: FILL
+ REAL,           INTENT(INOUT) :: RLON(NPTS),RLAT(NPTS)
+ REAL,           INTENT(INOUT) :: XPTS(NPTS),YPTS(NPTS)
+ REAL,           INTENT(  OUT) :: CROT(NPTS),SROT(NPTS)
+ REAL,           INTENT(  OUT) :: XLON(NPTS),XLAT(NPTS)
+ REAL,           INTENT(  OUT) :: YLON(NPTS),YLAT(NPTS),AREA(NPTS)
 !
- INTEGER                 :: IS1, IM, JM, NM, KSCAN, NSCAN, N
- INTEGER                 :: IOPF, NN, I, J
+ INTEGER                       :: IS1, IM, JM, NM, KSCAN, NSCAN, N
+ INTEGER                       :: IOPF, NN, I, J
 ! - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 !  COMPUTE GRID COORDINATES FOR ALL GRID POINTS
  IF(IOPT.EQ.0) THEN

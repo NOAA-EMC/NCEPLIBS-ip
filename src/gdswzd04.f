@@ -69,22 +69,40 @@
 !   LANGUAGE: FORTRAN 90
 !
 !$$$
- INTEGER KGDS(200)
- REAL XPTS(NPTS),YPTS(NPTS),RLON(NPTS),RLAT(NPTS)
- REAL CROT(NPTS),SROT(NPTS)
- REAL XLON(NPTS),XLAT(NPTS),YLON(NPTS),YLAT(NPTS),AREA(NPTS)
- PARAMETER(RERTH=6.3712E6)
- PARAMETER(PI=3.14159265358979,DPR=180./PI)
- REAL, ALLOCATABLE :: ALAT(:),BLAT(:),ALAT_JSCAN(:)
- REAL, ALLOCATABLE :: ALAT_TEMP(:),BLAT_TEMP(:)
- REAL, ALLOCATABLE :: YLAT_ROW(:)
+ IMPLICIT NONE
+!
+ INTEGER,         INTENT(IN   ) :: IOPT, KGDS(200)
+ INTEGER,         INTENT(IN   ) :: LROT, LMAP, NPTS
+ INTEGER,         INTENT(  OUT) :: NRET
+!
+ REAL,            INTENT(IN   ) :: FILL
+ REAL,            INTENT(INOUT) :: RLON(NPTS),RLAT(NPTS)
+ REAL,            INTENT(INOUT) :: XPTS(NPTS),YPTS(NPTS)
+ REAL,            INTENT(  OUT) :: CROT(NPTS),SROT(NPTS)
+ REAL,            INTENT(  OUT) :: XLON(NPTS),XLAT(NPTS)
+ REAL,            INTENT(  OUT) :: YLON(NPTS),YLAT(NPTS),AREA(NPTS)
+!
+ REAL,            PARAMETER     :: RERTH=6.3712E6
+ REAL,            PARAMETER     :: PI=3.14159265358979
+ REAL,            PARAMETER     :: DPR=180./PI
+!
+ INTEGER                        :: ISCAN, JSCAN, IM, JM
+ INTEGER                        :: J, JA, JG, JH, J1
+ INTEGER                        :: N
+!
+ REAL,            ALLOCATABLE   :: ALAT(:),BLAT(:),ALAT_JSCAN(:)
+ REAL,            ALLOCATABLE   :: ALAT_TEMP(:),BLAT_TEMP(:)
+ REAL                           :: DLON, HI
+ REAL                           :: RLATA, RLATB, RLAT1, RLON1, RLON2
+ REAL                           :: WB, WLAT, WLATA, WLATB
+ REAL                           :: XMAX, XMIN, YMAX, YMIN, YPTSA, YPTSB
+ REAL,            ALLOCATABLE   :: YLAT_ROW(:)
 ! - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
  IF(KGDS(1).EQ.004) THEN
    IM=KGDS(2)
    JM=KGDS(3)
    RLAT1=KGDS(4)*1.E-3
    RLON1=KGDS(5)*1.E-3
-   RLAT2=KGDS(7)*1.E-3
    RLON2=KGDS(8)*1.E-3
    JG=KGDS(10)*2
    ISCAN=MOD(KGDS(11)/128,2)
@@ -110,7 +128,6 @@
    DO WHILE(J1.LT.JG.AND.RLAT1.LT.(ALAT(J1)+ALAT(J1+1))/2)
      J1=J1+1
    ENDDO
-   J2=J1+JH*(JM-1)
    IF(LMAP.EQ.1)THEN
      ALLOCATE(ALAT_JSCAN(JG))
      DO JA=1,JG

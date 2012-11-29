@@ -62,12 +62,30 @@
 !   LANGUAGE: FORTRAN 90
 !
 !$$$
- INTEGER KGDS(200)
- REAL XPTS(NPTS),YPTS(NPTS),RLON(NPTS),RLAT(NPTS)
- REAL CROT(NPTS),SROT(NPTS)
- REAL XLON(NPTS),XLAT(NPTS),YLON(NPTS),YLAT(NPTS),AREA(NPTS)
- PARAMETER(RERTH=6.3712E6)
- PARAMETER(PI=3.14159265358979,DPR=180./PI)
+ IMPLICIT NONE
+!
+ INTEGER,             INTENT(IN   ) :: IOPT, KGDS(200)
+ INTEGER,             INTENT(IN   ) :: LMAP, LROT, NPTS
+ INTEGER,             INTENT(  OUT) :: NRET
+!
+ REAL,                INTENT(IN   ) :: FILL
+ REAL,                INTENT(INOUT) :: RLON(NPTS),RLAT(NPTS)
+ REAL,                INTENT(INOUT) :: XPTS(NPTS),YPTS(NPTS)
+ REAL,                INTENT(  OUT) :: CROT(NPTS),SROT(NPTS)
+ REAL,                INTENT(  OUT) :: XLON(NPTS),XLAT(NPTS)
+ REAL,                INTENT(  OUT) :: YLON(NPTS),YLAT(NPTS),AREA(NPTS)
+!
+ REAL,                PARAMETER     :: RERTH=6.3712E6
+ REAL,                PARAMETER     :: PI=3.14159265358979
+ REAL,                PARAMETER     :: DPR=180./PI
+!
+ INTEGER                            :: IM, JM, ISCAN, N
+!
+ REAL                               :: DLAT, DLON, DSLAT, HI
+ REAL                               :: RLATD, RLATU
+ REAL                               :: RLAT1, RLON1, RLAT2, RLON2
+ REAL                               :: XMAX, XMIN, YMAX, YMIN
+!
 ! - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
  IF(KGDS(1).EQ.000) THEN
    IM=KGDS(2)
@@ -77,9 +95,7 @@
    RLAT2=KGDS(7)*1.E-3
    RLON2=KGDS(8)*1.E-3
    ISCAN=MOD(KGDS(11)/128,2)
-   JSCAN=MOD(KGDS(11)/64,2)
    HI=(-1.)**ISCAN
-   HJ=(-1.)**(1-JSCAN)
    DLON=HI*(MOD(HI*(RLON2-RLON1)-1+3600,360.)+1)/(IM-1)
    DLAT=(RLAT2-RLAT1)/(JM-1)
    XMIN=0
