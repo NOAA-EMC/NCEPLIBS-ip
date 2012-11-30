@@ -51,17 +51,23 @@
 !   LANGUAGE: FORTRAN 90
 !
 !$$$
- INTEGER I1,I2,J1,J2,NF,M,MS
- INTEGER KGDS(200)
- LOGICAL(1) L(M,NF)
- REAL F(M,NF)
- INTEGER KGDSS(200)
- LOGICAL(1) LS(MS,NF)
- REAL FS(MS,NF)
- INTEGER IRET
- REAL XPTS(2),YPTS(2),RLON(2),RLAT(2)
- REAL CROT(2),SROT(2)
- INTEGER I1A,I2A,INA,J1A,J2A,JNA,K,KS,NS,NSCAN
+ IMPLICIT NONE
+!
+ INTEGER,           INTENT(IN   ) :: I1, I2, J1, J2
+ INTEGER,           INTENT(IN   ) :: KGDS(200), M, MS, NF
+ INTEGER,           INTENT(  OUT) :: IRET, KGDSS(200)
+!
+ LOGICAL(1),        INTENT(IN   ) :: L(M,NF)
+ LOGICAL(1),        INTENT(  OUT) :: LS(MS,NF)
+!
+ REAL,              INTENT(IN   ) :: F(M,NF)
+ REAL,              INTENT(  OUT) :: FS(MS,NF)
+!
+ INTEGER                          :: I1A,I2A,J1A,J2A,NRET
+ INTEGER                          :: INA,JNA,K,KS,N,NS,NSCAN
+!
+ REAL                             :: CROT(2),SROT(2)
+ REAL                             :: XPTS(2),YPTS(2),RLON(2),RLAT(2)
 ! - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 !  COMPUTE ACTUAL SECTOR BOUNDARIES
  IF((KGDS(1).NE.0.AND.KGDS(1).NE.1.AND.KGDS(1).NE.3.AND.&

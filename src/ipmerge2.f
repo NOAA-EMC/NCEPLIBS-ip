@@ -32,11 +32,17 @@
 !   LANGUAGE: FORTRAN 90
 !
 !$$$
- INTEGER NO,NF,M1,M2,MO
- LOGICAL(1) L1(M1,NF),L2(M2,NF)
- REAL F1(M1,NF),F2(M2,NF)
- LOGICAL(1) LO(MO,NF)
- REAL FO(MO,NF)
+ IMPLICIT NONE
+!
+ INTEGER,           INTENT(IN   ) :: NO,NF,M1,M2,MO
+!
+ LOGICAL(1),        INTENT(IN   ) :: L1(M1,NF),L2(M2,NF)
+ LOGICAL(1),        INTENT(  OUT) :: LO(MO,NF)
+!
+ REAL,              INTENT(IN   ) :: F1(M1,NF),F2(M2,NF)
+ REAL,              INTENT(  OUT) :: FO(MO,NF)
+!
+ INTEGER                          :: K, N
 ! - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 !  MERGE FIELDS, TAKING FIRST FIELD FIRST
  DO N=1,NF

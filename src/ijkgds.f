@@ -27,7 +27,17 @@
 !   LANGUAGE: FORTRAN 90
 !
 !$$$
- INTEGER KGDS(200)
+ IMPLICIT NONE
+!
+ INTEGER,         INTENT(IN   ) :: I, J, KGDS(200)
+!
+ INTEGER                        :: IJKGDS 
+ INTEGER                        :: IM, JM, ISCAN, KSCAN, NSCAN
+ INTEGER                        :: II, JJ, IIF, JJF, IS1, IG, JG
+!
+ REAL                           :: DLAT, DLON
+ REAL                           :: RLAT1, RLON1, RLAT2, RLON2
+!
 ! - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 !  GET GRID DIMENSIONS
  IF(KGDS(1).EQ.201) THEN

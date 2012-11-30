@@ -48,14 +48,20 @@
 !   LANGUAGE: FORTRAN 90
 !
 !$$$
- INTEGER I1,I2,J1,J2,NF,MS,M
- LOGICAL(1) LS(MS,NF)
- REAL FS(MS,NF)
- INTEGER KGDS(200)
- LOGICAL(1) L(M,NF)
- REAL F(M,NF)
- INTEGER IRET
- INTEGER I1A,I2A,INA,J1A,J2A,JNA,K,KS,NS,NSCAN
+ IMPLICIT NONE
+!
+ INTEGER,               INTENT(IN   ) :: I1,I2,J1,J2
+ INTEGER,               INTENT(IN   ) :: KGDS(200), M, MS, NF
+ INTEGER,               INTENT(  OUT) :: IRET
+!
+ LOGICAL(1),            INTENT(IN   ) :: LS(MS,NF)
+ LOGICAL(1),            INTENT(  OUT) :: L(M,NF)
+!
+ REAL,                  INTENT(IN   ) :: FS(MS,NF)
+ REAL,                  INTENT(  OUT) :: F(M,NF)
+!
+ INTEGER                              :: I1A,I2A,INA,J1A,J2A,JNA
+ INTEGER                              :: K,KS,N,NS,NSCAN
 ! - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 !  COMPUTE ACTUAL SECTOR BOUNDARIES
  IF((KGDS(1).NE.0.AND.KGDS(1).NE.1.AND.KGDS(1).NE.3.AND. &

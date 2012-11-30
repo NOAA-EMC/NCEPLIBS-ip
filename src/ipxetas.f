@@ -44,8 +44,17 @@
 !   LANGUAGE: FORTRAN 90
 !
 !$$$
- INTEGER KGDS1(200),KGDS2(200)
- REAL F1(M1,KM),F2(M2,KM)
+ IMPLICIT NONE
+!
+ INTEGER,                INTENT(IN   ) :: IDIR, M1, M2, KM
+ INTEGER,                INTENT(INOUT) :: KGDS1(200), KGDS2(200)
+ INTEGER,                INTENT(  OUT) :: IRET
+!
+ REAL,                   INTENT(INOUT) :: F1(M1,KM),F2(M2,KM)
+!
+ INTEGER                               :: IM, JM, K, N, NM
+!
+ REAL                                  :: W
 ! - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 !  TRANSFORM GDS
  IRET=0

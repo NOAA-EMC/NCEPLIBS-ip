@@ -133,10 +133,18 @@
 !   LANGUAGE: FORTRAN 90
 !
 !$$$
- INTEGER KGDS(200)
- CHARACTER GDS(400)
- INTEGER KPTR(200),KPDS(200),IPDS(200),IGDS(200)
- DATA KPTR/200*0/,KPDS/200*0/
+ IMPLICIT NONE
+!
+ CHARACTER,          INTENT(INOUT) :: GDS(400)
+!
+ INTEGER,            INTENT(IN   ) :: IOPT
+ INTEGER,            INTENT(INOUT) :: KGDS(200)
+ INTEGER,            INTENT(  OUT) :: IRET, LENGDS
+!
+ INTEGER                           :: ICOMP, IPDS(200), IGDS(200)
+ INTEGER                           :: KPTR(200), KPDS(200), NPTS
+!
+ DATA KPTR/200*0/, KPDS/200*0/
 ! - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 !  UNPACK GDS INTO KGDS
  IF(IOPT.EQ.-1) THEN
