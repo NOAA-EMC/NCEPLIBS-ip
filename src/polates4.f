@@ -87,17 +87,42 @@
 !   LANGUAGE: FORTRAN 90
 !
 !$$$
- INTEGER IPOPT(20)
- INTEGER KGDSI(200),KGDSO(200)
- INTEGER IBI(KM),IBO(KM)
- LOGICAL*1 LI(MI,KM),LO(MO,KM)
- REAL GI(MI,KM),GO(MO,KM)
- REAL RLAT(MO),RLON(MO),CROT(MO),SROT(MO)
- REAL XPTS(MO),YPTS(MO)
- REAL GO2(MO,KM)
- PARAMETER(FILL=-9999.)
- PARAMETER(RERTH=6.3712E6)
- PARAMETER(PI=3.14159265358979,DPR=180./PI)
+ IMPLICIT NONE
+!
+ INTEGER,          INTENT(IN   ) :: IPOPT(20), KGDSI(200)
+ INTEGER,          INTENT(IN   ) :: KGDSO(200), MI, MO
+ INTEGER,          INTENT(IN   ) :: IBI(KM), KM
+ INTEGER,          INTENT(  OUT) :: IBO(KM), IRET
+!
+ LOGICAL*1,        INTENT(IN   ) :: LI(MI,KM)
+ LOGICAL*1,        INTENT(  OUT) :: LO(MO,KM)
+!
+ REAL,             INTENT(IN   ) :: GI(MI,KM)
+ REAL,             INTENT(INOUT) :: RLAT(MO),RLON(MO)
+ REAL,             INTENT(  OUT) :: GO(MO,KM)
+!
+ REAL,             PARAMETER     :: FILL=-9999.
+ REAL,             PARAMETER     :: RERTH=6.3712E6
+ REAL,             PARAMETER     :: PI=3.14159265358979
+ REAL,             PARAMETER     :: DPR=180./PI
+!
+ INTEGER                         :: IDRTI, IDRTO, IG, JG, IM, JM
+ INTEGER                         :: IGO, JGO, IMO, JMO
+ INTEGER                         :: ISCAN, JSCAN, NSCAN
+ INTEGER                         :: ISCANO, JSCANO, NSCANO
+ INTEGER                         :: ISKIPI, JSKIPI
+ INTEGER                         :: IMAXI, JMAXI, ISPEC
+ INTEGER                         :: IP, IPRIME, IPROJ, IROMB, K
+ INTEGER                         :: MAXWV, N, NI, NJ, NPS, NO
+!
+ REAL                            :: CROT(MO),SROT(MO)
+ REAL                            :: DE, DR, DY
+ REAL                            :: DLAT, DLON, DLATO, DLONO
+ REAL                            :: GO2(MO,KM), H, HI, HJ
+ REAL                            :: ORIENT
+ REAL                            :: RLAT1, RLON1, RLAT2, RLON2, RLATI
+ REAL                            :: XMESH, XP, YP
+ REAL                            :: XPTS(MO), YPTS(MO)
 ! - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 !  COMPUTE NUMBER OF OUTPUT POINTS AND THEIR LATITUDES AND LONGITUDES.
  IRET=0
@@ -205,7 +230,6 @@
      NPS=KGDSO(2)
      RLAT1=KGDSO(4)*1.E-3
      RLON1=KGDSO(5)*1.E-3
-     IROT=MOD(KGDSO(6)/8,2)
      ORIENT=KGDSO(7)*1.E-3
      XMESH=KGDSO(8)
      IPROJ=MOD(KGDSO(10)/128,2)

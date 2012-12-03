@@ -90,25 +90,35 @@
 !
 !$$$
  IMPLICIT NONE
- INTEGER,INTENT(IN):: IPOPT(20),KGDSI(200),KGDSO(200),MI,MO,KM
- INTEGER,INTENT(IN):: IBI(KM)
- LOGICAL*1,INTENT(IN):: LI(MI,KM)
- REAL,INTENT(IN):: GI(MI,KM)
- INTEGER,INTENT(INOUT):: NO
- REAL,INTENT(INOUT):: RLAT(MO),RLON(MO)
- INTEGER,INTENT(OUT):: IBO(KM)
- LOGICAL*1,INTENT(OUT):: LO(MO,KM)
- REAL,INTENT(OUT):: GO(MO,KM)
- INTEGER,INTENT(OUT):: IRET
- REAL XPTS(MO),YPTS(MO)
- INTEGER IJKGDSA(20)
- REAL,PARAMETER:: FILL=-9999.
- INTEGER MSPIRAL,N,K,NK,NV,IJKGDS1
- INTEGER I1,J1,IXS,JXS,MX,KXS,KXT,IX,JX,NX
- INTEGER,SAVE:: KGDSIX(200)=-1,KGDSOX(200)=-1,NOX=-1,IRETX=-1
- INTEGER,ALLOCATABLE,SAVE:: NXY(:)
- REAL,ALLOCATABLE,SAVE:: RLATX(:),RLONX(:),XPTSX(:),YPTSX(:)
- REAL,ALLOCATABLE::DUM1(:),DUM2(:)
+!
+ INTEGER,               INTENT(IN   ):: IPOPT(20),KGDSI(200)
+ INTEGER,               INTENT(IN   ):: KGDSO(200),MI,MO,KM
+ INTEGER,               INTENT(IN   ):: IBI(KM)
+ INTEGER,               INTENT(INOUT):: NO
+ INTEGER,               INTENT(  OUT):: IRET, IBO(KM)
+!
+ LOGICAL*1,             INTENT(IN   ):: LI(MI,KM)
+ LOGICAL*1,             INTENT(  OUT):: LO(MO,KM)
+!
+ REAL,                  INTENT(IN   ):: GI(MI,KM)
+ REAL,                  INTENT(INOUT):: RLAT(MO),RLON(MO)
+ REAL,                  INTENT(  OUT):: GO(MO,KM)
+!
+ REAL,                  PARAMETER    :: FILL=-9999.
+!
+ INTEGER                             :: IJKGDSA(20)
+ INTEGER                             :: I1,J1,IXS,JXS
+ INTEGER                             :: MSPIRAL,N,K,NK
+ INTEGER                             :: NV,IJKGDS1
+ INTEGER                             :: MX,KXS,KXT,IX,JX,NX
+ INTEGER,                       SAVE :: KGDSIX(200)=-1,KGDSOX(200)=-1
+ INTEGER,                       SAVE :: NOX=-1,IRETX=-1
+ INTEGER,           ALLOCATABLE,SAVE :: NXY(:)
+!
+ REAL,              ALLOCATABLE      :: DUM1(:),DUM2(:)
+ REAL,              ALLOCATABLE,SAVE :: RLATX(:),RLONX(:)
+ REAL,              ALLOCATABLE,SAVE :: XPTSX(:),YPTSX(:)
+ REAL                                :: XPTS(MO),YPTS(MO)
 ! - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 !  SET PARAMETERS
  IRET=0

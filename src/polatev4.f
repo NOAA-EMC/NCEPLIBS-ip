@@ -106,18 +106,41 @@
 !   LANGUAGE: FORTRAN 90
 !
 !$$$
- INTEGER IPOPT(20)
- INTEGER KGDSI(200),KGDSO(200)
- INTEGER IBI(KM),IBO(KM)
- LOGICAL*1 LI(MI,KM),LO(MO,KM)
- REAL UI(MI,KM),VI(MI,KM),UO(MO,KM),VO(MO,KM)
- REAL RLAT(MO),RLON(MO)
- REAL CROT(MO),SROT(MO)
- REAL XPTS(MO),YPTS(MO)
- REAL UO2(MO,KM),VO2(MO,KM)
- PARAMETER(FILL=-9999.)
- PARAMETER(RERTH=6.3712E6)
- PARAMETER(PI=3.14159265358979,DPR=180./PI)
+ IMPLICIT NONE
+!
+ INTEGER,          INTENT(IN   ) :: IPOPT(20), IBI(KM)
+ INTEGER,          INTENT(IN   ) :: KM, MI, MO
+ INTEGER,          INTENT(  OUT) :: IRET, IBO(KM)
+ INTEGER,          INTENT(INOUT) :: KGDSI(200),KGDSO(200)
+!
+ LOGICAL*1,        INTENT(IN   ) :: LI(MI,KM)
+ LOGICAL*1,        INTENT(  OUT) :: LO(MO,KM)
+!
+ REAL,             INTENT(IN   ) :: UI(MI,KM),VI(MI,KM)
+ REAL,             INTENT(  OUT) :: UO(MO,KM),VO(MO,KM)
+ REAL,             INTENT(INOUT) :: RLAT(MO),RLON(MO)
+ REAL,             INTENT(  OUT) :: CROT(MO),SROT(MO)
+
+!
+ REAL,                 PARAMETER :: FILL=-9999.
+ REAL,                 PARAMETER :: RERTH=6.3712E6
+ REAL,                 PARAMETER :: PI=3.14159265358979
+ REAL,                 PARAMETER :: DPR=180./PI
+!
+ INTEGER                         :: IDRTO, IROMB, ISKIPI, ISPEC
+ INTEGER                         :: IDRTI, IMAXI, JMAXI, IM, JM
+ INTEGER                         :: IPRIME, IG, IMO, JMO, IGO, JGO
+ INTEGER                         :: ISCAN, JSCAN, NSCAN
+ INTEGER                         :: ISCANO, JSCANO, NSCANO
+ INTEGER                         :: IP, IPROJ, JSKIPI, JG
+ INTEGER                         :: K, MAXWV, N, NI, NJ, NO, NPS
+!
+ REAL                            :: DLAT, DLON, DLATO, DLONO, DE, DR, DY
+ REAL                            :: DUM, H, HI, HJ
+ REAL                            :: ORIENT
+ REAL                            :: RLAT1, RLON1, RLAT2, RLON2, RLATI
+ REAL                            :: UROT, VROT, UO2(MO,KM),VO2(MO,KM)
+ REAL                            :: XMESH, X, XP, YP, XPTS(MO),YPTS(MO)
 ! - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 !  COMPUTE NUMBER OF OUTPUT POINTS AND THEIR LATITUDES AND LONGITUDES.
  IRET=0

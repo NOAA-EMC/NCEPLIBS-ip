@@ -116,30 +116,37 @@
 !
 !$$$
  IMPLICIT NONE
- INTEGER,INTENT(IN):: IPOPT(20),KGDSI(200),KGDSO(200),MI,MO,KM
- INTEGER,INTENT(IN):: IBI(KM)
- LOGICAL*1,INTENT(IN):: LI(MI,KM)
- REAL,INTENT(IN):: UI(MI,KM),VI(MI,KM)
- INTEGER,INTENT(INOUT):: NO
- REAL,INTENT(INOUT):: RLAT(MO),RLON(MO),CROT(MO),SROT(MO)
- INTEGER,INTENT(OUT):: IBO(KM)
- LOGICAL*1,INTENT(OUT):: LO(MO,KM)
- REAL,INTENT(OUT):: UO(MO,KM),VO(MO,KM)
- INTEGER,INTENT(OUT):: IRET
- REAL XPTS(MO),YPTS(MO)
- INTEGER IJX(4),IJY(4)
- REAL WX(4),WY(4)
- INTEGER IJKGDSA(20)
- REAL,PARAMETER:: FILL=-9999.
- INTEGER MCON,MP,N,I,J,K,NK,NV,IJKGDS1
- REAL PMP,XIJ,YIJ,XF,YF,U,V,W,DUM,UMIN,UMAX,VMIN,VMAX
- REAL XPTI(MI),YPTI(MI),RLOI(MI),RLAI(MI),CROI(MI),SROI(MI)
- REAL CM,SM,UROT,VROT
- INTEGER,SAVE:: KGDSIX(200)=-1,KGDSOX(200)=-1,NOX=-1,IRETX=-1
- INTEGER,ALLOCATABLE,SAVE:: NXY(:,:,:),NC(:)
- REAL,ALLOCATABLE,SAVE:: RLATX(:),RLONX(:),CROTX(:),SROTX(:)
- REAL,ALLOCATABLE,SAVE:: WXY(:,:,:),CXY(:,:,:),SXY(:,:,:)
- REAL,ALLOCATABLE::DUM1(:),DUM2(:)
+!
+ INTEGER,            INTENT(IN   ):: IPOPT(20),KGDSI(200),KGDSO(200)
+ INTEGER,            INTENT(IN   ):: IBI(KM),MI,MO,KM
+ INTEGER,            INTENT(INOUT):: NO
+ INTEGER,            INTENT(  OUT):: IRET, IBO(KM)
+!
+ LOGICAL*1,          INTENT(IN   ):: LI(MI,KM)
+ LOGICAL*1,          INTENT(  OUT):: LO(MO,KM)
+!
+ REAL,               INTENT(IN   ):: UI(MI,KM),VI(MI,KM)
+ REAL,               INTENT(INOUT):: RLAT(MO),RLON(MO),CROT(MO),SROT(MO)
+ REAL,               INTENT(  OUT):: UO(MO,KM),VO(MO,KM)
+!
+ REAL,               PARAMETER    :: FILL=-9999.
+!
+ INTEGER                          :: IJX(4),IJY(4),IJKGDSA(20)
+ INTEGER                          :: MCON,MP,N,I,J,K,NK,NV,IJKGDS1
+ INTEGER,                    SAVE :: KGDSIX(200)=-1,KGDSOX(200)=-1
+ INTEGER,                    SAVE :: NOX=-1,IRETX=-1
+ INTEGER,        ALLOCATABLE,SAVE :: NXY(:,:,:),NC(:)
+!
+ REAL,           ALLOCATABLE      :: DUM1(:),DUM2(:)
+ REAL                             :: CM,SM,UROT,VROT
+ REAL                             :: PMP,XIJ,YIJ,XF,YF
+ REAL                             :: U,V,W,UMIN,UMAX,VMIN,VMAX
+ REAL                             :: XPTS(MO),YPTS(MO)
+ REAL                             :: WX(4),WY(4)
+ REAL                             :: XPTI(MI),YPTI(MI),RLOI(MI),RLAI(MI)
+ REAL                             :: CROI(MI),SROI(MI)
+ REAL,           ALLOCATABLE,SAVE :: RLATX(:),RLONX(:),CROTX(:),SROTX(:)
+ REAL,           ALLOCATABLE,SAVE :: WXY(:,:,:),CXY(:,:,:),SXY(:,:,:)
 ! - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 !  SET PARAMETERS
  IRET=0

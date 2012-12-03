@@ -82,11 +82,13 @@
 !     LI       - LOGICAL*1 (MI,KM) INPUT BITMAPS (IF SOME IBI(K)=1)
 !     UI       - REAL (MI,KM) INPUT U-COMPONENT FIELDS TO INTERPOLATE
 !     VI       - REAL (MI,KM) INPUT V-COMPONENT FIELDS TO INTERPOLATE
+!     RLAT     - REAL (MO) INPUT LATITUDES IN DEGREES (KGDSO(1)<0)
+!     RLON     - REAL (MO) INPUT LONGITUDES IN DEGREES (KGDSO(1)<0)
 !
 !   OUTPUT ARGUMENT LIST:
 !     NO       - INTEGER NUMBER OF OUTPUT POINTS
-!     RLAT     - REAL (MO) OUTPUT LATITUDES IN DEGREES
-!     RLON     - REAL (MO) OUTPUT LONGITUDES IN DEGREES
+!     RLAT     - REAL (MO) OUTPUT LATITUDES IN DEGREES (KGDSO(1)>0)
+!     RLON     - REAL (MO) OUTPUT LONGITUDES IN DEGREES (KGDSO(1)>0)
 !     CROT     - REAL (NO) VECTOR ROTATION COSINES
 !     SROT     - REAL (NO) VECTOR ROTATION SINES
 !                (UGRID=CROT*UEARTH-SROT*VEARTH;
@@ -112,26 +114,46 @@
 !   LANGUAGE: FORTRAN 90
 !
 !$$$
- INTEGER IPOPT(20)
- INTEGER KGDSI(200),KGDSO(200)
- INTEGER IBI(KM),IBO(KM)
- LOGICAL*1 LI(MI,KM),LO(MO,KM)
- REAL UI(MI,KM),VI(MI,KM),UO(MO,KM),VO(MO,KM)
- REAL RLAT(MO),RLON(MO)
- REAL CROT(MO),SROT(MO)
- REAL XPTS(MO),YPTS(MO)
- REAL XPTB(MO),YPTB(MO),RLOB(MO),RLAB(MO)
- INTEGER N11(MO),N21(MO),N12(MO),N22(MO)
- REAL W11(MO),W21(MO),W12(MO),W22(MO)
- REAL C11(MO),C21(MO),C12(MO),C22(MO)
- REAL S11(MO),S21(MO),S12(MO),S22(MO)
- REAL WO(MO,KM)
- INTEGER IJKGDSA(20)
- PARAMETER(FILL=-9999.)
- INTEGER,SAVE:: MIX=-1,KGDSIX(200)=-1
- REAL,ALLOCATABLE,SAVE:: XPTI(:),YPTI(:),RLOI(:),RLAI(:), &
-                         CROI(:),SROI(:)
- REAL,ALLOCATABLE::DUM1(:),DUM2(:)
+ IMPLICIT NONE
+!
+ INTEGER,          INTENT(IN   ):: IPOPT(20), IBI(KM)
+ INTEGER,          INTENT(IN   ):: KM, MI, MO
+ INTEGER,          INTENT(IN   ):: KGDSI(200)
+ INTEGER,          INTENT(INOUT):: KGDSO(200)
+ INTEGER,          INTENT(  OUT):: IRET, NO, IBO(KM)
+!
+ LOGICAL*1,        INTENT(IN   ):: LI(MI,KM)
+ LOGICAL*1,        INTENT(  OUT):: LO(MO,KM)
+!
+ REAL,             INTENT(IN   ):: UI(MI,KM),VI(MI,KM)
+ REAL,             INTENT(INOUT):: RLAT(MO),RLON(MO)
+ REAL,             INTENT(  OUT):: UO(MO,KM),VO(MO,KM)
+ REAL,             INTENT(  OUT):: CROT(MO),SROT(MO)
+!
+ REAL,             PARAMETER    :: FILL=-9999.
+!
+ INTEGER                        :: IJKGDS1, IJKGDSA(20)
+ INTEGER                        :: I1,I2,J1,J2,IB,JB,LSW,MP
+ INTEGER,          SAVE         :: MIX=-1,KGDSIX(200)=-1
+ INTEGER                        :: K,LB,N,NB,NB1,NB2,NB3,NB4,NV
+ INTEGER                        :: N11(MO),N21(MO),N12(MO),N22(MO)
+!
+ REAL,         ALLOCATABLE      :: DUM1(:),DUM2(:)
+ REAL                           :: CM11,SM11,CM12,SM12
+ REAL                           :: CM21,SM21,CM22,SM22
+ REAL                           :: PMP,RB2
+ REAL                           :: C11(MO),C21(MO),C12(MO),C22(MO)
+ REAL                           :: S11(MO),S21(MO),S12(MO),S22(MO)
+ REAL                           :: W11(MO),W21(MO),W12(MO),W22(MO)
+ REAL                           :: UB,VB,WB,UROT,VROT
+ REAL                           :: U11,V11,U21,V21,U12,V12,U22,V22
+ REAL                           :: WI1,WJ1,WI2,WJ2
+ REAL                           :: WO(MO,KM),XI,YI
+ REAL                           :: XPTS(MO),YPTS(MO)
+ REAL                           :: XPTB(MO),YPTB(MO),RLOB(MO),RLAB(MO)
+ REAL,         ALLOCATABLE,SAVE :: CROI(:),SROI(:)
+ REAL,         ALLOCATABLE,SAVE :: XPTI(:),YPTI(:),RLOI(:),RLAI(:)
+!
 ! - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 !  COMPUTE NUMBER OF OUTPUT POINTS AND THEIR LATITUDES AND LONGITUDES.
  IRET=0
