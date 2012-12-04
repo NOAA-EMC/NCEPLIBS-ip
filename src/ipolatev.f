@@ -167,12 +167,22 @@
 !   LANGUAGE: FORTRAN 90
 !
 !$$$
- INTEGER IPOPT(20)
- INTEGER KGDSI(200),KGDSO(200)
- INTEGER IBI(KM),IBO(KM)
- LOGICAL*1 LI(MI,KM),LO(MO,KM)
- REAL UI(MI,KM),VI(MI,KM),UO(MO,KM),VO(MO,KM)
- REAL RLAT(MO),RLON(MO),CROT(MO),SROT(MO)
+ IMPLICIT NONE
+!
+ INTEGER,               INTENT(IN   ):: IP, IPOPT(20), IBI(KM)
+ INTEGER,               INTENT(IN   ):: KM, MI, MO
+ INTEGER,               INTENT(INOUT):: KGDSI(200), KGDSO(200)
+ INTEGER,               INTENT(  OUT):: IBO(KM), IRET, NO
+!
+ LOGICAL*1,             INTENT(IN   ):: LI(MI,KM)
+ LOGICAL*1,             INTENT(  OUT):: LO(MO,KM)
+!
+ REAL,                  INTENT(IN   ):: UI(MI,KM),VI(MI,KM)
+ REAL,                  INTENT(INOUT):: CROT(MO),SROT(MO)
+ REAL,                  INTENT(INOUT):: RLAT(MO),RLON(MO)
+ REAL,                  INTENT(  OUT):: UO(MO,KM),VO(MO,KM)
+!
+ INTEGER                             :: K, N, KGDSI11, KGDSO11
 ! - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
  IF(KGDSI(1).EQ.201.OR.KGDSI(1).EQ.203) THEN
    KGDSI11=KGDSI(11)

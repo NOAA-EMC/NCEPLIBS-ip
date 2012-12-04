@@ -64,11 +64,24 @@
 !   LANGUAGE: FORTRAN 90
 !
 !$$$
- INTEGER KGDS1(200),KGDS2(200)
- INTEGER IB1(KM),IB2(KM)
- LOGICAL*1 L1(M1,KM),L2(M2,KM)
- REAL F1(M1,KM),F2(M2,KM)
- INTEGER NPWAFS(73)
+ IMPLICIT NONE
+!
+ INTEGER,             INTENT(IN   ):: IDIR, KM, M1, M2
+ INTEGER,             INTENT(INOUT):: KGDS1(200), KGDS2(200)
+ INTEGER,             INTENT(INOUT):: IB1(KM), IB2(KM)
+ INTEGER,             INTENT(  OUT):: IRET
+!
+ LOGICAL*1,           INTENT(INOUT):: L1(M1,KM),L2(M2,KM)
+!
+ REAL,                INTENT(INOUT):: F1(M1,KM),F2(M2,KM)
+!
+ INTEGER                           :: I, J, K, NPWAFS(73)
+ INTEGER                           :: IA, IB, ISCAN
+ INTEGER                           :: IM, IM1, IM2, IS1, IS2
+!
+ REAL                              :: DLON, HI, RLON1, RLON2
+ REAL                              :: RAT1, RAT2, WA, WB, X1, X2
+!
  DATA NPWAFS/ &
      73, 73, 73, 73, 73, 73, 73, 73, 72, 72, 72, 71, 71, 71, 70, &
      70, 69, 69, 68, 67, 67, 66, 65, 65, 64, 63, 62, 61, 60, 60, &

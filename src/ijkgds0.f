@@ -41,8 +41,18 @@
 !   LANGUAGE: FORTRAN 90
 !
 !$$$
- INTEGER KGDS(200)
- INTEGER IJKGDSA(20)
+ IMPLICIT NONE
+!
+ INTEGER,              INTENT(IN   ):: KGDS(200)
+ INTEGER,              INTENT(  OUT):: IJKGDSA(20)
+!
+ INTEGER                            :: IM, JM, IWRAP, JG
+ INTEGER                            :: ISCAN, KSCAN, NSCAN
+ INTEGER                            :: JWRAP1, JWRAP2
+!
+ REAL                               :: DLAT, DLON
+ REAL                               :: RLAT1, RLAT2
+ REAL                               :: RLON1, RLON2
 ! - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 !  SET USUAL VALUES
  IM=KGDS(2)

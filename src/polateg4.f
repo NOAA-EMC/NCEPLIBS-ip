@@ -93,18 +93,35 @@
 !   LANGUAGE: FORTRAN 90
 !
 !$$$
- INTEGER IPOPT(20)
- INTEGER KGDSI(200),KGDSO(200)
- INTEGER IBI(KM),IBO(KM)
- LOGICAL*1 LI(MI,KM),LO(MO,KM)
- REAL GI(MI,KM),XO(MO,KM),YO(MO,KM)
- REAL RLAT(MO),RLON(MO)
- REAL CROT(MO),SROT(MO)
- REAL XPTS(MO),YPTS(MO)
- REAL GO2(MO,KM)
- PARAMETER(FILL=-9999.)
- PARAMETER(RERTH=6.3712E6)
- PARAMETER(PI=3.14159265358979,DPR=180./PI)
+ IMPLICIT NONE
+!
+ INTEGER,              INTENT(IN   ):: IPOPT(20), IBI(KM)
+ INTEGER,              INTENT(IN   ):: KM, MI, MO
+ INTEGER,              INTENT(IN   ):: KGDSI(200),KGDSO(200)
+ INTEGER,              INTENT(INOUT):: NO
+ INTEGER,              INTENT(  OUT):: IBO(KM), IRET
+!
+ LOGICAL*1,            INTENT(IN   ):: LI(MI,KM)
+ LOGICAL*1,            INTENT(  OUT):: LO(MO,KM)
+!
+ REAL,                 INTENT(IN   ):: GI(MI,KM)
+ REAL,                 INTENT(INOUT):: CROT(MO),SROT(MO)
+ REAL,                 INTENT(INOUT):: RLAT(MO),RLON(MO)
+ REAL,                 INTENT(  OUT):: XO(MO,KM),YO(MO,KM)
+!
+ REAL,                 PARAMETER    :: FILL=-9999.
+ REAL,                 PARAMETER    :: PI=3.14159265358979
+ REAL,                 PARAMETER    :: DPR=180./PI
+!
+ INTEGER                            :: IGO, JGO, IROMB, ISPEC
+ INTEGER                            :: IMO, JMO, IMAXI, JMAXI
+ INTEGER                            :: IG, JG, IDRTO, IPRIME, IM, JM
+ INTEGER                            :: ISKIPI, JSKIPI, K, MAXWV, N
+ INTEGER                            :: IDRTI, ISCAN, JSCAN, NSCAN
+!
+ REAL                               :: DLAT, DLON, DLONO, GM
+ REAL                               :: RLAT1, RLAT2, RLON1, RLON2
+ REAL                               :: XPTS(MO),YPTS(MO)
 ! - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 !  COMPUTE NUMBER OF OUTPUT POINTS AND THEIR LATITUDES AND LONGITUDES.
  IRET=0

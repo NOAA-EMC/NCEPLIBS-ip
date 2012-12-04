@@ -44,8 +44,14 @@
 !   LANGUAGE: FORTRAN 90
 !
 !$$$
- INTEGER I,J
- INTEGER IJKGDSA(20)
+ IMPLICIT NONE
+!
+ INTEGER,         INTENT(IN   ):: I, J, IJKGDSA(20)
+!
+ INTEGER                       :: IJKGDS1
+ INTEGER                       :: II, JJ, IM, JM
+ INTEGER                       :: IIF, JJF, IS1, IWRAP
+ INTEGER                       :: JWRAP1, JWRAP2, KSCAN, NSCAN
 ! - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 !  EXTRACT FROM NAVIGATION PARAMETER ARRAY
  IM=IJKGDSA(1)

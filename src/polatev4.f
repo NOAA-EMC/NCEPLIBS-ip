@@ -120,7 +120,6 @@
  REAL,             INTENT(  OUT) :: UO(MO,KM),VO(MO,KM)
  REAL,             INTENT(INOUT) :: RLAT(MO),RLON(MO)
  REAL,             INTENT(  OUT) :: CROT(MO),SROT(MO)
-
 !
  REAL,                 PARAMETER :: FILL=-9999.
  REAL,                 PARAMETER :: RERTH=6.3712E6

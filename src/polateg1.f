@@ -69,6 +69,10 @@
 !     NO       - INTEGER NUMBER OF OUTPUT POINTS (ONLY IF KGDSO(1)>=0)
 !     RLAT     - REAL (MO) OUTPUT LATITUDES IN DEGREES (IF KGDSO(1)>=0)
 !     RLON     - REAL (MO) OUTPUT LONGITUDES IN DEGREES (IF KGDSO(1)>=0)
+!     CROT     - REAL (MO) VECTOR ROTATION COSINES (IF KGDSO(1)>=0)
+!     SROT     - REAL (MO) VECTOR ROTATION SINES (IF KGDSO(1)>=0)
+!                (UGRID=CROT*UEARTH-SROT*VEARTH;
+!                 VGRID=SROT*UEARTH+CROT*VEARTH)
 !     IBO      - INTEGER (KM) OUTPUT BITMAP FLAGS
 !     LO       - LOGICAL*1 (MO,KM) OUTPUT BITMAPS (ALWAYS OUTPUT)
 !     XO       - REAL (MO,KM) OUTPUT X-GRADIENT FIELDS INTERPOLATED
@@ -91,28 +95,40 @@
 !   LANGUAGE: FORTRAN 90
 !
 !$$$
- INTEGER IPOPT(20)
- INTEGER KGDSI(200),KGDSO(200)
- INTEGER IBI(KM),IBO(KM)
- LOGICAL*1 LI(MI,KM),LO(MO,KM)
- REAL GI(MI,KM),XO(MO,KM),YO(MO,KM)
- REAL RLAT(MO),RLON(MO)
- REAL CROT(MO),SROT(MO)
- REAL CLAT(MO)
- REAL XPTS(MO),YPTS(MO)
- REAL XLON(MO),XLAT(MO)
- REAL YLON(MO),YLAT(MO)
- INTEGER N11(MO),N21(MO),N12(MO),N22(MO)
- INTEGER NC(MO)
- REAL WX11(MO),WX21(MO),WX12(MO),WX22(MO)
- REAL WY11(MO),WY21(MO),WY12(MO),WY22(MO)
- REAL WX11L(MO),WX21L(MO),WX12L(MO),WX22L(MO)
- REAL WY11L(MO),WY21L(MO),WY12L(MO),WY22L(MO)
- REAL,ALLOCATABLE::DUM1(:),DUM2(:),AREA(:)
- INTEGER IJKGDSA(20)
- PARAMETER(FILL=-9999.)
- PARAMETER(PLAT=89.)
- PARAMETER(RERTH=6.3712E6)
+ IMPLICIT NONE
+!
+ INTEGER,             INTENT(IN   ):: IPOPT(20), IBI(KM)
+ INTEGER,             INTENT(IN   ):: KM, MI, MO
+ INTEGER,             INTENT(IN   ):: KGDSI(200),KGDSO(200)
+ INTEGER,             INTENT(  OUT):: IRET, IBO(KM), NO
+!
+ LOGICAL*1,           INTENT(IN   ):: LI(MI,KM)
+ LOGICAL*1,           INTENT(  OUT):: LO(MO,KM)
+!
+ REAL,                INTENT(IN   ):: GI(MI,KM)
+ REAL,                INTENT(INOUT):: CROT(MO),SROT(MO)
+ REAL,                INTENT(INOUT):: RLAT(MO),RLON(MO)
+ REAL,                INTENT(  OUT):: XO(MO,KM),YO(MO,KM)
+!
+ REAL,                PARAMETER    :: FILL=-9999.
+ REAL,                PARAMETER    :: PLAT=89.
+ REAL,                PARAMETER    :: RERTH=6.3712E6
+!
+ INTEGER                           :: I1, I2, J1, J2, IJKGDSA(20)
+ INTEGER                           :: IJKGDS1, K, N, NV, NC(MO)
+ INTEGER                           :: N11(MO),N21(MO),N12(MO),N22(MO)
+!
+ REAL,              ALLOCATABLE    :: DUM1(:),DUM2(:),AREA(:)
+ REAL                              :: CLAT(MO)
+ REAL                              :: DPR, FX, FY, G11, G12, G21, G22
+ REAL                              :: WX11(MO),WX21(MO),WX12(MO),WX22(MO)
+ REAL                              :: WY11(MO),WY21(MO),WY12(MO),WY22(MO)
+ REAL                              :: WX11L(MO),WX21L(MO),WX12L(MO),WX22L(MO)
+ REAL                              :: WY11L(MO),WY21L(MO),WY12L(MO),WY22L(MO)
+ REAL                              :: XROT, YROT, XF, YF, XI, YI
+ REAL                              :: XPTS(MO),YPTS(MO)
+ REAL                              :: XLON(MO),XLAT(MO)
+ REAL                              :: YLON(MO),YLAT(MO)
 ! - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 !  COMPUTE NUMBER OF OUTPUT POINTS AND THEIR LATITUDES AND LONGITUDES.
  IRET=0
