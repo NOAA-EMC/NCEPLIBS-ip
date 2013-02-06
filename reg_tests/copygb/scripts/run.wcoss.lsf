@@ -1,0 +1,26 @@
+#!/bin/ksh
+ 
+#-----------------------------------------------------
+# invoke this script as follows:
+# bsub < run.wcoss.lsf
+#-----------------------------------------------------
+
+#BSUB -oo copygb.log
+#BSUB -eo copygb.log
+#BSUB -q "dev"
+#BSUB -J "copygb"
+#BSUB -W 1:30
+
+set -x
+
+. /usrx/local/Modules/3.2.9/init/ksh
+module load ics/12.1
+module load lsf/8.3
+
+export REG_DIR="../.."
+
+export WORK_DIR="/ptmp/$LOGNAME/regression"
+
+$REG_DIR/copygb/scripts/runall.ksh
+
+exit 0
