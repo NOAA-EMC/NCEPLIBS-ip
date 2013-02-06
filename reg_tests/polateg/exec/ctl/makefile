@@ -12,10 +12,10 @@ d_byte:
 	export EXE=polateg_ctl_d.exe ; \
 	if [ `uname -s` == "Linux" ];then  \
 	  export FCOMP=ifort ; \
-	  export FFLAGS="-check all -traceback -fpe0 -ftrapuv -assume byterecl -g -r8 -i4 -FR" ; \
+	  export FFLAGS="-check all -traceback -fpe0 -ftrapuv -assume byterecl -openmp -g -r8 -i4 -FR" ; \
 	  export LIBIP="../../../lib/libip_ctl_d.a"  ; \
-	  export LIBSP="/scratch1/portfolios/NCEPDEV/da/save/George.Gayno/sp_from_georgev/libsp_d.a"  ; \
-	  export LIBS="-L/scratch1/portfolios/NCEPDEV/da/save/Michael.Lueken/nwprod/lib -lbacio_4 -lw3lib-2.0_d"  ; \
+	  export LIBSP="/nwprod/lib/libsp_v2.0.1_d.a"  ; \
+	  export LIBS="-L/nwprod/lib -lbacio_v2.0.1_4 -lw3nco_v2.0.4_d"  ; \
 	elif [ `uname -s` == "AIX" ];then \
 	  export FCOMP=xlf90_r ; \
 	  export FFLAGS="-C -g -qrealsize=8 -qextchk -qsmp=omp" ; \
@@ -27,10 +27,10 @@ d_byte:
 	export EXE=polateg_ctl_8.exe ; \
 	if [ `uname -s` == "Linux" ];then  \
 	  export FCOMP=ifort ; \
-	  export FFLAGS="-check all -traceback -fpe0 -ftrapuv -assume byterecl -g -r8 -i8 -FR" ; \
+	  export FFLAGS="-check all -traceback -fpe0 -ftrapuv -assume byterecl -openmp -g -r8 -i8 -FR" ; \
 	  export LIBIP="../../../lib/libip_ctl_8.a"  ; \
-	  export LIBSP="/scratch1/portfolios/NCEPDEV/da/save/George.Gayno/sp_from_georgev/libsp_8.a"  ; \
-	  export LIBS="-L/scratch1/portfolios/NCEPDEV/da/save/Michael.Lueken/nwprod/lib -lbacio_8 -lw3lib-2.0_8"  ; \
+	  export LIBSP="/nwprod/lib/libsp_v2.0.1_8.a"  ; \
+	  export LIBS="-L/nwprod/lib -lbacio_v2.0.1_8 -lw3nco_v2.0.8_d"  ; \
 	elif [ `uname -s` == "AIX" ];then \
 	  export FCOMP=xlf90_r ; \
 	  export FFLAGS="-C -g -qrealsize=8 -qintsize=8 -qextchk -qsmp=omp" ; \
@@ -42,10 +42,10 @@ d_byte:
 	export EXE=polateg_ctl_4.exe ; \
 	if [ `uname -s` == "Linux" ];then  \
 	  export FCOMP=ifort ; \
-	  export FFLAGS="-check all -traceback -fpe0 -ftrapuv -assume byterecl -g -i4 -FR" ; \
+	  export FFLAGS="-check all -traceback -fpe0 -ftrapuv -assume byterecl -openmp -g -i4 -FR" ; \
 	  export LIBIP="../../../lib/libip_ctl_4.a"  ; \
-	  export LIBSP="/scratch1/portfolios/NCEPDEV/da/save/George.Gayno/sp_from_georgev/libsp_4.a"  ; \
-	  export LIBS="-L/scratch1/portfolios/NCEPDEV/da/save/Michael.Lueken/nwprod/lib -lbacio_4 -lw3lib-2.0_4"  ; \
+	  export LIBSP="/nwprod/lib/libsp_v2.0.1_4.a"  ; \
+	  export LIBS="-L/nwprod/lib -lbacio_v2.0.1_4 -lw3nco_v2.0.4_d"  ; \
 	elif [ `uname -s` == "AIX" ];then \
 	  export FCOMP=xlf90_r ; \
 	  export FFLAGS="-C -g -qextchk -qsmp=omp" ; \
