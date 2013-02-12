@@ -1,6 +1,6 @@
 # @configure_input@
 
-# libsrc/ level makefile template
+# src/ level makefile template
 
 # Package-specific substitution variables
 package = @PACKAGE_NAME@
@@ -40,22 +40,22 @@ check: all
 	@echo "***THIS IS WHERE THE UNIT TEST INVOCATION GOES***"
 
 install_lib:
-	$(INSTALL) -d $(installdir)
-	$(INSTALL_DATA) lib$(package).a $(installdir)/lib$(package)$(suffix).a
+	$(INSTALL) -d $(DESTDIR)$(installdir)
+	$(INSTALL_DATA) lib$(package).a $(DESTDIR)$(installdir)/lib$(package)$(suffix).a
 
 install: install_lib
 
 nco_install_lib:
-	$(INSTALL) -d $(installdir)
-	$(INSTALL_DATA) lib$(package).a $(installdir)/lib$(package)_v$(version)$(suffix).a
+	$(INSTALL) -d  $(DESTDIR)$(installdir)
+	$(INSTALL_DATA) lib$(package).a $(DESTDIR)$(installdir)/lib$(package)_v$(version)$(suffix).a
 
 nco_install: nco_install_lib
 
 uninstall:
-	-rm -fr $(installdir)
+	-rm -fr $(DESTDIR)$(installdir)
 
 Makefile: Makefile.in ../config.status
-	cd .. && ./config.status libsrc/$@
+	cd .. && ./config.status src/$@
 
 ../config.status: ../configure
 	cd .. && ./config.status --recheck
