@@ -82,6 +82,6 @@ for PRECISION in ${PRECISION_LIST}; do
   make nco_install
 
   # Save the build log file.
-  cp config.log config.log_${PRECISION}
+  mv config.log config.log_${PRECISION}
 
 done
