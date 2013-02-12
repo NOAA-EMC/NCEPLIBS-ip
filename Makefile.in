@@ -18,10 +18,10 @@ installdir  = $(prefix)/$(distdir)
 
 # Target specification
 all clean check install nco_install uninstall:
-	cd libsrc && $(MAKE) $@
+	cd src && $(MAKE) $@
 
 distclean:
-	cd libsrc && $(MAKE) $@
+	cd src && $(MAKE) $@
 	-rm Makefile config.log* config.status
 
 Makefile: Makefile.in config.status

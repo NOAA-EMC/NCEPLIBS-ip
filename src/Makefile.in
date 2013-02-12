@@ -34,7 +34,7 @@ library: $(OBJ_FILES)
 	ar -crvs lib$(package).a $(OBJ_FILES)
 
 clean:
-	-rm *.o *.mod *.a
+	-rm -f *.o *.a
 
 distclean: clean
 	-rm Makefile
@@ -42,25 +42,17 @@ distclean: clean
 check: all
 	@echo "***THIS IS WHERE THE UNIT TEST INVOCATION GOES***"
 
-install_include:
-	$(INSTALL) -d $(DESTDIR)$(installdir)/include
-	$(INSTALL_DATA) *.mod $(DESTDIR)$(installdir)/include
-
 install_lib:
 	$(INSTALL) -d $(DESTDIR)$(installdir)/lib
 	$(INSTALL_DATA) lib$(package)$(SUFFIX).a $(DESTDIR)$(installdir)/lib
 
-install: install_include install_lib
+install: install_lib
 
 nco_install_lib:
 	$(INSTALL) -d $(DESTDIR)$(installdir)
 	$(INSTALL_DATA) lib$(package)$(SUFFIX).a $(DESTDIR)$(installdir)/lib$(package)-$(version)$(SUFFIX).a
 
-nco_install_include:
-	$(INSTALL) -d $(DESTDIR)$(installdir)/incmod/$(distdir)
-	$(INSTALL_DATA) *.mod $(DESTDIR)$(installdir)/incmod/$(distdir)
-
-nco_install: nco_install_include nco_install_lib
+nco_install: nco_install_lib
 
 uninstall:
 	-rm -fr $(DESTDIR)$(installdir)

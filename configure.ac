@@ -1,20 +1,17 @@
 ## Put version control id tag in output configure script
-AC_REVISION($Id: configure.ac 24354 2013-01-10 20:04:24Z paul.vandelst@noaa.gov $)
+AC_REVISION($Id: configure.ac 24354 2013-01-10 20:04:24Z george.gayno@noaa.gov $)
 
 ## Initialise autoconf
-AC_INIT([w3emc], [0.1.0], [ncep.list.emc.nceplibs.support@noaa.gov])
+AC_INIT([ip], [2.0.1], [ncep.list.emc.nceplibs.support@noaa.gov])
 
 # Output info for user
-AC_MSG_NOTICE([w3emc AC_PACKAGE_VERSION])
+AC_MSG_NOTICE([ip AC_PACKAGE_VERSION])
 
 # Check for existence of unique file before proceeding
-AC_CONFIG_SRCDIR([libsrc/w3fa03v.f])
-
-# Find out about the host we're building on.
-AC_CANONICAL_HOST
+AC_CONFIG_SRCDIR([src/ipolates.f])
 
 # Define the configuration files
-AC_CONFIG_FILES([Makefile libsrc/Makefile])
+AC_CONFIG_FILES([Makefile src/Makefile])
 
 # Check for programs
 AC_PROG_FC(ifort gfortran xlf2003 pgf95)
