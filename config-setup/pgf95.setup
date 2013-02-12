@@ -1,0 +1,7 @@
+export FC="pgf95"
+export FCFLAGS=" \
+ -g \
+ -fast \
+ -I/nwprod/lib/incmod/sigio_4"
+export LDFLAGS="-L/nwprod/lib"
+export LIBS="-lsigio_4"

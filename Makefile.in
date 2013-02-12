@@ -1,0 +1,33 @@
+# @configure_input@
+
+# Top level makefile template
+
+# Package-specific substitution variables
+package = @PACKAGE_NAME@
+version = @PACKAGE_VERSION@
+tarname = @PACKAGE_TARNAME@
+distdir = $(tarname)-$(version)@SUFFIX@
+
+# Prefix-specific substitution variables
+prefix      = @prefix@
+exec_prefix = @exec_prefix@
+bindir      = @bindir@
+
+# Mixed package and prefix substitution variables
+installdir  = $(prefix)/$(distdir)
+
+# Target specification
+all clean check install nco_install uninstall:
+	cd libsrc && $(MAKE) $@
+
+distclean:
+	cd libsrc && $(MAKE) $@
+	-rm Makefile config.log* config.status
+
+Makefile: Makefile.in config.status
+	./config.status $@
+
+config.status: configure
+	./config.status --recheck
+
+.PHONY: all clean distclean check install nco-install uninstall

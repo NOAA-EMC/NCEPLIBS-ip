@@ -1,0 +1,10 @@
+export FC="gfortran"
+export FCFLAGS=" \
+ -fbounds-check \
+ -ffpe-trap=overflow,zero,invalid \
+ -ffixed-form \
+ -ggdb \
+ -Wall \
+ -I/nwprod/lib/incmod/sigio_4"
+export LDFLAGS="-L/nwprod/lib"
+export LIBS="-lsigio_4"

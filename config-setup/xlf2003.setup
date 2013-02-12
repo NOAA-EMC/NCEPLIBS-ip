@@ -1,0 +1,11 @@
+export FC="xlf2003"
+export FCFLAGS=" \
+ -qarch=auto \
+ -qdbg \
+ -qfixed \
+ -qnosave \
+ -qoptimize=3 \
+ -qstrict \
+ -I/nwprod/lib/incmod/sigio_4"
+export LDFLAGS="-L/nwprod/lib"
+export LIBS="-lsigio_4"
