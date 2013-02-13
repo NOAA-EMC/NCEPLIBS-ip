@@ -1,11 +1,9 @@
 export FC="ifort"
-export FCFLAGS="-g \
- -O0 \
+export FCFLAGS="-check all \
  -traceback \
- -check bounds \
- -fp-stack-check \
- -mieee-fp \
- -fixed \
- -I/nwprod/lib/incmod/sigio_4"
-export LDFLAGS="-L/nwprod/lib"
-export LIBS="-lsigio_4"
+ -fpe0 \
+ -ftrapuv \
+ -g \
+ -openmp "
+export LDFLAGS=" "
+export LIBS=" "

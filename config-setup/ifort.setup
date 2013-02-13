@@ -1,4 +1,4 @@
 export FC="ifort"
-export FCFLAGS="-O2 -g -traceback -fixed -I/nwprod/lib/incmod/sigio_4"
-export LDFLAGS="-L/nwprod/lib"
-export LIBS="-lsigio_4"
+export FCFLAGS="-O3 -fp-model strict -ip -openmp"
+export LDFLAGS=" "
+export LIBS=" "
