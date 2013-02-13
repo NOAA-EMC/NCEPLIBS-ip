@@ -34,11 +34,18 @@ AC_SUBST(SUFFIX,[_${precision}])
 
 # Set the default type promotion compiler flags
 case $FC in
-  ifort|gfortran|pgf95)
+  ifort|pgf95)
     case ${precision} in
       4) ;;
       8) FCFLAGS="-r8 -i8 $FCFLAGS";;
       d) FCFLAGS="-r8 $FCFLAGS";;
+    esac
+    ;;
+  gfortran)
+    case ${precision} in
+      4) ;;
+      8) FCFLAGS="-fdefault-real-8 -fdefault-integer-8 $FCFLAGS";;
+      d) FCFLAGS="-fdefault-real-8 $FCFLAGS";;
     esac
     ;;
   xlf2003)
