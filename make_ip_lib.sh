@@ -1,7 +1,7 @@
 #!/bin/sh
 ###############################################################################
 #
-# $Id: make_w3emc_lib.sh 24354 2013-01-10 20:04:24Z paul.vandelst@noaa.gov $
+# $Id: make_ip_lib.sh 24354 2013-01-10 20:04:24Z paul.vandelst@noaa.gov $
 #
 # Script to iterate the configuration script over the set of precision
 # versions of the library.
@@ -59,8 +59,8 @@ for PRECISION in ${PRECISION_LIST}; do
   echo "Starting precision ${PRECISION} build"
   echo "==============================================================="
   echo
-  make clean
-  make
+  gmake clean
+  gmake
   if [ $? -ne 0 ]; then
     echo "$0: Error building precision ${PRECISION} version" >&2
     exit 1
@@ -72,14 +72,14 @@ for PRECISION in ${PRECISION_LIST}; do
   echo "Performing GNU-type install of precision ${PRECISION} build"
   echo "==============================================================="
   echo
-  make install
+  gmake install
 
   echo; echo
   echo "==============================================================="
   echo "Performing NCO-type install of precision ${PRECISION} build"
   echo "==============================================================="
   echo
-  make nco_install
+  gmake nco_install
 
   # Save the build log file.
   mv config.log config.log_${PRECISION}
