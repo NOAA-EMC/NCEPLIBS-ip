@@ -1,13 +1,4 @@
-export FC="xlf2003"
-export FCFLAGS=" \
- -qarch=auto \
- -qcheck \
- -qdbg \
- -qfixed \
- -qflttrap=ov:zero:en \
- -qinitauto \
- -qmaxmem=-1 \
- -qnosave \
- -I/nwprod/lib/incmod/sigio_4"
-export LDFLAGS="-L/nwprod/lib"
-export LIBS="-lsigio_4"
+export FC="xlf2003_r"
+export FCFLAGS="-C -g -qflttrap=overflow:zero:underflow:enable -qinitauto=7FF7FFF -qsmp=noauto -qnosave -qfixed"
+export LDFLAGS=" "
+export LIBS=" "

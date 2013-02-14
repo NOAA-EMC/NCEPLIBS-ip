@@ -48,7 +48,7 @@ case $FC in
       d) FCFLAGS="-fdefault-real-8 $FCFLAGS";;
     esac
     ;;
-  xlf2003)
+  xlf*)
     case ${precision} in
       4) ;;
       8) FCFLAGS="-qrealsize=8 -qintsize=8 $FCFLAGS";;
