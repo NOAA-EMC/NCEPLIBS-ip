@@ -1,7 +1,7 @@
 #!/bin/sh
 ###############################################################################
 #
-# $Id: make_ip_lib.sh 24354 2013-01-10 20:04:24Z paul.vandelst@noaa.gov $
+# $Id$
 #
 # Script to iterate the configuration script over the set of precision
 # versions of the library.
