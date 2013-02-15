@@ -32,6 +32,8 @@ esac
 AC_MSG_NOTICE([Building precision ${precision} version.])
 AC_SUBST(SUFFIX,[_${precision}])
 
+AC_SUBST(EXTRA_ARFLAGS,[ ])
+
 # Set the default type promotion compiler flags
 case $FC in
   ifort|pgf95)
@@ -49,6 +51,7 @@ case $FC in
     esac
     ;;
   xlf*)
+    EXTRA_ARFLAGS="-X64"
     case ${precision} in
       4) ;;
       8) FCFLAGS="-qrealsize=8 -qintsize=8 $FCFLAGS";;

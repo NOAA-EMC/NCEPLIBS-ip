@@ -604,6 +604,7 @@ PACKAGE_BUGREPORT='ncep.list.emc.nceplibs.support@noaa.gov'
 ac_unique_file="src/ipolates.f"
 ac_subst_vars='LTLIBOBJS
 LIBOBJS
+EXTRA_ARFLAGS
 SUFFIX
 FCFLAGS_f
 INSTALL_DATA
@@ -2471,6 +2472,9 @@ $as_echo "$as_me: Building precision ${precision} version." >&6;}
 SUFFIX=_${precision}
 
 
+EXTRA_ARFLAGS=
+
+
 # Set the default type promotion compiler flags
 case $FC in
   ifort|pgf95)
@@ -2488,6 +2492,7 @@ case $FC in
     esac
     ;;
   xlf*)
+    EXTRA_ARFLAGS="-X64"
     case ${precision} in
       4) ;;
       8) FCFLAGS="-qrealsize=8 -qintsize=8 $FCFLAGS";;

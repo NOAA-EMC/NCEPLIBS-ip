@@ -6,6 +6,7 @@
 package = @PACKAGE_NAME@
 version = @PACKAGE_VERSION@
 suffix  = @SUFFIX@
+EXTRA_ARFLAGS = @EXTRA_ARFLAGS@
 
 # Prefix-specific substitution variables
 prefix      = @prefix@
@@ -28,7 +29,7 @@ include make.filelist
 all: library
 
 library: $(OBJ_FILES)
-	ar -crvs lib$(package).a $(OBJ_FILES)
+	ar -crvs $(EXTRA_ARFLAGS) lib$(package).a $(OBJ_FILES)
 
 clean:
 	-rm -f *.o *.a
