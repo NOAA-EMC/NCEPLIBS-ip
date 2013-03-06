@@ -22,7 +22,7 @@ do
   esac
 
   ./configure --prefix=${PWD} --enable-promote=${PRECISION} FC=$COMPILER FCFLAGS="-openmp -FR" \
-    LDFLAGS="-L${PWD}/lib -L/nwprod/lib" \ 
+    LDFLAGS="-L${PWD}/lib -L/nwprod/lib" \
     LIBS="-lip_${whichip}_${PRECISION} -lsp_${PRECISION} -lbacio_${PRECISION2} -lw3nco_${PRECISION}"
   if [ $? -ne 0 ]; then
     echo "$0: Error configuring for ${whichip} precision ${PRECISION} version build" >&2
