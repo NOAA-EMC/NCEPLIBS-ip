@@ -5,9 +5,11 @@
 # Target specification
 all clean install:
 	cd gausslat/src && $(MAKE) $@
+	cd gcdist/src && $(MAKE) $@
 
 distclean:
 	cd gausslat/src && $(MAKE) $@
+	cd gcdist/src && $(MAKE) $@
 	-rm Makefile config*.log config.status
 
 Makefile: Makefile.in config.status

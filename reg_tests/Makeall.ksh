@@ -29,6 +29,10 @@ do
     exit 2
   fi
   gmake clean
+  if [ $? -ne 0 ]; then
+    echo "error"
+    exit 7
+  fi
   gmake
   if [ $? -ne 0 ]; then
     echo "error"
