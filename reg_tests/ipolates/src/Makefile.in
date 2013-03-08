@@ -33,7 +33,7 @@ exec: $(OBJ_FILES)
 	$(FC) $(FCFLAGS) -o ipolates.exe $(OBJ_FILES) $(LDFLAGS) $(LIBS)
 
 clean:
-	-rm -f *.o *.exe
+	-rm -f *.o *.mod *.exe
 
 distclean: clean
 	-rm Makefile
