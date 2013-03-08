@@ -39,6 +39,8 @@ AC_MSG_NOTICE([Building precision ${precision} version.])
 
 AC_SUBST(SUFFIX,[_${precision}])
 
+AC_ARG_VAR(EXTRA_FCFLAGS, Extra Fortran compiler flags)
+
 # Set the default type promotion compiler flags
 case $FC in
   ifort|pgf95)

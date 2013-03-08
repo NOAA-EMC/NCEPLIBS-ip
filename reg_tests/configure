@@ -604,6 +604,7 @@ PACKAGE_BUGREPORT='ncep.list.emc.nceplibs.support@noaa.gov'
 ac_unique_file="gausslat/src/gausslat_driver.f"
 ac_subst_vars='LTLIBOBJS
 LIBOBJS
+EXTRA_FCFLAGS
 SUFFIX
 FCFLAGS_f
 INSTALL_DATA
@@ -663,7 +664,8 @@ target_alias
 FC
 FCFLAGS
 LDFLAGS
-LIBS'
+LIBS
+EXTRA_FCFLAGS'
 
 
 # Initialize some variables set by options.
@@ -1293,6 +1295,8 @@ Some influential environment variables:
   LDFLAGS     linker flags, e.g. -L<lib dir> if you have libraries in a
               nonstandard directory <lib dir>
   LIBS        libraries to pass to the linker, e.g. -l<library>
+  EXTRA_FCFLAGS
+              Extra Fortran compiler flags
 
 Use these variables to override the choices made by `configure' or to help
 it to find libraries and programs with nonstandard names/locations.
@@ -2480,6 +2484,8 @@ esac
 $as_echo "$as_me: Building precision ${precision} version." >&6;}
 
 SUFFIX=_${precision}
+
+
 
 
 # Set the default type promotion compiler flags

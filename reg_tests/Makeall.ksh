@@ -7,14 +7,16 @@ MACHINE=$(hostname)
 
 case $MACHINE in
   g|t) COMPILER="ifort" 
-       FLAGS="-check all -traceback -fpe0 -ftrapuv -assume byterecl -g -FR -openmp" 
+       FLAGS="-check all -traceback -fpe0 -ftrapuv -assume byterecl -g -FR" 
        LFLAGS="-L${PWD}/lib -L/nwprod/lib" 
+       EXTRA_FFLAGS="-openmp"
        SP="lsp_v2.0.1" 
        W3="lw3nco_v2.0.4"
        BACIO="lbacio_v2.0.1" 
        EXTRA_LIB="" ;;
   c|s) COMPILER="xlf90_r" 
-       FLAGS="-C -g -qextchk -qsmp=omp"
+       FLAGS="-C -g -qextchk"
+       EXTRA_FFLAGS="-qsmp=omp"
        LFLAGS="-L${PWD}/lib -L/nwprod/lib" 
        SP="lsp_v2.0.0" 
        W3="lw3_v2.2.3"
@@ -37,7 +39,7 @@ do
   esac
 
   ./configure --prefix=${PWD} --enable-promote=${PRECISION} FC=${COMPILER} FCFLAGS="${FLAGS}" \
-    LDFLAGS="${LFLAGS}"  \
+    EXTRA_FCFLAGS=${EXTRA_FFLAGS}  LDFLAGS="${LFLAGS}"  \
     LIBS="-lip_${WHICHIP}_${PRECISION} -${SP}_${PRECISION} -${BACIO}_${PRECISION2} -${W3}_${PRECISION} ${EXTRA_LIB}"
   if [ $? -ne 0 ]; then
     echo "$0: Error configuring for ${WHICHIP} precision ${PRECISION} version build" >&2
