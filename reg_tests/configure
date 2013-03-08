@@ -602,6 +602,7 @@ PACKAGE_STRING='ip 2.0.1'
 PACKAGE_BUGREPORT='ncep.list.emc.nceplibs.support@noaa.gov'
 
 ac_unique_file="gausslat/src/gausslat_driver.f"
+ac_unique_file="gcdist/src/gcdist_driver.f"
 ac_subst_vars='LTLIBOBJS
 LIBOBJS
 SUFFIX
@@ -1750,8 +1751,13 @@ $as_echo "$as_me: ip 2.0.1" >&6;}
 # Check for existence of unique file before proceeding
 
 
+
 # Define the configuration files
-ac_config_files="$ac_config_files Makefile gausslat/src/Makefile gcdist/src/Makefile"
+ac_config_files="$ac_config_files Makefile"
+
+ac_config_files="$ac_config_files gausslat/src/Makefile"
+
+ac_config_files="$ac_config_files gcdist/src/Makefile"
 
 
 # Check for programs

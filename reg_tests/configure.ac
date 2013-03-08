@@ -9,9 +9,12 @@ AC_MSG_NOTICE([ip AC_PACKAGE_VERSION])
 
 # Check for existence of unique file before proceeding
 AC_CONFIG_SRCDIR([gausslat/src/gausslat_driver.f])
+AC_CONFIG_SRCDIR([gcdist/src/gcdist_driver.f])
 
 # Define the configuration files
-AC_CONFIG_FILES([Makefile gausslat/src/Makefile gcdist/src/Makefile])
+AC_CONFIG_FILES([Makefile])
+AC_CONFIG_FILES([gausslat/src/Makefile])
+AC_CONFIG_FILES([gcdist/src/Makefile])
 
 # Check for programs
 AC_PROG_FC(ifort gfortran xlf2003 pgf95)
