@@ -602,7 +602,6 @@ PACKAGE_STRING='ip 2.0.1'
 PACKAGE_BUGREPORT='ncep.list.emc.nceplibs.support@noaa.gov'
 
 ac_unique_file="gausslat/src/gausslat_driver.f"
-ac_unique_file="gcdist/src/gcdist_driver.f"
 ac_subst_vars='LTLIBOBJS
 LIBOBJS
 SUFFIX
@@ -1749,7 +1748,8 @@ ac_compiler_gnu=$ac_cv_c_compiler_gnu
 $as_echo "$as_me: ip 2.0.1" >&6;}
 
 # Check for existence of unique file before proceeding
-
+# Can only check for one file.  Not a file in each
+# subdirectory.
 
 
 # Define the configuration files
@@ -1758,6 +1758,8 @@ ac_config_files="$ac_config_files Makefile"
 ac_config_files="$ac_config_files gausslat/src/Makefile"
 
 ac_config_files="$ac_config_files gcdist/src/Makefile"
+
+ac_config_files="$ac_config_files gdswiz_wzd/src/Makefile"
 
 
 # Check for programs
@@ -3117,6 +3119,7 @@ do
     "Makefile") CONFIG_FILES="$CONFIG_FILES Makefile" ;;
     "gausslat/src/Makefile") CONFIG_FILES="$CONFIG_FILES gausslat/src/Makefile" ;;
     "gcdist/src/Makefile") CONFIG_FILES="$CONFIG_FILES gcdist/src/Makefile" ;;
+    "gdswiz_wzd/src/Makefile") CONFIG_FILES="$CONFIG_FILES gdswiz_wzd/src/Makefile" ;;
 
   *) { { $as_echo "$as_me:$LINENO: error: invalid argument: $ac_config_target" >&5
 $as_echo "$as_me: error: invalid argument: $ac_config_target" >&2;}

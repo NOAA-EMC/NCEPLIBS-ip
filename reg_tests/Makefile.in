@@ -6,10 +6,12 @@
 all clean install:
 	cd gausslat/src && $(MAKE) $@
 	cd gcdist/src && $(MAKE) $@
+	cd gdswiz_wzd/src && $(MAKE) $@
 
 distclean:
 	cd gausslat/src && $(MAKE) $@
 	cd gcdist/src && $(MAKE) $@
+	cd gdswiz_wzd/src && $(MAKE) $@
 	-rm Makefile config*.log config.status
 
 Makefile: Makefile.in config.status
