@@ -16,7 +16,6 @@ installdir  = $(prefix)/ipolates/exec
 # Compiler substitution variables
 FC = @FC@
 FCFLAGS = @FCFLAGS@ 
-EXTRA_FCFLAGS = @EXTRA_FCFLAGS@ 
 LDFLAGS = @LDFLAGS@ 
 LIBS = @LIBS@ 
 INSTALL         = @INSTALL@
