@@ -1763,6 +1763,8 @@ ac_config_files="$ac_config_files gdswiz_wzd/src/Makefile"
 
 ac_config_files="$ac_config_files ipolates/src/Makefile"
 
+ac_config_files="$ac_config_files ipolatev/src/Makefile"
+
 
 # Check for programs
 ac_ext=${ac_fc_srcext-f}
@@ -3123,6 +3125,7 @@ do
     "gcdist/src/Makefile") CONFIG_FILES="$CONFIG_FILES gcdist/src/Makefile" ;;
     "gdswiz_wzd/src/Makefile") CONFIG_FILES="$CONFIG_FILES gdswiz_wzd/src/Makefile" ;;
     "ipolates/src/Makefile") CONFIG_FILES="$CONFIG_FILES ipolates/src/Makefile" ;;
+    "ipolatev/src/Makefile") CONFIG_FILES="$CONFIG_FILES ipolatev/src/Makefile" ;;
 
   *) { { $as_echo "$as_me:$LINENO: error: invalid argument: $ac_config_target" >&5
 $as_echo "$as_me: error: invalid argument: $ac_config_target" >&2;}

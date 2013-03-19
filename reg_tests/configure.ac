@@ -18,6 +18,7 @@ AC_CONFIG_FILES([gausslat/src/Makefile])
 AC_CONFIG_FILES([gcdist/src/Makefile])
 AC_CONFIG_FILES([gdswiz_wzd/src/Makefile])
 AC_CONFIG_FILES([ipolates/src/Makefile])
+AC_CONFIG_FILES([ipolatev/src/Makefile])
 
 # Check for programs
 AC_PROG_FC(ifort gfortran xlf2003 pgf95)
