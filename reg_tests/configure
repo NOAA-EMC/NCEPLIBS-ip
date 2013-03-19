@@ -1761,6 +1761,8 @@ ac_config_files="$ac_config_files gcdist/src/Makefile"
 
 ac_config_files="$ac_config_files gdswiz_wzd/src/Makefile"
 
+ac_config_files="$ac_config_files makgds/src/Makefile"
+
 ac_config_files="$ac_config_files ipolates/src/Makefile"
 
 ac_config_files="$ac_config_files ipolatev/src/Makefile"
@@ -3124,6 +3126,7 @@ do
     "gausslat/src/Makefile") CONFIG_FILES="$CONFIG_FILES gausslat/src/Makefile" ;;
     "gcdist/src/Makefile") CONFIG_FILES="$CONFIG_FILES gcdist/src/Makefile" ;;
     "gdswiz_wzd/src/Makefile") CONFIG_FILES="$CONFIG_FILES gdswiz_wzd/src/Makefile" ;;
+    "makgds/src/Makefile") CONFIG_FILES="$CONFIG_FILES makgds/src/Makefile" ;;
     "ipolates/src/Makefile") CONFIG_FILES="$CONFIG_FILES ipolates/src/Makefile" ;;
     "ipolatev/src/Makefile") CONFIG_FILES="$CONFIG_FILES ipolatev/src/Makefile" ;;
 
