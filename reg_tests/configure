@@ -1767,6 +1767,8 @@ ac_config_files="$ac_config_files makgds/src/Makefile"
 
 ac_config_files="$ac_config_files ipxetas/src/Makefile"
 
+ac_config_files="$ac_config_files ipsector/src/Makefile"
+
 ac_config_files="$ac_config_files ipolates/src/Makefile"
 
 ac_config_files="$ac_config_files ipolatev/src/Makefile"
@@ -3133,6 +3135,7 @@ do
     "ipmerge2/src/Makefile") CONFIG_FILES="$CONFIG_FILES ipmerge2/src/Makefile" ;;
     "makgds/src/Makefile") CONFIG_FILES="$CONFIG_FILES makgds/src/Makefile" ;;
     "ipxetas/src/Makefile") CONFIG_FILES="$CONFIG_FILES ipxetas/src/Makefile" ;;
+    "ipsector/src/Makefile") CONFIG_FILES="$CONFIG_FILES ipsector/src/Makefile" ;;
     "ipolates/src/Makefile") CONFIG_FILES="$CONFIG_FILES ipolates/src/Makefile" ;;
     "ipolatev/src/Makefile") CONFIG_FILES="$CONFIG_FILES ipolatev/src/Makefile" ;;
 

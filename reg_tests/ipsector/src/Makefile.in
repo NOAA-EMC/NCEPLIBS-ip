@@ -1,0 +1,56 @@
+# @configure_input@
+
+# src/ level makefile template
+
+# Package-specific substitution variables
+package = @PACKAGE_NAME@
+version = @PACKAGE_VERSION@
+suffix  = @SUFFIX@
+
+# Prefix-specific substitution variables
+prefix      = @prefix@
+
+# Mixed package and prefix substitution variables
+installdir  = $(prefix)/ipsector/exec
+
+# Compiler substitution variables
+FC = @FC@
+FCFLAGS = @FCFLAGS@ 
+LDFLAGS = @LDFLAGS@ 
+LIBS = @LIBS@ 
+INSTALL         = @INSTALL@
+INSTALL_DATA    = @INSTALL_DATA@
+INSTALL_PROGRAM = @INSTALL_PROGRAM@
+INSTALL_SCRIPT  = @INSTALL_SCRIPT@
+
+# The file definitions. This include must occur before targets.
+include make.filelist
+
+# The targets
+all: exec
+
+exec: $(OBJ_FILES)
+	$(FC) $(FCFLAGS) -o ipsector.exe $(OBJ_FILES) $(LDFLAGS) $(LIBS)
+
+clean:
+	-rm -f *.o *.exe
+
+distclean: clean
+	-rm Makefile
+
+install:
+	$(INSTALL) -d $(DESTDIR)$(installdir)
+	$(INSTALL_PROGRAM) ipsector.exe $(DESTDIR)$(installdir)/ipsector$(suffix).exe
+
+Makefile: Makefile.in ../../config.status
+	cd ../.. && ./config.status ipsector/src/$@
+
+../../config.status: ../../configure
+	cd ../.. && ./config.status --recheck
+
+# Specify targets that do not generate filesystem objects
+.PHONY: all clean distclean install
+
+# File dependency and suffix rule include files
+include make.dependencies
+include make.rules
