@@ -8,6 +8,7 @@ all clean install:
 	cd gcdist/src && $(MAKE) $@
 	cd gdswiz_wzd/src && $(MAKE) $@
 	cd ipxetas/src && $(MAKE) $@
+	cd ipmerge2/src && $(MAKE) $@
 	cd makgds/src && $(MAKE) $@
 	cd ipolates/src && $(MAKE) $@ EXTRA_FCFLAGS=$(OMP_FLAGS)
 	cd ipolatev/src && $(MAKE) $@ EXTRA_FCFLAGS=$(OMP_FLAGS)
@@ -17,6 +18,7 @@ distclean:
 	cd gcdist/src && $(MAKE) $@
 	cd gdswiz_wzd/src && $(MAKE) $@
 	cd ipxetas/src && $(MAKE) $@
+	cd ipmerge2/src && $(MAKE) $@
 	cd makgds/src && $(MAKE) $@
 	cd ipolates/src && $(MAKE) $@
 	cd ipolatev/src && $(MAKE) $@
