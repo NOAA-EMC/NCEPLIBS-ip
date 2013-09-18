@@ -1,25 +1,37 @@
 ## Put version control id tag in output configure script
 AC_REVISION($Id$)
 
+
 ## Initialise autoconf
-AC_INIT([ip], [2.0.1], [ncep.list.emc.nceplibs.support@noaa.gov])
+AC_INIT([nceplibs ip], [v2.0.1], [ncep.list.emc.nceplibs.support@noaa.gov], [ip])
+
 
 # Output info for user
-AC_MSG_NOTICE([ip AC_PACKAGE_VERSION])
+AC_MSG_NOTICE([AC_PACKAGE_NAME AC_PACKAGE_VERSION])
+
 
 # Check for existence of unique file before proceeding
 AC_CONFIG_SRCDIR([src/ipolates.f])
 
+
 # Define the configuration files
 AC_CONFIG_FILES([Makefile src/Makefile])
+
 
 # Check for programs
 AC_PROG_FC(ifort gfortran xlf2003 pgf95)
 AC_PROG_INSTALL
+AC_PROG_RANLIB
+AC_CHECK_TOOL([AR], ar)
+# ...Set defaults for ARFLAGS since there is no autoconf macro
+test -n "$ARFLAGS" || ARFLAGS="crvs"
+AC_SUBST(ARFLAGS)
+
 
 # Set the programming language
 AC_LANG(Fortran)
 AC_FC_SRCEXT(f)
+
 
 # Establish the default type promotion for naming
 AC_ARG_ENABLE([promote],
@@ -30,11 +42,10 @@ case ${promote} in
   *) precision=4;;
 esac
 AC_MSG_NOTICE([Building precision ${precision} version.])
-AC_SUBST(SUFFIX,[_${precision}])
+AC_SUBST(PRECISION,[${precision}])
 
-AC_SUBST(EXTRA_ARFLAGS,[ ])
 
-# Set the default type promotion compiler flags
+# Set platform/compiler specific flags
 case $FC in
   ifort|pgf95)
     case ${precision} in
@@ -51,7 +62,7 @@ case $FC in
     esac
     ;;
   xlf*)
-    EXTRA_ARFLAGS="-X64"
+    ARFLAGS="-X64 $ARFLAGS"
     case ${precision} in
       4) ;;
       8) FCFLAGS="-qrealsize=8 -qintsize=8 $FCFLAGS";;

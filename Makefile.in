@@ -6,7 +6,7 @@
 all clean check install nco_install uninstall:
 	cd src && $(MAKE) $@
 
-distclean:
+distclean: clean
 	cd src && $(MAKE) $@
 	-rm Makefile config.log* config.status
 
@@ -16,4 +16,5 @@ Makefile: Makefile.in config.status
 config.status: configure
 	./config.status --recheck
 
+# Specify targets that do not generate filesystem objects
 .PHONY: all clean distclean check install nco-install uninstall
