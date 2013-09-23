@@ -1,9 +1,4 @@
 export FC="gfortran"
-export FCFLAGS=" \
- -O3 \
- -ffixed-form \
- -funroll-loops \
- -ggdb \
- -Wall "
+export FCFLAGS=" -O3"
 export LDFLAGS=" "
 export LIBS=" "
