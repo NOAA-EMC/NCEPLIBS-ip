@@ -23,7 +23,7 @@ module load intel
 
 export REG_DIR=$PBS_O_WORKDIR/../../
 
-export WORK_DIR=/stmp/$LOGNAME/regression
+export WORK_DIR=/scratch2/portfolios/NCEPDEV/stmp/$LOGNAME/regression
 mkdir -p $WORK_DIR
 
 $PBS_O_WORKDIR/runall.ksh 1

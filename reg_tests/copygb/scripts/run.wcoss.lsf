@@ -7,20 +7,23 @@
 
 #BSUB -oo copygb.log
 #BSUB -eo copygb.log
-#BSUB -q "dev"
-#BSUB -J "copygb"
-#BSUB -W 1:30
+#BSUB -q dev_shared
+#BSUB -J copygb
+#BSUB -R affinity[core]
+#BSUB -R rusage[mem=2500]
+#BSUB -P GFS-MTN
+#BSUB -W 3:00
 
 set -x
 
 . /usrx/local/Modules/3.2.9/init/ksh
 module load ics/12.1
-module load lsf/8.3
+module load lsf/9.1
 
 export REG_DIR="../.."
 
 export WORK_DIR="/ptmp/$LOGNAME/regression"
 
-$REG_DIR/copygb/scripts/runall.ksh
+$REG_DIR/copygb/scripts/copygb.ksh
 
 exit 0

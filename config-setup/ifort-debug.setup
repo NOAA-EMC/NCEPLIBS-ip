@@ -1,0 +1,9 @@
+export FC="ifort"
+export FCFLAGS="-check all \
+ -traceback \
+ -fpe0 \
+ -ftrapuv \
+ -g \
+ -openmp "
+export LDFLAGS=" "
+export LIBS=" "
