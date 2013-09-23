@@ -25,6 +25,6 @@ module load intel
 
 ulimit -s 2048000
 
-$REG_DIR/copygb/scripts/runall.ksh
+$REG_DIR/copygb/scripts/copygb.ksh
 
 exit 0

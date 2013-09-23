@@ -53,7 +53,7 @@ promotion compiler switches.
 Some additional points:
 - The "NCO-type" install is performed by default.
 - The libraries are installed relative to the current directory. After
-  running the script you should see two new directories containing the 
+  running the script you should see three new directories containing the 
   single (4), double (8), and mixed (d) precision libraries.
 - See section B.4 below for information about the installation directory
   structure
