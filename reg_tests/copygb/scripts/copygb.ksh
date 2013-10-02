@@ -41,6 +41,8 @@ mkdir -p $WORK_CTL
 WORK_TEST=${WORK}/test
 mkdir -p $WORK_TEST
 
+NWPROD=${NWPROD:-/nwprod/fix}
+
 cp $EXEC_DIR/ctl/copygb_ctl_* $WORK_CTL
 cp $EXEC_DIR/test/copygb_test_* $WORK_TEST
 
@@ -61,9 +63,9 @@ do
 # up, use a lower-res input data.
 
     if [[ $option == "4 0 -1" ]];then
-      input="/nwprod/fix/global_snoalb.1x1.grb"
+      input="$NWPROD/global_snoalb.1x1.grb"
     else
-      input="/nwprod/fix/global_shdmax.0.144x0.144.grb"
+      input="$NWPROD/global_shdmax.0.144x0.144.grb"
     fi
 
    # ncep standard grid, see ncep grib 1 doc for details

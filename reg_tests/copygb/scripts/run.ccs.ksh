@@ -25,6 +25,6 @@ export REG_DIR=$(pwd)/../..
 export WORK_DIR=/ptmp/$LOGNAME/regression
 mkdir -p $WORK_DIR
 
-$REG_DIR/copygb/scripts/runall.ksh 
+$REG_DIR/copygb/scripts/copygb.ksh 
 
 exit 0

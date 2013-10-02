@@ -61,16 +61,15 @@ gdsawt and ijkgds, which I think are obsolete.
     routines as other regression tests, it is not currently called
     from the regression driver scripts.  However, it may be run stand-alone.
 
-In OPS, there are three versions of IPLIB:
+There are three versions of IPLIB:
 
   1) 4 byte integer/4 byte float (libip_4.a)
   2) 4 byte integer/8 byte float (libip_d.a)
   3) 8 byte integer/8 byte float (libip_8.a)
 
-Each regression test is compiled with all versions of a 'control' and
+Each regression test is compiled with all three versions of a 'control' and
 'test' iplib (for a total of six executables).  The 'control' and 'test'
-library versions are determined by the user in the "Makeall.ksh" script 
-described below.
+library versions are determined by the user.
 
 Within each regression directory, the ./src subdirectory will contain the
 source code required for the regression test.  Scripts to compile and run 
@@ -81,23 +80,29 @@ stored in the ./grads subdirectory.  More detailed information about
 each regression test is described in a README file and in the comment
 sections of the scripts.
 
-The entire suite of tests is compiled on zeus or ccs with the "Makeall.ksh"
-script. You must modify this script to link the 'control' and 'test'
-ip libraries to the ./lib subdirectory, or copy them manually.  The naming
-convention is:  libip_ctl_4.a, libip_ctl_8.a, libip_ctl_d.a, libip_test_4.a,
-libip_test_8.a, and libip_test_d.a.  See the script comments for more
-details before compiling.  The executables for the control/test libraries will
-be in the ./exec/ctl and ./exec/test subdirectories.  To compile just a
-single regression test, invoke the "makeall.ksh" script located in that
-particular test's ./scripts subdirectory (only after you copy or link the
-libraries to the ./lib subdirectory).
+The entire suite of tests is compiled on wcoss, zeus or ccs with the 
+"Makeall.ksh" script. Before invoking the script, you must link the 'control'
+and 'test' libraries to the ./lib subdirectory, or copy them manually.  The naming
+convention is: 
+
+libip_ctl_4.a  (4 byte integer/4 byte float, control)
+libip_ctl_8.a  (8 byte integer/8 byte float, control)
+libip_ctl_d.a  (4 byte integer/8 byte float, control)
+libip_test_4.a (4 byte integer/4 byte float, test)
+libip_test_8.a (8 byte integer/8 byte float, test)
+libip_test_d.a (4 byte integer/8 byte float, test)
+
+See the script comments for more details before compiling.
+
+The executables for the control/test libraries will
+be in the ./exec/ctl and ./exec/test subdirectories.  
 
 After compilation, run the entire suite of tests on the ccs by
-typing "llsubmit Runall.ccs.ksh".  On zeus, type "Runall.zeus.ksh"
-Results are stored in "regression.log" in $WORK_DIR.  A summary of
-results is stored in "summary.log" in $WORK_DIR.  See the script
-comments for more details.  To run an individual regression test, 
-invoke the runall.ksh script located in the ./scripts subdirectory.
+typing "llsubmit Runall.ccs.ksh".  On zeus, type "Runall.zeus.ksh".
+On wcoss, type "Ruanll.wcoss.ksh".  Results are stored in 
+"regression.log" in $WORK_DIR.  A summary of results is 
+stored in "summary.log" in $WORK_DIR.  See the script
+comments for more details. 
 
 Below is a table of each routine in iplib and which regression test(s) invoke it.
 
