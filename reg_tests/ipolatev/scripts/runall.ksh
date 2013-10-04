@@ -79,11 +79,11 @@ rm -fr $WORK
 mkdir -p $WORK
 WORK_CTL=${WORK}/ctl
 mkdir -p $WORK_CTL
-cp $EXEC_DIR/ctl/*.exe $WORK_CTL
+cp $EXEC_DIR/ipolatev_ctl_*.exe  $WORK_CTL
 cp $INPUT_DATA  $WORK_CTL/fort.9
 WORK_TEST=${WORK}/test
 mkdir -p $WORK_TEST
-cp $EXEC_DIR/test/*.exe $WORK_TEST
+cp $EXEC_DIR/ipolatev_test_*.exe $WORK_TEST
 cp $INPUT_DATA  $WORK_TEST/fort.9
 
 ulimit -s 2048000

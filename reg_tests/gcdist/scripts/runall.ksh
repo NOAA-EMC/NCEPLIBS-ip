@@ -32,10 +32,10 @@ rm -fr $WORK
 mkdir -p $WORK
 WORK_CTL=${WORK}/ctl
 mkdir -p $WORK_CTL
-cp $EXEC_DIR/ctl/*exe $WORK_CTL
+cp $EXEC_DIR/gcdist_ctl_*.exe  $WORK_CTL
 WORK_TEST=${WORK}/test
 mkdir -p $WORK_TEST
-cp $EXEC_DIR/test/*exe $WORK_TEST
+cp $EXEC_DIR/gcdist_test_*.exe $WORK_TEST
 
 reg_test_failed=0
 

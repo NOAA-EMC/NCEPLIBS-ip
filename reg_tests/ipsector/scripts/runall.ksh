@@ -65,10 +65,10 @@ rm -fr $WORK
 mkdir -p $WORK
 WORK_CTL=${WORK}/ctl
 mkdir -p $WORK_CTL
-cp $EXEC_DIR/ctl/*exe $WORK_CTL
+cp $EXEC_DIR/ipsector_ctl_*.exe  $WORK_CTL
 WORK_TEST=${WORK}/test
 mkdir -p $WORK_TEST
-cp $EXEC_DIR/test/*exe $WORK_TEST
+cp $EXEC_DIR/ipsector_test_*.exe $WORK_TEST
 
 INPUT_DATA=$REG_DIR/ipsector/data/global_tg3clim.1x1.scan.0.grb
 cp $INPUT_DATA $WORK_CTL
