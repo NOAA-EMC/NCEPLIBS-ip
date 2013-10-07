@@ -10,7 +10,7 @@ case $MACHINE in
   g|t) COMPILER="ifort" 
        FLAGS="-check all -traceback -fpe0 -ftrapuv -assume byterecl -g" 
        export OMP_FLAGS="-openmp"
-       LFLAGS="-L${PWD}/lib -L/nwprod/lib" 
+       export LFLAGS="-L${PWD}/lib -L/nwprod/lib" 
        SP="lsp_v2.0.1" 
        W3="lw3nco_v2.0.4"
        BACIO="lbacio_v2.0.1" 

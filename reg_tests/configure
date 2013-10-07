@@ -1755,6 +1755,8 @@ $as_echo "$as_me: ip 2.0.1" >&6;}
 # Define the configuration files
 ac_config_files="$ac_config_files Makefile"
 
+ac_config_files="$ac_config_files ipxwafs/src/Makefile"
+
 ac_config_files="$ac_config_files gausslat/src/Makefile"
 
 ac_config_files="$ac_config_files gcdist/src/Makefile"
@@ -3129,6 +3131,7 @@ for ac_config_target in $ac_config_targets
 do
   case $ac_config_target in
     "Makefile") CONFIG_FILES="$CONFIG_FILES Makefile" ;;
+    "ipxwafs/src/Makefile") CONFIG_FILES="$CONFIG_FILES ipxwafs/src/Makefile" ;;
     "gausslat/src/Makefile") CONFIG_FILES="$CONFIG_FILES gausslat/src/Makefile" ;;
     "gcdist/src/Makefile") CONFIG_FILES="$CONFIG_FILES gcdist/src/Makefile" ;;
     "gdswiz_wzd/src/Makefile") CONFIG_FILES="$CONFIG_FILES gdswiz_wzd/src/Makefile" ;;

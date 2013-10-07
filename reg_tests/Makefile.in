@@ -4,6 +4,7 @@
 
 # Target specification
 all clean install:
+	cd ipxwafs/src && $(MAKE) $@ LDFLAGS="$(OMP_FLAGS) $(LFLAGS)"
 	cd gausslat/src && $(MAKE) $@
 	cd gcdist/src && $(MAKE) $@
 	cd gdswiz_wzd/src && $(MAKE) $@
@@ -15,6 +16,7 @@ all clean install:
 	cd ipolatev/src && $(MAKE) $@ EXTRA_FCFLAGS=$(OMP_FLAGS)
 
 distclean:
+	cd ipxwafs/src && $(MAKE) $@
 	cd gausslat/src && $(MAKE) $@
 	cd gcdist/src && $(MAKE) $@
 	cd gdswiz_wzd/src && $(MAKE) $@
