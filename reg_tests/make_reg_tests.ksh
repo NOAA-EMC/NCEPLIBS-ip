@@ -8,9 +8,10 @@ MACHINE=$(hostname)
 case $MACHINE in
 # wcoss
   g|t) COMPILER="ifort" 
-       FLAGS="-check all -traceback -fpe0 -ftrapuv -assume byterecl -g" 
-       export OMP_FLAGS="-openmp"
-       export LFLAGS="-L${PWD}/lib -L/nwprod/lib" 
+       COMPILER_FLAGS="-check all -traceback -fpe0 -ftrapuv -assume byterecl -g" 
+       export COMPILER_FLAGS_XTRA="-openmp"
+       export LD_FLAGS="-L${PWD}/lib -L/nwprod/lib" 
+       export LD_FLAGS_XTRA="-openmp"
        SP="lsp_v2.0.1" 
        W3="lw3nco_v2.0.4"
        BACIO="lbacio_v2.0.1" 
@@ -51,8 +52,8 @@ for WHICHIP in ctl test; do
       *) PRECISION2=$PRECISION ;;
     esac
 
-    ./configure --prefix=${PWD} --enable-promote=${PRECISION} FC=${COMPILER} FCFLAGS="${FLAGS}" \
-      LDFLAGS="${LFLAGS}"  \
+    ./configure --prefix=${PWD} --enable-promote=${PRECISION} FC=${COMPILER} FCFLAGS="${COMPILER_FLAGS}" \
+      LDFLAGS="${LD_FLAGS}"  \
       LIBS="-lip_${WHICHIP}_${PRECISION} -${SP}_${PRECISION} -${BACIO}_${PRECISION2} -${W3}_${PRECISION} ${EXTRA_LIB}"
     if [ $? -ne 0 ]; then
       set +x
