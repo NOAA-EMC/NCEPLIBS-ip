@@ -601,7 +601,7 @@ PACKAGE_VERSION='2.0.1'
 PACKAGE_STRING='ip 2.0.1'
 PACKAGE_BUGREPORT='ncep.list.emc.nceplibs.support@noaa.gov'
 
-ac_unique_file="gausslat/src/gausslat_driver.f"
+ac_unique_file="gausslat/src/gausslat_driver.f90"
 ac_subst_vars='LTLIBOBJS
 LIBOBJS
 SUFFIX

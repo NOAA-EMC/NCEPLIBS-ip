@@ -1,1 +1,1 @@
- ipxetas_driver.o : ipxetas_driver.f 
+ ipxetas_driver.o : ipxetas_driver.f90

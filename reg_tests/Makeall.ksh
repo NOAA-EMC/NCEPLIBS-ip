@@ -8,7 +8,7 @@ MACHINE=$(hostname)
 case $MACHINE in
 # wcoss
   g|t) COMPILER="ifort" 
-       FLAGS="-check all -traceback -fpe0 -ftrapuv -assume byterecl -g -FR" 
+       FLAGS="-check all -traceback -fpe0 -ftrapuv -assume byterecl -g" 
        export OMP_FLAGS="-openmp"
        LFLAGS="-L${PWD}/lib -L/nwprod/lib" 
        SP="lsp_v2.0.1" 

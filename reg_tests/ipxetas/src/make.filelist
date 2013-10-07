@@ -2,12 +2,12 @@
 FPP_FILES =
 
 # The list of regular source files
-FSRC_FILES = ipxetas_driver.f
+FSRC_FILES = ipxetas_driver.f90
 
 # The complete list of source files
 SRC_FILES = $(FSRC_FILES) \
             $(FPP_FILES)
 
 # The list of object files
-OBJ_FILES = ${FSRC_FILES:.f=.o} \
-            ${FPP_FILES:.F=.o}
+OBJ_FILES = ${FSRC_FILES:.f90=.o} \
+            ${FPP_FILES:.F90=.o}

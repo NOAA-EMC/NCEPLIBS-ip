@@ -10,7 +10,7 @@ AC_MSG_NOTICE([ip AC_PACKAGE_VERSION])
 # Check for existence of unique file before proceeding
 # Can only check for one file.  Not a file in each
 # subdirectory.
-AC_CONFIG_SRCDIR([gausslat/src/gausslat_driver.f])
+AC_CONFIG_SRCDIR([gausslat/src/gausslat_driver.f90])
 
 # Define the configuration files
 AC_CONFIG_FILES([Makefile])

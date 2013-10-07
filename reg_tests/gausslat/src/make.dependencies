@@ -1,1 +1,1 @@
- gausslat_driver.o : gausslat_driver.f 
+ gausslat_driver.o : gausslat_driver.f90

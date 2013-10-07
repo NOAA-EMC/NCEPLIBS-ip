@@ -1,1 +1,1 @@
- ipsector_driver.o : ipsector_driver.f 
+ ipsector_driver.o : ipsector_driver.f90
