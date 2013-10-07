@@ -30,8 +30,8 @@ WORK_DIR=${WORK_DIR:-/stmp/$LOGNAME/regression}
 
 REG_DIR=${REG_DIR:-../..}
 
-TEST_EXEC_DIR=$REG_DIR/ipxwafs/exec/test
-CTL_EXEC_DIR=$REG_DIR/ipxwafs/exec/ctl
+TEST_EXEC_DIR=$REG_DIR/ipxwafs/exec
+CTL_EXEC_DIR=$REG_DIR/ipxwafs/exec
 
 DATA_DIR=$REG_DIR/ipxwafs2_3/data
 

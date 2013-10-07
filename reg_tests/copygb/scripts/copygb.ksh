@@ -43,8 +43,8 @@ mkdir -p $WORK_TEST
 
 NWPROD=${NWPROD:-/nwprod/fix}
 
-cp $EXEC_DIR/ctl/copygb_ctl_* $WORK_CTL
-cp $EXEC_DIR/test/copygb_test_* $WORK_TEST
+cp $EXEC_DIR/copygb_ctl_* $WORK_CTL
+cp $EXEC_DIR/copygb_test_* $WORK_TEST
 
 output_ctl=$WORK_CTL/ctl.grb
 output_test=$WORK_TEST/test.grb
