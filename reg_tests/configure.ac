@@ -15,6 +15,7 @@ AC_CONFIG_SRCDIR([gausslat/src/gausslat_driver.f90])
 # Define the configuration files
 AC_CONFIG_FILES([Makefile])
 AC_CONFIG_FILES([ipxwafs/src/Makefile])
+AC_CONFIG_FILES([copygb/src/Makefile])
 AC_CONFIG_FILES([gausslat/src/Makefile])
 AC_CONFIG_FILES([gcdist/src/Makefile])
 AC_CONFIG_FILES([gdswiz_wzd/src/Makefile])

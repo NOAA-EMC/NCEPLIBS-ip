@@ -1757,6 +1757,8 @@ ac_config_files="$ac_config_files Makefile"
 
 ac_config_files="$ac_config_files ipxwafs/src/Makefile"
 
+ac_config_files="$ac_config_files copygb/src/Makefile"
+
 ac_config_files="$ac_config_files gausslat/src/Makefile"
 
 ac_config_files="$ac_config_files gcdist/src/Makefile"
@@ -3132,6 +3134,7 @@ do
   case $ac_config_target in
     "Makefile") CONFIG_FILES="$CONFIG_FILES Makefile" ;;
     "ipxwafs/src/Makefile") CONFIG_FILES="$CONFIG_FILES ipxwafs/src/Makefile" ;;
+    "copygb/src/Makefile") CONFIG_FILES="$CONFIG_FILES copygb/src/Makefile" ;;
     "gausslat/src/Makefile") CONFIG_FILES="$CONFIG_FILES gausslat/src/Makefile" ;;
     "gcdist/src/Makefile") CONFIG_FILES="$CONFIG_FILES gcdist/src/Makefile" ;;
     "gdswiz_wzd/src/Makefile") CONFIG_FILES="$CONFIG_FILES gdswiz_wzd/src/Makefile" ;;
