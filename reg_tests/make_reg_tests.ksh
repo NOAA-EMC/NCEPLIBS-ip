@@ -64,7 +64,6 @@ for WHICHIP in ctl test; do
     ./configure --prefix=${PWD} --enable-promote=${PRECISION} FC=${COMPILER} FCFLAGS="${COMPILER_FLAGS}" \
       LDFLAGS="${LD_FLAGS}"  \
       LIBS="-lip_${WHICHIP}_${PRECISION} -${SP}_${PRECISION} -${BACIO}_${PRECISION2} -${W3}_${PRECISION}"
-    ddd
     if [ $? -ne 0 ]; then
       set +x
       echo "$0: Error configuring for ${PRECISION}-byte ${WHICHIP} version build." >&2
