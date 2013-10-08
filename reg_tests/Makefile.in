@@ -2,6 +2,8 @@
 
 # Top level makefile template
 
+MAKE="gmake"
+
 # Target specification
 all:
 	cd copygb/src && $(MAKE) $@ LDFLAGS="$(LD_FLAGS_XTRA) $(LD_FLAGS)"

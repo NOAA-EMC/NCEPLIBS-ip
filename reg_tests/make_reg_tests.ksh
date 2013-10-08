@@ -14,8 +14,7 @@ case $MACHINE in
        export LD_FLAGS_XTRA="-openmp"
        SP="lsp_v2.0.1" 
        W3="lw3nco_v2.0.4"
-       BACIO="lbacio_v2.0.1" 
-       EXTRA_LIB="" ;;
+       BACIO="lbacio_v2.0.1" ;;
 # zeus
   f)   COMPILER="ifort" 
        FLAGS="-check all -traceback -fpe0 -ftrapuv -assume byterecl -g -FR" 
@@ -23,17 +22,7 @@ case $MACHINE in
        LFLAGS="-L${PWD}/lib -L/contrib/nceplibs/nwprod/lib" 
        SP="lsp_v2.0.1" 
        W3="lw3nco_v2.0.6"
-       BACIO="lbacio_v2.0.1" 
-       EXTRA_LIB="" ;;
-# ccs
-  c|s) COMPILER="xlf90_r" 
-       FLAGS="-C -g -qextchk"
-       export OMP_FLAGS="-qsmp=omp"
-       LFLAGS="-L${PWD}/lib -L/nwprod/lib" 
-       SP="lsp_v2.0.0" 
-       W3="lw3_v2.2.3"
-       BACIO="lbacio_v1.4.0"
-       EXTRA_LIB="-lessl" ;;
+       BACIO="lbacio_v2.0.1"  ;;
 # unknown machine
     *) set +x
        echo "$0: Error: Unknown Machine - Exiting" >&2
@@ -54,7 +43,7 @@ for WHICHIP in ctl test; do
 
     ./configure --prefix=${PWD} --enable-promote=${PRECISION} FC=${COMPILER} FCFLAGS="${COMPILER_FLAGS}" \
       LDFLAGS="${LD_FLAGS}"  \
-      LIBS="-lip_${WHICHIP}_${PRECISION} -${SP}_${PRECISION} -${BACIO}_${PRECISION2} -${W3}_${PRECISION} ${EXTRA_LIB}"
+      LIBS="-lip_${WHICHIP}_${PRECISION} -${SP}_${PRECISION} -${BACIO}_${PRECISION2} -${W3}_${PRECISION}"
     if [ $? -ne 0 ]; then
       set +x
       echo "$0: Error configuring for ${WHICHIP} precision ${PRECISION} version build" >&2
