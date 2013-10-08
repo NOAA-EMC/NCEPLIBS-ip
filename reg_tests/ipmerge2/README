@@ -1,11 +1,13 @@
 Test iplib routine ipmerge2, which merges two bitmapped fields
 into one.  I am not sure this routine is even used anymore.
 
-The fortran source code is located in the ./src subdirectory.
+The Fortran source code and make-related files are 
+located in the ./src subdirectory.
 
-The program is compiled by invoking the makeall.ksh script
-located in the ./scripts subdirectory.  See the script
-comments for more information.
+The program is compiled by invoking the make_reg_tests.ksh script
+located in the ./reg_tests directory.  See the script
+comments for more information.  The program executables
+are stored in the ./exec subdirectory.
 
 The regression test may be run 'stand-alone' by invoking
 the runall.ksh script in the ./scripts subdirectory.

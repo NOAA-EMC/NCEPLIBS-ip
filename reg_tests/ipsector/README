@@ -26,11 +26,13 @@ modes.  So there are two input files of global substrate
 temperature - one for scan mode '0' and one for scan mode '32'.
 Both datasets are located in the ./data subdirectory.
 
-The fortran source code is located in the ./src subdirectory.
+The Fortran source code and make-related files are located 
+in the ./src subdirectory.
 
-The program is compiled by invoking the makeall.ksh script
-located in the ./scripts subdirectory.  See the script
-comments for more information.
+The program is compiled by invoking the make_reg_tests.ksh script
+located in the ./reg_tests directory.  See the script
+comments for more information.  Program executables are stored
+in the ./exec subdirectory.
 
 The regression test may be run 'stand-alone' by invoking
 the runall.ksh script in the ./scripts subdirectory.

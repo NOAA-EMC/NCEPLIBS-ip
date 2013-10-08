@@ -8,11 +8,13 @@ ncep grib documentation.
  
 The input data is: /nwprod/fix/global_shdmax.0.144x0.144.grb
 
-The fortran source code is located in the ./src subdirectory.
+The Fortran source code and make-related files are 
+located in the ./src subdirectory.
 
-The program is compiled by invoking the makeall.ksh script
-located in the ./scripts subdirectory.  See the script
-comments for more information before compiling.
+The program is compiled by invoking the make_reg_test.ksh script
+located in the ./reg_tests directory.  See the script
+comments for more information before compiling.  The executables
+are stored in the ./exec subdirectory.
 
 The regression test is run 'stand-alone' by invoking
 the proper driver script in the ./scripts subdirectory as follows:
@@ -21,9 +23,11 @@ the proper driver script in the ./scripts subdirectory as follows:
 "bsub < run_wcoss.ksh" (wcoss machine)
 "qsub run_zeus.ksh" (zeus machine)
 
-This is considered a 'supplemental' regression test and it not
+These driver scripts call the copygb.ksh script.
+
+This is considered a 'supplemental' regression test and it is not
 run as part of the full suite of tests from the "Runall"
-driver script.
+driver in the ./reg_tests directory.
 
 Note, the copygb executable in this directory is used as part of
 the ipxwafs2_3 regression test.

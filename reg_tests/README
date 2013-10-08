@@ -3,63 +3,64 @@ a subset of IPLIB.  It was too difficult to create a single test
 that exercised every routine.  No tests were created for routines
 gdsawt and ijkgds, which I think are obsolete.
 
-1)  gausslat - a fortran program that calls routine gausslat 
+1)  gausslat - A fortran program that calls routine gausslat 
     to calculate the gaussian latitudes for a t382 grid.
-2)  gcdist - a fortran program that calls function gcdist and 
+2)  gcdist - A fortran program that calls function gcdist and 
     subroutine movect to calculate the distance of three great
     circle routes (and their corresponding rotation parameters).
-3)  gdswiz_wzd - a fortran program that calls gdswiz and gdswzd
+3)  gdswiz_wzd - A fortran program that calls gdswiz and gdswzd
     (and all of their child routines) to calculate lat/lon and
     other map-related fields for several grids of
     of various map projections.
-4)  ipmerge2 - a fortran program that calls routine
+4)  ipmerge2 - A fortran program that calls routine
     ipmerge2, which merges two bitmapped fields into one.  
-5)  ipolates - a fortran program that interpolates a global
+5)  ipolates - A fortran program that interpolates a global
     lat/lon grid of substrate temperature to several grids of various
     projections using the ipolates suite of routines.  All
     interpolation options (bilinear, neighbor, etc.) are used.
-6)  ipolatev - a fortran program that interpolates a global
+6)  ipolatev - A fortran program that interpolates a global
     lat/lon grid of vector u/v wind to several grids of various
     projections using the ipolatev suite of routines.  All
     interpolation options (bilinear, neighbor, etc.) are used.
-7)  ipsector - a fortran program that tests routine ipsector,
+7)  ipsector - A fortran program that tests routine ipsector,
     which which creates a subset of a larger
     two-dimensional field, and routine ipspaste, which does the
     opposite.
-8)  ipxetas - a fortran program that reads a field of
+8)  ipxetas - A fortran program that reads a field of
     vegetation greenness on a unstaggered eta grid, then 
     calls routine ipxetas to do the following transforms:
-      1) create a staggered mass grid from the unstaggered grid.
-      2) create a staggered velocity grid from the unstaggered grid.
-      3) create an unstaggered grid from the staggered mass grid created by step (1)
-      4) create an unstaggered grid from the staggered vel grid created by step (2)
-9)  ipxwafs2_3 - test ip routines ipxwafs2 and ipxwafs3 by transforming
+      1) Create a staggered mass grid from the unstaggered grid.
+      2) Create a staggered velocity grid from the unstaggered grid.
+      3) Create an unstaggered grid from the staggered mass grid created by step (1)
+      4) Create an unstaggered grid from the staggered vel grid created by step (2)
+9)  ipxwafs2_3 - Test ip routines ipxwafs2 and ipxwafs3 by transforming
     a global grid of 600 mb temperature (on ncep grid 3) to wafs grids 37 thru 44 
-    using copygb. after the global to wafs grid transforms are
+    using copygb. After the global to wafs grid transforms are
     completed, copygb is invoked again to transform temperature data on each
-    wafs grid back to ncep grid 3.  note: routine ipxwafs2 is invoked 
+    wafs grid back to ncep grid 3.  Note: routine ipxwafs2 is invoked 
     for interpolation option '0' (bilinear) and routine ipxwafs3 
     is invoked for interpolation option '2' (neighbor).
-10) ipxwafs - same as experiment 9 except a specially modified version
+10) ipxwafs - Same as experiment 9 except a specially modified version
     of copygb is used to call iplib routine ipxwafs instead of ipxwafs2. 
     ipxwafs and ipxwafs2 are the same except the latter accounts for bitmaps.
-11) makgds - a fortran program to test routine makgds.  Routine is called
+11) makgds - A fortran program to test routine makgds.  Routine is called
     three times.
-      1) create gds and kgds arrays for ncep grid 3. these arrays hold grid
+      1) Create gds and kgds arrays for ncep grid 3. these arrays hold grid
          description information used by w3 grib library.
-      2) make kgds array for grid 3 from gds array
-      3) make gds array for grid 3 from kgds array
-12) polateg - a fortran program to call the polateg group of routines
+      2) Make kgds array for grid 3 from gds array
+      3) Make gds array for grid 3 from kgds array
+12) polateg - A fortran program to call the polateg group of routines
     to interpolate temperature data on a 1-degree global lat/lon grid
     to a high-res global lat/lon grid, returning their vector gradients.
     Note: the polateg routines have several errors.  So, this test is
     not currently called from the regression driver scripts (listed below). 
-13) copygb - the ncep copygb program is used to transform a global lat/lon file of
+13) copygb - The ncep copygb program is used to transform a global lat/lon file of
     vegetation greenness to numerous standard ncep grids using all available
     interpolation options (bilinear, nearest neighbor, etc.).  Because this 
     test can take over an hour of wall clock time, and calls the same
     routines as other regression tests, it is not currently called
     from the regression driver scripts.  However, it may be run stand-alone.
+    Note: The copygb executables are used by the ixpwafs2_3 regresion test.
 
 There are three versions of IPLIB:
 
@@ -69,19 +70,23 @@ There are three versions of IPLIB:
 
 Each regression test is compiled with all three versions of a 'control' and
 'test' iplib (for a total of six executables).  The 'control' and 'test'
-library versions are determined by the user.
+library versions are determined by the user.  Normally, the 'control'
+libraries are those in production or at the head of the trunk.  And the
+'test' library is normally the branch copy.
 
 Within each regression directory, the ./src subdirectory will contain the
-source code required for the regression test.  Scripts to compile and run 
-are under the ./scripts subdirectory.  Makefiles and executables 
-stored under the ./exec subdirectory.  Any input data is stored in the
-./data subdirectory. Grads control files to view output data are 
-stored in the ./grads subdirectory.  More detailed information about
-each regression test is described in a README file and in the comment
-sections of the scripts.
+source code and make-related files required for the regression test. A script
+to run the individual regression test is under the ./scripts subdirectory.
+The executables (after compilation) are stored under the ./exec subdirectory.
+Any input data is stored in the ./data subdirectory.  Grads control files
+to view output data are stored in the ./grads subdirectory.  Some control
+files do not have map backgrounds specified.  They are only used to
+sanity check the data.  When viewing, do a 'set mproj off'. 
+More detailed information about is described in a README file 
+and in the comment sections of the scripts.
 
-The entire suite of tests is compiled on wcoss, zeus or ccs with the 
-"Makeall.ksh" script. Before invoking the script, you must link the 'control'
+The entire suite of tests is compiled on WCOSS or Zeus by invoking the
+make_reg_tests.ksh script. Before invoking the script, you must link the 'control'
 and 'test' libraries to the ./lib subdirectory, or copy them manually.  The naming
 convention is: 
 
@@ -95,14 +100,13 @@ libip_test_d.a (4 byte integer/8 byte float, test)
 See the script comments for more details before compiling.
 
 The executables for the control/test libraries will
-be in the ./exec/ctl and ./exec/test subdirectories.  
+be in the ./exec subdirectories.  
 
-After compilation, run the entire suite of tests on the ccs by
-typing "llsubmit Runall.ccs.ksh".  On zeus, type "Runall.zeus.ksh".
-On wcoss, type "Ruanll.wcoss.ksh".  Results are stored in 
-"regression.log" in $WORK_DIR.  A summary of results is 
-stored in "summary.log" in $WORK_DIR.  See the script
-comments for more details. 
+After compilation, run the entire suite of tests on Zeus by
+typing "Runall.zeus.ksh".  On WCOSS, type "Ruanll.wcoss.ksh".
+Results are stored in "regression.log" in $WORK_DIR.
+A summary of results is stored in "summary.log" in $WORK_DIR. 
+See the script comments for more details. 
 
 Below is a table of each routine in iplib and which regression test(s) invoke it.
 

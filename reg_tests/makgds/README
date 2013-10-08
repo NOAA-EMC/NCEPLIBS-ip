@@ -6,11 +6,13 @@ Routine is tested as follows:
   2) make kgds array for grid 3 from gds array
   3) make gds array for grid 3 from kgds array
 
-The fortran source code is located in the ./src subdirectory.
+The Fortran source code and make-related files are located 
+in the ./src subdirectory.
 
-The program is compiled by invoking the makeall.ksh script
-located in the ./scripts subdirectory.  See the script
-comments for more information.
+The program is compiled by invoking the make_reg_tests.ksh script
+located in the ./reg_tests directory.  See the script
+comments for more information.  The executables are stored in 
+the ./exec subdirectory.
 
 The regression test may be run 'stand-alone' by invoking
 the runall.ksh script in the ./scripts subdirectory.

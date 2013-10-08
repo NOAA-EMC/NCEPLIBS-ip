@@ -13,14 +13,16 @@ Note: routine ipxwafs and ipxwafs2 are the same except the latter
 accounts for bitmaps.  The ops version of copygb uses the latter
 routine for all interpolation options except '2' (neighbor).
 The specially modified version calls ipxwafs instead.  Since the
-test datasets does not have bitmaps (a field of 600 mb temperatures)
+test datasets do not have bitmaps (a field of 600 mb temperatures)
 the specially modified copygb and ops copygb give the same answer.
 
-The special copygb source code is in the ./src subdirectory.
+The special copygb source code and the make-related files 
+are in the ./src subdirectory.
 
-The program is compiled by invoking the makeall.ksh script
-located in the ./scripts subdirectory.  See the script
-comments for more information before compiling.
+The program is compiled by invoking the make_reg_tests.ksh script
+located in the ./reg_tests directory.  See the script
+comments for more information before compiling.  The executables
+are stored in the ./exec subdirectory.
 
 The regression test may be run 'stand-alone' by invoking
 the runall.ksh script in the ./scripts subdirectory.
