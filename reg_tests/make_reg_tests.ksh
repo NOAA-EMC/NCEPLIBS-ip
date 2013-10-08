@@ -17,12 +17,13 @@ case $MACHINE in
        BACIO="lbacio_v2.0.1" ;;
 # zeus
   f)   COMPILER="ifort" 
-       FLAGS="-check all -traceback -fpe0 -ftrapuv -assume byterecl -g -FR" 
-       export OMP_FLAGS="-openmp"
-       LFLAGS="-L${PWD}/lib -L/contrib/nceplibs/nwprod/lib" 
+       COMPILER_FLAGS="-check all -traceback -fpe0 -ftrapuv -assume byterecl -g" 
+       export COMPILER_FLAGS_XTRA="-openmp"
+       export LD_FLAGS="-L${PWD}/lib -L/contrib/nceplibs/nwprod/lib" 
+       export LD_FLAGS_XTRA="-openmp"
        SP="lsp_v2.0.1" 
        W3="lw3nco_v2.0.6"
-       BACIO="lbacio_v2.0.1"  ;;
+       BACIO="lbacio_v2.0.1" ;;
 # unknown machine
     *) set +x
        echo "$0: Error: Unknown Machine - Exiting" >&2
