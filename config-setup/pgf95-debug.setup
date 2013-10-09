@@ -6,6 +6,7 @@ export FCFLAGS=" \
  -Mbounds \
  -Mchkstk \
  -Mdaz \
+ -Mfree \
  -Minform,inform \
  -Mnosave \
  -Mref_externals \

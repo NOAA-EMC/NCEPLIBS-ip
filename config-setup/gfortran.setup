@@ -1,4 +1,4 @@
 export FC="gfortran"
-export FCFLAGS=" -O3"
+export FCFLAGS=" -O3 -ffree-form"
 export LDFLAGS=" "
 export LIBS=" "

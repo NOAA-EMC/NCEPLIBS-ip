@@ -4,6 +4,7 @@ export FCFLAGS="-check all \
  -fpe0 \
  -ftrapuv \
  -g \
+ -FR \
  -openmp "
 export LDFLAGS=" "
 export LIBS=" "
