@@ -12,10 +12,14 @@ The fortran source code is located in the ./src subdirectory.
 
 The program is compiled by invoking the makeall.ksh script
 located in the ./scripts subdirectory.  See the script
-comments for more information.
+comments for more information before compiling.
 
 The regression test is run 'stand-alone' by invoking
-the runall.ksh script in the ./scripts subdirectory.
+the proper driver script in the ./scripts subdirectory as follows:
+
+"llsubmit run_ccs.ksh" (ccs machine)
+"bsub < run_wcoss.ksh" (wcoss machine)
+"qsub run_zeus.ksh" (zeus machine)
 
 This is considered a 'supplemental' regression test and it not
 run as part of the full suite of tests from the "Runall"

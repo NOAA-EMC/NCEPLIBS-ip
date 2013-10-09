@@ -11,7 +11,7 @@
 
 export REG_DIR=$(pwd)
 
-export WORK_DIR=/stmp/$LOGNAME/regression
+export WORK_DIR=/scratch2/portfolios/NCEPDEV/stmp/$LOGNAME/regression
 rm -fr $WORK_DIR
 mkdir -p $WORK_DIR
 

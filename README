@@ -1,0 +1,238 @@
+Instructions for building and installing ip on Unix
+***************************************************
+
+$Revision$
+nceplibs support email: ncep.list.emc.nceplibs.support@noaa.gov
+
+
+         Contents
+         ========
+  A. The easy (I hope) way...
+  B. The more flexible way
+    1. Configuration
+    2. Building the library
+    3. Testing the library
+    4. Installing the library
+       - NCO Install
+       - GNU Install
+       - Uninstalling the library
+    5. Cleaning up
+
+
+
+A. The easy (I hope) way...
+===========================
+
+To build the single (_4), double (_8), and mixed (_d) precision ip
+libraries, you can use the "make_ip_lib.sh" script specifying the
+build configuration. Type
+
+  $ make_ip_lib.sh -h
+
+to get the usage information for the script.
+
+The available build configurations to use are:
+
+  gfortran-debug.setup  ifort-debug.setup  pgf95-debug.setup  xlf2003-debug.setup
+  gfortran.setup        ifort.setup        pgf95.setup        xlf2003.setup
+
+So, on WCOSS/tide/gyre you would type:
+
+  $ make_ip_lib.sh ifort.setup
+
+
+On zeus you could do the same, or if you wanted to the PGI compiler,
+
+  $ make_ip_lib.sh pgf95.setup
+
+
+This script iterates over the single (_4), double (_8), and mixed (_d) precision
+build configurations setting the appropriate default real and integer precision
+promotion compiler switches.
+
+Some additional points:
+- The "NCO-type" install is performed by default.
+- The libraries are installed relative to the current directory. After
+  running the script you should see three new directories containing the 
+  single (4), double (8), and mixed (d) precision libraries.
+- See section B.4 below for information about the installation directory
+  structure
+
+You can tailor the build process using this "make_ip_lib.sh" script by
+modifying the relevant build configuration setup file in the "config-setup/"
+subdirectory.
+
+Or, if you are going to be testing library builds multiple times, you can
+create your own configuration setup file.
+
+
+
+B. The more flexible way
+========================
+
+1. Configuration
+----------------
+
+If you need more flexibility in the library build you can specify the necessary 
+information directly to the configure script that generates the makefiles. For
+example, on WCOSS/tide:
+
+  $ ./configure --prefix=${PWD} \
+                --enable-promote=4|8|d \
+                FC="ifort" \
+                FCFLAGS="-O2 -g -traceback -fixed"
+
+The --prefix switch sets the installation directory and defaults to /usr/local so
+make sure you set it to a directory in which you have write access.
+
+The --enable-promote switch allows you to specify the type of precision build be it
+single (4), double (8), or mixed (d) precision. To build the mixed precision library
+you would use:
+
+  --enable-promote=d
+
+Not specifying this switch is equivalent to "--enable-promote=4".
+
+The definition of the "FC" enviroment variable is not strictly necessary as it defaults
+to "ifort" on linux systems if available (followed by "gfortran" and "pgf95" if not), and
+to "xlf2003" on AIX systems.
+
+
+
+
+2. Building the library
+-----------------------
+
+To start the library build for a particular configuration, simply type
+
+  $ make
+
+
+
+
+3. Testing the library
+----------------------
+
+We don't have any package-level tests for ip yet. Sorry! They're coming...
+
+
+
+
+4. Installing the library
+-------------------------
+
+Installation of the library *always* occurs into its own directory within the
+directory specified by the --prefix switch. The name of the installation 
+directory follows the convention:
+
+  <library name>_<version>_<precision>
+
+So, if a library version (say, v2.0.1) build was configured with --prefix=$PWD
+for the default precision (4) build, then the installation directory will be
+
+  ${PWD}/ip_v2.0.1_4
+ 
+
+
+NCO Install
+...........
+
+To install the library conforming to the NCO organisation and naming conventions,
+type:
+
+  $ make nco_install
+
+For a library version (say, v2.0.1) and the default precision (4), this will create
+a directory called "ip_v2.0.1_4". That directory is organised according to the
+current NCO structure on WCOSS in /nwprod/lib, as shown below:
+
+  ip_v2.0.1_4/
+    |
+    |--libip_v2.0.1_4.a
+    |
+    `--incmod/
+         |
+         `--ip_v2.0.1_4/
+
+The contents of the "ip_v2.0.1_4" directory can then be moved into the official
+/nwprod/lib location as needed.
+
+Note the include/ directory may not be present, or be empty, if no *.mod
+files are generated during the build.
+
+Let's assume the above install was moved into "/usrx/local/nceplibs", to use the
+library in this structure in your own application, the usual environment variables
+would be modified something like:
+
+  libroot="/usrx/local/nceplibs"
+  FCFLAGS="-I${libroot}/incmod/ip_v2.0.1_4 ${FCFLAGS}"
+  LDFLAGS="-L${libroot} ${LDFLAGS}"
+  LIBS="-lip_v2.0.1_4"
+
+
+
+GNU Install
+...........
+
+To perform a GNU-type install, type:
+
+  $ make install
+
+For a library version (say, v2.0.1) and the default precision (4), this will create
+a directory called "ip_v2.0.1_4". That directory structure is shown below:
+
+  ip_v2.0.1_4/
+    |
+    |--include/
+    |
+    `--lib/
+         |
+         `--libip.a
+
+Things to note:
+ 1) The only versioned item in this type of install is the name of the
+    installation directory itself.
+ 2) The include/ directory may not be present, or be empty, if no *.mod
+    files are generated during the build.
+
+Let's assume the above install was moved into "/usrx/local/nceplibs", to use the
+library in this structure in your own application, the usual environment variables
+would be modified something like:
+
+  libroot="/usrx/local/nceplibs"
+  FCFLAGS="-I${libroot}/ip_v2.0.1_4/include ${FCFLAGS}"
+  LDFLAGS="-L${libroot}/ip_v2.0.1_4/lib ${LDFLAGS}"
+  LIBS="-lip"
+
+
+
+Uninstalling the library
+........................
+
+To uninstall the library (assuming you haven't moved the installation directory
+contents somewhere else) you can type:
+
+  $ make uninstall
+  
+This will delete the created installation directory. So, for a library version
+(say, v2.0.1) and the default precision (4), if your configure script invocation
+was something like
+
+  $ ./configure --prefix=${PWD} ...other command line arguments...
+
+then the "uninstall" target will delete the "${PWD}/ip_v2.0.1_4" directory.
+
+
+
+
+5. Cleaning up
+--------------
+
+Two targets are provided for cleaning up after the build. To remove all the 
+build products type
+
+  $ make clean
+
+To also remove all the configuration products (i.e. the makefiles) type
+
+  $ make distclean
