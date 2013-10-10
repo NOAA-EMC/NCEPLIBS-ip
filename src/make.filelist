@@ -3,65 +3,65 @@ FPP_FILES =
 
 # The list of regular source files
 FSRC_FILES = \
- gausslat.f \
- gcdist.f \
- gdsawt.f \
- gdswiz00.f \
- gdswiz01.f \
- gdswiz03.f \
- gdswiz04.f \
- gdswiz05.f \
- gdswizc9.f \
- gdswizca.f \
- gdswizcb.f \
- gdswizcd.f \
- gdswiz.f \
- gdswzd00.f \
- gdswzd01.f \
- gdswzd03.f \
- gdswzd04.f \
- gdswzd05.f \
- gdswzdc9.f \
- gdswzdca.f \
- gdswzdcb.f \
- gdswzdcd.f \
- gdswzd.f \
- ijkgds0.f \
- ijkgds1.f \
- ijkgds.f \
- ipmerge2.f \
- ipolates.f \
- ipolatev.f \
- ipsector.f \
- ipspaste.f \
- ipxetas.f \
- ipxwafs2.f \
- ipxwafs3.f \
- ipxwafs.f \
- makgds.f \
- movect.f \
- polateg0.f \
- polateg1.f \
- polateg4.f \
- polates0.f \
- polates1.f \
- polates2.f \
- polates3.f \
- polates4.f \
- polates6.f \
- polatev0.f \
- polatev1.f \
- polatev2.f \
- polatev3.f \
- polatev4.f \
- polatev6.f \
- polfixs.f \
- polfixv.f
+ gausslat.f90 \
+ gcdist.f90 \
+ gdsawt.f90 \
+ gdswiz00.f90 \
+ gdswiz01.f90 \
+ gdswiz03.f90 \
+ gdswiz04.f90 \
+ gdswiz05.f90 \
+ gdswizc9.f90 \
+ gdswizca.f90 \
+ gdswizcb.f90 \
+ gdswizcd.f90 \
+ gdswiz.f90 \
+ gdswzd00.f90 \
+ gdswzd01.f90 \
+ gdswzd03.f90 \
+ gdswzd04.f90 \
+ gdswzd05.f90 \
+ gdswzdc9.f90 \
+ gdswzdca.f90 \
+ gdswzdcb.f90 \
+ gdswzdcd.f90 \
+ gdswzd.f90 \
+ ijkgds0.f90 \
+ ijkgds1.f90 \
+ ijkgds.f90 \
+ ipmerge2.f90 \
+ ipolates.f90 \
+ ipolatev.f90 \
+ ipsector.f90 \
+ ipspaste.f90 \
+ ipxetas.f90 \
+ ipxwafs2.f90 \
+ ipxwafs3.f90 \
+ ipxwafs.f90 \
+ makgds.f90 \
+ movect.f90 \
+ polateg0.f90 \
+ polateg1.f90 \
+ polateg4.f90 \
+ polates0.f90 \
+ polates1.f90 \
+ polates2.f90 \
+ polates3.f90 \
+ polates4.f90 \
+ polates6.f90 \
+ polatev0.f90 \
+ polatev1.f90 \
+ polatev2.f90 \
+ polatev3.f90 \
+ polatev4.f90 \
+ polatev6.f90 \
+ polfixs.f90 \
+ polfixv.f90
 
 # The complete list of source files
 SRC_FILES = $(FSRC_FILES) \
             $(FPP_FILES)
 
 # The list of object files
-OBJ_FILES = ${FSRC_FILES:.f=.o} \
-            ${FPP_FILES:.F=.o}
+OBJ_FILES = ${FSRC_FILES:.f90=.o} \
+            ${FPP_FILES:.F90=.o}
