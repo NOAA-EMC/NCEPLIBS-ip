@@ -2,7 +2,7 @@
 AC_REVISION($Id: configure.ac 25875 2013-02-19 15:45:31Z george.gayno@noaa.gov $)
 
 ## Initialise autoconf
-AC_INIT([ip], [2.0.1], [ncep.list.emc.nceplibs.support@noaa.gov])
+AC_INIT([ip regression test suite], [2.0.1], [ncep.list.emc.nceplibs.support@noaa.gov])
 
 # Output info for user
 AC_MSG_NOTICE([ip AC_PACKAGE_VERSION])
@@ -27,7 +27,7 @@ AC_CONFIG_FILES([ipolates/src/Makefile])
 AC_CONFIG_FILES([ipolatev/src/Makefile])
 
 # Check for programs
-AC_PROG_FC(ifort gfortran xlf2003 pgf95)
+AC_PROG_FC(ifort)
 AC_PROG_INSTALL
 
 # Set the programming language
@@ -48,25 +48,11 @@ AC_SUBST(SUFFIX,[_${precision}])
 
 # Set the default type promotion compiler flags
 case $FC in
-  ifort|pgf95)
+  ifort)
     case ${precision} in
       4) ;;
       8) FCFLAGS="-r8 -i8 $FCFLAGS";;
       d) FCFLAGS="-r8 $FCFLAGS";;
-    esac
-    ;;
-  gfortran)
-    case ${precision} in
-      4) ;;
-      8) FCFLAGS="-fdefault-real-8 -fdefault-integer-8 $FCFLAGS";;
-      d) FCFLAGS="-fdefault-real-8 $FCFLAGS";;
-    esac
-    ;;
-  xlf*)
-    case ${precision} in
-      4) ;;
-      8) FCFLAGS="-qrealsize=8 -qintsize=8 $FCFLAGS";;
-      d) FCFLAGS="-qrealsize=8 $FCFLAGS";;
     esac
     ;;
   *) AC_MSG_WARN([Precision promotion flags for $FC unknown and not set]);;
