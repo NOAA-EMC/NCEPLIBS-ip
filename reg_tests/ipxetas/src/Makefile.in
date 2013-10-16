@@ -33,9 +33,12 @@ exec: $(OBJ_FILES)
 	$(FC) $(FCFLAGS) -o ipxetas.exe $(OBJ_FILES) $(LDFLAGS) $(LIBS)
 
 clean:
-	-rm -f *.o *.exe *.mod
+	-rm -f *.o *.exe
 
-distclean: clean
+uninstall:
+	-rm -f $(DESTDIR)$(installdir)/*.exe
+
+distclean: clean uninstall
 	-rm Makefile
 
 install:
@@ -49,7 +52,7 @@ Makefile: Makefile.in ../../config.status
 	cd ../.. && ./config.status --recheck
 
 # Specify targets that do not generate filesystem objects
-.PHONY: all clean distclean install
+.PHONY: all clean distclean install uninstall
 
 # File dependency and suffix rule include files
 include make.dependencies

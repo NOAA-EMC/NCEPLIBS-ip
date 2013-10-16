@@ -35,7 +35,10 @@ exec: $(OBJ_FILES)
 clean:
 	-rm -f *.o *.mod *.exe
 
-distclean: clean
+uninstall:
+	-rm -f $(DESTDIR)$(installdir)/*.exe
+
+distclean: clean uninstall
 	-rm Makefile
 
 install:
@@ -49,7 +52,7 @@ Makefile: Makefile.in ../../config.status
 	cd ../.. && ./config.status --recheck
 
 # Specify targets that do not generate filesystem objects
-.PHONY: all clean distclean install
+.PHONY: all clean distclean install uninstall
 
 # File dependency and suffix rule include files
 include make.dependencies

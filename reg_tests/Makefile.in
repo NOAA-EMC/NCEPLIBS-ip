@@ -18,7 +18,7 @@ all:
 	cd ipolates/src && $(MAKE) $@ EXTRA_FCFLAGS=$(COMPILER_FLAGS_XTRA)
 	cd ipolatev/src && $(MAKE) $@ EXTRA_FCFLAGS=$(COMPILER_FLAGS_XTRA)
 
-clean install:
+clean install uninstall:
 	cd copygb/src && $(MAKE) $@
 	cd ipxwafs/src && $(MAKE) $@
 	cd gausslat/src && $(MAKE) $@
@@ -51,4 +51,4 @@ Makefile: Makefile.in config.status
 config.status: configure
 	./config.status --recheck
 
-.PHONY: all clean distclean check install
+.PHONY: all clean distclean check install uninstall
