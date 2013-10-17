@@ -1,0 +1,7 @@
+export FC="ifort"
+export FCFLAGS="-openmp -check all -traceback -fpe0 -ftrapuv -assume byterecl -g"
+export LDFLAGS="-openmp -L${PWD}/lib -L/nwprod/lib"
+# the version numbers for the sp, w3nco and bacio libraries.
+export SP_LIB_V="2.0.1"
+export W3NCO_LIB_V="2.0.4"
+export BACIO_LIB_V="2.0.1"

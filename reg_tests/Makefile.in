@@ -5,20 +5,7 @@
 MAKE="gmake"
 
 # Target specification
-all:
-	cd copygb/src && $(MAKE) $@ LDFLAGS="$(LD_FLAGS_XTRA) $(LD_FLAGS)"
-	cd ipxwafs/src && $(MAKE) $@ LDFLAGS="$(LD_FLAGS_XTRA) $(LD_FLAGS)"
-	cd gausslat/src && $(MAKE) $@
-	cd gcdist/src && $(MAKE) $@
-	cd gdswiz_wzd/src && $(MAKE) $@
-	cd ipxetas/src && $(MAKE) $@
-	cd ipsector/src && $(MAKE) $@
-	cd ipmerge2/src && $(MAKE) $@
-	cd makgds/src && $(MAKE) $@
-	cd ipolates/src && $(MAKE) $@ EXTRA_FCFLAGS=$(COMPILER_FLAGS_XTRA)
-	cd ipolatev/src && $(MAKE) $@ EXTRA_FCFLAGS=$(COMPILER_FLAGS_XTRA)
-
-clean install uninstall:
+all clean install uninstall:
 	cd copygb/src && $(MAKE) $@
 	cd ipxwafs/src && $(MAKE) $@
 	cd gausslat/src && $(MAKE) $@
