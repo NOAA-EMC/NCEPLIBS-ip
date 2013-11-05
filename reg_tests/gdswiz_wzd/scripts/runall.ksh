@@ -1,24 +1,60 @@
 #!/bin/ksh
 
 #--------------------------------------------------------------------
-# Test the gdswiz and gdswzd suite of routines.
+# Test the gdswiz and gdswzd suite of routines using a Fortran
+# program.
 #
-# Binary files from the 'control' and 'test' containing gdswiz
-# and gdswwzd related fields, such as lat/lon, are checked for
-# bit-identicalness.  If not identical, the regression test is 
-# considered failed.  Each run outputs two binary files -
-# one with fields computed with the gdswiz/wzd iopt option
-# set to '0', and one with the iopt option set to '-1'.
-# (The files contain "iopt0/m1" in their name.)
-# See comments in the source code for more details.
+# The program is compiled with all three byte versions
+# of the 'control' and 'test' ip library.
 #
-# The i/j to lat/lon transform should be reversable.
-# If not, an error message is printed to the text log file.
-# When this happens, the regression test is considered failed.
+# The three byte versions of the library are:
+#  > 4 byte integer/4 byte float  ($bytesize=4)
+#  > 8 byte integer/8 byte float  ($bytesize=8)
+#  > 8 byte float/4 byte integer  ($bytesize=d)
+#
+# The gdswiz and gdswzd routines compute the following fields:
+#
+# - lat/lon from i/j OR i/j from lat lon
+# - clockwise vector rotation sines/cosines
+# - dx/dlon, dx/dlat, dy/dlon, dy/dlat  (gdswzd only)
+# - grid box area (gdswzd only)
+#
+# The routines are called twice for each grid to test both the
+# i/j to lat/lon AND lat/lon to i/j transforms.  This is controled by setting
+# the routine's IOPT argument to '0'/'-1'.  The transform should be reversable to
+# within floating point differences.  If it is not reversable a warning
+# message is printed to standard output and the regression test
+# is considered failed.
+#
+# All fields computed from each call to gdswiz/wzd are output to a binary file.
+# The file naming convention is: grid${gridnum}.iopt${0/m1}.bin.
+# The files from the 'control' and 'test' ip libraries are compared
+# and if not bit identical, the regression test fails.
+#
+# The grids tested are:
+#
+# 003        one-degree global lat/lon (ncep grid 3)
+# 008        mercator (ncep grid 8)
+# 127        t254 gaussian (ncep grid 127)
+# 201        rotated lat/lon e-staggered (number refers to gds octet 6)
+#            tests routines gdswizc9 and gdswzdc9
+# 202        rotated lat/lon b-staggered (number refers to gds octet 6)
+#            tests routines gdswizca and gdswzdca
+# 203        rotated lat/lon e-staggered (number refers to gds octet 6)
+#            tests routines gdswizcb and gdswzdcb
+# 205        rotated lat/lon b-staggered (number refers to gds octet 6)
+#            tests routines gdswizcd and gdswzdcd
+# 212        nh polar stereographic, spherical earth (number meaningless)
+# 213        sh polar stereographic, spherical earth (number meaningless)
+# 218        lambert conformal (ncep grid 218)
+# 222        nh polar stereographic, elliptical earth (number meaningless)
 #
 # If any step in the regression test fails, the log file and
 # any binary files will be stored in a "failed" sub-directory under
-# $WORK_DIR.
+# working directory, $WORK_DIR.
+#
+# This script is run by the Runall.${machine}.ksh driver script located
+# in ../reg_tests.
 #--------------------------------------------------------------------
 
 #set -x

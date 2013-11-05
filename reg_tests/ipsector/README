@@ -1,18 +1,37 @@
 Test iplib routines ipsector, which creates a subsector of a 
 larger two-dimensional field, and routine ipspaste, which
-does the opposite.
+does the opposite.  Test is performed with a Fortran program.
 
-More specically, read in a global dataset of substrate
+The program is compiled with all byte versions of the 'control'
+and 'test' iplibs by invoking the make_reg_tests.ksh script
+located in the /reg_tests directory.  See the
+/reg_tests/README file for more information.
+
+The three byte versions of the library are:
+  > 4 byte integer/4 byte float
+  > 8 byte integer/8 byte float
+  > 8 byte float/4 byte integer
+
+The Fortran source code and make-related files are
+located in the ./src subdirectory.  The executables (a
+total of six) are stored in the ./exec subdirectory.
+
+Test specifics: read in a global dataset of substrate
 temperature, then call ipsector to create a subsector of
 the original grid.  Then call ipspaste to 'paste'
 the subsectored data (created by call to ipsector) back
-to the original grid.  The data returned from ipsector
+to the original grid.  The data returned from ipspaste
 should match the original data.
 
 Three sets of calls to ipsector/ipspaste are made:
 - for a North America subsector
 - for a non-overlapping subsector
 - for an overlapping subsector
+
+The routines have differing logic for different Grib 1 scan
+modes.  So there are two input files of global substrate
+temperature - one for scan mode '0' and one for scan mode '32'.
+Both datasets are located in the ./data subdirectory.
 
 Output from each step is written to binary files.  These file
 may be viewed in Grads using the control files in the ./grads subdirectory.
@@ -21,23 +40,12 @@ The regression test fails if the 'control' and 'test' subsectored
 data is not bit identical, or if the 'test' data from the
 ipspaste step does not match the original data.
 
-The routines have differing logic for different Grib 1 scan
-modes.  So there are two input files of global substrate
-temperature - one for scan mode '0' and one for scan mode '32'.
-Both datasets are located in the ./data subdirectory.
+This regression test is run by the runall.ksh script
+in the ./scripts subdirectory.  The runall.ksh script
+is run by the Runall.${machine}.ksh driver script located
+in /reg_tests.
 
-The Fortran source code and make-related files are located 
-in the ./src subdirectory.
-
-The program is compiled by invoking the make_reg_tests.ksh script
-located in the ./reg_tests directory.  See the script
-comments for more information.  Program executables are stored
-in the ./exec subdirectory.
-
-The regression test may be run 'stand-alone' by invoking
-the runall.ksh script in the ./scripts subdirectory.
-
-List of routines tested:
+List of iplib routines tested:
 
 ipsector
 ipspaste

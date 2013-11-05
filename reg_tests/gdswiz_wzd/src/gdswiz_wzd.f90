@@ -12,7 +12,25 @@
 ! This program takes two arguments.  The first is 'WIZ' or 'WZD'
 ! to run either the gdswiz or gdswzd set of routines.  The second is
 ! the grid number.  The valid grids are defined by data statements
-! below.  The grid numbers have no special meaning.
+! below.  They are:
+!
+! grid #       description
+! ======       ===========
+! 003          one-degree global lat/lon (ncep grid 3)
+! 008          mercator (ncep grid 8)
+! 127          t254 gaussian (ncep grid 127)
+! 201          rotated lat/lon e-staggered (number refers to gds octet 6)
+!              tests routines gdswizc9 and gdswzdc9
+! 202          rotated lat/lon b-staggered (number refers to gds octet 6)
+!              tests routines gdswizca and gdswzdca
+! 203          rotated lat/lon e-staggered (number refers to gds octet 6)
+!              tests routines gdswizcb and gdswzdcb
+! 205          rotated lat/lon b-staggered (number refers to gds octet 6)
+!              tests routines gdswizcd and gdswzdcd
+! 212          nh polar stereographic, spherical earth (number meaningless)
+! 213          sh polar stereographic, spherical earth (number meaningless)
+! 218          lambert conformal (ncep grid 218)
+! 222          nh polar stereographic, elliptical earth (number meaningless)
 !
 ! All computed fields are output to a direct access file so
 ! they may be compared for bit-idenicalness with other test runs,
@@ -38,21 +56,22 @@
  real :: diff, fill, maxdiffx, maxdiffy
  real, allocatable :: xpts(:,:), ypts(:,:)
  real, allocatable :: rlat(:,:), rlon(:,:)
+
  real, allocatable :: crot(:,:), srot(:,:)
  real, allocatable :: xlon(:,:), xlat(:,:)
  real, allocatable :: ylon(:,:), ylat(:,:), area(:,:)
 
 ! the grids that will be tested.
 
- integer :: grd3(200)    ! one-degree lat/lon, for gdswiz00 and gdswzd00 routines
+ integer :: grd3(200)    ! ncep grid3; one-degree lat/lon, for gdswiz00 and gdswzd00 routines
  data grd3 / 0, 360, 181, 90000, 0, 128, -90000,  &
             -1000, 1000, 1000, 0, 0, 0, 0, 0, 0, 0, 0, 0, 255, 180*0/
 
- integer :: grd8(200)    ! mercator, for gdswiz01 and gdswzd01 routines
+ integer :: grd8(200)    ! ncep grid8; mercator, for gdswiz01 and gdswzd01 routines
  data grd8 / 1, 116, 44, -48670, 3104, 128, 61050,  &
              0, 22500, 0, 64, 318830, 318830, 0, 0, 0, 0, 0, 0, 255, 180*0/
 
- integer :: grd127(200)  ! gaussian (t254), for gdswiz04 and gdswzd04 routines
+ integer :: grd127(200)  ! ncep grid 127; gaussian (t254), for gdswiz04 and gdswzd04 routines
  data grd127 /4, 768, 384, 89642, 0, 128, -89642,  &
              -469, 469, 192, 0, 0, 255, 0, 0, 0, 0, 0, 0, 255, 180*0/
 

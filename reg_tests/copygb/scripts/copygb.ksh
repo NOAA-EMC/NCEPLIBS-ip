@@ -2,9 +2,9 @@
 
 #--------------------------------------------------------------------
 # Invoke copygb to interpolate a global lat/lon grid of vegetation
-# greenness to numerous ncep standard grids.  Use all interpolation
-# options: 0-bilinear, 1-bicubic, 2-neighbor, 3-budget, 4-spectral,
-# 6-neighbor-budget.
+# greenness or albedo to numerous ncep standard grids.  Use all 
+# interpolation options: 0-bilinear, 1-bicubic, 2-neighbor, 3-budget, 
+# 4-spectral, 6-neighbor-budget.
 #
 # The ncep standard grid numbers are defined in the official
 # ncep grib documentation.  Not all standard grids are tested. 
@@ -15,12 +15,25 @@
 # interpolation.  Running the spectral test just for grid 90
 # took 44 minutes on Zeus.  
 #
-# If the output files from the test and control are not bit identical,
-# the regression test fails.
+# The input greenness data is: $NWPROD/global_shdmax.0.144x0.144.grb
+# The input albedo data is: $NWPROD/global_snoalb.1x1.grb
+# The lower res albedo data is only used for the spectral interpolation
+# (which is computationally intensive).
+#
+# copygb is compiled with all three byte versions
+# of the 'control' and 'test' ip library.
+#
+# The three byte versions of the library are:
+#  > 4 byte integer/4 byte float  ($bytesize=4)
+#  > 8 byte integer/8 byte float  ($bytesize=8)
+#  > 8 byte float/4 byte integer  ($bytesize=d)
+#
+# If the output grib 1 files from the 'test' and 'control' iplibs 
+# are not bit identical, the regression test fails.
 #
 # This is considered a 'supplemental' regression test and it not
-# run as part of the full suite of tests from the main "Runall" 
-# driver script.
+# run as part of the full suite of tests from the main 
+# /reg_tests/Runall.${machine}.ksh driver scripts.
 #--------------------------------------------------------------------
 
 #set -x 

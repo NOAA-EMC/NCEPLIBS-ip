@@ -1,33 +1,58 @@
+Regression test for ncep copygb program.
+
 Invoke copygb to interpolate a global lat/lon grid of vegetation
-greenness to numerous ncep standard grids.  Use all interpolation
+greenness or albedo to numerous ncep standard grids.  Use all interpolation
 options: 0-bilinear, 1-bicubic, 2-neighbor, 3-budget, 4-spectral,
 6-neighbor-budget.
 
 The ncep standard grid numbers are defined in the official
-ncep grib documentation.
+ncep grib 1 documentation. Not all standard grids are tested.
+For example, there is an error with how w3nco routine w3fi71
+specifies the GDS for NCEP grid 174.  This causes copygb to
+fail on Zeus. Also grids 90, 91 and 92 are very high-res, which
+will cause copygb to run very slow, especially for the spectral
+interpolation.  Running the spectral test just for grid 90
+took 44 minutes on Zeus.
  
-The input data is: /nwprod/fix/global_shdmax.0.144x0.144.grb
+The input greenness data is: $NWPROD/global_shdmax.0.144x0.144.grb
+The input albedo data is: $NWPROD/global_snoalb.1x1.grb
+The lower res albedo data is only used for the spectral interpolation
+(which is computationally intensive).  On CCS/WCOSS, NWPROD=/nwprod/fix.
+On Zeus, NWPROD is the following gfs subversion tag:
+/NCEPDEV/global/save/glopara/svn/gfs/tags/REL-9.1.3/para/fix/fix_am
 
-The Fortran source code and make-related files are 
+The copygb source code and make-related files are 
 located in the ./src subdirectory.
 
-The program is compiled by invoking the make_reg_test.ksh script
-located in the ./reg_tests directory.  See the script
-comments for more information before compiling.  The executables
-are stored in the ./exec subdirectory.
+The program is compiled with all byte versions of the 'control' and 'test' 
+iplibs by invoking the make_reg_test.ksh script located
+in the /reg_tests directory.  See the /reg_tests/README
+file for more information before compiling.  
+
+The three byte versions of the library are:
+  > 4 byte integer/4 byte float
+  > 8 byte integer/8 byte float
+  > 8 byte float/4 byte integer
+
+The executables (a total of six) are stored in the 
+./exec subdirectory.
 
 The regression test is run 'stand-alone' by invoking
 the proper driver script in the ./scripts subdirectory as follows:
 
 "llsubmit run_ccs.ksh" (ccs machine)
 "bsub < run_wcoss.ksh" (wcoss machine)
-"qsub run_zeus.ksh" (zeus machine)
+"qsub run_zeus.ksh"    (zeus machine)
 
-These driver scripts call the copygb.ksh script.
+These driver scripts call the copygb.ksh script located in ./scripts.
 
-This is considered a 'supplemental' regression test and it is not
-run as part of the full suite of tests from the "Runall"
+The interpolated greenness or albedo is output in grib 1 format.
+If the grib 1 files from the 'control' and 'test' iplibs is
+not bit identical, the regression test is considered failed.
+
+This is considered a 'supplemental' regression test and it is NOT
+run as part of the full suite of tests from the Runall.${machine}.ksh
 driver in the ./reg_tests directory.
 
-Note, the copygb executable in this directory is used as part of
+NOTE, the copygb executable in this directory is used as part of
 the ipxwafs2_3 regression test.

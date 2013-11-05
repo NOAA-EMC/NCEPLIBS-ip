@@ -3,16 +3,32 @@
 #-------------------------------------------------------------------
 # Regression test for iplib routine makgds.
 #
+# The routine is invoked by a simple Fortran program.
+# The program is compiled with all three byte versions
+# of the 'control' and 'test' ip library.
+#
+# The three byte versions of the library are:
+#  > 4 byte integer/4 byte float  ($bytesize=4)
+#  > 8 byte integer/8 byte float  ($bytesize=8)
+#  > 8 byte float/4 byte integer  ($bytesize=d)
+#
 # Routine is tested as follows:
 #  1) create gds and kgds arrays for ncep grid 3.  arrays hold grid
 #     description information used by w3 grib library.
 #  2) make kgds array for grid 3 from gds array
 #  3) make gds array for grid 3 from kgds array
 #
-# Output from the control and test executables is placed in a
-# ascii log file.  If the log files are not bit identical, the
-# test fails. If a test fails, the log file is saved in 
-# WORK_DIR with a ".failed" extension.
+# Output from the program is placed in an log file.  If the
+# output from the 'control' and 'test' iplibs is not
+# identical, the regression test is considered failed and
+# the log file is saved in the working directory with the
+# following name:
+#
+#   ctl.${bytesize}byte.log.failed
+#   test.${bytesize}byte.log.failed
+#
+# This script is run by the /reg_tests/Runall.${machine}.ksh
+# driver script.  It may also be run stand-alone.
 #-------------------------------------------------------------------
 
 #set -x

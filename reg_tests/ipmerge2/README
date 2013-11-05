@@ -1,17 +1,30 @@
-Test iplib routine ipmerge2, which merges two bitmapped fields
-into one.  I am not sure this routine is even used anymore.
+Regression test for iplib routine ipmerge2, which merges two bitmapped
+fields into one.  I am not sure this routine is even used anymore.
+This routine is called from a simple Fortran program.
+
+The program is compiled with all byte versions of the 'control'
+and 'test' iplibs by invoking the make_reg_tests.ksh script
+located in the /reg_tests directory.  See the
+/reg_tests/README file for more information.
+
+The three byte versions of the library are:
+  > 4 byte integer/4 byte float  
+  > 8 byte integer/8 byte float 
+  > 8 byte float/4 byte integer 
 
 The Fortran source code and make-related files are 
-located in the ./src subdirectory.
+located in the ./src subdirectory.   The executables (a 
+total of six) are stored in the ./exec subdirectory.
 
-The program is compiled by invoking the make_reg_tests.ksh script
-located in the ./reg_tests directory.  See the script
-comments for more information.  The program executables
-are stored in the ./exec subdirectory.
+This regression test is run by the runall.ksh script
+in the ./scripts subdirectory.  The runall.ksh script
+is run by the Runall.${machine}.ksh driver script located
+in /reg_tests.
 
-The regression test may be run 'stand-alone' by invoking
-the runall.ksh script in the ./scripts subdirectory.
+All output is written to a text file.  If the
+text files from the 'control' and 'test' iplibs are not identical,
+the regression test is considered failed.
 
-List of routines tested:
+List of iplib routines tested:
 
 ipmerge2    

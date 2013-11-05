@@ -1,19 +1,30 @@
 #!/bin/ksh
 
 #--------------------------------------------------------------
-# Test iplib routine ipmerge2, which merges two bitmap 
-# fields.
+# Run regression test for iplib routine ipmerge2.
+#
+# The routine is invoked by a simple Fortran program.
+# The program is compiled with all three byte versions
+# of the 'control' and 'test' ip library.
 # 
-# Output from the 'control' and 'test' is placed in its
-# own text log file.  If the log files are not identical,
-# the test is considered 'failed'.  If a test fails, the
-# log file is stored in the work directory with a ".failed"
-# extension.
+# The three byte versions of the library are:
+#  > 4 byte integer/4 byte float  ($bytesize=4)
+#  > 8 byte integer/8 byte float  ($bytesize=8)
+#  > 8 byte float/4 byte integer  ($bytesize=d)
+#
+# Output from the program is written to a text log file.
+#
+# The log file naming convention is:
+#    ctl_${bytesize}byte.log 
+#    test_${bytesize}byte.log
+#
+# The 'control' and 'test' libraries must produce identical
+# output, or the regression test is considered 'failed'. 
+# If a failure happens, the log files are stored in the work 
+# directory with a ".failed" extension.
 # 
-# All three versions of the library are tested:
-#  > 4 byte integer/4 byte float  (libip_4.a)
-#  > 8 byte integer/8 byte float  (libip_8.a)
-#  > 8 byte float/4 byte integer  (libip_d.a)
+# This script is run by the Runall.${machine}.ksh driver 
+# script located in /reg_tests.
 #--------------------------------------------------------------
 
 #set -x
