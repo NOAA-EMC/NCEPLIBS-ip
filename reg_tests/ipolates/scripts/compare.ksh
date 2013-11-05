@@ -4,6 +4,7 @@
 # Part 2 of the ipolates regression test.
 #
 # Ensure single and multiple thread files are bit identical.
+# If not, the regression test fails.
 #--------------------------------------------------------------------
 
 #set -x

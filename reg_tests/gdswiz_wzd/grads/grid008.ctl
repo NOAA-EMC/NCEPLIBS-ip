@@ -1,4 +1,4 @@
-dset ^/global/save/wx20gg/iplib_g2/reg_tests/gdswiz_wzd/exec/test/grid8.bin
+dset ^./grid8.bin
 undef 9.999E+20
 xdef 116 linear 0.000000 1.0
 ydef 44 linear 0.000000 1.0

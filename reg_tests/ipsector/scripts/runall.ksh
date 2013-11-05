@@ -5,12 +5,29 @@
 # a subsector of a larger two-dimensional field,
 # and routine ipspaste, which does the opposite.
 #
-# Read in a global dataset of substrate temperature,
-# then call ipsector to create a subsector of 
-# the original grid.  Then call ipspaste to 'paste'
+# The routines are invoked by a simple Fortran program.
+# The program is compiled with all three byte versions
+# of the 'control' and 'test' ip library.
+#
+# The three byte versions of the library are:
+#  > 4 byte integer/4 byte float  ($bytesize=4)
+#  > 8 byte integer/8 byte float  ($bytesize=8)
+#  > 8 byte float/4 byte integer  ($bytesize=d)
+#
+# The 'control' and 'test' executables run from their
+# own working directory: $WORK_CTL and $WORK_TEST.
+#
+# The program reads in a global dataset of substrate temperature,
+# then calls ipsector to create a subsector of 
+# the original grid.  Then calls ipspaste to 'paste'
 # the subsectored data (created by call to ipsector) back
-# to the original grid.  The data returned from ipsector
-# should match the original data.
+# to the original grid.  The data returned from ipspaste
+# should match the original data.  The input temperature data is
+# in the ./data directory.  It is in grib 1 format.
+# These ip routines have separate logic for differing
+# Grib 1 scanning modes.  So there are two versions
+# of the input data - one with a scan mode of '0'
+# and one with a scan mode of '32'.
 #
 # Three sets of calls to ipsector/ipspaste are made:
 # - for a North America subsector
@@ -18,34 +35,28 @@
 # - for an overlapping subsector
 #
 # Regression test passes if...
-#  - The 'control' and 'test' runs to completion
+#  - The 'control' and 'test' iplib runs to completion
 #    with no errors. 
 #  - The output from the three calls to ipsector are stored in
 #    files "ipsector.namer.bin", "ipsector.no.sect.bin" and
 #    "ipsector.ovlp.sect.bin". The 'control' and 'test'
-#    files must be bit identical.
+#    iplib files must be bit identical.
 #  - The output from the three calls to ipspaste are stored in
 #    files "ipspaste.namer.bin", "ipspaste.no.sect.bin" and
 #    "ipspaste.ovlp.sect.bin". These files must
 #    be bit identical to the original input data
 #    (stored in file "orig.bin"). Check performed for 
-#    'test' files only.
+#    'test' iplib files only.
 #  - The kgds array values from the 'control' and
-#    'test' are stored to log files.  The log
+#    'test' are stored to text log files.  The log
 #    files must be identical.
 #
 # If anything fails, the log and binary data are stored
-# in a $WORK_DIR subdirectory with a 'failed' extension.
+# in a working subdirectory with a 'failed' extension of
+# the following name: failed.${bytesize}byte.scan${scanmode}
 #
-# These ip routines have separate logic for differing
-# Grib 1 scanning modes.  So there are two versions
-# of the input data - one with a scan mode of '0'
-# and one with a scan mode of '32'.
-#
-# All three byte versions of the library are tested:
-#  > 4 byte integer/4 byte float  (libip_4.a)
-#  > 8 byte integer/8 byte float  (libip_8.a)
-#  > 8 byte float/4 byte integer  (libip_d.a)
+# This script is run by the /reg_tests/Runall.${machine}.ksh
+# driver script.  
 #--------------------------------------------------------------
 
 #set -x
@@ -65,10 +76,10 @@ rm -fr $WORK
 mkdir -p $WORK
 WORK_CTL=${WORK}/ctl
 mkdir -p $WORK_CTL
-cp $EXEC_DIR/ctl/*exe $WORK_CTL
+cp $EXEC_DIR/ipsector_ctl_*.exe  $WORK_CTL
 WORK_TEST=${WORK}/test
 mkdir -p $WORK_TEST
-cp $EXEC_DIR/test/*exe $WORK_TEST
+cp $EXEC_DIR/ipsector_test_*.exe $WORK_TEST
 
 INPUT_DATA=$REG_DIR/ipsector/data/global_tg3clim.1x1.scan.0.grb
 cp $INPUT_DATA $WORK_CTL
