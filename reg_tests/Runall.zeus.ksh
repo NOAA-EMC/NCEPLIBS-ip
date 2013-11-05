@@ -1,12 +1,19 @@
 #!/bin/ksh --login
 
 #----------------------------------------------------------------------------
-# Run the entire suite of regression tests on zeus.
+# Run the entire suite of IPOLATES (or IPLIB) regression tests on Zeus.
 #
-# Type  "Runall.zeus.ksh"
+# See the README file for information on setting up and compiling
+# the test suite.
 #
-# Test results will be in "regression.log" located in $WORK_DIR
-# A summary of the results will be placed in "summary.log" in $WORK_DIR
+# To run, type:  "Runall.zeus.ksh". A series of "daisy-chained"
+# job steps will be submitted.  To check the queue, type:
+# "showq -n -v -u USERNAME"
+#
+# The run output is stored in $WORK_DIR.  Log output from the test suite
+# will be in "regression.log"  To monitor as the suite is running,
+# do: grep ">>>" regression.log.  Once the suite is complete, a summary
+# is placed in "summary.log"
 #----------------------------------------------------------------------------
 
 export REG_DIR=$(pwd)

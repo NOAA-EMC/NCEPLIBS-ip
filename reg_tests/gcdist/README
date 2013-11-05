@@ -1,17 +1,30 @@
-Test iplib routines gcdist and movect, which calculate the
-distance of great circle routes and their corresponding
-rotation parameters.
+Regression test for iplib routines gcdist and movect, which calculate
+the distance of great circle routes and their corresponding
+rotation parameters.  Routines are invoked from a Fortran program.
 
-The fortran source code is located in the ./src subdirectory.
+The Fortran program is compiled with all byte versions of the 'control'
+and 'test' iplibs by invoking the make_reg_tests.ksh script
+located in the /reg_tests directory.  See the 
+/reg_test/README file for more information.  
 
-The program is compiled by invoking the makeall.ksh script
-located in the ./scripts subdirectory.  See the script
-comments for more information.
+The three byte versions of the library are:
+  > 4 byte integer/4 byte float
+  > 8 byte integer/8 byte float
+  > 8 byte float/4 byte integer
 
-The regression test may be run 'stand-alone' by invoking
-the runall.ksh script in the ./scripts subdirectory.
+The Fortran source code and make-related files are 
+located in the ./src subdirectory.  Program executables (a total
+of six) are stored in the ./exec subdirectory.
 
-List of routines tested:
+This regression test is run the runall.ksh script in the
+the ./scripts subdirectory.  The runall.ksh script is run
+by the /reg_tests/Runall.${machine}.ksh driver script.
+
+All output is written to a text file.  If the files from the
+'control' and 'test' iplibs are different, the regression
+test is considered failed.
+
+List of iplib routines tested:
 
 gcdist
 movect

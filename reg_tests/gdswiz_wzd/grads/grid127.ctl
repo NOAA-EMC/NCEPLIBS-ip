@@ -1,4 +1,4 @@
-dset ^/global/save/wx20gg/iplib_g2/reg_tests/gdswiz_wzd/exec/ctl/grid127.bin
+dset ^./grid127.bin
 undef 9.999E+20
 options yrev
 xdef 768 linear 0.000000 1.0

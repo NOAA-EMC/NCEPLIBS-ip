@@ -1,12 +1,19 @@
 #!/bin/ksh 
 
 #------------------------------------------------------------------------
-# Run the entire series of iplib regression tests on the wcoss machine.
+# Run the entire suite of ipolates (or iplib) regression tests on 
+# the NCEP WCOSS machine.
 #
-# To run, type: "Runall.wcoss.ksh"
+# See the README file for information on setting up and compiling
+# the test suite.
 #
-# The log output, "regression.log" is stored in $WORK_DIR.
-# A summary of the results will be placed in "summary.log" in $WORK_DIR.
+# To run, type: "Runall.wcoss.ksh".  A series of "daisy-chained"
+# job steps will be submitted.  To check the queue, type "bjobs".
+#
+# The run output is stored in $WORK_DIR.  Log output from the test suite 
+# will be in "regression.log"  To monitor as the suite is running,
+# do: grep ">>>" regression.log.  Once the suite is complete, a summary
+# is placed in "summary.log" 
 #------------------------------------------------------------------------
 
 set -x

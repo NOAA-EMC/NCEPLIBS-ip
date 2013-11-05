@@ -1,108 +1,166 @@
+---------------------------------------------------------------
+HOW TO RUN THE REGRESSION TEST SUITE
+---------------------------------------------------------------
+
+The regression test suite consists of eleven fortran programs
+that invoke a subset of IPOLATES (or IPLIB) routines.  IPOLATES
+developers are required to run this test suite to ensure their
+branch changes perform as expected before they are merged to 
+the trunk.
+
+The following steps are required to setup and run the test suite:
+
+(1) Compile the 'test' and 'control' IPOLATES libraries.
+
+   The suite tests all three versions of IPOLATES:
+
+   -4 byte integer/4 byte float 
+   -4 byte integer/8 byte float 
+   -8 byte integer/8 byte float 
+
+   The 'test' libraries are your branch copies, while 
+   the 'control' libaries are the head of the trunk.
+
+(2) Link the 'test' and 'control' libraries to the
+    ./reg_tests/lib directory in your branch.  
+
+    Example:
+
+    cd ./reg_tests/lib
+
+    ln -s /trunk/ip_v${version}_4/libip_v${version}_4.a  libip_ctl_4.a  (4 byte integer/4 byte float, control)
+    ln -s /trunk/ip_v${version}_8/libip_v${version}_8.a  libip_ctl_8.a  (8 byte integer/8 byte float, control)
+    ln -s /trunk/ip_v${version}_d/libip_v${version}_d.a  libip_ctl_d.a  (4 byte integer/8 byte float, control)
+    ln -s /branch/ip_v${version}_4/libip_v${version}_4.a  libip_test_4.a  (4 byte integer/4 byte float, test)
+    ln -s /branch/ip_v${version}_8/libip_v${version}_8.a  libip_test_8.a  (8 byte integer/8 byte float, test)
+    ln -s /branch/ip_v${version}_d/libip_v${version}_d.a  libip_test_d.a  (4 byte integer/8 byte float, test)
+
+(3) Check the ./reg_tests/config-setup/ifort.setup file in your branch.
+
+    This file contains the compiler, compiler flags, link flags
+    and version numbers of the SP, W3NCO and BACIO libraries.
+    Currently, the regression suite has only been tested with the
+    "ifort" compiler.  The settings in this file work for WCOSS.
+    On Zeus, the SP, W3CNO and BACIO libaries are located in:
+    /contrib/nceplibs/nwprod/lib.  So the LDFLAGS line should
+    be set as follows:
+
+    export LDFLAGS="-openmp -L${PWD}/lib -L/contrib/nceplibs/nwprod/lib"
+
+    All other entries should be the same for WCOSS and Zeus.
+
+(4) Build the regression tests suite.
+
+    From ./reg_tests type "make_reg_tests.ksh"
+
+    Log output from the 'ctl' and 'test' builds will be in the
+    config*log files.  There will be six executables for
+    each individual regression test (one for each 'ctl' and 'test' library version).
+    These executables will be located in the ./exec sub-directory for
+    the regression test.  The source code is in the ./src sub-directory.
+
+(5) Kickoff the regression test suite.
+
+    There are driver scripts for WCOSS, Zeus and CCS located in
+    ./reg_tests.  The CCS script is no longer used.  
+
+    To start the tests on WCOSS or Zeus, simply type the script name.
+   
+    A series of "daisy-chained" jobs steps will be submitted.  On
+    WCOSS, the queue may be checked by typing:  "bjobs".  On
+    Zeus, the command is: "showq -n -v -u USERNAME"
+    
+(6) Check results.
+
+    On WCOSS, the default run directory is /stmp/${LOGNAME}/regression
+    On Zeus, the default run directory is /scratch2/portfolios/NCEPDEV/stmp/$LOGNAME/regression
+    (variable $WORK_DIR in the driver script).
+
+    Log output from the test suite will be in "regression.log"  To monitor as
+    the suite is running, do: grep ">>>" regression.log
+    
+    Once the suite is complete, a summary is placed in "summary.log"   Any failures
+    should be investigated.
+
+---------------------------------------------------------------
+DETAILS ON EACH INDIVIDUAL REGRESSION TEST
+---------------------------------------------------------------
+
 The tests in the following subdirectories are designed to test 
 a subset of IPLIB.  It was too difficult to create a single test
 that exercised every routine.  No tests were created for routines
 gdsawt and ijkgds, which I think are obsolete.
 
-1)  gausslat - a fortran program that calls routine gausslat 
+1)  gausslat - A fortran program that calls routine gausslat 
     to calculate the gaussian latitudes for a t382 grid.
-2)  gcdist - a fortran program that calls function gcdist and 
+2)  gcdist - A fortran program that calls function gcdist and 
     subroutine movect to calculate the distance of three great
     circle routes (and their corresponding rotation parameters).
-3)  gdswiz_wzd - a fortran program that calls gdswiz and gdswzd
+3)  gdswiz_wzd - A fortran program that calls gdswiz and gdswzd
     (and all of their child routines) to calculate lat/lon and
     other map-related fields for several grids of
     of various map projections.
-4)  ipmerge2 - a fortran program that calls routine
+4)  ipmerge2 - A fortran program that calls routine
     ipmerge2, which merges two bitmapped fields into one.  
-5)  ipolates - a fortran program that interpolates a global
+5)  ipolates - A fortran program that interpolates a global
     lat/lon grid of substrate temperature to several grids of various
     projections using the ipolates suite of routines.  All
     interpolation options (bilinear, neighbor, etc.) are used.
-6)  ipolatev - a fortran program that interpolates a global
+6)  ipolatev - A fortran program that interpolates a global
     lat/lon grid of vector u/v wind to several grids of various
     projections using the ipolatev suite of routines.  All
     interpolation options (bilinear, neighbor, etc.) are used.
-7)  ipsector - a fortran program that tests routine ipsector,
+7)  ipsector - A fortran program that tests routine ipsector,
     which which creates a subset of a larger
     two-dimensional field, and routine ipspaste, which does the
     opposite.
-8)  ipxetas - a fortran program that reads a field of
+8)  ipxetas - A fortran program that reads a field of
     vegetation greenness on a unstaggered eta grid, then 
     calls routine ipxetas to do the following transforms:
-      1) create a staggered mass grid from the unstaggered grid.
-      2) create a staggered velocity grid from the unstaggered grid.
-      3) create an unstaggered grid from the staggered mass grid created by step (1)
-      4) create an unstaggered grid from the staggered vel grid created by step (2)
-9)  ipxwafs2_3 - test ip routines ipxwafs2 and ipxwafs3 by transforming
+      1) Create a staggered mass grid from the unstaggered grid.
+      2) Create a staggered velocity grid from the unstaggered grid.
+      3) Create an unstaggered grid from the staggered mass grid created by step (1)
+      4) Create an unstaggered grid from the staggered vel grid created by step (2)
+9)  ipxwafs2_3 - Test ip routines ipxwafs2 and ipxwafs3 by transforming
     a global grid of 600 mb temperature (on ncep grid 3) to wafs grids 37 thru 44 
-    using copygb. after the global to wafs grid transforms are
+    using copygb. After the global to wafs grid transforms are
     completed, copygb is invoked again to transform temperature data on each
-    wafs grid back to ncep grid 3.  note: routine ipxwafs2 is invoked 
+    wafs grid back to ncep grid 3.  Note: routine ipxwafs2 is invoked 
     for interpolation option '0' (bilinear) and routine ipxwafs3 
     is invoked for interpolation option '2' (neighbor).
-10) ipxwafs - same as experiment 9 except a specially modified version
+10) ipxwafs - Same as experiment 9 except a specially modified version
     of copygb is used to call iplib routine ipxwafs instead of ipxwafs2. 
     ipxwafs and ipxwafs2 are the same except the latter accounts for bitmaps.
-11) makgds - a fortran program to test routine makgds.  Routine is called
+11) makgds - A fortran program to test routine makgds.  Routine is called
     three times.
-      1) create gds and kgds arrays for ncep grid 3. these arrays hold grid
+      1) Create gds and kgds arrays for ncep grid 3. these arrays hold grid
          description information used by w3 grib library.
-      2) make kgds array for grid 3 from gds array
-      3) make gds array for grid 3 from kgds array
-12) polateg - a fortran program to call the polateg group of routines
+      2) Make kgds array for grid 3 from gds array
+      3) Make gds array for grid 3 from kgds array
+12) polateg - A fortran program to call the polateg group of routines
     to interpolate temperature data on a 1-degree global lat/lon grid
     to a high-res global lat/lon grid, returning their vector gradients.
     Note: the polateg routines have several errors.  So, this test is
     not currently called from the regression driver scripts (listed below). 
-13) copygb - the ncep copygb program is used to transform a global lat/lon file of
+13) copygb - The ncep copygb program is used to transform a global lat/lon file of
     vegetation greenness to numerous standard ncep grids using all available
     interpolation options (bilinear, nearest neighbor, etc.).  Because this 
     test can take over an hour of wall clock time, and calls the same
     routines as other regression tests, it is not currently called
     from the regression driver scripts.  However, it may be run stand-alone.
-
-There are three versions of IPLIB:
-
-  1) 4 byte integer/4 byte float (libip_4.a)
-  2) 4 byte integer/8 byte float (libip_d.a)
-  3) 8 byte integer/8 byte float (libip_8.a)
-
-Each regression test is compiled with all three versions of a 'control' and
-'test' iplib (for a total of six executables).  The 'control' and 'test'
-library versions are determined by the user.
+    Note: The copygb executables are used by the ixpwafs2_3 regresion test.
 
 Within each regression directory, the ./src subdirectory will contain the
-source code required for the regression test.  Scripts to compile and run 
-are under the ./scripts subdirectory.  Makefiles and executables 
-stored under the ./exec subdirectory.  Any input data is stored in the
-./data subdirectory. Grads control files to view output data are 
-stored in the ./grads subdirectory.  More detailed information about
-each regression test is described in a README file and in the comment
-sections of the scripts.
+source code and make-related files required for the regression test. A script
+to run the individual regression test is under the ./scripts subdirectory.
+The executables (after compilation) are stored under the ./exec subdirectory.
+Any input data is stored in the ./data subdirectory.  Grads control files
+to view any binary output data are stored in the ./grads subdirectory.  Some control
+files do not have map backgrounds specified.  They are only used to
+sanity check the data.  So when viewing, do a 'set mproj off'. 
 
-The entire suite of tests is compiled on wcoss, zeus or ccs with the 
-"Makeall.ksh" script. Before invoking the script, you must link the 'control'
-and 'test' libraries to the ./lib subdirectory, or copy them manually.  The naming
-convention is: 
-
-libip_ctl_4.a  (4 byte integer/4 byte float, control)
-libip_ctl_8.a  (8 byte integer/8 byte float, control)
-libip_ctl_d.a  (4 byte integer/8 byte float, control)
-libip_test_4.a (4 byte integer/4 byte float, test)
-libip_test_8.a (8 byte integer/8 byte float, test)
-libip_test_d.a (4 byte integer/8 byte float, test)
-
-See the script comments for more details before compiling.
-
-The executables for the control/test libraries will
-be in the ./exec/ctl and ./exec/test subdirectories.  
-
-After compilation, run the entire suite of tests on the ccs by
-typing "llsubmit Runall.ccs.ksh".  On zeus, type "Runall.zeus.ksh".
-On wcoss, type "Ruanll.wcoss.ksh".  Results are stored in 
-"regression.log" in $WORK_DIR.  A summary of results is 
-stored in "summary.log" in $WORK_DIR.  See the script
-comments for more details. 
+More detailed information about each test is described in a README file in that
+test's subdirectory.
 
 Below is a table of each routine in iplib and which regression test(s) invoke it.
 
