@@ -2,7 +2,7 @@
 AC_REVISION($Id: configure.ac 25875 2013-02-19 15:45:31Z george.gayno@noaa.gov $)
 
 ## Initialise autoconf
-AC_INIT([ip regression test suite], [2.0.1], [ncep.list.emc.nceplibs.support@noaa.gov])
+AC_INIT([ip regression test suite], [2.0.2], [ncep.list.emc.nceplibs.support@noaa.gov])
 
 # Output info for user
 AC_MSG_NOTICE([ip AC_PACKAGE_VERSION])
