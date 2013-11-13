@@ -3,7 +3,7 @@ AC_REVISION($Id$)
 
 
 ## Initialise autoconf
-AC_INIT([nceplibs ip], [v2.0.1], [ncep.list.emc.nceplibs.support@noaa.gov], [ip])
+AC_INIT([nceplibs ip], [v2.0.2], [ncep.list.emc.nceplibs.support@noaa.gov], [ip])
 
 
 # Output info for user
@@ -11,7 +11,7 @@ AC_MSG_NOTICE([AC_PACKAGE_NAME AC_PACKAGE_VERSION])
 
 
 # Check for existence of unique file before proceeding
-AC_CONFIG_SRCDIR([src/ipolates.f])
+AC_CONFIG_SRCDIR([src/ipolates.f90])
 
 
 # Define the configuration files
@@ -30,7 +30,7 @@ AC_SUBST(ARFLAGS)
 
 # Set the programming language
 AC_LANG(Fortran)
-AC_FC_SRCEXT(f)
+AC_FC_SRCEXT(f90)
 
 
 # Establish the default type promotion for naming

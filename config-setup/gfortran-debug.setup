@@ -2,7 +2,6 @@ export FC="gfortran"
 export FCFLAGS=" \
  -fbounds-check \
  -ffpe-trap=overflow,zero,invalid \
- -ffixed-form \
  -ggdb \
  -Wall"
 export LDFLAGS=" "
