@@ -4,8 +4,6 @@ FPP_FILES =
 # The list of regular source files
 FSRC_FILES = \
  gausslat.f90 \
- gcdist.f90 \
- gdsawt.f90 \
  gdswiz00.f90 \
  gdswiz01.f90 \
  gdswiz03.f90 \
@@ -28,21 +26,14 @@ FSRC_FILES = \
  gdswzd.f90 \
  ijkgds0.f90 \
  ijkgds1.f90 \
- ijkgds.f90 \
- ipmerge2.f90 \
  ipolates.f90 \
  ipolatev.f90 \
- ipsector.f90 \
- ipspaste.f90 \
  ipxetas.f90 \
  ipxwafs2.f90 \
  ipxwafs3.f90 \
  ipxwafs.f90 \
  makgds.f90 \
  movect.f90 \
- polateg0.f90 \
- polateg1.f90 \
- polateg4.f90 \
  polates0.f90 \
  polates1.f90 \
  polates2.f90 \

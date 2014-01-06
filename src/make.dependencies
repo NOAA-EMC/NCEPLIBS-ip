@@ -1,6 +1,4 @@
  gausslat.o : gausslat.f90
- gcdist.o : gcdist.f90
- gdsawt.o : gdsawt.f90
  gdswiz00.o : gdswiz00.f90
  gdswiz01.o : gdswiz01.f90
  gdswiz03.o : gdswiz03.f90
@@ -23,21 +21,14 @@
  gdswzd.o : gdswzd.f90
  ijkgds0.o : ijkgds0.f90
  ijkgds1.o : ijkgds1.f90
- ijkgds.o : ijkgds.f90
- ipmerge2.o : ipmerge2.f90
  ipolates.o : ipolates.f90
  ipolatev.o : ipolatev.f90
- ipsector.o : ipsector.f90
- ipspaste.o : ipspaste.f90
  ipxetas.o : ipxetas.f90
  ipxwafs2.o : ipxwafs2.f90
  ipxwafs3.o : ipxwafs3.f90
  ipxwafs.o : ipxwafs.f90
  makgds.o : makgds.f90
  movect.o : movect.f90
- polateg0.o : polateg0.f90
- polateg1.o : polateg1.f90 
- polateg4.o : polateg4.f90 
  polates0.o : polates0.f90
  polates1.o : polates1.f90 
  polates2.o : polates2.f90 
