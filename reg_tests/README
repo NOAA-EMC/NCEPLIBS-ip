@@ -93,9 +93,8 @@ gdsawt and ijkgds, which I think are obsolete.
 
 1)  gausslat - A fortran program that calls routine gausslat 
     to calculate the gaussian latitudes for a t382 grid.
-2)  gcdist - A fortran program that calls function gcdist and 
-    subroutine movect to calculate the distance of three great
-    circle routes (and their corresponding rotation parameters).
+2)  movect - A fortran program that calls subroutine movect
+    move vector along three great circle routes.
 3)  gdswiz_wzd - A fortran program that calls gdswiz and gdswzd
     (and all of their child routines) to calculate lat/lon and
     other map-related fields for several grids of
@@ -168,7 +167,6 @@ subroutine name         regression test
 ===============         ===============
 
 gausslat                gausslat
-gcdist                  gcdist
 gdswiz                  gdswiz_wzd, ipolates, ipolatev, ipsector, ipxwafs, ipxwafs2_3, copygb
 gdswiz00                gdswiz_wzd, ipolates, ipolatev, ipsector, ipxwafs, ipxwafs2_3, copygb
 gdswiz01                gdswiz_wzd, ipolates, ipolatev, copygb
@@ -201,7 +199,7 @@ ipxwafs                 ipxwafs, ipxwafs2_3
 ipxwafs2                ipxwafs2_3, copygb
 ipxwafs3                ipxwafs2_3, copygb
 makgds                  ipxwafs, ipxwafs2_3, makgds
-movect                  gcdist, ipolatev
+movect                  movect, ipolatev
 polateg0                polateg
 polateg1                polateg
 polateg4                polateg

@@ -86,7 +86,7 @@ set -x
 #@dependency=(ipolatev_4thread == 0)
 #@queue
 
-#@step_name=gcdist
+#@step_name=movect
 #@resources=ConsumableMemory(1000Mb)
 #@job_type=serial
 #@task_affinity=cpu(1)
@@ -103,7 +103,7 @@ set -x
 #@parallel_threads=1
 #@wall_clock_limit=00:03:00
 #@node_usage=shared
-#@dependency=(gcdist == 0)
+#@dependency=(movect == 0)
 #@queue
 
 #@step_name=ipsector
@@ -188,8 +188,8 @@ gausslat)
   rm -fr $WORK_DIR
   mkdir -p $WORK_DIR
   $REG_DIR/gausslat/scripts/runall.ksh > $LOG_FILE;;
-gcdist)
-  $REG_DIR/gcdist/scripts/runall.ksh >> $LOG_FILE;;
+movect)
+  $REG_DIR/movect/scripts/runall.ksh >> $LOG_FILE;;
 ipmerge2)
   $REG_DIR/ipmerge2/scripts/runall.ksh >> $LOG_FILE;;
 ipsector)

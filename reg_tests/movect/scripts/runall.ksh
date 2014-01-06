@@ -1,9 +1,9 @@
 #!/bin/ksh
 
 #--------------------------------------------------------------
-# Run regression test for iplib routines gcdist and movect.
+# Run regression test for iplib routine movect.
 #
-# The routines are invoked by a simple Fortran program.
+# The routine is invoked by a simple Fortran program.
 # The program is compiled with all three byte versions
 # of the 'control' and 'test' ip library.
 #
@@ -30,7 +30,7 @@
 #set -x
 
 echo
-echo "BEGIN GCDIST/MOVECT REGRESSION TEST"
+echo "BEGIN MOVECT REGRESSION TEST"
 echo
 
 REG_DIR=${REG_DIR:-../..}
@@ -38,31 +38,31 @@ REG_DIR=${REG_DIR:-../..}
 WORK_DIR=${WORK_DIR:-/stmp/$LOGNAME/regression}
 
 # where the executables are located
-EXEC_DIR=$REG_DIR/gcdist/exec
+EXEC_DIR=$REG_DIR/movect/exec
 
-WORK=${WORK_DIR}/gcdist
+WORK=${WORK_DIR}/movect
 rm -fr $WORK
 mkdir -p $WORK
 WORK_CTL=${WORK}/ctl
 mkdir -p $WORK_CTL
-cp $EXEC_DIR/gcdist_ctl_*.exe  $WORK_CTL
+cp $EXEC_DIR/movect_ctl_*.exe  $WORK_CTL
 WORK_TEST=${WORK}/test
 mkdir -p $WORK_TEST
-cp $EXEC_DIR/gcdist_test_*.exe $WORK_TEST
+cp $EXEC_DIR/movect_test_*.exe $WORK_TEST
 
 reg_test_failed=0
 
 for bytesize in "4" "8" "d"  # the version of the library
 do
 
-  echo "TEST ${bytesize}-BYTE FLOAT VERSION OF ROUTINES GCDIST/MOVECT"
+  echo "TEST ${bytesize}-BYTE FLOAT VERSION OF ROUTINE MOVECT"
 
   ctl_failed=0
   test_failed=0
 
   cd $WORK_CTL
   CTL_LOG=ctl.${bytesize}byte.log
-  gcdist_ctl_${bytesize}.exe  > $CTL_LOG
+  movect_ctl_${bytesize}.exe  > $CTL_LOG
   status=$?
   if ((status != 0));then
     echo "** CONTROL RUN FAILED."
@@ -72,7 +72,7 @@ do
 
   cd $WORK_TEST
   TEST_LOG=test.${bytesize}byte.log
-  gcdist_test_${bytesize}.exe > $TEST_LOG
+  movect_test_${bytesize}.exe > $TEST_LOG
   status=$?
   if ((status != 0));then
     echo "** TEST RUN FAILED."
@@ -109,11 +109,11 @@ done
 if ((reg_test_failed == 0))
 then
   echo
-  echo "<<< GCDIST/MOVECT REGRESSION TEST PASSED. >>>"
+  echo "<<< MOVECT REGRESSION TEST PASSED. >>>"
   echo
 else
   echo
-  echo "<<< GCDIST/MOVECT REGRESSION TEST FAILED. >>>"
+  echo "<<< MOVECT REGRESSION TEST FAILED. >>>"
   echo
 fi
 

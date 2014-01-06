@@ -11,7 +11,7 @@ suffix  = @SUFFIX@
 prefix      = @prefix@
 
 # Mixed package and prefix substitution variables
-installdir  = $(prefix)/gcdist/exec
+installdir  = $(prefix)/movect/exec
 
 # Compiler substitution variables
 FC = @FC@
@@ -30,7 +30,7 @@ include make.filelist
 all: exec
 
 exec: $(OBJ_FILES)
-	$(FC) $(FCFLAGS) -o gcdist.exe $(OBJ_FILES) $(LDFLAGS) $(LIBS)
+	$(FC) $(FCFLAGS) -o movect.exe $(OBJ_FILES) $(LDFLAGS) $(LIBS)
 
 clean:
 	-rm -f *.o *.exe
@@ -43,10 +43,10 @@ distclean: clean uninstall
 
 install:
 	$(INSTALL) -d $(DESTDIR)$(installdir)
-	$(INSTALL_PROGRAM) gcdist.exe $(DESTDIR)$(installdir)/gcdist$(suffix).exe
+	$(INSTALL_PROGRAM) movect.exe $(DESTDIR)$(installdir)/movect$(suffix).exe
 
 Makefile: Makefile.in ../../config.status
-	cd ../.. && ./config.status gcdist/src/$@
+	cd ../.. && ./config.status movect/src/$@
 
 ../../config.status: ../../configure
 	cd ../.. && ./config.status --recheck
