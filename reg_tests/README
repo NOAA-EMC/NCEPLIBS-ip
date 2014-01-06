@@ -2,7 +2,7 @@
 HOW TO RUN THE REGRESSION TEST SUITE
 ---------------------------------------------------------------
 
-The regression test suite consists of eleven fortran programs
+The regression test suite consists of ten fortran programs
 that invoke a subset of IPOLATES (or IPLIB) routines.  IPOLATES
 developers are required to run this test suite to ensure their
 branch changes perform as expected before they are merged to 
@@ -93,55 +93,53 @@ gdsawt and ijkgds, which I think are obsolete.
 
 1)  gausslat - A fortran program that calls routine gausslat 
     to calculate the gaussian latitudes for a t382 grid.
-2)  movect - A fortran program that calls subroutine movect
-    move vector along three great circle routes.
-3)  gdswiz_wzd - A fortran program that calls gdswiz and gdswzd
+2)  gdswiz_wzd - A fortran program that calls gdswiz and gdswzd
     (and all of their child routines) to calculate lat/lon and
     other map-related fields for several grids of
     of various map projections.
-4)  ipmerge2 - A fortran program that calls routine
+3)  ipmerge2 - A fortran program that calls routine
     ipmerge2, which merges two bitmapped fields into one.  
-5)  ipolates - A fortran program that interpolates a global
+4)  ipolates - A fortran program that interpolates a global
     lat/lon grid of substrate temperature to several grids of various
     projections using the ipolates suite of routines.  All
     interpolation options (bilinear, neighbor, etc.) are used.
-6)  ipolatev - A fortran program that interpolates a global
+5)  ipolatev - A fortran program that interpolates a global
     lat/lon grid of vector u/v wind to several grids of various
     projections using the ipolatev suite of routines.  All
     interpolation options (bilinear, neighbor, etc.) are used.
-7)  ipsector - A fortran program that tests routine ipsector,
+6)  ipsector - A fortran program that tests routine ipsector,
     which which creates a subset of a larger
     two-dimensional field, and routine ipspaste, which does the
     opposite.
-8)  ipxetas - A fortran program that reads a field of
+7)  ipxetas - A fortran program that reads a field of
     vegetation greenness on a unstaggered eta grid, then 
     calls routine ipxetas to do the following transforms:
       1) Create a staggered mass grid from the unstaggered grid.
       2) Create a staggered velocity grid from the unstaggered grid.
       3) Create an unstaggered grid from the staggered mass grid created by step (1)
       4) Create an unstaggered grid from the staggered vel grid created by step (2)
-9)  ipxwafs2_3 - Test ip routines ipxwafs2 and ipxwafs3 by transforming
+8)  ipxwafs2_3 - Test ip routines ipxwafs2 and ipxwafs3 by transforming
     a global grid of 600 mb temperature (on ncep grid 3) to wafs grids 37 thru 44 
     using copygb. After the global to wafs grid transforms are
     completed, copygb is invoked again to transform temperature data on each
     wafs grid back to ncep grid 3.  Note: routine ipxwafs2 is invoked 
     for interpolation option '0' (bilinear) and routine ipxwafs3 
     is invoked for interpolation option '2' (neighbor).
-10) ipxwafs - Same as experiment 9 except a specially modified version
+9)  ipxwafs - Same as experiment 9 except a specially modified version
     of copygb is used to call iplib routine ipxwafs instead of ipxwafs2. 
     ipxwafs and ipxwafs2 are the same except the latter accounts for bitmaps.
-11) makgds - A fortran program to test routine makgds.  Routine is called
+10) makgds - A fortran program to test routine makgds.  Routine is called
     three times.
       1) Create gds and kgds arrays for ncep grid 3. these arrays hold grid
          description information used by w3 grib library.
       2) Make kgds array for grid 3 from gds array
       3) Make gds array for grid 3 from kgds array
-12) polateg - A fortran program to call the polateg group of routines
+11) polateg - A fortran program to call the polateg group of routines
     to interpolate temperature data on a 1-degree global lat/lon grid
     to a high-res global lat/lon grid, returning their vector gradients.
     Note: the polateg routines have several errors.  So, this test is
     not currently called from the regression driver scripts (listed below). 
-13) copygb - The ncep copygb program is used to transform a global lat/lon file of
+12) copygb - The ncep copygb program is used to transform a global lat/lon file of
     vegetation greenness to numerous standard ncep grids using all available
     interpolation options (bilinear, nearest neighbor, etc.).  Because this 
     test can take over an hour of wall clock time, and calls the same
@@ -199,7 +197,7 @@ ipxwafs                 ipxwafs, ipxwafs2_3
 ipxwafs2                ipxwafs2_3, copygb
 ipxwafs3                ipxwafs2_3, copygb
 makgds                  ipxwafs, ipxwafs2_3, makgds
-movect                  movect, ipolatev
+movect                  ipolatev
 polateg0                polateg
 polateg1                polateg
 polateg4                polateg

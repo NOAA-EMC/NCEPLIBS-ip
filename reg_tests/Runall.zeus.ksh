@@ -30,11 +30,8 @@ module load intel
 GAUSSLAT=$(qsub -l nodes=1 -l walltime=0:01:00 -A rm -N iplib -o $LOG_FILE -e $LOG_FILE \
       -v REG_DIR,WORK_DIR $REG_DIR/gausslat/scripts/runall.ksh)
 
-MOVECT=$(qsub -l nodes=1 -l walltime=0:01:00 -A rm -N iplib -o $LOG_FILE -e $LOG_FILE \
-      -v REG_DIR,WORK_DIR -W depend=afterok:$GAUSSLAT $REG_DIR/movect/scripts/runall.ksh)
-
 IMERGE2=$(qsub -l nodes=1 -l walltime=0:01:00 -A rm -N iplib -o $LOG_FILE -e $LOG_FILE \
-      -v REG_DIR,WORK_DIR -W depend=afterok:$MOVECT $REG_DIR/ipmerge2/scripts/runall.ksh)
+      -v REG_DIR,WORK_DIR -W depend=afterok:$GAUSSLAT $REG_DIR/ipmerge2/scripts/runall.ksh)
 
 IPSECTOR=$(qsub -l nodes=1 -l walltime=0:01:00 -A rm -N iplib -o $LOG_FILE -e $LOG_FILE \
       -v REG_DIR,WORK_DIR -W depend=afterok:$IMERGE2 $REG_DIR/ipsector/scripts/runall.ksh)

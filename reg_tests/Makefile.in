@@ -9,7 +9,6 @@ all clean install uninstall:
 	cd copygb/src && $(MAKE) $@
 	cd ipxwafs/src && $(MAKE) $@
 	cd gausslat/src && $(MAKE) $@
-	cd movect/src && $(MAKE) $@
 	cd gdswiz_wzd/src && $(MAKE) $@
 	cd ipxetas/src && $(MAKE) $@
 	cd ipsector/src && $(MAKE) $@
@@ -22,7 +21,6 @@ distclean:
 	cd copygb/src && $(MAKE) $@
 	cd ipxwafs/src && $(MAKE) $@
 	cd gausslat/src && $(MAKE) $@
-	cd movect/src && $(MAKE) $@
 	cd gdswiz_wzd/src && $(MAKE) $@
 	cd ipxetas/src && $(MAKE) $@
 	cd ipsector/src && $(MAKE) $@
