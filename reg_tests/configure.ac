@@ -21,7 +21,6 @@ AC_CONFIG_FILES([gdswiz_wzd/src/Makefile])
 AC_CONFIG_FILES([ipmerge2/src/Makefile])
 AC_CONFIG_FILES([makgds/src/Makefile])
 AC_CONFIG_FILES([ipxetas/src/Makefile])
-AC_CONFIG_FILES([ipsector/src/Makefile])
 AC_CONFIG_FILES([ipolates/src/Makefile])
 AC_CONFIG_FILES([ipolatev/src/Makefile])
 

@@ -96,16 +96,6 @@ set -x
 #@dependency=(ipolatev_compare == 0)
 #@queue
 
-#@step_name=ipsector
-#@resources=ConsumableMemory(1000Mb)
-#@job_type=serial
-#@task_affinity=cpu(1)
-#@parallel_threads=1
-#@wall_clock_limit=00:03:00
-#@node_usage=shared
-#@dependency=(ipmerge2 == 0)
-#@queue
-
 #@step_name=ipxetas
 #@resources=ConsumableMemory(1000Mb)
 #@job_type=serial
@@ -113,7 +103,7 @@ set -x
 #@parallel_threads=1
 #@wall_clock_limit=00:03:00
 #@node_usage=shared
-#@dependency=(ipsector == 0)
+#@dependency=(ipmerge2 == 0)
 #@queue
 
 #@step_name=ipxwafs
@@ -180,8 +170,6 @@ gausslat)
   $REG_DIR/gausslat/scripts/runall.ksh > $LOG_FILE;;
 ipmerge2)
   $REG_DIR/ipmerge2/scripts/runall.ksh >> $LOG_FILE;;
-ipsector)
-  $REG_DIR/ipsector/scripts/runall.ksh >> $LOG_FILE;;
 ipxetas)
   $REG_DIR/ipxetas/scripts/runall.ksh >> $LOG_FILE;;
 ipxwafs)
