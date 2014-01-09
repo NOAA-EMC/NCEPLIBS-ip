@@ -1764,8 +1764,6 @@ ac_config_files="$ac_config_files gausslat/src/Makefile"
 
 ac_config_files="$ac_config_files gdswiz_wzd/src/Makefile"
 
-ac_config_files="$ac_config_files ipmerge2/src/Makefile"
-
 ac_config_files="$ac_config_files makgds/src/Makefile"
 
 ac_config_files="$ac_config_files ipxetas/src/Makefile"
@@ -3120,7 +3118,6 @@ do
     "copygb/src/Makefile") CONFIG_FILES="$CONFIG_FILES copygb/src/Makefile" ;;
     "gausslat/src/Makefile") CONFIG_FILES="$CONFIG_FILES gausslat/src/Makefile" ;;
     "gdswiz_wzd/src/Makefile") CONFIG_FILES="$CONFIG_FILES gdswiz_wzd/src/Makefile" ;;
-    "ipmerge2/src/Makefile") CONFIG_FILES="$CONFIG_FILES ipmerge2/src/Makefile" ;;
     "makgds/src/Makefile") CONFIG_FILES="$CONFIG_FILES makgds/src/Makefile" ;;
     "ipxetas/src/Makefile") CONFIG_FILES="$CONFIG_FILES ipxetas/src/Makefile" ;;
     "ipolates/src/Makefile") CONFIG_FILES="$CONFIG_FILES ipolates/src/Makefile" ;;

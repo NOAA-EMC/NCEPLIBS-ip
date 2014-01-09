@@ -97,45 +97,43 @@ gdsawt and ijkgds, which I think are obsolete.
     (and all of their child routines) to calculate lat/lon and
     other map-related fields for several grids of
     of various map projections.
-3)  ipmerge2 - A fortran program that calls routine
-    ipmerge2, which merges two bitmapped fields into one.  
-4)  ipolates - A fortran program that interpolates a global
+3)  ipolates - A fortran program that interpolates a global
     lat/lon grid of substrate temperature to several grids of various
     projections using the ipolates suite of routines.  All
     interpolation options (bilinear, neighbor, etc.) are used.
-5)  ipolatev - A fortran program that interpolates a global
+4)  ipolatev - A fortran program that interpolates a global
     lat/lon grid of vector u/v wind to several grids of various
     projections using the ipolatev suite of routines.  All
     interpolation options (bilinear, neighbor, etc.) are used.
-6)  ipxetas - A fortran program that reads a field of
+5)  ipxetas - A fortran program that reads a field of
     vegetation greenness on a unstaggered eta grid, then 
     calls routine ipxetas to do the following transforms:
       1) Create a staggered mass grid from the unstaggered grid.
       2) Create a staggered velocity grid from the unstaggered grid.
       3) Create an unstaggered grid from the staggered mass grid created by step (1)
       4) Create an unstaggered grid from the staggered vel grid created by step (2)
-7)  ipxwafs2_3 - Test ip routines ipxwafs2 and ipxwafs3 by transforming
+6)  ipxwafs2_3 - Test ip routines ipxwafs2 and ipxwafs3 by transforming
     a global grid of 600 mb temperature (on ncep grid 3) to wafs grids 37 thru 44 
     using copygb. After the global to wafs grid transforms are
     completed, copygb is invoked again to transform temperature data on each
     wafs grid back to ncep grid 3.  Note: routine ipxwafs2 is invoked 
     for interpolation option '0' (bilinear) and routine ipxwafs3 
     is invoked for interpolation option '2' (neighbor).
-8)  ipxwafs - Same as experiment 9 except a specially modified version
+7)  ipxwafs - Same as experiment 9 except a specially modified version
     of copygb is used to call iplib routine ipxwafs instead of ipxwafs2. 
     ipxwafs and ipxwafs2 are the same except the latter accounts for bitmaps.
-9)  makgds - A fortran program to test routine makgds.  Routine is called
+8)  makgds - A fortran program to test routine makgds.  Routine is called
     three times.
       1) Create gds and kgds arrays for ncep grid 3. these arrays hold grid
          description information used by w3 grib library.
       2) Make kgds array for grid 3 from gds array
       3) Make gds array for grid 3 from kgds array
-10) polateg - A fortran program to call the polateg group of routines
+9)  polateg - A fortran program to call the polateg group of routines
     to interpolate temperature data on a 1-degree global lat/lon grid
     to a high-res global lat/lon grid, returning their vector gradients.
     Note: the polateg routines have several errors.  So, this test is
     not currently called from the regression driver scripts (listed below). 
-11) copygb - The ncep copygb program is used to transform a global lat/lon file of
+10) copygb - The ncep copygb program is used to transform a global lat/lon file of
     vegetation greenness to numerous standard ncep grids using all available
     interpolation options (bilinear, nearest neighbor, etc.).  Because this 
     test can take over an hour of wall clock time, and calls the same
@@ -183,7 +181,6 @@ gdswzdcb                gdswiz_wzd
 gdswzdcd                gdswiz_wzd
 ijkgds0                 ipolates, ipolatev, ipxwafs, ipxwafs2_3, polateg, copygb
 ijkgds1                 ipolates, ipolatev, ipxwafs, ipxwafs2_3
-ipmerge2                ipmerge2
 ipolates                ipolates, ipxwafs, ipxwafs2_3, copygb
 ipolatev                ipolatev
 ipxetas                 ipxetas

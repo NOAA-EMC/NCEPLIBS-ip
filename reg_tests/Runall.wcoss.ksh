@@ -38,10 +38,7 @@ bsub -e $LOG_FILE -o $LOG_FILE -q "dev_shared" -P "GFS-MTN" \
      -J "gdswiz" -R affinity[core] -R "rusage[mem=300]" -W 0:05 -w 'ended(gausslat)' $REG_DIR/gdswiz_wzd/scripts/runall.ksh 
 
 bsub -e $LOG_FILE -o $LOG_FILE -q "dev_shared" -P "GFS-MTN" \
-     -J "ipmerge2" -R affinity[core] -R "rusage[mem=100]" -W 0:02 -w 'ended(gdswiz)' $REG_DIR/ipmerge2/scripts/runall.ksh 
-
-bsub -e $LOG_FILE -o $LOG_FILE -q "dev_shared" -P "GFS-MTN" \
-     -J "ipxetas" -R affinity[core] -R "rusage[mem=100]" -W 0:02 -w 'ended(ipmerge2)' $REG_DIR/ipxetas/scripts/runall.ksh 
+     -J "ipxetas" -R affinity[core] -R "rusage[mem=100]" -W 0:02 -w 'ended(gdswiz)' $REG_DIR/ipxetas/scripts/runall.ksh 
 
 bsub -e $LOG_FILE -o $LOG_FILE -q "dev_shared" -P "GFS-MTN" \
      -J "ipxwafs" -R affinity[core] -R "rusage[mem=100]" -W 0:05 -w 'ended(ipxetas)' $REG_DIR/ipxwafs/scripts/runall.ksh 
