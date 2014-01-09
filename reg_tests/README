@@ -128,12 +128,7 @@ gdsawt and ijkgds, which I think are obsolete.
          description information used by w3 grib library.
       2) Make kgds array for grid 3 from gds array
       3) Make gds array for grid 3 from kgds array
-9)  polateg - A fortran program to call the polateg group of routines
-    to interpolate temperature data on a 1-degree global lat/lon grid
-    to a high-res global lat/lon grid, returning their vector gradients.
-    Note: the polateg routines have several errors.  So, this test is
-    not currently called from the regression driver scripts (listed below). 
-10) copygb - The ncep copygb program is used to transform a global lat/lon file of
+9)  copygb - The ncep copygb program is used to transform a global lat/lon file of
     vegetation greenness to numerous standard ncep grids using all available
     interpolation options (bilinear, nearest neighbor, etc.).  Because this 
     test can take over an hour of wall clock time, and calls the same
@@ -169,8 +164,8 @@ gdswizc9                gdswiz_wzd
 gdswizca                gdswiz_wzd
 gdswizcb                gdswiz_wzd, ipolates, ipolatev, copygb
 gdswizcd                gdswiz_wzd, ipolates, ipolatev, copygb
-gdswzd                  gdswiz_wzd, polateg
-gdswzd00                gdswiz_wzd, polateg
+gdswzd                  gdswiz_wzd
+gdswzd00                gdswiz_wzd
 gdswzd01                gdswiz_wzd
 gdswzd03                gdswiz_wzd
 gdswzd04                gdswiz_wzd
@@ -179,7 +174,7 @@ gdswzdc9                gdswiz_wzd
 gdswzdca                gdswiz_wzd
 gdswzdcb                gdswiz_wzd
 gdswzdcd                gdswiz_wzd
-ijkgds0                 ipolates, ipolatev, ipxwafs, ipxwafs2_3, polateg, copygb
+ijkgds0                 ipolates, ipolatev, ipxwafs, ipxwafs2_3, copygb
 ijkgds1                 ipolates, ipolatev, ipxwafs, ipxwafs2_3
 ipolates                ipolates, ipxwafs, ipxwafs2_3, copygb
 ipolatev                ipolatev
@@ -189,9 +184,6 @@ ipxwafs2                ipxwafs2_3, copygb
 ipxwafs3                ipxwafs2_3, copygb
 makgds                  ipxwafs, ipxwafs2_3, makgds
 movect                  ipolatev
-polateg0                polateg
-polateg1                polateg
-polateg4                polateg
 polates0                ipolates, ipxwafs, ipxwafs2_3, copygb
 polates1                ipolates, copygb
 polates2                ipolates, ipxwafs2_3, copygb
@@ -205,4 +197,4 @@ polatev3                ipolatev
 polatev4                ipolatev
 polatev6                ipolatev
 polfixs                 ipolates, ipxwafs, ipxwafs2_3
-polfixv                 ipolatev, polateg
+polfixv                 ipolatev
