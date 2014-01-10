@@ -2,7 +2,7 @@
 HOW TO RUN THE REGRESSION TEST SUITE
 ---------------------------------------------------------------
 
-The regression test suite consists of nine fortran programs
+The regression test suite consists of eight fortran programs
 that invoke a subset of IPOLATES (or IPLIB) routines.  IPOLATES
 developers are required to run this test suite to ensure their
 branch changes perform as expected before they are merged to 
@@ -88,8 +88,7 @@ DETAILS ON EACH INDIVIDUAL REGRESSION TEST
 
 The tests in the following subdirectories are designed to test 
 a subset of IPLIB.  It was too difficult to create a single test
-that exercised every routine.  No tests were created for routines
-gdsawt and ijkgds, which I think are obsolete.
+that exercised every routine.  
 
 1)  gausslat - A fortran program that calls routine gausslat 
     to calculate the gaussian latitudes for a t382 grid.
@@ -106,7 +105,7 @@ gdsawt and ijkgds, which I think are obsolete.
     projections using the ipolatev suite of routines.  All
     interpolation options (bilinear, neighbor, etc.) are used.
 5)  ipxetas - A fortran program that reads a field of
-    vegetation greenness on a unstaggered eta grid, then 
+    vegetation greenness on an unstaggered eta grid, then 
     calls routine ipxetas to do the following transforms:
       1) Create a staggered mass grid from the unstaggered grid.
       2) Create a staggered velocity grid from the unstaggered grid.
