@@ -9,11 +9,8 @@ all clean install uninstall:
 	cd copygb/src && $(MAKE) $@
 	cd ipxwafs/src && $(MAKE) $@
 	cd gausslat/src && $(MAKE) $@
-	cd gcdist/src && $(MAKE) $@
 	cd gdswiz_wzd/src && $(MAKE) $@
 	cd ipxetas/src && $(MAKE) $@
-	cd ipsector/src && $(MAKE) $@
-	cd ipmerge2/src && $(MAKE) $@
 	cd makgds/src && $(MAKE) $@
 	cd ipolates/src && $(MAKE) $@
 	cd ipolatev/src && $(MAKE) $@
@@ -22,11 +19,8 @@ distclean:
 	cd copygb/src && $(MAKE) $@
 	cd ipxwafs/src && $(MAKE) $@
 	cd gausslat/src && $(MAKE) $@
-	cd gcdist/src && $(MAKE) $@
 	cd gdswiz_wzd/src && $(MAKE) $@
 	cd ipxetas/src && $(MAKE) $@
-	cd ipsector/src && $(MAKE) $@
-	cd ipmerge2/src && $(MAKE) $@
 	cd makgds/src && $(MAKE) $@
 	cd ipolates/src && $(MAKE) $@
 	cd ipolatev/src && $(MAKE) $@

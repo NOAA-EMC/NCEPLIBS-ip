@@ -2,7 +2,7 @@
 AC_REVISION($Id: configure.ac 25875 2013-02-19 15:45:31Z george.gayno@noaa.gov $)
 
 ## Initialise autoconf
-AC_INIT([ip regression test suite], [2.0.2], [ncep.list.emc.nceplibs.support@noaa.gov])
+AC_INIT([ip regression test suite], [2.0.3], [ncep.list.emc.nceplibs.support@noaa.gov])
 
 # Output info for user
 AC_MSG_NOTICE([ip AC_PACKAGE_VERSION])
@@ -17,12 +17,9 @@ AC_CONFIG_FILES([Makefile])
 AC_CONFIG_FILES([ipxwafs/src/Makefile])
 AC_CONFIG_FILES([copygb/src/Makefile])
 AC_CONFIG_FILES([gausslat/src/Makefile])
-AC_CONFIG_FILES([gcdist/src/Makefile])
 AC_CONFIG_FILES([gdswiz_wzd/src/Makefile])
-AC_CONFIG_FILES([ipmerge2/src/Makefile])
 AC_CONFIG_FILES([makgds/src/Makefile])
 AC_CONFIG_FILES([ipxetas/src/Makefile])
-AC_CONFIG_FILES([ipsector/src/Makefile])
 AC_CONFIG_FILES([ipolates/src/Makefile])
 AC_CONFIG_FILES([ipolatev/src/Makefile])
 
