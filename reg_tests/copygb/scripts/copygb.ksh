@@ -45,7 +45,7 @@ echo
 REG_DIR=${REG_DIR:-../..}
 EXEC_DIR=$REG_DIR/copygb/exec
 
-WORK_DIR=${WORK_DIR:-/stmp/$LOGNAME/regression}
+WORK_DIR=${WORK_DIR:-/stmpp1/$LOGNAME/regression}
 WORK=${WORK_DIR}/copygb
 rm -fr $WORK
 mkdir -p $WORK

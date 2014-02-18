@@ -37,7 +37,7 @@ echo
 echo BEGIN MAKGDS REGRESSION TEST
 echo
  
-WORK_DIR=${WORK_DIR:-/stmp/$LOGNAME/regression}
+WORK_DIR=${WORK_DIR:-/stmpp1/$LOGNAME/regression}
 
 REG_DIR=${REG_DIR:-../..}
 
