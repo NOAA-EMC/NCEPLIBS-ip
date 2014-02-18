@@ -24,7 +24,7 @@ module load lsf/9.1
 
 export REG_DIR=$(pwd)
 
-export WORK_DIR="/stmp/${LOGNAME}/regression"
+export WORK_DIR="/stmpp1/${LOGNAME}/regression"
 rm -fr $WORK_DIR
 mkdir -p $WORK_DIR
 

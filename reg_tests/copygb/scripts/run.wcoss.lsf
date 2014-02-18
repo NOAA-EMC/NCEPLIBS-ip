@@ -24,7 +24,7 @@ module load lsf/9.1
 
 export REG_DIR="../.."
 
-export WORK_DIR="/ptmp/$LOGNAME/regression"
+export WORK_DIR="/ptmpp1/$LOGNAME/regression"
 
 $REG_DIR/copygb/scripts/copygb.ksh
 

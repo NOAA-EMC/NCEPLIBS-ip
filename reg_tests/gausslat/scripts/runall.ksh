@@ -38,7 +38,7 @@ REG_DIR=${REG_DIR:-../..}
 # where the control and test executables are located
 EXEC_DIR=$REG_DIR/gausslat/exec
 
-WORK_DIR=${WORK_DIR:-/stmp/$LOGNAME/regression}
+WORK_DIR=${WORK_DIR:-/stmpp1/$LOGNAME/regression}
 
 WORK=${WORK_DIR}/gausslat
 rm -fr $WORK

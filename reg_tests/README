@@ -72,7 +72,7 @@ The following steps are required to setup and run the test suite:
     
 (6) Check results.
 
-    On WCOSS, the default run directory is /stmp/${LOGNAME}/regression
+    On WCOSS, the default run directory is /stmpp1/${LOGNAME}/regression
     On Zeus, the default run directory is /scratch2/portfolios/NCEPDEV/stmp/$LOGNAME/regression
     (variable $WORK_DIR in the driver script).
 
