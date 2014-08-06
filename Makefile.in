@@ -4,10 +4,10 @@
 
 # Target specification
 all clean check install nco_install uninstall nco_uninstall:
-	cd src && $(MAKE) $@
+	cd sorc && $(MAKE) $@
 
 distclean: clean
-	cd src && $(MAKE) $@
+	cd sorc && $(MAKE) $@
 	-rm Makefile config.log* config.status
 
 Makefile: Makefile.in config.status

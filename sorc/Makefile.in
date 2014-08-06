@@ -1,6 +1,6 @@
 # @configure_input@
 
-# src/ level makefile template
+# sorc/ level makefile template
 
 # Package-specific substitution variables
 package = @PACKAGE_NAME@
@@ -71,7 +71,7 @@ nco_uninstall:
 
 # ...Reconfig targets
 Makefile: Makefile.in ../config.status
-	cd .. && ./config.status libsrc/$@
+	cd .. && ./config.status sorc/$@
 
 ../config.status: ../configure
 	cd .. && ./config.status --recheck

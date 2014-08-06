@@ -11,11 +11,11 @@ AC_MSG_NOTICE([AC_PACKAGE_NAME AC_PACKAGE_VERSION])
 
 
 # Check for existence of unique file before proceeding
-AC_CONFIG_SRCDIR([src/ipolates.f90])
+AC_CONFIG_SRCDIR([sorc/ipolates.f90])
 
 
 # Define the configuration files
-AC_CONFIG_FILES([Makefile src/Makefile])
+AC_CONFIG_FILES([Makefile sorc/Makefile])
 
 
 # Check for programs
