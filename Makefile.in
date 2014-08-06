@@ -3,7 +3,7 @@
 # Top level makefile template
 
 # Target specification
-all clean check install nco_install uninstall:
+all clean check install nco_install uninstall nco_uninstall:
 	cd src && $(MAKE) $@
 
 distclean: clean
@@ -17,4 +17,4 @@ config.status: configure
 	./config.status --recheck
 
 # Specify targets that do not generate filesystem objects
-.PHONY: all clean distclean check install nco-install uninstall
+.PHONY: all clean distclean check install nco-install uninstall nco_uninstall
