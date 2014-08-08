@@ -57,7 +57,7 @@ The following steps are required to setup and run the test suite:
     config*log files.  There will be six executables for
     each individual regression test (one for each 'ctl' and 'test' library version).
     These executables will be located in the ./exec sub-directory for
-    the regression test.  The source code is in the ./src sub-directory.
+    the regression test.  The source code is in the ./sorc sub-directory.
 
 (5) Kickoff the regression test suite.
 
@@ -135,7 +135,7 @@ that exercised every routine.
     from the regression driver scripts.  However, it may be run stand-alone.
     Note: The copygb executables are used by the ixpwafs2_3 regresion test.
 
-Within each regression directory, the ./src subdirectory will contain the
+Within each regression directory, the ./sorc subdirectory will contain the
 source code and make-related files required for the regression test. A script
 to run the individual regression test is under the ./scripts subdirectory.
 The executables (after compilation) are stored under the ./exec subdirectory.

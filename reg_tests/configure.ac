@@ -2,7 +2,7 @@
 AC_REVISION($Id: configure.ac 25875 2013-02-19 15:45:31Z george.gayno@noaa.gov $)
 
 ## Initialise autoconf
-AC_INIT([ip regression test suite], [2.0.3], [ncep.list.emc.nceplibs.support@noaa.gov])
+AC_INIT([ip regression test suite], [2.0.4], [ncep.list.emc.nceplibs.support@noaa.gov])
 
 # Output info for user
 AC_MSG_NOTICE([ip AC_PACKAGE_VERSION])
@@ -10,18 +10,18 @@ AC_MSG_NOTICE([ip AC_PACKAGE_VERSION])
 # Check for existence of unique file before proceeding
 # Can only check for one file.  Not a file in each
 # subdirectory.
-AC_CONFIG_SRCDIR([gausslat/src/gausslat_driver.f90])
+AC_CONFIG_SRCDIR([gausslat/sorc/gausslat_driver.f90])
 
 # Define the configuration files
 AC_CONFIG_FILES([Makefile])
-AC_CONFIG_FILES([ipxwafs/src/Makefile])
-AC_CONFIG_FILES([copygb/src/Makefile])
-AC_CONFIG_FILES([gausslat/src/Makefile])
-AC_CONFIG_FILES([gdswiz_wzd/src/Makefile])
-AC_CONFIG_FILES([makgds/src/Makefile])
-AC_CONFIG_FILES([ipxetas/src/Makefile])
-AC_CONFIG_FILES([ipolates/src/Makefile])
-AC_CONFIG_FILES([ipolatev/src/Makefile])
+AC_CONFIG_FILES([ipxwafs/sorc/Makefile])
+AC_CONFIG_FILES([copygb/sorc/Makefile])
+AC_CONFIG_FILES([gausslat/sorc/Makefile])
+AC_CONFIG_FILES([gdswiz_wzd/sorc/Makefile])
+AC_CONFIG_FILES([makgds/sorc/Makefile])
+AC_CONFIG_FILES([ipxetas/sorc/Makefile])
+AC_CONFIG_FILES([ipolates/sorc/Makefile])
+AC_CONFIG_FILES([ipolatev/sorc/Makefile])
 
 # Check for programs
 AC_PROG_FC(ifort)

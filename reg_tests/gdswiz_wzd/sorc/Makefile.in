@@ -1,6 +1,6 @@
 # @configure_input@
 
-# src/ level makefile template
+# sorc/ level makefile template
 
 # Package-specific substitution variables
 package = @PACKAGE_NAME@
@@ -11,7 +11,7 @@ suffix  = @SUFFIX@
 prefix      = @prefix@
 
 # Mixed package and prefix substitution variables
-installdir  = $(prefix)/ipxwafs/exec
+installdir  = $(prefix)/gdswiz_wzd/exec
 
 # Compiler substitution variables
 FC = @FC@
@@ -30,23 +30,23 @@ include make.filelist
 all: exec
 
 exec: $(OBJ_FILES)
-	$(FC) $(FCFLAGS) -o copygb.exe $(OBJ_FILES) $(LDFLAGS) $(LIBS)
+	$(FC) $(FCFLAGS) -o gdswiz_wzd.exe $(OBJ_FILES) $(LDFLAGS) $(LIBS)
 
 clean:
 	-rm -f *.o *.exe
 
 uninstall:
-	-rm -f $(DESTDIR)$(installdir)/copygb*
+	-rm -f $(DESTDIR)$(installdir)/*.exe
 
 distclean: clean uninstall
 	-rm Makefile
 
 install:
 	$(INSTALL) -d $(DESTDIR)$(installdir)
-	$(INSTALL_PROGRAM) copygb.exe $(DESTDIR)$(installdir)/copygb$(suffix)
+	$(INSTALL_PROGRAM) gdswiz_wzd.exe $(DESTDIR)$(installdir)/gdswiz_wzd$(suffix).exe
 
 Makefile: Makefile.in ../../config.status
-	cd ../.. && ./config.status ipxwafs/src/$@
+	cd ../.. && ./config.status gdswiz_wzd/sorc/$@
 
 ../../config.status: ../../configure
 	cd ../.. && ./config.status --recheck

@@ -1,6 +1,6 @@
 # @configure_input@
 
-# src/ level makefile template
+# sorc/ level makefile template
 
 # Package-specific substitution variables
 package = @PACKAGE_NAME@
@@ -11,7 +11,7 @@ suffix  = @SUFFIX@
 prefix      = @prefix@
 
 # Mixed package and prefix substitution variables
-installdir  = $(prefix)/gausslat/exec
+installdir  = $(prefix)/makgds/exec
 
 # Compiler substitution variables
 FC = @FC@
@@ -30,7 +30,7 @@ include make.filelist
 all: exec
 
 exec: $(OBJ_FILES)
-	$(FC) $(FCFLAGS) -o gausslat.exe $(OBJ_FILES) $(LDFLAGS) $(LIBS)
+	$(FC) $(FCFLAGS) -o makgds.exe $(OBJ_FILES) $(LDFLAGS) $(LIBS)
 
 clean:
 	-rm -f *.o *.exe
@@ -43,10 +43,10 @@ distclean: clean uninstall
 
 install:
 	$(INSTALL) -d $(DESTDIR)$(installdir)
-	$(INSTALL_PROGRAM) gausslat.exe $(DESTDIR)$(installdir)/gausslat$(suffix).exe
+	$(INSTALL_PROGRAM) makgds.exe $(DESTDIR)$(installdir)/makgds$(suffix).exe
 
 Makefile: Makefile.in ../../config.status
-	cd ../.. && ./config.status gausslat/src/$@
+	cd ../.. && ./config.status makgds/sorc/$@
 
 ../../config.status: ../../configure
 	cd ../.. && ./config.status --recheck
