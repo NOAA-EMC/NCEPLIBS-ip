@@ -12,16 +12,16 @@ The following steps are required to setup and run the test suite:
 
 (1) Compile the 'test' and 'control' IPOLATES libraries.
 
-   The suite tests all three versions of IPOLATES:
+   The suite tests all three precision versions of IPOLATES:
 
-   -4 byte integer/4 byte float 
-   -4 byte integer/8 byte float 
-   -8 byte integer/8 byte float 
+   -4 byte integer/4 byte float ("4")
+   -4 byte integer/8 byte float ("d")
+   -8 byte integer/8 byte float ("8")
 
    The 'test' libraries are your branch copies, while 
    the 'control' libaries are the head of the trunk.
 
-(2) Link the 'test' and 'control' libraries to the
+(2) Link the 'test' and 'control' IPOLATES libraries to the
     ./reg_tests/lib directory in your branch.  
 
     Example:
@@ -37,19 +37,46 @@ The following steps are required to setup and run the test suite:
 
 (3) Check the ./reg_tests/config-setup/ifort.setup file in your branch.
 
-    This file contains the compiler, compiler flags, link flags
-    and version numbers of the SP, W3NCO and BACIO libraries.
+    This file contains the compiler, compiler flags and link flags.
     Currently, the regression suite has only been tested with the
-    "ifort" compiler.  The settings in this file work for WCOSS.
-    On Zeus, the SP, W3CNO and BACIO libaries are located in:
-    /contrib/nceplibs/nwprod/lib.  So the LDFLAGS line should
-    be set as follows:
+    intel "ifort" compiler.  Unless your machine does not have 
+    the intel compiler, you should not have to change these
+    settings.
 
-    export LDFLAGS="-openmp -L${PWD}/lib -L/contrib/nceplibs/nwprod/lib"
+(4) Ensure the build process can find the NCEP SP, W3NCO and
+    BACIO libraries.
 
-    All other entries should be the same for WCOSS and Zeus.
+    The regression suite requires these libraries.  The
+    path/name of these libraries are stored in environment 
+    variables in the "make_reg_tests.ksh" script. These variables are:
+    
+    SP_LIB4    - 4 byte integer/4 byte float version
+    SP_LIB8    - 8 byte integer/8 byte float version
+    SP_LIBd    - 4 byte integer/8 byte float version
+    W3NCO_LIB4 - 4 byte integer/4 byte float version
+    W3NCO_LIB8 - 8 byte integer/8 byte float version
+    W3NCO_LIBd - 4 byte integer/8 byte float version
+    BACIO_LIB4 - 4 byte integer/4 byte float version
+    BACIO_LIB8 - 8 byte integer/8 byte float version
 
-(4) Build the regression tests suite.
+    There is no mixed precision ("d") version of BACIO.
+
+    On WCOSS and Zeus, these variables are set automatically thru
+    the use of modules.  There is no way to override those
+    settings except to manually edit the "make_reg_tests.ksh"
+    script.  
+
+    On other machines, the user must locate these libraries
+    and manually set the environment variables on the command
+    line before running "make_reg_tests.ksh".  
+
+    Example (if using tcsh):
+
+    setenv W3NCO_LIB4 $pathname/libw3nco_4.a
+    setenv SP_LIB4 $pathname/libsp_4.a
+    ... and so on ...
+
+(5) Build the regression tests suite.
 
     From ./reg_tests type "make_reg_tests.ksh"
 
@@ -59,7 +86,7 @@ The following steps are required to setup and run the test suite:
     These executables will be located in the ./exec sub-directory for
     the regression test.  The source code is in the ./sorc sub-directory.
 
-(5) Kickoff the regression test suite.
+(6) Kickoff the regression test suite.
 
     There are driver scripts for WCOSS, Zeus and CCS located in
     ./reg_tests.  The CCS script is no longer used.  
@@ -70,7 +97,7 @@ The following steps are required to setup and run the test suite:
     WCOSS, the queue may be checked by typing:  "bjobs".  On
     Zeus, the command is: "showq -n -v -u USERNAME"
     
-(6) Check results.
+(7) Check results.
 
     On WCOSS, the default run directory is /stmpp1/${LOGNAME}/regression
     On Zeus, the default run directory is /scratch2/portfolios/NCEPDEV/stmp/$LOGNAME/regression
