@@ -21,7 +21,22 @@
 
 set -x
 
+#. /contrib/module/3.2.9/Modules/3.2.9/init/ksh
+#module use -a /contrib/nceplibs/Modules/modulefiles
+#module load sp
+
 . ./config-setup/ifort.setup
+
+BACIO_LIB4=${BACIO_LIB4:?}
+SP_LIB4=${SP_LIB4:?}
+W3NCO_LIB4=${W3NCO_LIB4:?}
+
+BACIO_LIB8=${BACIO_LIB8:?}
+SP_LIB8=${SP_LIB8:?}
+W3NCO_LIB8=${W3NCO_LIB8:?}
+
+SP_LIBd=${SP_LIBd:?}
+W3NCO_LIBd=${W3NCO_LIBd:?}
 
 MAKE="gmake"
 
@@ -31,12 +46,19 @@ for WHICHIP in ctl test; do
   for PRECISION in 4 8 d; do
 
     case $PRECISION in
-      d) PRECISION2=4 ;;
-      *) PRECISION2=$PRECISION ;;
+      4) SP_LIB=$SP_LIB4
+         BACIO_LIB=$BACIO_LIB4
+         W3NCO_LIB=$W3NCO_LIB4 ;;
+      8) SP_LIB=$SP_LIB8
+         BACIO_LIB=$BACIO_LIB8
+         W3NCO_LIB=$W3NCO_LIB8 ;;
+      d) SP_LIB=$SP_LIBd
+         BACIO_LIB=$BACIO_LIB4
+         W3NCO_LIB=$W3NCO_LIBd ;;
     esac
 
     ./configure --prefix=${PWD} --enable-promote=${PRECISION} \
-      LIBS="-lip_${WHICHIP}_${PRECISION} -lsp_v${SP_LIB_V}_${PRECISION} -lbacio_v${BACIO_LIB_V}_${PRECISION2} -lw3nco_v${W3NCO_LIB_V}_${PRECISION}"
+      LIBS="${PWD}/lib/libip_${WHICHIP}_${PRECISION}.a ${SP_LIB} ${BACIO_LIB} ${W3NCO_LIB}"
     if [ $? -ne 0 ]; then
       set +x
       echo "$0: Error configuring for ${PRECISION}-byte ${WHICHIP} version build." >&2
