@@ -21,11 +21,15 @@
 
 set -x
 
-#. /contrib/module/3.2.9/Modules/3.2.9/init/ksh
-#module use -a /contrib/nceplibs/Modules/modulefiles
-#module load sp
-
 . ./config-setup/ifort.setup
+
+if [ "$(hostname -d)" = "zeus.fairmont.rdhpcs.noaa.gov" ]; then 
+  . /contrib/module/3.2.9/Modules/3.2.9/init/ksh
+  module use -a /contrib/nceplibs/Modules/modulefiles
+  module load bacio
+  module load sp
+  module load w3nco
+fi 
 
 BACIO_LIB4=${BACIO_LIB4:?}
 SP_LIB4=${SP_LIB4:?}
