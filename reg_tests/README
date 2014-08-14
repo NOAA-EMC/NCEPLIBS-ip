@@ -113,10 +113,12 @@ The following steps are required to setup and run the test suite:
     "daisy-chained" jobs steps will be submitted.  To check
     the job queue type "bjobs".
 
-    On Zeus, the "Runall.zeus.ksh" is used.  Before running, 
-    set the project code that will be charged (by editing script
-    variable $PROJECT_CODE) when running the test suite.  The default
-    is the "rm" project.  To find out which projects you
+    On Zeus, the "Runall.zeus.ksh" script is used.  Before running, 
+    set the project code that will be charged when running the test
+    suite.  The project code is script variable $PROJECT_CODE. The
+    default is the "rm" project.  You may change the code by manually
+    editing the script or doing "setenv PROJECT_CODE $code_name" on 
+    the command line.  To find out which projects you
     are authorized to use, type "account_params".  After
     setting the project code, start the tests by typing
     "Runall.zeus.ksh" on the command line.  A series of
