@@ -24,16 +24,33 @@ The following steps are required to setup and run the test suite:
 (2) Link the 'test' and 'control' IPOLATES libraries to the
     ./reg_tests/lib directory in your branch.  
 
-    Example, assuming an 'nco-style' installation:
+    The regression test build expects the 'test' and 'control'
+    libraries in the ./reg_tests/lib directory with the 
+    following names:
 
-    cd /branch/reg_tests/lib
+    libip_ctl_4.a  (4 byte integer/4 byte float, control)
+    libip_ctl_8.a  (8 byte integer/8 byte float, control)
+    libip_ctl_d.a  (4 byte integer/8 byte float, control)
+    libip_test_4.a  (4 byte integer/4 byte float, test)
+    libip_test_8.a  (8 byte integer/8 byte float, test)
+    libip_test_d.a  (4 byte integer/8 byte float, test)
 
-    ln -s /trunk/ip/vX.Y.Z/libip_vX.Y.Z_4.a  libip_ctl_4.a  (4 byte integer/4 byte float, control)
-    ln -s /trunk/ip/vX.Y.Z/libip_vX.Y.Z_8.a  libip_ctl_8.a  (8 byte integer/8 byte float, control)
-    ln -s /trunk/ip/vX.Y.Z/libip_vX.Y.Z_d.a  libip_ctl_d.a  (4 byte integer/8 byte float, control)
-    ln -s /branch/ip/vX.Y.Z/libip_vX.Y.Z_4.a  libip_test_4.a  (4 byte integer/4 byte float, test)
-    ln -s /branch/ip/vX.Y.Z/libip_vX.Y.Z_8.a  libip_test_8.a  (8 byte integer/8 byte float, test)
-    ln -s /branch/ip/vX.Y.Z/libip_vX.Y.Z_d.a  libip_test_d.a  (4 byte integer/8 byte float, test)
+    One way to place these libraries in the ./reg_tests/lib
+    directory is thru unix links.  Suppose the trunk and
+    branch libraries will built using an 'nco-style' installation.
+    First, change to the ./reg_tests/lib directory:
+
+    "cd /branch/reg_tests/lib"
+
+    Then, link each library to the name expected by the regression
+    test build:
+    
+    "ln -s /trunk/ip/vX.Y.Z/libip_vX.Y.Z_4.a  ./libip_ctl_4.a"
+    "ln -s /trunk/ip/vX.Y.Z/libip_vX.Y.Z_8.a  ./libip_ctl_8.a"
+    "ln -s /trunk/ip/vX.Y.Z/libip_vX.Y.Z_d.a  ./libip_ctl_d.a"
+    "ln -s /branch/ip/vX.Y.Z/libip_vX.Y.Z_4.a ./libip_test_4.a"
+    "ln -s /branch/ip/vX.Y.Z/libip_vX.Y.Z_8.a ./libip_test_8.a"
+    "ln -s /branch/ip/vX.Y.Z/libip_vX.Y.Z_d.a ./libip_test_d.a"
 
 (3) Check the ./reg_tests/config-setup/ifort.setup file in your branch.
 
@@ -61,10 +78,10 @@ The following steps are required to setup and run the test suite:
 
     There is no mixed precision ("_d") version of BACIO.
 
-    On WCOSS and Zeus, these variables are set automatically thru
-    the use of modules.  There is no way to override those
-    settings except to manually edit the "make_reg_tests.ksh"
-    script.  
+    On WCOSS and Zeus, these variables are set automatically by
+    "make_reg_test.ksh" via modules.  There is no way to
+    to override those settings except to manually edit 
+    the "make_reg_tests.ksh" script.
 
     On other machines, the user must locate these libraries
     and manually set the environment variables on the command
@@ -91,11 +108,20 @@ The following steps are required to setup and run the test suite:
     There are driver scripts for WCOSS, Zeus and CCS located in
     ./reg_tests.  The CCS script is no longer used.  
 
-    To start the tests on WCOSS or Zeus, simply type the script name.
-   
-    A series of "daisy-chained" jobs steps will be submitted.  On
-    WCOSS, the queue may be checked by typing:  "bjobs".  On
-    Zeus, the command is: "showq -n -v -u USERNAME"
+    To start the tests on WCOSS, simply type the script name -
+    Runall.wcoss.ksh - on the command line.  A series of
+    "daisy-chained" jobs steps will be submitted.  To check
+    the job queue type "bjobs".
+
+    On Zeus, the "Runall.zeus.ksh" is used.  Before running, 
+    set the project code that will be charged (by editing script
+    variable $PROJECT_CODE) when running the test suite.  The default
+    is the "rm" project.  To find out which projects you
+    are authorized to use, type "account_params".  After
+    setting the project code, start the tests by typing
+    "Runall.zeus.ksh" on the command line.  A series of
+    "daisy-chained" jobs steps will be submitted.  To check
+    the job queue, type: "showq -n -v -u USERNAME"
     
 (7) Check results.
 
