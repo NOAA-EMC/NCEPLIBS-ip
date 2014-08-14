@@ -18,7 +18,7 @@
 
 set -x
 
-. /usrx/local/Modules/3.2.9/init/ksh
+. /usrx/local/Modules/default/init/ksh
 module load ics/12.1
 module load lsf/9.1 
 
