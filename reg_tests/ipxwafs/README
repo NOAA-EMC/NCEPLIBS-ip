@@ -7,7 +7,7 @@ invoked again to interpolate a grid of 600 mb temperature on each
 wafs grid back to ncep grid 3.
 
 The special copygb source code and the make-related files 
-are in the ./src subdirectory.  The code is compiled with all
+are in the ./sorc subdirectory.  The code is compiled with all
 byte versions of the 'control' and 'test' ip libraries:
 
   > 4 byte integer/4 byte float

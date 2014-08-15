@@ -22,7 +22,7 @@ On Zeus, NWPROD is the following gfs subversion tag:
 /NCEPDEV/global/save/glopara/svn/gfs/tags/REL-9.1.3/para/fix/fix_am
 
 The copygb source code and make-related files are 
-located in the ./src subdirectory.
+located in the ./sorc subdirectory.
 
 The program is compiled with all byte versions of the 'control' and 'test' 
 iplibs by invoking the make_reg_test.ksh script located

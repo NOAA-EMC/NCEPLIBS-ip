@@ -13,7 +13,7 @@ of the 'control' and 'test' ip libraries:
   > 8 byte integer/8 byte float
   > 8 byte float/4 byte integer
 The source code and executables (a total of six) are in the 
-copygb/src and exec directories. See /copygb/README for details.
+copygb/sorc and exec directories. See /copygb/README for details.
 
 The input data for these tests is located in the ./data subdirectory.
 They are in grib 1 format:

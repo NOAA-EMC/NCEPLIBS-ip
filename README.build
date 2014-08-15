@@ -51,12 +51,12 @@ build configurations setting the appropriate default real and integer precision
 promotion compiler switches.
 
 Some additional points:
+- There is an "NCO-type" install that conforms to NCO's vertical structure.
+- There is also a "GNU-type" install.
 - The "NCO-type" install is performed by default.
-- The libraries are installed relative to the current directory. After
-  running the script you should see three new directories containing the 
-  single (4), double (8), and mixed (d) precision libraries.
-- See section B.4 below for information about the installation directory
-  structure
+- The libraries are installed relative to the current directory. 
+- See section B.4 below for detailed information about the installation
+  directory structure.
 
 You can tailor the build process using this "make_ip_lib.sh" script by
 modifying the relevant build configuration setup file in the "config-setup/"
@@ -75,7 +75,7 @@ B. The more flexible way
 
 If you need more flexibility in the library build you can specify the necessary 
 information directly to the configure script that generates the makefiles. For
-example, on WCOSS/tide:
+example, on WCOSS/tide/gyre:
 
   $ ./configure --prefix=${PWD} \
                 --enable-promote=4|8|d \
@@ -86,7 +86,7 @@ The --prefix switch sets the installation directory and defaults to /usr/local s
 make sure you set it to a directory in which you have write access.
 
 The --enable-promote switch allows you to specify the type of precision build be it
-single (4), double (8), or mixed (d) precision. To build the mixed precision library
+single (_4), double (_8), or mixed (_d) precision. To build the mixed precision library
 you would use:
 
   --enable-promote=d
@@ -113,7 +113,9 @@ To start the library build for a particular configuration, simply type
 3. Testing the library
 ----------------------
 
-We don't have any package-level tests for ip yet. Sorry! They're coming...
+A suite of regression tests is located in the ./reg_tests directory.
+See the README file in that directory for details on how to build
+and run it.
 
 
 
@@ -122,53 +124,48 @@ We don't have any package-level tests for ip yet. Sorry! They're coming...
 -------------------------
 
 Installation of the library *always* occurs into its own directory within the
-directory specified by the --prefix switch. The name of the installation 
-directory follows the convention:
-
-  <library name>_<version>_<precision>
-
-So, if a library version (say, v2.0.1) build was configured with --prefix=$PWD
-for the default precision (4) build, then the installation directory will be
-
-  ${PWD}/ip_v2.0.1_4
- 
+directory specified by the --prefix switch. 
 
 
 NCO Install
 ...........
 
-To install the library conforming to the NCO organisation and naming conventions,
-type:
+To install the library conforming to the NCO vertical structure and naming
+conventions, type:
 
   $ make nco_install
 
-For a library version (say, v2.0.1) and the default precision (4), this will create
-a directory called "ip_v2.0.1_4". That directory is organised according to the
-current NCO structure on WCOSS in /nwprod/lib, as shown below:
+Example: for a library version of v2.0.1 and the default precision (_4), the
+directory tree will look as follows:
 
-  ip_v2.0.1_4/
-    |
-    |--libip_v2.0.1_4.a
-    |
-    `--incmod/
+  ip/
+   |
+   `--v2.0.1
          |
-         `--ip_v2.0.1_4/
+         `--libip_v2.0.1_4.a
 
-The contents of the "ip_v2.0.1_4" directory can then be moved into the official
-/nwprod/lib location as needed.
+If you then create the double precsion (_8) and mixed precision (_d) libraries and
+invoke "make nco_install", the directory tree will look like:
 
-Note the include/ directory may not be present, or be empty, if no *.mod
-files are generated during the build.
+  ip/
+   |
+   `--v2.0.1
+         |
+         |--libip_v2.0.1_4.a
+         |--libip_v2.0.1_d.a
+         `--libip_v2.0.1_8.a
 
-Let's assume the above install was moved into "/usrx/local/nceplibs", to use the
-library in this structure in your own application, the usual environment variables
+
+The contents of the "v2.0.1" directory can then be moved into the official
+/nwprod/lib/ip location as needed.
+
+Let's assume the above install was moved into "/usrx/local/nceplibs". To use the
+4-byte library in this structure in your own application, the usual environment variables
 would be modified something like:
 
-  libroot="/usrx/local/nceplibs"
-  FCFLAGS="-I${libroot}/incmod/ip_v2.0.1_4 ${FCFLAGS}"
+  libroot="/usrx/local/nceplibs/ip/v2.0.1"
   LDFLAGS="-L${libroot} ${LDFLAGS}"
   LIBS="-lip_v2.0.1_4"
-
 
 
 GNU Install
@@ -178,50 +175,79 @@ To perform a GNU-type install, type:
 
   $ make install
 
-For a library version (say, v2.0.1) and the default precision (4), this will create
+For a library version (say, v2.0.1) and the default precision (_4), this will create
 a directory called "ip_v2.0.1_4". That directory structure is shown below:
 
   ip_v2.0.1_4/
-    |
-    |--include/
     |
     `--lib/
          |
          `--libip.a
 
-Things to note:
- 1) The only versioned item in this type of install is the name of the
-    installation directory itself.
- 2) The include/ directory may not be present, or be empty, if no *.mod
-    files are generated during the build.
+NOTE: The only version identifier in this type of install is the name of the
+      installation directory itself.
+
+Building the remaining precision versions (_8) and (_d) and installing would 
+create the following directory trees:
+
+  ip_v2.0.1_4/
+    |
+    `--lib/
+         |
+         `--libip.a
+
+  ip_v2.0.1_8/
+    |
+    `--lib/
+         |
+         `--libip.a
+
+  ip_v2.0.1_d/
+    |
+    `--lib/
+         |
+         `--libip.a
 
 Let's assume the above install was moved into "/usrx/local/nceplibs", to use the
-library in this structure in your own application, the usual environment variables
-would be modified something like:
+single precison (_4) library in this structure in your own application, the usual environment
+variables would be modified something like:
 
   libroot="/usrx/local/nceplibs"
-  FCFLAGS="-I${libroot}/ip_v2.0.1_4/include ${FCFLAGS}"
   LDFLAGS="-L${libroot}/ip_v2.0.1_4/lib ${LDFLAGS}"
   LIBS="-lip"
 
 
 
-Uninstalling the library
-........................
+Uninstalling the library (after an NCO install)
+...............................................
 
 To uninstall the library (assuming you haven't moved the installation directory
 contents somewhere else) you can type:
 
-  $ make uninstall
-  
-This will delete the created installation directory. So, for a library version
-(say, v2.0.1) and the default precision (4), if your configure script invocation
-was something like
+  $ make nco_uninstall
+
+which will delete the created installation directory.
+
+Ex: For a library version of v2.0.1, if your configure script invocation was
+something like...
 
   $ ./configure --prefix=${PWD} ...other command line arguments...
 
-then the "uninstall" target will delete the "${PWD}/ip_v2.0.1_4" directory.
+then the "nco_uninstall" target will delete the "${PWD}/ip/v2.0.1" directory.
 
+
+Uninstalling the library (after a GNU install)
+..............................................
+
+To uninstall the library after a GNU install, you can type:
+
+  $ make uninstall
+  
+This will delete the created installation directory. 
+
+Ex: for a library version of v2.0.1, a default precision of (_4),
+and using "--prefix=${PWD}" during the configure, the
+"${PWD}/ip_v2.0.1_4" installation directory will be deleted.
 
 
 

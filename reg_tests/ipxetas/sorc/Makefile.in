@@ -1,6 +1,6 @@
 # @configure_input@
 
-# src/ level makefile template
+# sorc/ level makefile template
 
 # Package-specific substitution variables
 package = @PACKAGE_NAME@
@@ -46,7 +46,7 @@ install:
 	$(INSTALL_PROGRAM) ipxetas.exe $(DESTDIR)$(installdir)/ipxetas$(suffix).exe
 
 Makefile: Makefile.in ../../config.status
-	cd ../.. && ./config.status ipxetas/src/$@
+	cd ../.. && ./config.status ipxetas/sorc/$@
 
 ../../config.status: ../../configure
 	cd ../.. && ./config.status --recheck

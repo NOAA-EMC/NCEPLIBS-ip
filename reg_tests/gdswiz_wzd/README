@@ -13,7 +13,7 @@ The three byte versions of the library are:
   > 8 byte float/4 byte integer
 
 The Fortran source code and make-related files are located in 
-the ./src subdirectory. The executables (a total of six) are stored in
+the ./sorc subdirectory. The executables (a total of six) are stored in
 the ./exec subdirectory.
 
 The regression test is run by the runall.ksh script

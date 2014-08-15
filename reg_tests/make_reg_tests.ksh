@@ -1,42 +1,79 @@
 #!/bin/ksh
 
 #-----------------------------------------------------------------------------
-# This script compiles all regression tests on WCOSS or Zeus using the 
-# intel IFORT compiler.
-#
-# Before compiling, you must link the 'control' and 'test' IP libraries
-# to the ./lib subdirectory, or copy them manually.  Normally, the
-# 'control' library is the OPS version or the head of the trunk.  And
-# the 'test' library is your branch version.  The naming convention is:
-#
-# libip_ctl_4.a  (4 byte integer/4 byte float, control)
-# libip_ctl_8.a  (8 byte integer/8 byte float, control)
-# libip_ctl_d.a  (4 byte integer/8 byte float, control)
-# libip_test_4.a (4 byte integer/4 byte float, test)
-# libip_test_8.a (8 byte integer/8 byte float, test)
-# libip_test_d.a (4 byte integer/8 byte float, test)
-#
-# Invoke this script as follows: "make_reg_tests.ksh"
+# This script compiles all regression tests.
+# 
+# PLEASE READ THE "README" FILE IN THIS DIRECTORY FOR DETAILS ON HOW
+# TO RUN THIS SCRIPT.
 #-----------------------------------------------------------------------------
 
 set -x
 
+#-----------------------------------------------------------------------------
+# Read in compiler, compiler flags and link flags.
+#-----------------------------------------------------------------------------
+
 . ./config-setup/ifort.setup
+
+#-----------------------------------------------------------------------------
+# These regression tests depend on the NCEP BACIO, SP, and W3NCO libraries.
+# The path/name of these libraries are set thru environment variables.
+# On Zeus and WCOSS, these are set via modules.  On other machines,
+# they must be set manually.
+#-----------------------------------------------------------------------------
+
+if [ "$(hostname -d)" = "zeus.fairmont.rdhpcs.noaa.gov" ]; then # Zeus
+  . /contrib/module/3.2.9/Modules/3.2.9/init/ksh
+  module use -a /contrib/nceplibs/Modules/modulefiles
+  module load bacio
+  module load sp
+  module load w3nco
+elif [ "$(hostname -d)" = "ncep.noaa.gov" ]; then  #WCOSS
+  . /usrx/local/Modules/default/init/ksh
+  module load bacio
+  module load sp
+  module load w3nco
+fi 
+
+#-----------------------------------------------------------------------------
+# Stop scripts if library environment variables are undefined.
+#-----------------------------------------------------------------------------
+
+BACIO_LIB4=${BACIO_LIB4:?}  # Single precision libraries
+SP_LIB4=${SP_LIB4:?}
+W3NCO_LIB4=${W3NCO_LIB4:?}
+
+BACIO_LIB8=${BACIO_LIB8:?}  # Double precision libraries
+SP_LIB8=${SP_LIB8:?}
+W3NCO_LIB8=${W3NCO_LIB8:?}
+
+SP_LIBd=${SP_LIBd:?}        # Mixed precision libraries
+W3NCO_LIBd=${W3NCO_LIBd:?}
 
 MAKE="gmake"
 
-# location and names of libraries are machine dependent
+#-----------------------------------------------------------------------------
+# Make regression test executables for all three precision versions of
+# the 'control' and 'test IPLIB.
+#-----------------------------------------------------------------------------
 
-for WHICHIP in ctl test; do
-  for PRECISION in 4 8 d; do
+for WHICHIP in ctl test; do  # the 'control' or 'test' IPLIB
+  for PRECISION in 4 8 d; do  # single ("4"), double ("8") or mixed ("d") precison IPLIB
 
     case $PRECISION in
-      d) PRECISION2=4 ;;
-      *) PRECISION2=$PRECISION ;;
+      4) SP_LIB=$SP_LIB4
+         BACIO_LIB=$BACIO_LIB4
+         W3NCO_LIB=$W3NCO_LIB4 ;;
+      8) SP_LIB=$SP_LIB8
+         BACIO_LIB=$BACIO_LIB8
+         W3NCO_LIB=$W3NCO_LIB8 ;;
+      d) SP_LIB=$SP_LIBd
+         BACIO_LIB=$BACIO_LIB4
+         W3NCO_LIB=$W3NCO_LIBd ;;
     esac
 
     ./configure --prefix=${PWD} --enable-promote=${PRECISION} \
-      LIBS="-lip_${WHICHIP}_${PRECISION} -lsp_v${SP_LIB_V}_${PRECISION} -lbacio_v${BACIO_LIB_V}_${PRECISION2} -lw3nco_v${W3NCO_LIB_V}_${PRECISION}"
+      LIBS="${PWD}/lib/libip_${WHICHIP}_${PRECISION}.a ${SP_LIB} ${BACIO_LIB} ${W3NCO_LIB}"
     if [ $? -ne 0 ]; then
       set +x
       echo "$0: Error configuring for ${PRECISION}-byte ${WHICHIP} version build." >&2
@@ -60,5 +97,5 @@ for WHICHIP in ctl test; do
 
     mv config.log config_${WHICHIP}_${PRECISION}.log
 
-  done
-done
+  done  # library precision
+done  # 'ctl' or 'test' IPLIB

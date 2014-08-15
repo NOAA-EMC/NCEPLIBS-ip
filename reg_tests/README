@@ -2,7 +2,7 @@
 HOW TO RUN THE REGRESSION TEST SUITE
 ---------------------------------------------------------------
 
-The regression test suite consists of eight fortran programs
+The regression test suite consists of eight Fortran programs
 that invoke a subset of IPOLATES (or IPLIB) routines.  IPOLATES
 developers are required to run this test suite to ensure their
 branch changes perform as expected before they are merged to 
@@ -12,44 +12,88 @@ The following steps are required to setup and run the test suite:
 
 (1) Compile the 'test' and 'control' IPOLATES libraries.
 
-   The suite tests all three versions of IPOLATES:
+   The suite tests all three precision versions of IPOLATES:
 
-   -4 byte integer/4 byte float 
-   -4 byte integer/8 byte float 
-   -8 byte integer/8 byte float 
+   -4 byte integer/4 byte float ("_4")
+   -4 byte integer/8 byte float ("_d")
+   -8 byte integer/8 byte float ("_8")
 
    The 'test' libraries are your branch copies, while 
    the 'control' libaries are the head of the trunk.
 
-(2) Link the 'test' and 'control' libraries to the
+(2) Link the 'test' and 'control' IPOLATES libraries to the
     ./reg_tests/lib directory in your branch.  
 
-    Example:
+    The regression test build expects the 'test' and 'control'
+    libraries in the ./reg_tests/lib directory with the 
+    following names:
 
-    cd ./reg_tests/lib
+    libip_ctl_4.a  (4 byte integer/4 byte float, control)
+    libip_ctl_8.a  (8 byte integer/8 byte float, control)
+    libip_ctl_d.a  (4 byte integer/8 byte float, control)
+    libip_test_4.a  (4 byte integer/4 byte float, test)
+    libip_test_8.a  (8 byte integer/8 byte float, test)
+    libip_test_d.a  (4 byte integer/8 byte float, test)
 
-    ln -s /trunk/ip_v${version}_4/libip_v${version}_4.a  libip_ctl_4.a  (4 byte integer/4 byte float, control)
-    ln -s /trunk/ip_v${version}_8/libip_v${version}_8.a  libip_ctl_8.a  (8 byte integer/8 byte float, control)
-    ln -s /trunk/ip_v${version}_d/libip_v${version}_d.a  libip_ctl_d.a  (4 byte integer/8 byte float, control)
-    ln -s /branch/ip_v${version}_4/libip_v${version}_4.a  libip_test_4.a  (4 byte integer/4 byte float, test)
-    ln -s /branch/ip_v${version}_8/libip_v${version}_8.a  libip_test_8.a  (8 byte integer/8 byte float, test)
-    ln -s /branch/ip_v${version}_d/libip_v${version}_d.a  libip_test_d.a  (4 byte integer/8 byte float, test)
+    One way to place these libraries in the ./reg_tests/lib
+    directory is thru unix links.  Suppose the trunk and
+    branch libraries will built using an 'nco-style' installation.
+    First, change to the ./reg_tests/lib directory:
+
+    "cd /branch/reg_tests/lib"
+
+    Then, link each library to the name expected by the regression
+    test build:
+    
+    "ln -s /trunk/ip/vX.Y.Z/libip_vX.Y.Z_4.a  ./libip_ctl_4.a"
+    "ln -s /trunk/ip/vX.Y.Z/libip_vX.Y.Z_8.a  ./libip_ctl_8.a"
+    "ln -s /trunk/ip/vX.Y.Z/libip_vX.Y.Z_d.a  ./libip_ctl_d.a"
+    "ln -s /branch/ip/vX.Y.Z/libip_vX.Y.Z_4.a ./libip_test_4.a"
+    "ln -s /branch/ip/vX.Y.Z/libip_vX.Y.Z_8.a ./libip_test_8.a"
+    "ln -s /branch/ip/vX.Y.Z/libip_vX.Y.Z_d.a ./libip_test_d.a"
 
 (3) Check the ./reg_tests/config-setup/ifort.setup file in your branch.
 
-    This file contains the compiler, compiler flags, link flags
-    and version numbers of the SP, W3NCO and BACIO libraries.
+    This file contains the compiler, compiler flags and link flags.
     Currently, the regression suite has only been tested with the
-    "ifort" compiler.  The settings in this file work for WCOSS.
-    On Zeus, the SP, W3CNO and BACIO libaries are located in:
-    /contrib/nceplibs/nwprod/lib.  So the LDFLAGS line should
-    be set as follows:
+    intel "ifort" compiler.  Unless your machine does not have 
+    the intel compiler, you should not have to change these
+    settings.
 
-    export LDFLAGS="-openmp -L${PWD}/lib -L/contrib/nceplibs/nwprod/lib"
+(4) Ensure the build process can find the NCEP SP, W3NCO and
+    BACIO libraries.
 
-    All other entries should be the same for WCOSS and Zeus.
+    The regression suite requires these external libraries.  The
+    path/name of these libraries are stored in environment 
+    variables in the "make_reg_tests.ksh" script. These variables are:
+    
+    SP_LIB4    - 4 byte integer/4 byte float version
+    SP_LIB8    - 8 byte integer/8 byte float version
+    SP_LIBd    - 4 byte integer/8 byte float version
+    W3NCO_LIB4 - 4 byte integer/4 byte float version
+    W3NCO_LIB8 - 8 byte integer/8 byte float version
+    W3NCO_LIBd - 4 byte integer/8 byte float version
+    BACIO_LIB4 - 4 byte integer/4 byte float version
+    BACIO_LIB8 - 8 byte integer/8 byte float version
 
-(4) Build the regression tests suite.
+    There is no mixed precision ("_d") version of BACIO.
+
+    On WCOSS and Zeus, these variables are set automatically by
+    "make_reg_test.ksh" via modules.  There is no way to
+    to override those settings except to manually edit 
+    the "make_reg_tests.ksh" script.
+
+    On other machines, the user must locate these libraries
+    and manually set the environment variables on the command
+    line before running "make_reg_tests.ksh".  
+
+    Example (if using tcsh):
+
+    setenv W3NCO_LIB4 $pathname/libw3nco_4.a
+    setenv SP_LIB4 $pathname/libsp_4.a
+    ... and so on ...
+
+(5) Build the regression tests suite.
 
     From ./reg_tests type "make_reg_tests.ksh"
 
@@ -57,24 +101,35 @@ The following steps are required to setup and run the test suite:
     config*log files.  There will be six executables for
     each individual regression test (one for each 'ctl' and 'test' library version).
     These executables will be located in the ./exec sub-directory for
-    the regression test.  The source code is in the ./src sub-directory.
+    the regression test.  The source code is in the ./sorc sub-directory.
 
-(5) Kickoff the regression test suite.
+(6) Kickoff the regression test suite.
 
     There are driver scripts for WCOSS, Zeus and CCS located in
     ./reg_tests.  The CCS script is no longer used.  
 
-    To start the tests on WCOSS or Zeus, simply type the script name.
-   
-    A series of "daisy-chained" jobs steps will be submitted.  On
-    WCOSS, the queue may be checked by typing:  "bjobs".  On
-    Zeus, the command is: "showq -n -v -u USERNAME"
+    To start the tests on WCOSS, simply type the script name -
+    Runall.wcoss.ksh - on the command line.  A series of
+    "daisy-chained" jobs steps will be submitted.  To check
+    the job queue type "bjobs".
+
+    On Zeus, the "Runall.zeus.ksh" script is used.  Before running, 
+    set the project code that will be charged when running the test
+    suite.  The project code is script variable $PROJECT_CODE. The
+    default is the "rm" project.  You may change the code by manually
+    editing the script or doing "setenv PROJECT_CODE $code_name" on 
+    the command line.  To find out which projects you
+    are authorized to use, type "account_params".  After
+    setting the project code, start the tests by typing
+    "Runall.zeus.ksh" on the command line.  A series of
+    "daisy-chained" jobs steps will be submitted.  To check
+    the job queue, type: "showq -n -v -u USERNAME"
     
-(6) Check results.
+(7) Check results.
 
     On WCOSS, the default run directory is /stmpp1/${LOGNAME}/regression
     On Zeus, the default run directory is /scratch2/portfolios/NCEPDEV/stmp/$LOGNAME/regression
-    (variable $WORK_DIR in the driver script).
+    (The run directory is variable $WORK_DIR in the driver script).
 
     Log output from the test suite will be in "regression.log"  To monitor as
     the suite is running, do: grep ">>>" regression.log
@@ -135,7 +190,7 @@ that exercised every routine.
     from the regression driver scripts.  However, it may be run stand-alone.
     Note: The copygb executables are used by the ixpwafs2_3 regresion test.
 
-Within each regression directory, the ./src subdirectory will contain the
+Within each regression directory, the ./sorc subdirectory will contain the
 source code and make-related files required for the regression test. A script
 to run the individual regression test is under the ./scripts subdirectory.
 The executables (after compilation) are stored under the ./exec subdirectory.

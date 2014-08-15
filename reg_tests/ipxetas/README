@@ -18,7 +18,7 @@ The three byte versions of the library are:
   > 8 byte float/4 byte integer
 
 The Fortran source code and make-related files are
-located in the ./src subdirectory.  The executables are
+located in the ./sorc subdirectory.  The executables are
 (a total of six) stored in the ./exec subdirectory.
 
 The input greenness data is ./data/green.202.grb

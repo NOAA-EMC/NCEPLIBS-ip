@@ -1,6 +1,6 @@
 # @configure_input@
 
-# src/ level makefile template
+# sorc/ level makefile template
 
 # Package-specific substitution variables
 package = @PACKAGE_NAME@
@@ -11,7 +11,7 @@ suffix  = @SUFFIX@
 prefix      = @prefix@
 
 # Mixed package and prefix substitution variables
-installdir  = $(prefix)/copygb/exec
+installdir  = $(prefix)/ipxwafs/exec
 
 # Compiler substitution variables
 FC = @FC@
@@ -46,7 +46,7 @@ install:
 	$(INSTALL_PROGRAM) copygb.exe $(DESTDIR)$(installdir)/copygb$(suffix)
 
 Makefile: Makefile.in ../../config.status
-	cd ../.. && ./config.status copygb/src/$@
+	cd ../.. && ./config.status ipxwafs/sorc/$@
 
 ../../config.status: ../../configure
 	cd ../.. && ./config.status --recheck
