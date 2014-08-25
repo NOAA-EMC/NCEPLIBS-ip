@@ -7,19 +7,18 @@
 # To run, type "qsub runzeus.4.threads.ksh"
 #------------------------------------------------------------------
 
-#PBS -l nodes=1
+#PBS -l nodes=1:ppn=1
+#PBS -l vmem=2000M
 #PBS -l walltime=1:00:00
-# the account number. rm is regional model
 #PBS -A rm
-#PBS -N test
+#PBS -N ipolatev4
 #PBS -o ./log.4.threads
 #PBS -e ./log.4.threads
 
-ulimit -s 2048000
+. /contrib/module/3.2.9/Modules/3.2.9/init/ksh
+module load intel
 
 export OMP_NUM_THREADS=4
-
-module load intel
 
 export REG_DIR=$PBS_O_WORKDIR/../../
 
