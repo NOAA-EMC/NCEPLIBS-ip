@@ -7,9 +7,8 @@
 # To run, type "qsub runzeus.4.threads.ksh"
 #------------------------------------------------------------------
 
-#PBS -l nodes=1:ppn=1
-#PBS -l vmem=2000M
-#PBS -l walltime=1:00:00
+#PBS -l nodes=1:ppn=12
+#PBS -l walltime=0:45:00
 #PBS -A rm
 #PBS -N ipolatev4
 #PBS -o ./log.4.threads

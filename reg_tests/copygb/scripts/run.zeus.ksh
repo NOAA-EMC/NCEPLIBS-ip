@@ -8,8 +8,8 @@
 #
 #PBS -l procs=1
 #PBS -l vmem=2500M
-#PBS -l walltime=4:00:00
-#PBS -A rm
+#PBS -l walltime=2:30:00
+#PBS -A glbss
 #PBS -N iptest_copygb
 #PBS -o ./regression.log
 #PBS -e ./regression.log
@@ -25,6 +25,8 @@ mkdir -p $WORK_DIR
 module load intel
 
 export NWPROD=/scratch2/portfolios/NCEPDEV/global/save/glopara/svn/gfs/tags/REL-9.1.3/para/fix/fix_am
+
+export OMP_NUM_THREADS=1
 
 $REG_DIR/copygb/scripts/copygb.ksh
 

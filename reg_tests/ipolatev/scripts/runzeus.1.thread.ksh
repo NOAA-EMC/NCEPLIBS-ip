@@ -9,7 +9,7 @@
 
 #PBS -l procs=1
 #PBS -l vmem=2000M
-#PBS -l walltime=1:00:00
+#PBS -l walltime=0:45:00
 #PBS -A rm
 #PBS -N ipolatev1
 #PBS -o ./log.1.thread
