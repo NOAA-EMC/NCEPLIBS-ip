@@ -19,7 +19,6 @@ AC_CONFIG_FILES([copygb/sorc/Makefile])
 AC_CONFIG_FILES([gausslat/sorc/Makefile])
 AC_CONFIG_FILES([gdswiz_wzd/sorc/Makefile])
 AC_CONFIG_FILES([makgds/sorc/Makefile])
-AC_CONFIG_FILES([ipxetas/sorc/Makefile])
 AC_CONFIG_FILES([ipolates/sorc/Makefile])
 AC_CONFIG_FILES([ipolatev/sorc/Makefile])
 

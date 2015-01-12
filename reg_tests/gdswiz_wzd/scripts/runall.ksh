@@ -36,10 +36,6 @@
 # 003        one-degree global lat/lon (ncep grid 3)
 # 008        mercator (ncep grid 8)
 # 127        t254 gaussian (ncep grid 127)
-# 201        rotated lat/lon e-staggered (number refers to gds octet 6)
-#            tests routines gdswizc9 and gdswzdc9
-# 202        rotated lat/lon b-staggered (number refers to gds octet 6)
-#            tests routines gdswizca and gdswzdca
 # 203        rotated lat/lon e-staggered (number refers to gds octet 6)
 #            tests routines gdswizcb and gdswzdcb
 # 205        rotated lat/lon b-staggered (number refers to gds octet 6)
@@ -86,7 +82,7 @@ for routine in "WIZ" "WZD"  # test gdswiz and gdswzd separately
 do
   echo
   echo RUN REGRESSION TEST FOR GDS${routine} ROUTINES 
-  for grids in "3" "8" "203" "127" "212" "213" "218" "205" "201" "202" "222"
+  for grids in "3" "8" "203" "127" "212" "213" "218" "205" "222"
   do
     echo
     for bytesize in "4" "8" "d"  # test each library version

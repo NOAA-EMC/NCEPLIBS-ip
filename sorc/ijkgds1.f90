@@ -30,7 +30,6 @@
 !                           (0 IF NO WRAPAROUND)
 !                IJKGDSA(6) IS SCANNING MODE
 !                           (0 IF X FIRST THEN Y; 1 IF Y FIRST THEN X;
-!                            2 IF STAGGERED DIAGONAL LIKE PROJECTION 201;
 !                            3 IF STAGGERED DIAGONAL LIKE PROJECTION 203)
 !                IJKGDSA(7) IS MASS/WIND FLAG FOR STAGGERED DIAGONAL
 !                           (0 IF MASS; 1 IF WIND)

@@ -31,7 +31,6 @@
 !                           (0 IF NO WRAPAROUND)
 !                IJKGDSA(6) IS SCANNING MODE
 !                           (0 IF X FIRST THEN Y; 1 IF Y FIRST THEN X;
-!                            2 IF STAGGERED DIAGONAL LIKE PROJECTION 201;
 !                            3 IF STAGGERED DIAGONAL LIKE PROJECTION 203)
 !                IJKGDSA(7) IS MASS/WIND FLAG FOR STAGGERED DIAGONAL
 !                           (0 IF MASS; 1 IF WIND)
@@ -123,18 +122,6 @@
        JWRAP2=2*JM+1
      ENDIF
    ENDIF
-! - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-!  SET EXCEPTIONAL VALUES FOR PROJECTION 201
- ELSEIF(KGDS(1).EQ.201) THEN
-   IM=KGDS(7)
-   JM=KGDS(8)
-   NSCAN=2
-   KSCAN=MOD(KGDS(11)/256,2)
-! - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-!  SET EXCEPTIONAL VALUES FOR PROJECTION 202
- ELSEIF(KGDS(1).EQ.202) THEN
-   IM=KGDS(7)
-   JM=KGDS(8)
 ! - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 !  SET EXCEPTIONAL VALUES FOR PROJECTION 203
  ELSEIF(KGDS(1).EQ.203) THEN

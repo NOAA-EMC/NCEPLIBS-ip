@@ -9,8 +9,6 @@ FSRC_FILES = \
  gdswiz03.f90 \
  gdswiz04.f90 \
  gdswiz05.f90 \
- gdswizc9.f90 \
- gdswizca.f90 \
  gdswizcb.f90 \
  gdswizcd.f90 \
  gdswiz.f90 \
@@ -19,8 +17,6 @@ FSRC_FILES = \
  gdswzd03.f90 \
  gdswzd04.f90 \
  gdswzd05.f90 \
- gdswzdc9.f90 \
- gdswzdca.f90 \
  gdswzdcb.f90 \
  gdswzdcd.f90 \
  gdswzd.f90 \
@@ -28,7 +24,6 @@ FSRC_FILES = \
  ijkgds1.f90 \
  ipolates.f90 \
  ipolatev.f90 \
- ipxetas.f90 \
  ipxwafs2.f90 \
  ipxwafs3.f90 \
  ipxwafs.f90 \

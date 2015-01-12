@@ -4,8 +4,6 @@
  gdswiz03.o : gdswiz03.f90
  gdswiz04.o : gdswiz04.f90
  gdswiz05.o : gdswiz05.f90
- gdswizc9.o : gdswizc9.f90
- gdswizca.o : gdswizca.f90
  gdswizcb.o : gdswizcb.f90
  gdswizcd.o : gdswizcd.f90
  gdswiz.o : gdswiz.f90
@@ -14,8 +12,6 @@
  gdswzd03.o : gdswzd03.f90
  gdswzd04.o : gdswzd04.f90
  gdswzd05.o : gdswzd05.f90
- gdswzdc9.o : gdswzdc9.f90
- gdswzdca.o : gdswzdca.f90
  gdswzdcb.o : gdswzdcb.f90
  gdswzdcd.o : gdswzdcd.f90
  gdswzd.o : gdswzd.f90
@@ -23,7 +19,6 @@
  ijkgds1.o : ijkgds1.f90
  ipolates.o : ipolates.f90
  ipolatev.o : ipolatev.f90
- ipxetas.o : ipxetas.f90
  ipxwafs2.o : ipxwafs2.f90
  ipxwafs3.o : ipxwafs3.f90
  ipxwafs.o : ipxwafs.f90

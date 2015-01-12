@@ -43,11 +43,8 @@ export OMP_NUM_THREADS=1
 GAUSSLAT=$(qsub -l procs=1 -l vmem=500M -l walltime=0:01:00 -A $PROJECT_CODE -N iptest_gausslat -o $LOG_FILE -e $LOG_FILE \
       -v REG_DIR,WORK_DIR,OMP_NUM_THREADS $REG_DIR/gausslat/scripts/runall.ksh)
 
-IPXETAS=$(qsub -l procs=1 -l vmem=500M -l walltime=0:01:00 -A $PROJECT_CODE -N iptest_ipxetas -o $LOG_FILE -e $LOG_FILE \
-      -v REG_DIR,WORK_DIR,OMP_NUM_THREADS -W depend=afterok:$GAUSSLAT $REG_DIR/ipxetas/scripts/runall.ksh)
-
 IPXWAFS=$(qsub -l procs=1 -l vmem=500M -l walltime=0:02:00 -A $PROJECT_CODE -N iptest_ipxwafs -o $LOG_FILE -e $LOG_FILE \
-      -v REG_DIR,WORK_DIR,OMP_NUM_THREADS -W depend=afterok:$IPXETAS $REG_DIR/ipxwafs/scripts/runall.ksh)
+      -v REG_DIR,WORK_DIR,OMP_NUM_THREADS -W depend=afterok:$GAUSSLAT $REG_DIR/ipxwafs/scripts/runall.ksh)
 
 IPXWAFS2_3=$(qsub -l procs=1 -l vmem=500M -l walltime=0:02:00 -A $PROJECT_CODE -N iptest_ipxwafs2 -o $LOG_FILE -e $LOG_FILE \
       -v REG_DIR,WORK_DIR,OMP_NUM_THREADS -W depend=afterok:$IPXWAFS $REG_DIR/ipxwafs2_3/scripts/runall.ksh)

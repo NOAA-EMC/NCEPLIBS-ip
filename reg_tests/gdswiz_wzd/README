@@ -28,10 +28,6 @@ grid #       description
 003          one-degree global lat/lon (ncep grid 3)
 008          mercator (ncep grid 8)
 127          t254 gaussian (ncep grid 127)
-201          rotated lat/lon e-staggered (number refers to gds octet 6)
-             tests routines gdswizc9 and gdswzdc9
-202          rotated lat/lon b-staggered (number refers to gds octet 6)
-             tests routines gdswizca and gdswzdca
 203          rotated lat/lon e-staggered (number refers to gds octet 6)
              tests routines gdswizcb and gdswzdcb
 205          rotated lat/lon b-staggered (number refers to gds octet 6)
@@ -68,8 +64,6 @@ gdswiz01
 gdswiz03      
 gdswiz04     
 gdswiz05    
-gdswizc9   
-gdswizca  
 gdswizcb  
 gdswizcd 
 gdswzd   
@@ -78,7 +72,5 @@ gdswzd01
 gdswzd03 
 gdswzd04 
 gdswzd05 
-gdswzdc9  
-gdswzdca  
 gdswzdcb  
 gdswzdcd          
