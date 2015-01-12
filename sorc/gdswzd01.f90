@@ -121,15 +121,11 @@
          RLAT(N)=2*ATAN(EXP(DPHI*(YPTS(N)-YE)))*DPR-90
          NRET=NRET+1
          IF(LROT.EQ.1) THEN
-           CROT(N)=1
-           SROT(N)=0
+           CALL GDSWZD01_VECT_ROT(CROT(N),SROT(N))
          ENDIF
          IF(LMAP.EQ.1) THEN
-           XLON(N)=1/DLON
-           XLAT(N)=0.
-           YLON(N)=0.
-           YLAT(N)=1/DPHI/COS(RLAT(N)/DPR)/DPR
-           AREA(N)=RERTH**2*COS(RLAT(N)/DPR)**2*DPHI*DLON/DPR
+           CALL GDSWZD01_MAP_JACOB(DPHI,DLON,RLAT(N),XLON(N),XLAT(N),YLON(N),YLAT(N))
+           CALL GDSWZD01_GRID_AREA(DPHI,DLON,RLAT(N),AREA(N))
          ENDIF
        ELSE
          RLON(N)=FILL
@@ -147,15 +143,11 @@
             YPTS(N).GE.YMIN.AND.YPTS(N).LE.YMAX) THEN
            NRET=NRET+1
            IF(LROT.EQ.1) THEN
-             CROT(N)=1
-             SROT(N)=0
+             CALL GDSWZD01_VECT_ROT(CROT(N),SROT(N))
            ENDIF
            IF(LMAP.EQ.1) THEN
-             XLON(N)=1/DLON
-             XLAT(N)=0.
-             YLON(N)=0.
-             YLAT(N)=1/DPHI/COS(RLAT(N)/DPR)/DPR
-             AREA(N)=RERTH**2*COS(RLAT(N)/DPR)**2*DPHI*DLON/DPR
+             CALL GDSWZD01_MAP_JACOB(DPHI,DLON,RLAT(N),XLON(N),XLAT(N),YLON(N),YLAT(N))
+             CALL GDSWZD01_GRID_AREA(DPHI,DLON,RLAT(N),AREA(N))
            ENDIF
          ELSE
            XPTS(N)=FILL
@@ -185,3 +177,46 @@
  ENDIF
 ! - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
  END SUBROUTINE GDSWZD01
+!
+ SUBROUTINE GDSWZD01_VECT_ROT(CROT,SROT)
+
+ IMPLICIT NONE
+
+ REAL,                INTENT(  OUT) :: CROT, SROT
+
+ CROT=1.0
+ SROT=0.0
+
+ END SUBROUTINE GDSWZD01_VECT_ROT
+!
+ SUBROUTINE GDSWZD01_MAP_JACOB(DPHI,DLON,RLAT,XLON,XLAT,YLON,YLAT)
+
+ IMPLICIT NONE
+
+ REAL,                INTENT(IN   ) :: DPHI, DLON, RLAT
+ REAL,                INTENT(  OUT) :: XLON, XLAT, YLON, YLAT
+
+ REAL,              PARAMETER       :: PI=3.14159265358979
+ REAL,              PARAMETER       :: DPR=180./PI
+
+ XLON=1./DLON
+ XLAT=0.
+ YLON=0.
+ YLAT=1./DPHI/COS(RLAT/DPR)/DPR
+
+ END SUBROUTINE GDSWZD01_MAP_JACOB
+!
+ SUBROUTINE GDSWZD01_GRID_AREA(DPHI,DLON,RLAT,AREA)
+
+ IMPLICIT NONE
+
+ REAL,              PARAMETER     :: RERTH=6.3712E6
+ REAL,              PARAMETER     :: PI=3.14159265358979
+ REAL,              PARAMETER     :: DPR=180./PI
+
+ REAL,              INTENT(IN   ) :: DPHI, DLON, RLAT
+ REAL,              INTENT(  OUT) :: AREA
+
+ AREA=RERTH**2*COS(RLAT/DPR)**2*DPHI*DLON/DPR
+
+ END SUBROUTINE GDSWZD01_GRID_AREA

@@ -147,6 +147,7 @@
          DI=H*(XPTS(N)-XP)*DXS
          DJ=H*(YPTS(N)-YP)*DYS
          DR2=DI**2+DJ**2
+         DR=SQRT(DR2)
          IF(DR2.LT.DE2*1.E-6) THEN
            RLON(N)=0.
            RLAT(N)=H*90.
@@ -155,33 +156,14 @@
            RLAT(N)=(2*DPR*ATAN((DE2/DR2)**ANTR)-90)
          ENDIF
          NRET=NRET+1
+         DLON=MOD(RLON(N)-ORIENT+180+3600,360.)-180
          IF(LROT.EQ.1) THEN
-           IF(IROT.EQ.1) THEN
-             DLON=MOD(RLON(N)-ORIENT+180+3600,360.)-180
-             CROT(N)=COS(AN*DLON/DPR)
-             SROT(N)=SIN(AN*DLON/DPR)
-           ELSE
-             CROT(N)=1
-             SROT(N)=0
-           ENDIF
+           CALL GDSWZD03_VECT_ROT(IROT,DLON,AN,CROT(N),SROT(N))
          ENDIF
          IF(LMAP.EQ.1) THEN
-           DR=SQRT(DR2)
-           DLON=MOD(RLON(N)-ORIENT+180+3600,360.)-180
-           CLAT=COS(RLAT(N)/DPR)
-           IF(CLAT.LE.0.OR.DR.LE.0) THEN
-             XLON(N)=FILL
-             XLAT(N)=FILL
-             YLON(N)=FILL
-             YLAT(N)=FILL
-             AREA(N)=FILL
-           ELSE
-             XLON(N)=H*COS(AN*DLON/DPR)*AN/DPR*DR/DXS
-             XLAT(N)=-H*SIN(AN*DLON/DPR)*AN/DPR*DR/DXS/CLAT
-             YLON(N)=H*SIN(AN*DLON/DPR)*AN/DPR*DR/DYS
-             YLAT(N)=H*COS(AN*DLON/DPR)*AN/DPR*DR/DYS/CLAT
-             AREA(N)=RERTH**2*CLAT**2*ABS(DXS)*ABS(DYS)/(AN*DR)**2
-           ENDIF
+           CALL GDSWZD03_MAP_JACOB(H,DR,DLON,RLAT(N),AN,FILL,DXS,DYS, &
+                                   XLON(N),XLAT(N),YLON(N),YLAT(N))
+           CALL GDSWZD03_GRID_AREA(H,DR,RLAT(N),AN,FILL,DXS,DYS,AREA(N))
          ENDIF
        ELSE
          RLON(N)=FILL
@@ -202,29 +184,12 @@
             YPTS(N).GE.YMIN.AND.YPTS(N).LE.YMAX) THEN
            NRET=NRET+1
            IF(LROT.EQ.1) THEN
-             IF(IROT.EQ.1) THEN
-               CROT(N)=COS(AN*DLON/DPR)
-               SROT(N)=SIN(AN*DLON/DPR)
-             ELSE
-               CROT(N)=1
-               SROT(N)=0
-             ENDIF
+             CALL GDSWZD03_VECT_ROT(IROT,DLON,AN,CROT(N),SROT(N))
            ENDIF
            IF(LMAP.EQ.1) THEN
-             CLAT=COS(RLAT(N)/DPR)
-             IF(CLAT.LE.0.OR.DR.LE.0) THEN
-               XLON(N)=FILL
-               XLAT(N)=FILL
-               YLON(N)=FILL
-               YLAT(N)=FILL
-               AREA(N)=FILL
-             ELSE
-               XLON(N)=H*COS(AN*DLON/DPR)*AN/DPR*DR/DXS
-               XLAT(N)=-H*SIN(AN*DLON/DPR)*AN/DPR*DR/DXS/CLAT
-               YLON(N)=H*SIN(AN*DLON/DPR)*AN/DPR*DR/DYS
-               YLAT(N)=H*COS(AN*DLON/DPR)*AN/DPR*DR/DYS/CLAT
-               AREA(N)=RERTH**2*CLAT**2*ABS(DXS)*ABS(DYS)/(AN*DR)**2
-             ENDIF
+             CALL GDSWZD03_MAP_JACOB(H,DR,DLON,RLAT(N),AN,FILL,DXS,DYS, &
+                                     XLON(N),XLAT(N),YLON(N),YLAT(N))
+             CALL GDSWZD03_GRID_AREA(H,DR,RLAT(N),AN,FILL,DXS,DYS,AREA(N))
            ENDIF
          ELSE
            XPTS(N)=FILL
@@ -254,3 +219,77 @@
  ENDIF
 ! - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
  END SUBROUTINE GDSWZD03
+!
+ SUBROUTINE GDSWZD03_VECT_ROT(IROT,DLON,AN,CROT,SROT)
+
+ IMPLICIT NONE
+
+ INTEGER,        INTENT(IN   ) :: IROT
+
+ REAL,           INTENT(IN   ) :: DLON, AN
+ REAL,           INTENT(  OUT) :: CROT, SROT
+
+ REAL,           PARAMETER     :: PI=3.14159265358979
+ REAL,           PARAMETER     :: DPR=180./PI
+
+ IF(IROT.EQ.1) THEN
+   CROT=COS(AN*DLON/DPR)
+   SROT=SIN(AN*DLON/DPR)
+ ELSE
+   CROT=1.
+   SROT=0.
+ ENDIF
+
+ END SUBROUTINE GDSWZD03_VECT_ROT
+!
+ SUBROUTINE GDSWZD03_MAP_JACOB(H,DR,DLON,RLAT,AN,FILL,DXS,DYS, &
+                               XLON,XLAT,YLON,YLAT)
+
+ IMPLICIT NONE
+
+ REAL,           PARAMETER     :: PI=3.14159265358979
+ REAL,           PARAMETER     :: DPR=180./PI
+
+ REAL,           INTENT(IN   ) :: H, DR, DLON, RLAT, AN
+ REAL,           INTENT(IN   ) :: FILL, DXS, DYS
+ REAL,           INTENT(  OUT) :: XLON, XLAT, YLON, YLAT
+
+ REAL                          :: CLAT
+
+ CLAT=COS(RLAT/DPR)
+ IF(CLAT.LE.0.OR.DR.LE.0) THEN
+   XLON=FILL
+   XLAT=FILL
+   YLON=FILL
+   YLAT=FILL
+ ELSE
+   XLON=H*COS(AN*DLON/DPR)*AN/DPR*DR/DXS
+   XLAT=-H*SIN(AN*DLON/DPR)*AN/DPR*DR/DXS/CLAT
+   YLON=H*SIN(AN*DLON/DPR)*AN/DPR*DR/DYS
+   YLAT=H*COS(AN*DLON/DPR)*AN/DPR*DR/DYS/CLAT
+ ENDIF
+
+ END SUBROUTINE GDSWZD03_MAP_JACOB
+!
+ SUBROUTINE GDSWZD03_GRID_AREA(H,DR,RLAT,AN,FILL,DXS,DYS,AREA)
+
+ IMPLICIT NONE
+
+ REAL,           PARAMETER     :: RERTH=6.3712E6
+ REAL,           PARAMETER     :: PI=3.14159265358979
+ REAL,           PARAMETER     :: DPR=180./PI
+
+ REAL,           INTENT(IN   ) :: H, DR, RLAT, AN
+ REAL,           INTENT(IN   ) :: FILL, DXS, DYS
+ REAL,           INTENT(  OUT) :: AREA
+
+ REAL                          :: CLAT
+
+ CLAT=COS(RLAT/DPR)
+ IF(CLAT.LE.0.OR.DR.LE.0) THEN
+   AREA=FILL
+ ELSE
+   AREA=RERTH**2*CLAT**2*ABS(DXS)*ABS(DYS)/(AN*DR)**2
+ ENDIF
+
+ END SUBROUTINE GDSWZD03_GRID_AREA

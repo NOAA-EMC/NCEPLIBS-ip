@@ -82,7 +82,6 @@
  REAL,            INTENT(  OUT) :: XLON(NPTS),XLAT(NPTS)
  REAL,            INTENT(  OUT) :: YLON(NPTS),YLAT(NPTS),AREA(NPTS)
 !
- REAL,            PARAMETER     :: RERTH=6.3712E6
  REAL,            PARAMETER     :: PI=3.14159265358979
  REAL,            PARAMETER     :: DPR=180./PI
 !
@@ -93,8 +92,7 @@
  REAL,            ALLOCATABLE   :: ALAT(:),BLAT(:),ALAT_JSCAN(:)
  REAL,            ALLOCATABLE   :: ALAT_TEMP(:),BLAT_TEMP(:)
  REAL                           :: DLON, HI
- REAL                           :: RLATA, RLATB, RLAT1, RLON1, RLON2
- REAL                           :: WB, WLAT, WLATA, WLATB
+ REAL                           :: RLATA, RLATB, RLAT1, RLON1, RLON2, WB
  REAL                           :: XMAX, XMIN, YMAX, YMIN, YPTSA, YPTSB
  REAL,            ALLOCATABLE   :: YLAT_ROW(:)
 ! - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -163,18 +161,12 @@
          RLAT(N)=RLATA+WB*(RLATB-RLATA)
          NRET=NRET+1
          IF(LROT.EQ.1) THEN
-           CROT(N)=1
-           SROT(N)=0
+           CALL GDSWZD04_VECT_ROT(CROT(N),SROT(N))
          ENDIF
          IF(LMAP.EQ.1) THEN
-           XLON(N)=1/DLON
-           XLAT(N)=0.
-           YLON(N)=0.
-           YLAT(N)=YLAT_ROW(NINT(YPTS(N)))
-           WLATA=BLAT(J1+JH*(J-1))
-           WLATB=BLAT(J1+JH*J)
-           WLAT=WLATA+WB*(WLATB-WLATA)
-           AREA(N)=RERTH**2*WLAT*DLON/DPR
+           CALL GDSWZD04_MAP_JACOB(DLON, YPTS(N), YLAT_ROW, JG, &
+                                   XLON(N), XLAT(N), YLON(N), YLAT(N))
+           CALL GDSWZD04_GRID_AREA(YPTS(N),J1,JH,JG,BLAT,DLON,AREA(N))
          ENDIF
        ELSE
          RLON(N)=FILL
@@ -202,18 +194,12 @@
             YPTS(N).GE.YMIN.AND.YPTS(N).LE.YMAX) THEN
            NRET=NRET+1
            IF(LROT.EQ.1) THEN
-             CROT(N)=1
-             SROT(N)=0
+             CALL GDSWZD04_VECT_ROT(CROT(N),SROT(N))
            ENDIF
            IF(LMAP.EQ.1) THEN
-             XLON(N)=1/DLON
-             XLAT(N)=0.
-             YLON(N)=0.
-             YLAT(N)=YLAT_ROW(NINT(YPTS(N)))
-             WLATA=BLAT(JA)
-             WLATB=BLAT(JA+1)
-             WLAT=WLATA+WB*(WLATB-WLATA)
-             AREA(N)=RERTH**2*WLAT*DLON/DPR
+             CALL GDSWZD04_MAP_JACOB(DLON, YPTS(N), YLAT_ROW, JG, &
+                                     XLON(N), XLAT(N), YLON(N), YLAT(N))
+             CALL GDSWZD04_GRID_AREA(YPTS(N),J1,JH,JG,BLAT,DLON,AREA(N))
            ENDIF
          ELSE
            XPTS(N)=FILL
@@ -242,3 +228,59 @@
  ENDIF
 ! - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
  END SUBROUTINE GDSWZD04
+!
+ SUBROUTINE GDSWZD04_VECT_ROT(CROT,SROT)
+
+ IMPLICIT NONE
+
+ REAL,                INTENT(  OUT) :: CROT, SROT
+
+ CROT=1.0
+ SROT=0.0
+
+ END SUBROUTINE GDSWZD04_VECT_ROT
+!
+ SUBROUTINE GDSWZD04_MAP_JACOB(DLON, YPTS, YLAT_ROW, JG, &
+                               XLON, XLAT, YLON, YLAT)
+
+ IMPLICIT NONE
+
+ INTEGER,             INTENT(IN   ) :: JG
+
+ REAL,                INTENT(IN   ) :: DLON, YPTS
+ REAL,                INTENT(IN   ) :: YLAT_ROW(0:JG+1)
+ REAL,                INTENT(  OUT) :: XLON, XLAT, YLON, YLAT
+
+ XLON=1/DLON
+ XLAT=0.
+ YLON=0.
+ YLAT=YLAT_ROW(NINT(YPTS))
+
+ END SUBROUTINE GDSWZD04_MAP_JACOB
+!
+ SUBROUTINE GDSWZD04_GRID_AREA(YPTS,J1,JH,JG,BLAT,DLON,AREA)
+
+ IMPLICIT NONE
+
+ INTEGER,         INTENT(IN   ) :: J1, JH, JG
+
+ REAL,            INTENT(IN   ) :: BLAT(0:JG+1)
+ REAL,            INTENT(IN   ) :: YPTS, DLON
+ REAL,            INTENT(  OUT) :: AREA
+
+ REAL,            PARAMETER     :: RERTH=6.3712E6
+ REAL,            PARAMETER     :: PI=3.14159265358979
+ REAL,            PARAMETER     :: DPR=180./PI
+
+ INTEGER                        :: J
+
+ REAL                           :: WB, WLAT, WLATA, WLATB
+
+ J = YPTS
+ WB=YPTS-J
+ WLATA=BLAT(J1+JH*(J-1))
+ WLATB=BLAT(J1+JH*J)
+ WLAT=WLATA+WB*(WLATB-WLATA)
+ AREA=RERTH**2*WLAT*DLON/DPR
+
+ END SUBROUTINE GDSWZD04_GRID_AREA

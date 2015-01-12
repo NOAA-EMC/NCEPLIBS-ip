@@ -75,14 +75,9 @@
  REAL,                INTENT(  OUT) :: XLON(NPTS),XLAT(NPTS)
  REAL,                INTENT(  OUT) :: YLON(NPTS),YLAT(NPTS),AREA(NPTS)
 !
- REAL,                PARAMETER     :: RERTH=6.3712E6
- REAL,                PARAMETER     :: PI=3.14159265358979
- REAL,                PARAMETER     :: DPR=180./PI
-!
  INTEGER                            :: IM, JM, ISCAN, N
 !
- REAL                               :: DLAT, DLON, DSLAT, HI
- REAL                               :: RLATD, RLATU
+ REAL                               :: DLAT, DLON, HI
  REAL                               :: RLAT1, RLON1, RLAT2, RLON2
  REAL                               :: XMAX, XMIN, YMAX, YMIN
 !
@@ -114,18 +109,11 @@
          RLAT(N)=MIN(MAX(RLAT1+DLAT*(YPTS(N)-1),-90.),90.)
          NRET=NRET+1
          IF(LROT.EQ.1) THEN
-           CROT(N)=1
-           SROT(N)=0
+           CALL GDSWZD00_VECT_ROT(CROT(N),SROT(N))
          ENDIF
          IF(LMAP.EQ.1) THEN
-           XLON(N)=1/DLON
-           XLAT(N)=0.
-           YLON(N)=0.
-           YLAT(N)=1/DLAT
-           RLATU=MIN(MAX(RLAT(N)+DLAT/2,-90.),90.)
-           RLATD=MIN(MAX(RLAT(N)-DLAT/2,-90.),90.)
-           DSLAT=SIN(RLATU/DPR)-SIN(RLATD/DPR)
-           AREA(N)=RERTH**2*ABS(DSLAT*DLON)/DPR
+           CALL GDSWZD00_MAP_JACOB(DLON,DLAT,XLON(N),XLAT(N),YLON(N),YLAT(N))
+           CALL GDSWZD00_GRID_AREA(RLAT(N),DLON,DLAT,AREA(N))
          ENDIF
        ELSE
          RLON(N)=FILL
@@ -143,18 +131,11 @@
             YPTS(N).GE.YMIN.AND.YPTS(N).LE.YMAX) THEN
            NRET=NRET+1
            IF(LROT.EQ.1) THEN
-             CROT(N)=1
-             SROT(N)=0
+             CALL GDSWZD00_VECT_ROT(CROT(N),SROT(N))
            ENDIF
            IF(LMAP.EQ.1) THEN
-             XLON(N)=1/DLON
-             XLAT(N)=0.
-             YLON(N)=0.
-             YLAT(N)=1/DLAT
-             RLATU=MIN(MAX(RLAT(N)+DLAT/2,-90.),90.)
-             RLATD=MIN(MAX(RLAT(N)-DLAT/2,-90.),90.)
-             DSLAT=SIN(RLATU/DPR)-SIN(RLATD/DPR)
-             AREA(N)=RERTH**2*ABS(DSLAT*DLON)/DPR
+             CALL GDSWZD00_MAP_JACOB(DLON,DLAT,XLON(N),XLAT(N),YLON(N),YLAT(N))
+             CALL GDSWZD00_GRID_AREA(RLAT(N),DLON,DLAT,AREA(N))
            ENDIF
          ELSE
            XPTS(N)=FILL
@@ -184,3 +165,46 @@
  ENDIF
 ! - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
  END SUBROUTINE GDSWZD00
+!
+ SUBROUTINE GDSWZD00_VECT_ROT(CROT,SROT)
+
+ IMPLICIT NONE
+
+ REAL,                INTENT(  OUT) :: CROT, SROT
+
+ CROT=1.0
+ SROT=0.0
+
+ END SUBROUTINE GDSWZD00_VECT_ROT
+!
+ SUBROUTINE GDSWZD00_MAP_JACOB(DLON,DLAT,XLON,XLAT,YLON,YLAT)
+
+ REAL,                INTENT(IN   ) :: DLAT, DLON
+ REAL,                INTENT(  OUT) :: XLON,XLAT,YLON,YLAT
+
+ XLON=1.0/DLON
+ XLAT=0.
+ YLON=0.
+ YLAT=1.0/DLAT
+
+ END SUBROUTINE GDSWZD00_MAP_JACOB
+!
+ SUBROUTINE GDSWZD00_GRID_AREA(RLAT,DLON,DLAT,AREA)
+
+ IMPLICIT NONE
+
+ REAL,                INTENT(IN   ) :: RLAT, DLAT, DLON
+ REAL,                INTENT(  OUT) :: AREA
+
+ REAL,                PARAMETER     :: RERTH=6.3712E6
+ REAL,                PARAMETER     :: PI=3.14159265358979
+ REAL,                PARAMETER     :: DPR=180./PI
+
+ REAL                               :: DSLAT, RLATU, RLATD
+
+ RLATU=MIN(MAX(RLAT+DLAT/2,-90.),90.)
+ RLATD=MIN(MAX(RLAT-DLAT/2,-90.),90.)
+ DSLAT=SIN(RLATU/DPR)-SIN(RLATD/DPR)
+ AREA=RERTH**2*ABS(DSLAT*DLON)/DPR
+
+ END SUBROUTINE GDSWZD00_GRID_AREA
