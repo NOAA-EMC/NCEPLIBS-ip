@@ -84,7 +84,7 @@
  INTEGER                         :: IM, JM, IPROJ, IROT
  INTEGER                         :: ISCAN, JSCAN, N
 !
- REAL                            :: CLAT, DI, DJ, DE, DE2
+ REAL                            :: DI, DJ, DE, DE2
  REAL                            :: DX, DY, DXS, DYS
  REAL                            :: DR, DR2, H, HI, HJ
  REAL                            :: ORIENT, RLAT1, RLON1
@@ -136,30 +136,12 @@
          ENDIF
          NRET=NRET+1
          IF(LROT.EQ.1) THEN
-           IF(IROT.EQ.1) THEN
-             CROT(N)=H*COS((RLON(N)-ORIENT)/DPR)
-             SROT(N)=SIN((RLON(N)-ORIENT)/DPR)
-           ELSE
-             CROT(N)=1
-             SROT(N)=0
-           ENDIF
+           CALL GDSWZD05_VECT_ROT(IROT,H,ORIENT,RLON(N),CROT(N),SROT(N))
          ENDIF
          IF(LMAP.EQ.1) THEN
-           IF(DR2.LT.DE2*1.E-6) THEN
-             XLON(N)=0.
-             XLAT(N)=-SIN((RLON(N)-ORIENT)/DPR)/DPR*DE/DXS/2
-             YLON(N)=0.
-             YLAT(N)=H*COS((RLON(N)-ORIENT)/DPR)/DPR*DE/DYS/2
-             AREA(N)=RERTH**2*ABS(DXS)*ABS(DYS)*4/DE2
-           ELSE
-             DR=SQRT(DR2)
-             CLAT=COS(RLAT(N)/DPR)
-             XLON(N)=H*COS((RLON(N)-ORIENT)/DPR)/DPR*DR/DXS
-             XLAT(N)=-SIN((RLON(N)-ORIENT)/DPR)/DPR*DR/DXS/CLAT
-             YLON(N)=SIN((RLON(N)-ORIENT)/DPR)/DPR*DR/DYS
-             YLAT(N)=H*COS((RLON(N)-ORIENT)/DPR)/DPR*DR/DYS/CLAT
-             AREA(N)=RERTH**2*CLAT**2*ABS(DXS)*ABS(DYS)/DR2
-           ENDIF
+           CALL GDSWZD05_MAP_JACOB(DR2,DE2,H,RLON(N),RLAT(N),ORIENT,DXS,DYS, &
+                                   XLON(N),XLAT(N),YLON(N),YLAT(N))
+           CALL GDSWZD05_GRID_AREA(DR2,DE2,H,RLAT(N),DXS,DYS,AREA(N))
          ENDIF
        ELSE
          RLON(N)=FILL
@@ -173,36 +155,19 @@
        IF(ABS(RLON(N)).LE.360.AND.ABS(RLAT(N)).LE.90.AND. &
                                      H*RLAT(N).NE.-90) THEN
          DR=DE*TAN((90-H*RLAT(N))/2/DPR)
+         DR2=DR**2
          XPTS(N)=XP+H*SIN((RLON(N)-ORIENT)/DPR)*DR/DXS
          YPTS(N)=YP-COS((RLON(N)-ORIENT)/DPR)*DR/DYS
          IF(XPTS(N).GE.XMIN.AND.XPTS(N).LE.XMAX.AND. &
             YPTS(N).GE.YMIN.AND.YPTS(N).LE.YMAX) THEN
            NRET=NRET+1
            IF(LROT.EQ.1) THEN
-             IF(IROT.EQ.1) THEN
-               CROT(N)=H*COS((RLON(N)-ORIENT)/DPR)
-               SROT(N)=SIN((RLON(N)-ORIENT)/DPR)
-             ELSE
-               CROT(N)=1
-               SROT(N)=0
-             ENDIF
+             CALL GDSWZD05_VECT_ROT(IROT,H,ORIENT,RLON(N),CROT(N),SROT(N))
            ENDIF
            IF(LMAP.EQ.1) THEN
-             DR2=DR**2
-             IF(DR2.LT.DE2*1.E-6) THEN
-               XLON(N)=0.
-               XLAT(N)=-SIN((RLON(N)-ORIENT)/DPR)/DPR*DE/DXS/2
-               YLON(N)=0.
-               YLAT(N)=H*COS((RLON(N)-ORIENT)/DPR)/DPR*DE/DYS/2
-               AREA(N)=RERTH**2*ABS(DXS)*ABS(DYS)*4/DE2
-             ELSE
-               CLAT=COS(RLAT(N)/DPR)
-               XLON(N)=H*COS((RLON(N)-ORIENT)/DPR)/DPR*DR/DXS
-               XLAT(N)=-SIN((RLON(N)-ORIENT)/DPR)/DPR*DR/DXS/CLAT
-               YLON(N)=SIN((RLON(N)-ORIENT)/DPR)/DPR*DR/DYS
-               YLAT(N)=H*COS((RLON(N)-ORIENT)/DPR)/DPR*DR/DYS/CLAT
-               AREA(N)=RERTH**2*CLAT**2*ABS(DXS)*ABS(DYS)/DR2
-             ENDIF
+             CALL GDSWZD05_MAP_JACOB(DR2,DE2,H,RLON(N),RLAT(N),ORIENT,DXS,DYS, &
+                                     XLON(N),XLAT(N),YLON(N),YLAT(N))
+             CALL GDSWZD05_GRID_AREA(DR2,DE2,H,RLAT(N),DXS,DYS,AREA(N))
            ENDIF
          ELSE
            XPTS(N)=FILL
@@ -232,3 +197,77 @@
  ENDIF
 ! - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
  END SUBROUTINE GDSWZD05
+!
+ SUBROUTINE GDSWZD05_VECT_ROT(IROT, H, ORIENT, RLON, CROT, SROT)
+
+ IMPLICIT NONE
+
+ INTEGER,          INTENT(IN   ) :: IROT
+
+ REAL,             INTENT(IN   ) :: H, ORIENT, RLON
+ REAL,             INTENT(  OUT) :: CROT, SROT
+
+ REAL,             PARAMETER     :: PI=3.14159265358979
+ REAL,             PARAMETER     :: DPR=180./PI
+
+ IF(IROT.EQ.1) THEN
+   CROT=H*COS((RLON-ORIENT)/DPR)
+   SROT=SIN((RLON-ORIENT)/DPR)
+ ELSE
+   CROT=1.
+   SROT=0.
+ ENDIF
+
+ END SUBROUTINE GDSWZD05_VECT_ROT
+!
+ SUBROUTINE GDSWZD05_MAP_JACOB(DR2,DE2,H,RLON,RLAT,ORIENT,DXS,DYS, &
+                               XLON,XLAT,YLON,YLAT)
+
+ IMPLICIT NONE
+
+ REAL,             PARAMETER     :: PI=3.14159265358979
+ REAL,             PARAMETER     :: DPR=180./PI
+
+ REAL,             INTENT(IN   ) :: DR2,DE2,H,RLON,RLAT,ORIENT,DXS,DYS
+ REAL,             INTENT(  OUT) :: XLON, XLAT, YLON, YLAT
+
+ REAL                            :: CLAT, DE, DR
+
+ IF(DR2.LT.DE2*1.E-6) THEN
+   DE=SQRT(DE2)
+   XLON=0.
+   XLAT=-SIN((RLON-ORIENT)/DPR)/DPR*DE/DXS/2
+   YLON=0.
+   YLAT=H*COS((RLON-ORIENT)/DPR)/DPR*DE/DYS/2
+ ELSE
+   DR=SQRT(DR2)
+   CLAT=COS(RLAT/DPR)
+   XLON=H*COS((RLON-ORIENT)/DPR)/DPR*DR/DXS
+   XLAT=-SIN((RLON-ORIENT)/DPR)/DPR*DR/DXS/CLAT
+   YLON=SIN((RLON-ORIENT)/DPR)/DPR*DR/DYS
+   YLAT=H*COS((RLON-ORIENT)/DPR)/DPR*DR/DYS/CLAT
+ ENDIF
+
+ END SUBROUTINE GDSWZD05_MAP_JACOB
+!
+ SUBROUTINE GDSWZD05_GRID_AREA(DR2,DE2,H,RLAT,DXS,DYS,AREA)
+
+ IMPLICIT NONE
+
+ REAL,             PARAMETER     :: RERTH=6.3712E6
+ REAL,             PARAMETER     :: PI=3.14159265358979
+ REAL,             PARAMETER     :: DPR=180./PI
+
+ REAL,             INTENT(IN   ) :: DR2,DE2,H,RLAT,DXS,DYS
+ REAL,             INTENT(  OUT) :: AREA
+
+ REAL                            :: CLAT
+
+ IF(DR2.LT.DE2*1.E-6) THEN
+   AREA=RERTH**2*ABS(DXS)*ABS(DYS)*4/DE2
+ ELSE
+   CLAT=COS(RLAT/DPR)
+   AREA=RERTH**2*CLAT**2*ABS(DXS)*ABS(DYS)/DR2
+ ENDIF
+
+ END SUBROUTINE GDSWZD05_GRID_AREA

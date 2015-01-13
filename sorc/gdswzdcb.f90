@@ -88,7 +88,6 @@
  REAL,            INTENT(  OUT) :: XLON(NPTS),XLAT(NPTS)
  REAL,            INTENT(  OUT) :: YLON(NPTS),YLAT(NPTS),AREA(NPTS)
 !
- REAL(KIND=KD),   PARAMETER     :: RERTH=6.3712E6_KD
  REAL(KIND=KD),   PARAMETER     :: PI=3.14159265358979_KD
  REAL(KIND=KD),   PARAMETER     :: DPR=180._KD/PI
 !
@@ -101,8 +100,6 @@
  REAL(KIND=KD)                  :: RLATR,RLONR,DLATS,DLONS
  REAL(KIND=KD)                  :: SLAT,CLAT,CLON,SLON
  REAL                           :: HI,HS
- REAL(KIND=KD)                  :: TERM1,TERM2
- REAL(KIND=KD)                  :: XLONF,XLATF,YLONF,YLATF
  REAL                           :: XMAX, XMIN, YMAX, YMIN, XPTF, YPTF
 ! - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
  IF(KGDS(1).EQ.203) THEN
@@ -173,41 +170,14 @@
          ENDIF
          NRET=NRET+1
          IF(LROT.EQ.1) THEN
-           IF(IROT.EQ.1) THEN
-             IF(CLATR.LE.0) THEN
-               CROT(N)=-SIGN(1._KD,SLATR*SLAT0)
-               SROT(N)=0
-             ELSE
-               SLON=SIN((RLON(N)-RLON0)/DPR)
-               CROT(N)=(CLAT0*CLAT+SLAT0*SLAT*CLON)/CLATR
-               SROT(N)=SLAT0*SLON/CLATR
-             ENDIF
-           ELSE
-             CROT(N)=1
-             SROT(N)=0
-           ENDIF
+           CALL GDSWZDCB_VECT_ROT(IROT, CLAT0, CLAT, CLON, CLATR, SLAT0, &
+                                  SLATR, SLAT, RLON0, RLON(N), CROT(N), SROT(N))
          ENDIF
          IF(LMAP.EQ.1) THEN
-           IF(CLATR.LE.0) THEN
-             XLON(N)=FILL
-             XLAT(N)=FILL
-             YLON(N)=FILL
-             YLAT(N)=FILL
-             AREA(N)=FILL
-           ELSE
-             SLON=SIN((RLON(N)-RLON0)/DPR)
-             TERM1=(CLAT0*CLAT+SLAT0*SLAT*CLON)/CLATR
-             TERM2=SLAT0*SLON/CLATR
-             XLONF=TERM1*CLAT/(DLONS*CLATR)
-             XLATF=-TERM2/(DLONS*CLATR)
-             YLONF=TERM2*CLAT/DLATS
-             YLATF=TERM1/DLATS
-             XLON(N)=XLONF-YLONF
-             XLAT(N)=XLATF-YLATF
-             YLON(N)=XLONF+YLONF
-             YLAT(N)=XLATF+YLATF
-             AREA(N)=RERTH**2*CLATR*DLATS*DLONS*2/DPR**2
-           ENDIF
+           CALL GDSWZDCB_MAP_JACOB(FILL, RLON(N), CLAT0, CLAT, CLATR, &
+                             CLON, RLON0, DLATS, DLONS, SLAT0, SLAT, &
+                             XLON(N), XLAT(N), YLON(N), YLAT(N))
+           CALL GDSWZDCB_GRID_AREA(FILL, CLATR, DLATS, DLONS, AREA(N))
          ENDIF
        ELSE
          RLON(N)=FILL
@@ -247,41 +217,14 @@
            YPTS(N)=(XPTF+(YPTF-KSCAN))/2
            NRET=NRET+1
            IF(LROT.EQ.1) THEN
-             IF(IROT.EQ.1) THEN
-               IF(CLATR.LE.0) THEN
-                 CROT(N)=-SIGN(1._KD,SLATR*SLAT0)
-                 SROT(N)=0
-               ELSE
-                 SLON=SIN((RLON(N)-RLON0)/DPR)
-                 CROT(N)=(CLAT0*CLAT+SLAT0*SLAT*CLON)/CLATR
-                 SROT(N)=SLAT0*SLON/CLATR
-               ENDIF
-             ELSE
-               CROT(N)=1
-               SROT(N)=0
-             ENDIF
+             CALL GDSWZDCB_VECT_ROT(IROT, CLAT0, CLAT, CLON, CLATR, SLAT0, &
+                                    SLATR, SLAT, RLON0, RLON(N), CROT(N), SROT(N))
            ENDIF
            IF(LMAP.EQ.1) THEN
-             IF(CLATR.LE.0) THEN
-               XLON(N)=FILL
-               XLAT(N)=FILL
-               YLON(N)=FILL
-               YLAT(N)=FILL
-               AREA(N)=FILL
-             ELSE
-               SLON=SIN((RLON(N)-RLON0)/DPR)
-               TERM1=(CLAT0*CLAT+SLAT0*SLAT*CLON)/CLATR
-               TERM2=SLAT0*SLON/CLATR
-               XLONF=TERM1*CLAT/(DLONS*CLATR)
-               XLATF=-TERM2/(DLONS*CLATR)
-               YLONF=TERM2*CLAT/DLATS
-               YLATF=TERM1/DLATS
-               XLON(N)=XLONF-YLONF
-               XLAT(N)=XLATF-YLATF
-               YLON(N)=XLONF+YLONF
-               YLAT(N)=XLATF+YLATF
-               AREA(N)=RERTH**2*CLATR*DLATS*DLONS*2/DPR**2
-             ENDIF
+             CALL GDSWZDCB_MAP_JACOB(FILL, RLON(N), CLAT0, CLAT, CLATR, &
+                               CLON, RLON0, DLATS, DLONS, SLAT0, SLAT, &
+                               XLON(N), XLAT(N), YLON(N), YLAT(N))
+             CALL GDSWZDCB_GRID_AREA(FILL, CLATR, DLATS, DLONS, AREA(N))
            ENDIF
          ELSE
            XPTS(N)=FILL
@@ -311,3 +254,100 @@
  ENDIF
 ! - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
  END SUBROUTINE GDSWZDCB
+!
+ SUBROUTINE GDSWZDCB_VECT_ROT(IROT, CLAT0, CLAT, CLON, CLATR, &
+                              SLAT0, SLATR, SLAT, RLON0, RLON, CROT, SROT)
+
+ IMPLICIT NONE
+
+ INTEGER,          PARAMETER     :: KD=SELECTED_REAL_KIND(15,45)
+
+ INTEGER,          INTENT(IN   ) :: IROT
+
+ REAL(KIND=KD),    INTENT(IN   ) :: CLAT0, CLAT, CLON, CLATR
+ REAL(KIND=KD),    INTENT(IN   ) :: SLAT0, SLATR, SLAT, RLON0
+ REAL         ,    INTENT(IN   ) :: RLON
+ REAL         ,    INTENT(  OUT) :: CROT, SROT
+
+ REAL(KIND=KD),    PARAMETER     :: PI=3.14159265358979_KD
+ REAL(KIND=KD),    PARAMETER     :: DPR=180._KD/PI
+
+ REAL(KIND=KD)                   :: SLON
+
+ IF(IROT.EQ.1) THEN
+   IF(CLATR.LE.0) THEN
+     CROT=-SIGN(1._KD,SLATR*SLAT0)
+     SROT=0.
+   ELSE
+     SLON=SIN((RLON-RLON0)/DPR)
+     CROT=(CLAT0*CLAT+SLAT0*SLAT*CLON)/CLATR
+     SROT=SLAT0*SLON/CLATR
+   ENDIF
+ ELSE
+   CROT=1.
+   SROT=0.
+ ENDIF
+
+ END SUBROUTINE GDSWZDCB_VECT_ROT
+!
+ SUBROUTINE GDSWZDCB_MAP_JACOB(FILL, RLON, CLAT0, CLAT, CLATR, &
+                               CLON, RLON0, DLATS, DLONS, SLAT0, SLAT, &
+                               XLON, XLAT, YLON, YLAT)
+
+ IMPLICIT NONE
+
+ INTEGER,          PARAMETER     :: KD=SELECTED_REAL_KIND(15,45)
+
+ REAL         ,    INTENT(IN   ) :: FILL, RLON
+ REAL(KIND=KD),    INTENT(IN   ) :: CLAT0, CLAT, CLATR, CLON, RLON0
+ REAL(KIND=KD),    INTENT(IN   ) :: DLATS, DLONS, SLAT0, SLAT
+ REAL         ,    INTENT(  OUT) :: XLON, XLAT, YLON, YLAT
+
+ REAL(KIND=KD),    PARAMETER     :: PI=3.14159265358979_KD
+ REAL(KIND=KD),    PARAMETER     :: DPR=180._KD/PI
+
+ REAL(KIND=KD)                   :: SLON, TERM1, TERM2
+ REAL(KIND=KD)                   :: XLATF, XLONF, YLATF, YLONF
+
+ IF(CLATR.LE.0._KD) THEN
+   XLON=FILL
+   XLAT=FILL
+   YLON=FILL
+   YLAT=FILL
+ ELSE
+   SLON=SIN((RLON-RLON0)/DPR)
+   TERM1=(CLAT0*CLAT+SLAT0*SLAT*CLON)/CLATR
+   TERM2=SLAT0*SLON/CLATR
+   XLONF=TERM1*CLAT/(DLONS*CLATR)
+   XLATF=-TERM2/(DLONS*CLATR)
+   YLONF=TERM2*CLAT/DLATS
+   YLATF=TERM1/DLATS
+   XLON=XLONF-YLONF
+   XLAT=XLATF-YLATF
+   YLON=XLONF+YLONF
+   YLAT=XLATF+YLATF
+ ENDIF
+
+ END SUBROUTINE GDSWZDCB_MAP_JACOB
+!
+ SUBROUTINE GDSWZDCB_GRID_AREA(FILL, CLATR, DLATS, DLONS, AREA)
+
+ IMPLICIT NONE
+
+ INTEGER,          PARAMETER     :: KD=SELECTED_REAL_KIND(15,45)
+
+ REAL(KIND=KD),    PARAMETER     :: RERTH=6.3712E6_KD
+ REAL(KIND=KD),    PARAMETER     :: PI=3.14159265358979_KD
+ REAL(KIND=KD),    PARAMETER     :: DPR=180._KD/PI
+
+ REAL,             INTENT(IN   ) :: FILL
+ REAL(KIND=KD),    INTENT(IN   ) :: CLATR, DLATS, DLONS
+ REAL,             INTENT(  OUT) :: AREA
+
+ IF(CLATR.LE.0._KD) THEN
+   AREA=FILL
+ ELSE
+   AREA=RERTH**2*CLATR*DLATS*DLONS*2/DPR**2
+ ENDIF
+
+ END SUBROUTINE GDSWZDCB_GRID_AREA
