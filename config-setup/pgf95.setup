@@ -1,6 +1,7 @@
 export FC="pgf95"
 export FCFLAGS=" \
  -g \
- -fast"
+ -fast \
+ -I."
 export LDFLAGS=" "
 export LIBS=" "

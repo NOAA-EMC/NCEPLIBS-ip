@@ -41,7 +41,7 @@ $(LIBRARY): $(OBJ_FILES)
 library: $(LIBRARY)
 
 clean:
-	-rm -f *.o *.a
+	-rm -f *.o *.mod *.a
 
 distclean:
 	-rm Makefile
@@ -51,6 +51,8 @@ check: library
 
 # ...Gnu-style installation
 install:
+	$(INSTALL) -d $(DESTDIR)$(installdir)/include
+	$(INSTALL_DATA) *.mod $(DESTDIR)$(installdir)/include
 	$(INSTALL) -d $(DESTDIR)$(installdir)/lib
 	$(INSTALL_DATA) $(LIBRARY) $(DESTDIR)$(installdir)/lib
 	$(INSTALL_DATA) ../config.log $(DESTDIR)$(installdir)
@@ -59,6 +61,8 @@ install:
 nco_install:
 	$(INSTALL) -d $(DESTDIR)$(nco_installdir)
 	$(INSTALL_DATA) $(LIBRARY) $(DESTDIR)$(nco_installdir)/lib$(distdir).a
+	$(INSTALL) -d $(DESTDIR)$(nco_installdir)/incmod/$(distdir)
+	$(INSTALL_DATA) *.mod $(DESTDIR)$(nco_installdir)/incmod/$(distdir)
 	$(INSTALL_DATA) ../config.log $(DESTDIR)$(nco_installdir)/config.log.$(distdir)
         
 # ...Universal uninstallation

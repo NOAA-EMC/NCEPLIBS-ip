@@ -1,3 +1,11 @@
+ MODULE GDSWZD03_MOD
+ 
+ PRIVATE
+
+ PUBLIC :: GDSWZD03
+
+ CONTAINS
+
  SUBROUTINE GDSWZD03(KGDS,IOPT,NPTS,FILL,XPTS,YPTS,RLON,RLAT,NRET, &
                      LROT,CROT,SROT,LMAP,XLON,XLAT,YLON,YLAT,AREA)
 !$$$  SUBPROGRAM DOCUMENTATION BLOCK
@@ -88,7 +96,7 @@
  INTEGER                       :: IM, JM, IPROJ, N
  INTEGER                       :: IROT, ISCAN, JSCAN
 !
- REAL                          :: AN, ANTR, CLAT, DI, DJ
+ REAL                          :: AN, ANTR, DI, DJ
  REAL                          :: DX, DY, DXS, DYS, DLON, DLON1
  REAL                          :: DE, DE2, DR, DR2
  REAL                          :: H, HI, HJ
@@ -163,7 +171,7 @@
          IF(LMAP.EQ.1) THEN
            CALL GDSWZD03_MAP_JACOB(H,DR,DLON,RLAT(N),AN,FILL,DXS,DYS, &
                                    XLON(N),XLAT(N),YLON(N),YLAT(N))
-           CALL GDSWZD03_GRID_AREA(H,DR,RLAT(N),AN,FILL,DXS,DYS,AREA(N))
+           CALL GDSWZD03_GRID_AREA(DR,RLAT(N),AN,FILL,DXS,DYS,AREA(N))
          ENDIF
        ELSE
          RLON(N)=FILL
@@ -189,7 +197,7 @@
            IF(LMAP.EQ.1) THEN
              CALL GDSWZD03_MAP_JACOB(H,DR,DLON,RLAT(N),AN,FILL,DXS,DYS, &
                                      XLON(N),XLAT(N),YLON(N),YLAT(N))
-             CALL GDSWZD03_GRID_AREA(H,DR,RLAT(N),AN,FILL,DXS,DYS,AREA(N))
+             CALL GDSWZD03_GRID_AREA(DR,RLAT(N),AN,FILL,DXS,DYS,AREA(N))
            ENDIF
          ELSE
            XPTS(N)=FILL
@@ -271,7 +279,7 @@
 
  END SUBROUTINE GDSWZD03_MAP_JACOB
 !
- SUBROUTINE GDSWZD03_GRID_AREA(H,DR,RLAT,AN,FILL,DXS,DYS,AREA)
+ SUBROUTINE GDSWZD03_GRID_AREA(DR,RLAT,AN,FILL,DXS,DYS,AREA)
 
  IMPLICIT NONE
 
@@ -279,7 +287,7 @@
  REAL,           PARAMETER     :: PI=3.14159265358979
  REAL,           PARAMETER     :: DPR=180./PI
 
- REAL,           INTENT(IN   ) :: H, DR, RLAT, AN
+ REAL,           INTENT(IN   ) :: DR, RLAT, AN
  REAL,           INTENT(IN   ) :: FILL, DXS, DYS
  REAL,           INTENT(  OUT) :: AREA
 
@@ -293,3 +301,5 @@
  ENDIF
 
  END SUBROUTINE GDSWZD03_GRID_AREA
+ 
+ END MODULE GDSWZD03_MOD

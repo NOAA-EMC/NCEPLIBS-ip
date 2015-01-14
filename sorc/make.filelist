@@ -12,14 +12,14 @@ FSRC_FILES = \
  gdswizcb.f90 \
  gdswizcd.f90 \
  gdswiz.f90 \
- gdswzd00.f90 \
- gdswzd01.f90 \
- gdswzd03.f90 \
- gdswzd04.f90 \
- gdswzd05.f90 \
- gdswzdcb.f90 \
- gdswzdcd.f90 \
- gdswzd.f90 \
+ gdswzd00_mod.f90 \
+ gdswzd01_mod.f90 \
+ gdswzd03_mod.f90 \
+ gdswzd04_mod.f90 \
+ gdswzd05_mod.f90 \
+ gdswzdcb_mod.f90 \
+ gdswzdcd_mod.f90 \
+ gdswzd_mod.f90 \
  ijkgds0.f90 \
  ijkgds1.f90 \
  ipolates.f90 \
