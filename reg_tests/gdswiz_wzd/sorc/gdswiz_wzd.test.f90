@@ -200,7 +200,7 @@
 
  if (wzd) then
    call gdswzd(kgds, iopt, npts, fill, xpts, ypts, rlon, rlat, &
-               nret, lrot, crot, srot, lmap, xlon, xlat, ylon, ylat, area)
+               nret, crot, srot, xlon, xlat, ylon, ylat, area)
  else
    call gdswiz(kgds, iopt, npts, fill, xpts, ypts, rlon, rlat, &
                nret, lrot, crot, srot)
@@ -240,7 +240,7 @@
 
  if (wzd) then
    call gdswzd(kgds, iopt, npts, fill, xpts, ypts, rlon, rlat,&
-               nret, lrot, crot, srot, lmap, xlon, xlat, ylon, ylat, area)
+               nret, crot, srot, xlon, xlat, ylon, ylat, area)
  else
    call gdswiz(kgds, iopt, npts, fill, xpts, ypts, rlon, rlat, &
                nret, lrot, crot, srot)
