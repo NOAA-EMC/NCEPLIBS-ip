@@ -83,18 +83,27 @@
  REAL, OPTIONAL,   INTENT(  OUT) :: YLON(NPTS),YLAT(NPTS),AREA(NPTS)
 !
  REAL,             PARAMETER     :: RERTH=6.3712E6
+ REAL,             PARAMETER     :: RERTH_WGS84=6.378137E6
  REAL,             PARAMETER     :: PI=3.14159265358979
  REAL,             PARAMETER     :: DPR=180./PI
+ REAL,             PARAMETER     :: PI2=PI/2.0
+ REAL,             PARAMETER     :: PI4=PI/4.0
+ REAL,             PARAMETER     :: E2=.00669437999013  ! wgs84 datum
+ REAL,             PARAMETER     :: SLAT=60.0  ! standard latitude according
+                                               ! to grib 1 standard
+ REAL,             PARAMETER     :: SLATR=SLAT/DPR
 !
  INTEGER                         :: IM, JM, IPROJ, IROT
- INTEGER                         :: ISCAN, JSCAN, N
+ INTEGER                         :: ISCAN, JSCAN, ITER, N
 !
- LOGICAL                         :: LROT, LMAP, LAREA
+ LOGICAL                         :: ELLIPTICAL, LROT, LMAP, LAREA
 !
+ REAL                            :: ALAT, ALAT1, ALONG, DIFF
  REAL                            :: DI, DJ, DE, DE2
  REAL                            :: DX, DY, DXS, DYS
- REAL                            :: DR, DR2, H, HI, HJ
- REAL                            :: ORIENT, RLAT1, RLON1
+ REAL                            :: DR, DR2, E, E_OVER_2, H, HI, HJ
+ REAL                            :: MC
+ REAL                            :: ORIENT, RLAT1, RLON1, RHO, T, TC
  REAL                            :: XMAX, XMIN, YMAX, YMIN
  REAL                            :: XP, YP
 ! - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -107,6 +116,7 @@
  IF(PRESENT(AREA)) AREA=FILL
 ! - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
  IF(KGDS(1).EQ.005) THEN
+   ELLIPTICAL=MOD(KGDS(6)/64,2).EQ.1
    IM=KGDS(2)
    JM=KGDS(3)
    RLAT1=KGDS(4)*1.E-3
@@ -123,11 +133,28 @@
    HJ=(-1.)**(1-JSCAN)
    DXS=DX*HI
    DYS=DY*HJ
-   DE=(1.+SIN(60./DPR))*RERTH
-   DR=DE*COS(RLAT1/DPR)/(1+H*SIN(RLAT1/DPR))
-   XP=1-H*SIN((RLON1-ORIENT)/DPR)*DR/DXS
-   YP=1+COS((RLON1-ORIENT)/DPR)*DR/DYS
-   DE2=DE**2
+!
+! FIND X/Y OF POLE
+   IF (.NOT.ELLIPTICAL) THEN
+     DE=(1.+SIN(60./DPR))*RERTH
+     DR=DE*COS(RLAT1/DPR)/(1+H*SIN(RLAT1/DPR))
+     XP=1-H*SIN((RLON1-ORIENT)/DPR)*DR/DXS
+     YP=1+COS((RLON1-ORIENT)/DPR)*DR/DYS
+     DE2=DE**2
+   ELSE
+     E=SQRT(E2)
+     E_OVER_2=E*0.5
+     ALAT=H*RLAT1/DPR
+     ALONG = (RLON1-ORIENT)/DPR
+     T=TAN(PI4-ALAT/2.)/((1.-E*SIN(ALAT))/  &
+       (1.+E*SIN(ALAT)))**(E_OVER_2)
+     TC=TAN(PI4-SLATR/2.)/((1.-E*SIN(SLATR))/  &
+       (1.+E*SIN(SLATR)))**(E_OVER_2)
+     MC=COS(SLATR)/SQRT(1.0-E2*(SIN(SLATR)**2))
+     RHO=RERTH_WGS84*MC*T/TC
+     YP = 1.0 + RHO*COS(H*ALONG)/DYS
+     XP = 1.0 - RHO*SIN(H*ALONG)/DXS
+   ENDIF ! ELLIPTICAL
    XMIN=0
    XMAX=IM+1
    YMIN=0
@@ -151,55 +178,117 @@
 ! - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 !  TRANSLATE GRID COORDINATES TO EARTH COORDINATES
    IF(IOPT.EQ.0.OR.IOPT.EQ.1) THEN
-     DO N=1,NPTS
-       IF(XPTS(N).GE.XMIN.AND.XPTS(N).LE.XMAX.AND. &
-          YPTS(N).GE.YMIN.AND.YPTS(N).LE.YMAX) THEN
-         DI=(XPTS(N)-XP)*DXS
-         DJ=(YPTS(N)-YP)*DYS
-         DR2=DI**2+DJ**2
-         IF(DR2.LT.DE2*1.E-6) THEN
-           RLON(N)=0.
-           RLAT(N)=H*90.
-         ELSE
-           RLON(N)=MOD(ORIENT+H*DPR*ATAN2(DI,-DJ)+3600,360.)
-           RLAT(N)=H*DPR*ASIN((DE2-DR2)/(DE2+DR2))
-         ENDIF
-         NRET=NRET+1
-         IF(LROT) CALL GDSWZD05_VECT_ROT(IROT,H,ORIENT,RLON(N),CROT(N),SROT(N))
-         IF(LMAP) CALL GDSWZD05_MAP_JACOB(DR2,DE2,H,RLON(N),RLAT(N),ORIENT,DXS,DYS, &
-                                          XLON(N),XLAT(N),YLON(N),YLAT(N))
-         IF(LAREA) CALL GDSWZD05_GRID_AREA(DR2,DE2,RLAT(N),DXS,DYS,AREA(N))
-       ELSE
-         RLON(N)=FILL
-         RLAT(N)=FILL
-       ENDIF
-     ENDDO
-! - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-!  TRANSLATE EARTH COORDINATES TO GRID COORDINATES
-   ELSEIF(IOPT.EQ.-1) THEN
-     DO N=1,NPTS
-       IF(ABS(RLON(N)).LE.360.AND.ABS(RLAT(N)).LE.90.AND. &
-                                     H*RLAT(N).NE.-90) THEN
-         DR=DE*TAN((90-H*RLAT(N))/2/DPR)
-         DR2=DR**2
-         XPTS(N)=XP+H*SIN((RLON(N)-ORIENT)/DPR)*DR/DXS
-         YPTS(N)=YP-COS((RLON(N)-ORIENT)/DPR)*DR/DYS
+     IF(.NOT.ELLIPTICAL)THEN
+       DO N=1,NPTS
          IF(XPTS(N).GE.XMIN.AND.XPTS(N).LE.XMAX.AND. &
             YPTS(N).GE.YMIN.AND.YPTS(N).LE.YMAX) THEN
+           DI=(XPTS(N)-XP)*DXS
+           DJ=(YPTS(N)-YP)*DYS
+           DR2=DI**2+DJ**2
+           IF(DR2.LT.DE2*1.E-6) THEN
+             RLON(N)=0.
+             RLAT(N)=H*90.
+           ELSE
+             RLON(N)=MOD(ORIENT+H*DPR*ATAN2(DI,-DJ)+3600,360.)
+             RLAT(N)=H*DPR*ASIN((DE2-DR2)/(DE2+DR2))
+           ENDIF
            NRET=NRET+1
            IF(LROT) CALL GDSWZD05_VECT_ROT(IROT,H,ORIENT,RLON(N),CROT(N),SROT(N))
            IF(LMAP) CALL GDSWZD05_MAP_JACOB(DR2,DE2,H,RLON(N),RLAT(N),ORIENT,DXS,DYS, &
                                             XLON(N),XLAT(N),YLON(N),YLAT(N))
            IF(LAREA) CALL GDSWZD05_GRID_AREA(DR2,DE2,RLAT(N),DXS,DYS,AREA(N))
          ELSE
+           RLON(N)=FILL
+           RLAT(N)=FILL
+         ENDIF
+       ENDDO
+     ELSE ! ELLIPTICAL
+       DO N=1,NPTS
+         IF(XPTS(N).GE.XMIN.AND.XPTS(N).LE.XMAX.AND.  &
+            YPTS(N).GE.YMIN.AND.YPTS(N).LE.YMAX) THEN
+           DI=(XPTS(N)-XP)*DXS
+           DJ=(YPTS(N)-YP)*DYS
+           RHO=SQRT(DI*DI+DJ*DJ)
+           T=(RHO*TC)/(RERTH_WGS84*MC)
+           IF(ABS(YPTS(N)-YP)<0.01)THEN
+             IF(DI>0.0) ALONG=ORIENT+H*90.0
+             IF(DI<=0.0) ALONG=ORIENT-H*90.0
+           ELSE
+             ALONG=ORIENT+H*ATAN(DI/(-DJ))*DPR
+             IF(DJ>0) ALONG=ALONG+180.
+           END IF
+           ALAT1=PI2-2.0*ATAN(T)
+           DO ITER=1,10
+             ALAT = PI2 - 2.0*ATAN(T*(((1.0-E*SIN(ALAT1))/  &
+                   (1.0+E*SIN(ALAT1)))**(E_OVER_2)))
+             DIFF = ABS(ALAT-ALAT1)*DPR
+             IF (DIFF < 0.000001) EXIT
+             ALAT1=ALAT
+           ENDDO
+           RLAT(N)=H*ALAT*DPR
+           RLON(N)=ALONG
+           IF(RLON(N)<0.0) RLON(N)=RLON(N)+360.
+           IF(RLON(N)>360.0) RLON(N)=RLON(N)-360.0
+           NRET=NRET+1
+           IF(LROT) CALL GDSWZD05_VECT_ROT(IROT,H,ORIENT,RLON(N),CROT(N),SROT(N))
+         ELSE
+           RLON(N)=FILL
+           RLAT(N)=FILL
+         ENDIF
+       ENDDO
+     ENDIF ! ELLIPTICAL
+! - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+!  TRANSLATE EARTH COORDINATES TO GRID COORDINATES
+   ELSEIF(IOPT.EQ.-1) THEN
+     IF(.NOT.ELLIPTICAL)THEN
+       DO N=1,NPTS
+         IF(ABS(RLON(N)).LE.360.AND.ABS(RLAT(N)).LE.90.AND. &
+                                       H*RLAT(N).NE.-90) THEN
+           DR=DE*TAN((90-H*RLAT(N))/2/DPR)
+           DR2=DR**2
+           XPTS(N)=XP+H*SIN((RLON(N)-ORIENT)/DPR)*DR/DXS
+           YPTS(N)=YP-COS((RLON(N)-ORIENT)/DPR)*DR/DYS
+           IF(XPTS(N).GE.XMIN.AND.XPTS(N).LE.XMAX.AND. &
+              YPTS(N).GE.YMIN.AND.YPTS(N).LE.YMAX) THEN
+             NRET=NRET+1
+             IF(LROT) CALL GDSWZD05_VECT_ROT(IROT,H,ORIENT,RLON(N),CROT(N),SROT(N))
+             IF(LMAP) CALL GDSWZD05_MAP_JACOB(DR2,DE2,H,RLON(N),RLAT(N),ORIENT,DXS,DYS, &
+                                              XLON(N),XLAT(N),YLON(N),YLAT(N))
+             IF(LAREA) CALL GDSWZD05_GRID_AREA(DR2,DE2,RLAT(N),DXS,DYS,AREA(N))
+           ELSE
+             XPTS(N)=FILL
+             YPTS(N)=FILL
+           ENDIF
+         ELSE
            XPTS(N)=FILL
            YPTS(N)=FILL
          ENDIF
-       ELSE
-         XPTS(N)=FILL
-         YPTS(N)=FILL
-       ENDIF
-     ENDDO
+       ENDDO
+     ELSE  ! ELLIPTICAL CASE
+       DO N=1,NPTS
+         IF(ABS(RLON(N)).LE.360.AND.ABS(RLAT(N)).LE.90.AND.  &
+                                        H*RLAT(N).NE.-90) THEN
+           ALAT = H*RLAT(N)/DPR
+           ALONG = (RLON(N)-ORIENT)/DPR
+           T=TAN(PI4-ALAT*0.5)/((1.-E*SIN(ALAT))/  &
+             (1.+E*SIN(ALAT)))**(E_OVER_2)
+           RHO=RERTH_WGS84*MC*T/TC
+           XPTS(N)= XP + RHO*SIN(H*ALONG) / DXS
+           YPTS(N)= YP - RHO*COS(H*ALONG) / DYS
+           IF(XPTS(N).GE.XMIN.AND.XPTS(N).LE.XMAX.AND.  &
+              YPTS(N).GE.YMIN.AND.YPTS(N).LE.YMAX) THEN
+             NRET=NRET+1
+             IF(LROT) CALL GDSWZD05_VECT_ROT(IROT,H,ORIENT,RLON(N),CROT(N),SROT(N))
+           ELSE
+             XPTS(N)=FILL
+             YPTS(N)=FILL
+           ENDIF
+         ELSE
+           XPTS(N)=FILL
+           YPTS(N)=FILL
+         ENDIF
+       ENDDO
+     ENDIF
    ENDIF
 ! - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 !  PROJECTION UNRECOGNIZED
