@@ -109,6 +109,9 @@
 !   LANGUAGE: FORTRAN 90
 !
 !$$$
+! 
+ USE GDSWZD_MOD
+!
  IMPLICIT NONE
 !
  INTEGER,            INTENT(IN   ):: IPOPT(20),KGDSI(200),KGDSO(200)
@@ -134,7 +137,6 @@
  INTEGER,                     SAVE:: NOX=-1,IRETX=-1
  INTEGER,         ALLOCATABLE,SAVE:: NXY(:)
 !
- REAL,            ALLOCATABLE     :: DUM1(:),DUM2(:)
  REAL                             :: CX,SX,CM,SM,UROT,VROT
  REAL                             :: XPTS(MO),YPTS(MO)
  REAL                             :: CROI(MI),SROI(MI)
@@ -151,16 +153,14 @@
 ! - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 !  COMPUTE NUMBER OF OUTPUT POINTS AND THEIR LATITUDES AND LONGITUDES.
    IF(KGDSO(1).GE.0) THEN
-     CALL GDSWIZ(KGDSO, 0,MO,FILL,XPTS,YPTS,RLON,RLAT,NO,1,CROT,SROT)
+     CALL GDSWZD(KGDSO, 0,MO,FILL,XPTS,YPTS,RLON,RLAT,NO,CROT,SROT)
      IF(NO.EQ.0) IRET=3
    ENDIF
 ! - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 !  LOCATE INPUT POINTS
-   ALLOCATE(DUM1(NO))
-   ALLOCATE(DUM2(NO))
-   CALL GDSWIZ(KGDSI,-1,NO,FILL,XPTS,YPTS,RLON,RLAT,NV,0,DUM1,DUM2)
+   CALL GDSWZD(KGDSI,-1,NO,FILL,XPTS,YPTS,RLON,RLAT,NV)
    IF(IRET.EQ.0.AND.NV.EQ.0) IRET=2
-   CALL GDSWIZ(KGDSI, 0,MI,FILL,XPTI,YPTI,RLOI,RLAI,NV,1,CROI,SROI)
+   CALL GDSWZD(KGDSI, 0,MI,FILL,XPTI,YPTI,RLOI,RLAI,NV,CROI,SROI)
 ! - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 !  ALLOCATE AND SAVE GRID DATA
    KGDSIX=KGDSI

@@ -88,6 +88,8 @@
 !   LANGUAGE: FORTRAN 90
 !
 !$$$
+ USE GDSWZD_MOD
+!
  IMPLICIT NONE
 !
  INTEGER,          INTENT(IN   ) :: IPOPT(20), KGDSI(200)
@@ -116,7 +118,6 @@
  INTEGER                         :: IP, IPRIME, IPROJ, IROMB, K
  INTEGER                         :: MAXWV, N, NI, NJ, NPS, NO
 !
- REAL                            :: CROT(MO),SROT(MO)
  REAL                            :: DE, DR, DY
  REAL                            :: DLAT, DLON, DLATO, DLONO
  REAL                            :: GO2(MO,KM), H, HI, HJ
@@ -128,7 +129,7 @@
 !  COMPUTE NUMBER OF OUTPUT POINTS AND THEIR LATITUDES AND LONGITUDES.
  IRET=0
  IF(KGDSO(1).GE.0) THEN
-   CALL GDSWIZ(KGDSO, 0,MO,FILL,XPTS,YPTS,RLON,RLAT,NO,0,CROT,SROT)
+   CALL GDSWZD(KGDSO, 0,MO,FILL,XPTS,YPTS,RLON,RLAT,NO)
    IF(NO.EQ.0) IRET=3
  ENDIF
 ! - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -

@@ -82,7 +82,7 @@
 !                3    UNRECOGNIZED OUTPUT GRID
 !
 ! SUBPROGRAMS CALLED:
-!   GDSWIZ       GRID DESCRIPTION SECTION WIZARD
+!   GDSWZD       GRID DESCRIPTION SECTION WIZARD
 !   IJKGDS0      SET UP PARAMETERS FOR IJKGDS1
 !   (IJKGDS1)    RETURN FIELD POSITION FOR A GIVEN GRID POINT
 !   POLFIXS      MAKE MULTIPLE POLE SCALAR VALUES CONSISTENT
@@ -91,6 +91,9 @@
 !   LANGUAGE: FORTRAN 90
 !
 !$$$
+!
+ USE GDSWZD_MOD
+!
  IMPLICIT NONE
 !
  INTEGER,               INTENT(IN   ):: IPOPT(20),KGDSI(200)
@@ -118,7 +121,6 @@
  INTEGER,SAVE                        :: KGDSIX(200)=-1,KGDSOX(200)=-1
  INTEGER,SAVE                        :: NOX=-1,IRETX=-1
 !
- REAL,ALLOCATABLE                    :: CROT(:),SROT(:)
  REAL                                :: WX(2),WY(2)
  REAL                                :: XPTS(MO),YPTS(MO)
  REAL                                :: PMP,XIJ,YIJ,XF,YF,G,W
@@ -138,18 +140,12 @@
 ! - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 !  COMPUTE NUMBER OF OUTPUT POINTS AND THEIR LATITUDES AND LONGITUDES.
    IF(KGDSO(1).GE.0) THEN
-     ALLOCATE (CROT(MO))
-     ALLOCATE (SROT(MO))
-     CALL GDSWIZ(KGDSO, 0,MO,FILL,XPTS,YPTS,RLON,RLAT,NO,0,CROT,SROT)
-     DEALLOCATE (CROT,SROT)
+     CALL GDSWZD(KGDSO, 0,MO,FILL,XPTS,YPTS,RLON,RLAT,NO)
      IF(NO.EQ.0) IRET=3
    ENDIF
 ! - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 !  LOCATE INPUT POINTS
-   ALLOCATE (CROT(NO))
-   ALLOCATE (SROT(NO))
-   CALL GDSWIZ(KGDSI,-1,NO,FILL,XPTS,YPTS,RLON,RLAT,NV,0,CROT,SROT)
-   DEALLOCATE (CROT,SROT)
+   CALL GDSWZD(KGDSI,-1,NO,FILL,XPTS,YPTS,RLON,RLAT,NV)
    IF(IRET.EQ.0.AND.NV.EQ.0) IRET=2
 ! - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 !  ALLOCATE AND SAVE GRID DATA
