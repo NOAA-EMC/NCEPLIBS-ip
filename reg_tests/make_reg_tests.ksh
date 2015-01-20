@@ -73,7 +73,7 @@ for WHICHIP in ctl test; do  # the 'control' or 'test' IPLIB
     esac
 
     ./configure --prefix=${PWD} --enable-promote=${PRECISION} \
-      FCFLAGS="${FCFLAGS} -I../../../ip/v2.0.4/incmod/ip_v2.0.4_${PRECISION}" \
+      FCFLAGS="${FCFLAGS} -I${PWD}/lib/incmod_${WHICHIP}_${PRECISION}" \
       LIBS="${PWD}/lib/libip_${WHICHIP}_${PRECISION}.a ${SP_LIB} ${BACIO_LIB} ${W3NCO_LIB}"
     if [ $? -ne 0 ]; then
       set +x
@@ -82,9 +82,6 @@ for WHICHIP in ctl test; do  # the 'control' or 'test' IPLIB
     fi
 
     $MAKE clean
-    cd ./gdswiz_wzd/sorc
-    ln -fs gdswiz_wzd.${WHICHIP}.f90 gdswiz_wzd.f90
-    cd ../..
     $MAKE
     if [ $? -ne 0 ]; then
       set +x
