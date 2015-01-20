@@ -106,7 +106,7 @@ set -x
 #@dependency=(ipxwafs == 0)
 #@queue
 
-#@step_name=gdswiz
+#@step_name=gdswzd
 #@resources=ConsumableMemory(1000Mb)
 #@job_type=serial
 #@task_affinity=cpu(1)
@@ -123,7 +123,7 @@ set -x
 #@parallel_threads=1
 #@wall_clock_limit=00:03:00
 #@node_usage=shared
-#@dependency=(gdswiz == 0)
+#@dependency=(gdswzd == 0)
 #@queue
 
 #@step_name=summary
@@ -152,8 +152,8 @@ ipxwafs)
   $REG_DIR/ipxwafs/scripts/runall.ksh >> $LOG_FILE;;
 ipxwafs2_2)
   $REG_DIR/ipxwafs2_2/scripts/runall.ksh >> $LOG_FILE;;
-gdswiz)
-  $REG_DIR/gdswiz_wzd/scripts/runall.ksh >> $LOG_FILE;;
+gdswzd)
+  $REG_DIR/gdswzd/scripts/runall.ksh >> $LOG_FILE;;
 ipolates_1thread)
   $REG_DIR/ipolates/scripts/runall.ksh 1 >> $LOG_FILE;;
 ipolates_4thread)

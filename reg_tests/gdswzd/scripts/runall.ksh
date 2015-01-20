@@ -64,17 +64,17 @@ WORK_DIR=${WORK_DIR:-/stmpp1/$LOGNAME/regression}
 REG_DIR=${REG_DIR:-../..}
 
 # where the executables are located
-EXEC_DIR=$REG_DIR/gdswiz_wzd/exec
+EXEC_DIR=$REG_DIR/gdswzd/exec
 
-WORK=${WORK_DIR}/gdswiz_wzd
+WORK=${WORK_DIR}/gdswzd
 rm -fr $WORK
 mkdir -p $WORK
 WORK_CTL=${WORK}/ctl
 mkdir -p $WORK_CTL
-cp $EXEC_DIR/gdswiz_wzd_ctl_*.exe  $WORK_CTL
+cp $EXEC_DIR/gdswzd_ctl_*.exe  $WORK_CTL
 WORK_TEST=${WORK}/test
 mkdir -p $WORK_TEST
-cp $EXEC_DIR/gdswiz_wzd_test_*.exe $WORK_TEST
+cp $EXEC_DIR/gdswzd_test_*.exe $WORK_TEST
 
 reg_test_failed=0
 
@@ -95,7 +95,7 @@ do
 
       cd $WORK_CTL
       CTL_LOG=ctl.${routine}.${bytesize}byte.grid${grids}.log
-      gdswiz_wzd_ctl_${bytesize}.exe "$routine" "$grids" > $CTL_LOG
+      gdswzd_ctl_${bytesize}.exe "$routine" "$grids" > $CTL_LOG
       status=$?
 # did 'control' executable run without error?
       if ((status != 0));then
@@ -106,7 +106,7 @@ do
 
       cd $WORK_TEST
       TEST_LOG=test.${routine}.${bytesize}byte.grid${grids}.log
-      gdswiz_wzd_test_${bytesize}.exe "$routine" "$grids" > $TEST_LOG
+      gdswzd_test_${bytesize}.exe "$routine" "$grids" > $TEST_LOG
       status=$?
 # did 'test' executable run without error?
       if ((status != 0));then
