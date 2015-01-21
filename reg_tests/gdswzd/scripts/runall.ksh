@@ -1,7 +1,7 @@
 #!/bin/ksh
 
 #--------------------------------------------------------------------
-# Test the gdswiz and gdswzd suite of routines using a Fortran
+# Test the gdswzd suite of routines using a Fortran
 # program.
 #
 # The program is compiled with all three byte versions
@@ -12,12 +12,12 @@
 #  > 8 byte integer/8 byte float  ($bytesize=8)
 #  > 8 byte float/4 byte integer  ($bytesize=d)
 #
-# The gdswiz and gdswzd routines compute the following fields:
+# The gdswzd routines compute the following fields:
 #
 # - lat/lon from i/j OR i/j from lat lon
 # - clockwise vector rotation sines/cosines
-# - dx/dlon, dx/dlat, dy/dlon, dy/dlat  (gdswzd only)
-# - grid box area (gdswzd only)
+# - dx/dlon, dx/dlat, dy/dlon, dy/dlat 
+# - grid box area 
 #
 # The routines are called twice for each grid to test both the
 # i/j to lat/lon AND lat/lon to i/j transforms.  This is controled by setting
@@ -26,7 +26,7 @@
 # message is printed to standard output and the regression test
 # is considered failed.
 #
-# All fields computed from each call to gdswiz/wzd are output to a binary file.
+# All fields computed from each call to gdswzd are output to a binary file.
 # The file naming convention is: grid${gridnum}.iopt${0/m1}.bin.
 # The files from the 'control' and 'test' ip libraries are compared
 # and if not bit identical, the regression test fails.
@@ -37,9 +37,9 @@
 # 008        mercator (ncep grid 8)
 # 127        t254 gaussian (ncep grid 127)
 # 203        rotated lat/lon e-staggered (number refers to gds octet 6)
-#            tests routines gdswizcb and gdswzdcb
+#            tests routine gdswzdcb
 # 205        rotated lat/lon b-staggered (number refers to gds octet 6)
-#            tests routines gdswizcd and gdswzdcd
+#            tests routine gdswzdcd
 # 212        nh polar stereographic, spherical earth (number meaningless)
 # 213        sh polar stereographic, spherical earth (number meaningless)
 # 218        lambert conformal (ncep grid 218)
@@ -56,7 +56,7 @@
 #set -x
 
 echo
-echo BEGIN GDSWIZ/WZD REGRESSION TEST
+echo BEGIN GDSWZD REGRESSION TEST
 echo
 
 WORK_DIR=${WORK_DIR:-/stmpp1/$LOGNAME/regression}
@@ -78,133 +78,128 @@ cp $EXEC_DIR/gdswzd_test_*.exe $WORK_TEST
 
 reg_test_failed=0
 
-for routine in "WIZ" "WZD"  # test gdswiz and gdswzd separately
+for grids in "3" "8" "203" "127" "212" "213" "218" "205" "222"
 do
   echo
-  echo RUN REGRESSION TEST FOR GDS${routine} ROUTINES 
-  for grids in "3" "8" "203" "127" "212" "213" "218" "205" "222"
+  for bytesize in "4" "8" "d"  # test each library version
   do
-    echo
-    for bytesize in "4" "8" "d"  # test each library version
-    do
 
-      ctl_failed=0
-      test_failed=0
+    ctl_failed=0
+    test_failed=0
 
-      echo TEST GRID $grids ${bytesize}-BYTE FLOAT VERSION
+    echo TEST GRID $grids ${bytesize}-BYTE FLOAT VERSION
 
-      cd $WORK_CTL
-      CTL_LOG=ctl.${routine}.${bytesize}byte.grid${grids}.log
-      gdswzd_ctl_${bytesize}.exe "$routine" "$grids" > $CTL_LOG
-      status=$?
+    cd $WORK_CTL
+    CTL_LOG=ctl.${bytesize}byte.grid${grids}.log
+    gdswzd_ctl_${bytesize}.exe "$grids" > $CTL_LOG
+    status=$?
 # did 'control' executable run without error?
-      if ((status != 0));then
-        echo "** CONTROL RUN FAILED."
-        ctl_failed=1
-        reg_test_failed=1
-      fi
+    if ((status != 0));then
+      echo "** CONTROL RUN FAILED."
+      ctl_failed=1
+      reg_test_failed=1
+    fi
 
-      cd $WORK_TEST
-      TEST_LOG=test.${routine}.${bytesize}byte.grid${grids}.log
-      gdswzd_test_${bytesize}.exe "$routine" "$grids" > $TEST_LOG
-      status=$?
+    cd $WORK_TEST
+    TEST_LOG=test.${bytesize}byte.grid${grids}.log
+    gdswzd_test_${bytesize}.exe "$grids" > $TEST_LOG
+    status=$?
 # did 'test' executable run without error?
-      if ((status != 0));then
-        echo "** TEST RUN FAILED."
-        test_failed=1
-        reg_test_failed=1
-      fi
+    if ((status != 0));then
+      echo "** TEST RUN FAILED."
+      test_failed=1
+      reg_test_failed=1
+    fi
 
 # did the i/j to lat/lon transform fail for the control?
-      grep -Eq 'BAD|ERROR' $WORK_CTL/$CTL_LOG
-      status=$?
-      if ((status == 0)); then
-        echo "** PROBLEM WITH CTL RUN. CHECK LOG FILE."
-        ctl_failed=1
-        reg_test_failed=1
-      fi
+    grep -Eq 'BAD|ERROR' $WORK_CTL/$CTL_LOG
+    status=$?
+    if ((status == 0)); then
+      echo "** PROBLEM WITH CTL RUN. CHECK LOG FILE."
+      ctl_failed=1
+      reg_test_failed=1
+    fi
 
 # did the i/j to lat/lon transform fail for the test?
-      grep -Eq 'BAD|ERROR' $WORK_TEST/$TEST_LOG
+    grep -Eq 'BAD|ERROR' $WORK_TEST/$TEST_LOG
+    status=$?
+    if ((status == 0)); then
+      echo "** PROBLEM WITH TEST RUN. CHECK LOG FILE."
+      test_failed=1
+      reg_test_failed=1
+    fi
+
+# are binary files bit identical?
+    if ((test_failed == 0 && ctl_failed == 0)); then
+      cmp $WORK_CTL/grid${grids}.iopt0.bin $WORK_TEST/grid${grids}.iopt0.bin
       status=$?
-      if ((status == 0)); then
-        echo "** PROBLEM WITH TEST RUN. CHECK LOG FILE."
+      if ((status != 0));then
+        echo "** BINARY FILES NOT BIT IDENTICAL. REGRESSION TEST FAILED."
+        ctl_failed=1
         test_failed=1
         reg_test_failed=1
       fi
-
-# are binary files bit identical?
-      if ((test_failed == 0 && ctl_failed == 0)); then
-        cmp $WORK_CTL/grid${grids}.iopt0.bin $WORK_TEST/grid${grids}.iopt0.bin
-        status=$?
-        if ((status != 0));then
-          echo "** BINARY FILES NOT BIT IDENTICAL. REGRESSION TEST FAILED."
-          ctl_failed=1
-          test_failed=1
-          reg_test_failed=1
-        fi
-        cmp $WORK_CTL/grid${grids}.ioptm1.bin $WORK_TEST/grid${grids}.ioptm1.bin
-        status=$?
-        if ((status != 0));then
-          echo "** BINARY FILES NOT BIT IDENTICAL. REGRESSION TEST FAILED."
-          ctl_failed=1
-          test_failed=1
-          reg_test_failed=1
-        fi
+      cmp $WORK_CTL/grid${grids}.ioptm1.bin $WORK_TEST/grid${grids}.ioptm1.bin
+      status=$?
+      if ((status != 0));then
+        echo "** BINARY FILES NOT BIT IDENTICAL. REGRESSION TEST FAILED."
+        ctl_failed=1
+        test_failed=1
+        reg_test_failed=1
       fi
+    fi
 
 # if any step of regression test fails, save data in a subdirectory.
 
-      if ((ctl_failed == 1));then
-        FAILED_DIR=$WORK_CTL/failed.${routine}.${bytesize}byte.grid${grids}
-        mkdir -p $FAILED_DIR
-        if [ -s $WORK_CTL/$CTL_LOG ]; then
-          mv $WORK_CTL/$CTL_LOG $FAILED_DIR
-        fi
-        if [ -s $WORK_CTL/grid${grids}.iopt0.bin ];then
-          mv $WORK_CTL/grid${grids}.iopt0.bin $FAILED_DIR
-        fi
-        if [ -s $WORK_CTL/grid${grids}.ioptm1.bin ];then
-          mv $WORK_CTL/grid${grids}.ioptm1.bin $FAILED_DIR
-        fi
-        if [ -s $WORK_CTL/core* ];then
-          mv $WORK_CTL/core*  $FAILED_DIR
-        fi 
+    if ((ctl_failed == 1));then
+      FAILED_DIR=$WORK_CTL/failed.${bytesize}byte.grid${grids}
+      mkdir -p $FAILED_DIR
+      if [ -s $WORK_CTL/$CTL_LOG ]; then
+        mv $WORK_CTL/$CTL_LOG $FAILED_DIR
       fi
-
-      if ((test_failed == 1));then
-        FAILED_DIR=$WORK_TEST/failed.${routine}.${bytesize}byte.grid${grids}
-        mkdir -p $FAILED_DIR
-        if [ -s $WORK_TEST/$TEST_LOG ];then
-          mv $WORK_TEST/$TEST_LOG $FAILED_DIR
-        fi
-        if [ -s $WORK_TEST/grid${grids}.iopt0.bin ];then
-          mv $WORK_TEST/grid${grids}.iopt0.bin $FAILED_DIR
-        fi
-        if [ -s $WORK_TEST/grid${grids}.ioptm1.bin ];then
-          mv $WORK_TEST/grid${grids}.ioptm1.bin $FAILED_DIR
-        fi
-        if [ -s $WORK_TEST/core* ];then
-          mv $WORK_TEST/core*  $FAILED_DIR
-        fi
+      if [ -s $WORK_CTL/grid${grids}.iopt0.bin ];then
+        mv $WORK_CTL/grid${grids}.iopt0.bin $FAILED_DIR
       fi
+      if [ -s $WORK_CTL/grid${grids}.ioptm1.bin ];then
+        mv $WORK_CTL/grid${grids}.ioptm1.bin $FAILED_DIR
+      fi
+      if [ -s $WORK_CTL/core* ];then
+        mv $WORK_CTL/core*  $FAILED_DIR
+      fi 
+    fi
 
-      rm -f $WORK_CTL/grid${grids}.iopt0.bin  $WORK_TEST/grid${grids}.iopt0.bin
-      rm -f $WORK_CTL/grid${grids}.ioptm1.bin $WORK_TEST/grid${grids}.ioptm1.bin
-      rm -f $WORK_CTL/$CTL_LOG $WORK_TEST/$TEST_LOG
-      rm -f $WORK_CTL/core*  $WORK_TEST/core*
+    if ((test_failed == 1));then
+      FAILED_DIR=$WORK_TEST/failed.${bytesize}byte.grid${grids}
+      mkdir -p $FAILED_DIR
+      if [ -s $WORK_TEST/$TEST_LOG ];then
+        mv $WORK_TEST/$TEST_LOG $FAILED_DIR
+      fi
+      if [ -s $WORK_TEST/grid${grids}.iopt0.bin ];then
+        mv $WORK_TEST/grid${grids}.iopt0.bin $FAILED_DIR
+      fi
+      if [ -s $WORK_TEST/grid${grids}.ioptm1.bin ];then
+        mv $WORK_TEST/grid${grids}.ioptm1.bin $FAILED_DIR
+      fi
+      if [ -s $WORK_TEST/core* ];then
+        mv $WORK_TEST/core*  $FAILED_DIR
+      fi
+    fi
 
-    done
+    rm -f $WORK_CTL/grid${grids}.iopt0.bin  $WORK_TEST/grid${grids}.iopt0.bin
+    rm -f $WORK_CTL/grid${grids}.ioptm1.bin $WORK_TEST/grid${grids}.ioptm1.bin
+    rm -f $WORK_CTL/$CTL_LOG $WORK_TEST/$TEST_LOG
+    rm -f $WORK_CTL/core*  $WORK_TEST/core*
+
   done
 done
 
 if ((reg_test_failed == 0)); then
   echo
-  echo "<<< GDSWIZ/WZD REGRESSION TEST PASSED. >>>"
+  echo "<<< GDSWZD REGRESSION TEST PASSED. >>>"
   echo
 else
   echo
-  echo "<<< GDSWIZ/WZD REGRESSION TEST FAILED. >>>"
+  echo "<<< GDSWZD REGRESSION TEST FAILED. >>>"
   echo
 fi
 

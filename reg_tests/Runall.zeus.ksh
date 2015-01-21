@@ -52,13 +52,11 @@ IPXWAFS2_3=$(qsub -l procs=1 -l vmem=500M -l walltime=0:02:00 -A $PROJECT_CODE -
 MAKGDS=$(qsub -l procs=1 -l vmem=500M -l walltime=0:02:00 -A $PROJECT_CODE -N iptest_makgds -o $LOG_FILE -e $LOG_FILE \
       -v REG_DIR,WORK_DIR,OMP_NUM_THREADS -W depend=afterok:$IPXWAFS2_3 $REG_DIR/makgds/scripts/runall.ksh)
 
-GDSWIZ=$(qsub -l procs=1 -l vmem=2000M -l walltime=0:10:00 -A $PROJECT_CODE -N iptest_gdswzd -o $LOG_FILE -e $LOG_FILE \
+GDSWZD=$(qsub -l procs=1 -l vmem=2000M -l walltime=0:10:00 -A $PROJECT_CODE -N iptest_gdswzd -o $LOG_FILE -e $LOG_FILE \
       -v REG_DIR,WORK_DIR,OMP_NUM_THREADS -W depend=afterok:$MAKGDS $REG_DIR/gdswzd/scripts/runall.ksh)
 
-exit 0
-
 IPOLATES_1=$(qsub -l procs=1 -l vmem=2000M -l walltime=0:30:00 -A $PROJECT_CODE -N iptest_ipolates1 -o $LOG_FILE -e $LOG_FILE \
-      -F "1" -v REG_DIR,WORK_DIR,OMP_NUM_THREADS -W depend=afterok:$GDSWIZ $REG_DIR/ipolates/scripts/runall.ksh)
+      -F "1" -v REG_DIR,WORK_DIR,OMP_NUM_THREADS -W depend=afterok:$GDSWZD $REG_DIR/ipolates/scripts/runall.ksh)
 
 export OMP_NUM_THREADS=4
 

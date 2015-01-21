@@ -1,7 +1,7 @@
- program gdswiz_wzd
+ program gdswzd_driver
  
 !------------------------------------------------------------------
-! Test gdswiz and gdswzd routines for all map projections.  
+! Test gdswzd routines for all map projections.  
 !
 ! Routines are called twice to test both the (1) i/j to lat/lon 
 ! and the (2) lat/lon to i/j conversions.  This should be
@@ -9,10 +9,8 @@
 ! standard output.  (1) is invoked by setting the IOPT argument
 ! to '0' and (2) is invoked by setting it to '-1'.
 !
-! This program takes two arguments.  The first is 'WIZ' or 'WZD'
-! to run either the gdswiz or gdswzd set of routines.  The second is
-! the grid number.  The valid grids are defined by data statements
-! below.  They are:
+! This program takes one argument: the grid number.  The valid 
+! grids are defined by data statements below.  They are:
 !
 ! grid #       description
 ! ======       ===========
@@ -20,9 +18,9 @@
 ! 008          mercator (ncep grid 8)
 ! 127          t254 gaussian (ncep grid 127)
 ! 203          rotated lat/lon e-staggered (number refers to gds octet 6)
-!              tests routines gdswizcb and gdswzdcb
+!              tests routine gdswzdcb
 ! 205          rotated lat/lon b-staggered (number refers to gds octet 6)
-!              tests routines gdswizcd and gdswzdcd
+!              tests routine gdswzdcd
 ! 212          nh polar stereographic, spherical earth (number meaningless)
 ! 213          sh polar stereographic, spherical earth (number meaningless)
 ! 218          lambert conformal (ncep grid 218)
@@ -31,7 +29,7 @@
 ! All computed fields are output to a direct access file so
 ! they may be compared for bit-idenicalness with other test runs,
 ! or so they may be visualized.  Separate files are written
-! to output the data from each call to gdswiz/wzd.  The
+! to output the data from each call to gdswzd.  The
 ! file naming convention is:
 !
 ! grid${gridnum}.iopt${0 or m1}.bin
@@ -41,15 +39,13 @@
 
  implicit none
 
- character*3   :: grid, routine
+ character*3   :: grid
  character*100 :: outfile
 
  integer*4 :: i1
  integer   :: nret, lrot, lmap, iopt, npts, imdl, jmdl
  integer   :: i, j, n, iret, kgds(200), nscan, kscan, is1, nm
  integer   :: ii, jj, iii, jjj, badpts
-
- logical   :: wzd
 
  real :: diff, fill, maxdiffx, maxdiffy
  real, allocatable :: xpts(:,:), ypts(:,:)
@@ -61,33 +57,32 @@
 
 ! the grids that will be tested.
 
- integer :: grd3(200)    ! ncep grid3; one-degree lat/lon, for gdswiz00 and gdswzd00 routines
+ integer :: grd3(200)    ! ncep grid3; one-degree lat/lon, for gdswzd00 routine
  data grd3 / 0, 360, 181, 90000, 0, 128, -90000,  &
             -1000, 1000, 1000, 0, 0, 0, 0, 0, 0, 0, 0, 0, 255, 180*0/
 
- integer :: grd8(200)    ! ncep grid8; mercator, for gdswiz01 and gdswzd01 routines
+ integer :: grd8(200)    ! ncep grid8; mercator, for gdswzd01 routine
  data grd8 / 1, 116, 44, -48670, 3104, 128, 61050,  &
              0, 22500, 0, 64, 318830, 318830, 0, 0, 0, 0, 0, 0, 255, 180*0/
 
- integer :: grd127(200)  ! ncep grid 127; gaussian (t254), for gdswiz04 and gdswzd04 routines
+ integer :: grd127(200)  ! ncep grid 127; gaussian (t254), for gdswzd04 routine
  data grd127 /4, 768, 384, 89642, 0, 128, -89642,  &
              -469, 469, 192, 0, 0, 255, 0, 0, 0, 0, 0, 0, 255, 180*0/
 
- integer :: grd203(200)  ! nam e-grid, for gdswizcb and gdswzdcb routines
+ integer :: grd203(200)  ! nam e-grid, for gdswzdcb routine
  data grd203 /203, 669, 1165, -7450, -144140, 136, 54000,  &
               -106000, 90, 77, 64, 0, 0, 0, 0, 0, 0, 0, 0, 255, 180*0/
 
- integer :: grd212(200)  ! afwa nh polar, spherical earth, for gdswiz05 and gdswzd05 routines
+ integer :: grd212(200)  ! afwa nh polar, spherical earth, for gdswzd05 routine
  data grd212 /5,2*512,-20826,145000,8,-80000,2*47625,0,  &
               9*0,255,180*0/
 
- integer :: grd222(200)  ! afwa nh polar, oblate spheroid earth for gdswiz05 and gdswzd05
-                         ! routines.  note gdswzd05 does not have this option and 
-                         ! treats it as spherical.
+ integer :: grd222(200)  ! afwa nh polar, oblate spheroid earth for gdswzd05
+                         ! routine.  
  data grd222 /5,2*512,-20826,145000,72,-80000,2*47625,0,  &
               9*0,255,180*0/
 
- integer :: grd213(200)  ! afwa sh polar, spherical earth for gdswiz05 and gdswzd05 routines.
+ integer :: grd213(200)  ! afwa sh polar, spherical earth for gdswzd05 routine.
                          ! note, there is a difference in how gdswiz05
                          ! and gdswzd05 define the orientation angle.
                          ! gdswzd05 assumes +100 degrees for this grid.
@@ -95,27 +90,15 @@
  data grd213/5,2*512,20826,-125000,8,-80000,2*47625,128, &
              9*0,255,180*0/
 
- integer :: grd205(200)  ! nam 12km b-grid, for gdswizcd and gdswzdcd routines
+ integer :: grd205(200)  ! nam 12km b-grid, for gdswzdcd routine
  data grd205 /205, 954, 835, -7491, -144134, 136, 54000,  &
              -106000, 126, 108, 64, 44540, 14800, 0, 0, 0, 0, 0, 0, 255, 180*0/
 
- integer :: grd218(200)  ! lambert conformal (ncep grid 218) for gdswiz03 and gdswzd03 routines
+ integer :: grd218(200)  ! lambert conformal (ncep grid 218) for gdswzd03 routine
  data grd218 /3, 614, 428, 12190, -133459, 8, -95000,  &
               12191, 12191, 0, 64, 25000, 25000, 0, 0, 0, 0, 0, 0, 255, 180*0/
 
  i1=1
- call getarg(i1,routine)
- select case (routine)
-   case ('WIZ')
-     wzd=.false.
-   case ('WZD')
-     wzd=.true.
-   case default
-     print*,"DO YOU WANT TO TEST GDSWIZ OR GDSWZD?"
-     stop
- end select
-
- i1=2
  call getarg(i1,grid)
 
  kgds=0
@@ -152,7 +135,7 @@
      kgds=grd213
      imdl=kgds(2)
      jmdl=kgds(3)
-     if (wzd) kgds(7) = 100000
+              kgds(7) = 100000
    case ('218')
      kgds=grd218
      imdl=kgds(2)
@@ -162,11 +145,6 @@
      stop
  end select
 
- if (wzd) then
-   print*,"TEST GDSWZD ROUTINE"
- else
-   print*,"TEST GDSWIZ ROUTINE"
- endif
  print*,"PROCESS GRID ", grid
 
 !---------------------------------------------------------------------------
@@ -198,13 +176,8 @@
  iopt = 0
  npts = imdl * jmdl
 
- if (wzd) then
-   call gdswzd(kgds, iopt, npts, fill, xpts, ypts, rlon, rlat, &
-               nret, crot, srot, xlon, xlat, ylon, ylat, area)
- else
-   call gdswiz(kgds, iopt, npts, fill, xpts, ypts, rlon, rlat, &
-               nret, lrot, crot, srot)
- end if
+ call gdswzd(kgds, iopt, npts, fill, xpts, ypts, rlon, rlat, &
+             nret, crot, srot, xlon, xlat, ylon, ylat, area)
 
  if (nret /= npts) then
    print*,'ERROR. WRONG NUMBER OF POINTS RETURNED ',nret,npts
@@ -238,13 +211,8 @@
  xpts=fill
  ypts=fill
 
- if (wzd) then
-   call gdswzd(kgds, iopt, npts, fill, xpts, ypts, rlon, rlat,&
-               nret, crot, srot, xlon, xlat, ylon, ylat, area)
- else
-   call gdswiz(kgds, iopt, npts, fill, xpts, ypts, rlon, rlat, &
-               nret, lrot, crot, srot)
- endif
+ call gdswzd(kgds, iopt, npts, fill, xpts, ypts, rlon, rlat,&
+             nret, crot, srot, xlon, xlat, ylon, ylat, area)
 
  if (nret /= npts) then
    print*,'ERROR. WRONG NUMBER OF POINTS RETURNED ',nret,npts
@@ -347,4 +315,4 @@
  print*,'ERROR WRITING OUTPUT FILE.'
  stop 44
 
- end program gdswiz_wzd
+ end program gdswzd_driver

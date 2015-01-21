@@ -147,8 +147,8 @@ that exercised every routine.
 
 1)  gausslat - A fortran program that calls routine gausslat 
     to calculate the gaussian latitudes for a t382 grid.
-2)  gdswiz_wzd - A fortran program that calls gdswiz and gdswzd
-    (and all of their child routines) to calculate lat/lon and
+2)  gdswzd - A fortran program that calls gdswzd
+    and all of its child routines to calculate lat/lon and
     other map-related fields for several grids of
     of various map projections.
 3)  ipolates - A fortran program that interpolates a global
@@ -195,28 +195,21 @@ sanity check the data.  So when viewing, do a 'set mproj off'.
 More detailed information about each test is described in a README file in that
 test's subdirectory.
 
-Below is a table of each routine in iplib and which regression test(s) invoke it.
+Below is a table of each routine (or module) in iplib and which regression test(s) invoke it.
 
-subroutine name         regression test
+subroutine or
+module name             regression test
 ===============         ===============
 
 gausslat                gausslat
-gdswiz                  gdswiz_wzd, ipolates, ipolatev, ipxwafs, ipxwafs2_3, copygb
-gdswiz00                gdswiz_wzd, ipolates, ipolatev, ipxwafs, ipxwafs2_3, copygb
-gdswiz01                gdswiz_wzd, ipolates, ipolatev, copygb
-gdswiz03                gdswiz_wzd, ipolates, ipolatev, copygb
-gdswiz04                gdswiz_wzd, ipolates, ipolatev, copygb
-gdswiz05                gdswiz_wzd, ipolates, ipolatev, copygb
-gdswizcb                gdswiz_wzd, ipolates, ipolatev, copygb
-gdswizcd                gdswiz_wzd, ipolates, ipolatev, copygb
-gdswzd                  gdswiz_wzd
-gdswzd00                gdswiz_wzd
-gdswzd01                gdswiz_wzd
-gdswzd03                gdswiz_wzd
-gdswzd04                gdswiz_wzd
-gdswzd05                gdswiz_wzd
-gdswzdcb                gdswiz_wzd
-gdswzdcd                gdswiz_wzd
+gdswzd                  gdswzd, ipolates, ipolatev, ipxwafs, ipxwafs2_3, copygb
+gdswzd00                gdswzd, ipolates, ipolatev, ipxwafs, ipxwafs2_3, copygb
+gdswzd01                gdswzd, ipolates, ipolatev, copygb
+gdswzd03                gdswzd, ipolates, ipolatev, copygb
+gdswzd04                gdswzd, ipolates, ipolatev, copygb
+gdswzd05                gdswzd, ipolates, ipolatev, copygb
+gdswzdcb                gdswzd, ipolates, ipolatev, copygb
+gdswzdcd                gdswzd, ipolates, ipolatev, copygb
 ijkgds0                 ipolates, ipolatev, ipxwafs, ipxwafs2_3, copygb
 ijkgds1                 ipolates, ipolatev, ipxwafs, ipxwafs2_3
 ipolates                ipolates, ipxwafs, ipxwafs2_3, copygb
