@@ -83,10 +83,6 @@
               9*0,255,180*0/
 
  integer :: grd213(200)  ! afwa sh polar, spherical earth for gdswzd05 routine.
-                         ! note, there is a difference in how gdswiz05
-                         ! and gdswzd05 define the orientation angle.
-                         ! gdswzd05 assumes +100 degrees for this grid.
-                         ! this is handled with logic below.
  data grd213/5,2*512,20826,-125000,8,-80000,2*47625,128, &
              9*0,255,180*0/
 
@@ -135,7 +131,6 @@
      kgds=grd213
      imdl=kgds(2)
      jmdl=kgds(3)
-              kgds(7) = 100000
    case ('218')
      kgds=grd218
      imdl=kgds(2)
