@@ -1,12 +1,4 @@
  gausslat.o : gausslat.f90
- gdswiz00.o : gdswiz00.f90
- gdswiz01.o : gdswiz01.f90
- gdswiz03.o : gdswiz03.f90
- gdswiz04.o : gdswiz04.f90
- gdswiz05.o : gdswiz05.f90
- gdswizcb.o : gdswizcb.f90
- gdswizcd.o : gdswizcd.f90
- gdswiz.o : gdswiz.f90
  gdswzd00_mod.o : gdswzd00_mod.f90
  gdswzd01_mod.o : gdswzd01_mod.f90
  gdswzd03_mod.o : gdswzd03_mod.f90

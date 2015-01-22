@@ -37,8 +37,6 @@ bsub -e $LOG_FILE -o $LOG_FILE -q "dev_shared" -P "GFS-MTN" \
 bsub -e $LOG_FILE -o $LOG_FILE -q "dev_shared" -P "GFS-MTN" \
      -J "gdswzd" -R affinity[core] -R "rusage[mem=300]" -W 0:05 -w 'ended(gausslat)' $REG_DIR/gdswzd/scripts/runall.ksh 
 
-exit 0
-
 bsub -e $LOG_FILE -o $LOG_FILE -q "dev_shared" -P "GFS-MTN" \
      -J "ipxwafs" -R affinity[core] -R "rusage[mem=100]" -W 0:05 -w 'ended(gdswzd)' $REG_DIR/ipxwafs/scripts/runall.ksh 
 
