@@ -21,29 +21,39 @@ The following steps are required to setup and run the test suite:
    The 'test' libraries are your branch copies, while 
    the 'control' libaries are the head of the trunk.
 
-(2) Link the 'test' and 'control' IPOLATES libraries to the
-    ./reg_tests/lib directory in your branch.  
+(2) Link the 'test' and 'control' IPOLATES libraries and 
+    their include directories (which contain their Fortran
+    module files) to the ./reg_tests/lib directory
+    in your branch.  
 
     The regression test build expects the 'test' and 'control'
-    libraries in the ./reg_tests/lib directory with the 
-    following names:
+    libraries and include directories in the ./reg_tests/lib 
+    directory with the following names:
 
-    libip_ctl_4.a  (4 byte integer/4 byte float, control)
-    libip_ctl_8.a  (8 byte integer/8 byte float, control)
-    libip_ctl_d.a  (4 byte integer/8 byte float, control)
-    libip_test_4.a  (4 byte integer/4 byte float, test)
-    libip_test_8.a  (8 byte integer/8 byte float, test)
-    libip_test_d.a  (4 byte integer/8 byte float, test)
+    libip_ctl_4.a  (4 byte integer/4 byte float library, control)
+    libip_ctl_8.a  (8 byte integer/8 byte float library, control)
+    libip_ctl_d.a  (4 byte integer/8 byte float library, control)
+    libip_test_4.a  (4 byte integer/4 byte float library, test)
+    libip_test_8.a  (8 byte integer/8 byte float library, test)
+    libip_test_d.a  (4 byte integer/8 byte float library, test)
 
-    One way to place these libraries in the ./reg_tests/lib
-    directory is thru unix links.  Suppose the trunk and
-    branch libraries will built using an 'nco-style' installation.
-    First, change to the ./reg_tests/lib directory:
+    incmod_ctl_4  (4 byte integer/4 byte float include dir, control)
+    incmod_ctl_8  (8 byte integer/8 byte float include dir, control)
+    incmod_ctl_d  (4 byte integer/8 byte float include dir, control)
+    incmod_test_4 (4 byte integer/4 byte float include dir, test)
+    incmod_test_8 (8 byte integer/8 byte float include dir, test)
+    incmod_test_d (4 byte integer/8 byte float include dir, test)
+
+    One way to place these libraries and include directories in 
+    the ./reg_tests/lib directory is thru unix links.  Suppose
+    the trunk and branch libraries were built using an
+    'nco-style' installation.  First, change to the
+    ./reg_tests/lib directory:
 
     "cd /branch/reg_tests/lib"
 
-    Then, link each library to the name expected by the regression
-    test build:
+    Then, link each library and include directory to the 
+    name expected by the regression test build:
     
     "ln -s /trunk/ip/vX.Y.Z/libip_vX.Y.Z_4.a  ./libip_ctl_4.a"
     "ln -s /trunk/ip/vX.Y.Z/libip_vX.Y.Z_8.a  ./libip_ctl_8.a"
@@ -51,6 +61,13 @@ The following steps are required to setup and run the test suite:
     "ln -s /branch/ip/vX.Y.Z/libip_vX.Y.Z_4.a ./libip_test_4.a"
     "ln -s /branch/ip/vX.Y.Z/libip_vX.Y.Z_8.a ./libip_test_8.a"
     "ln -s /branch/ip/vX.Y.Z/libip_vX.Y.Z_d.a ./libip_test_d.a"
+
+    "ln -s /trunk/ip/vX.Y.Z/incmod/ip_vX.Y.Z_4  ./incmod_ctl_4"
+    "ln -s /trunk/ip/vX.Y.Z/incmod/ip_vX.Y.Z_8  ./incmod_ctl_8"
+    "ln -s /trunk/ip/vX.Y.Z/incmod/ip_vX.Y.Z_d  ./incmod_ctl_d"
+    "ln -s /branch/ip/vX.Y.Z/incmod/ip_vX.Y.Z_4 ./incmod_test_4"
+    "ln -s /branch/ip/vX.Y.Z/incmod/ip_vX.Y.Z_8 ./incmod_test_8"
+    "ln -s /branch/ip/vX.Y.Z/incmod/ip_vX.Y.Z_d ./incmod_test_d"
 
 (3) Check the ./reg_tests/config-setup/ifort.setup file in your branch.
 
@@ -166,7 +183,7 @@ that exercised every routine.
     wafs grid back to ncep grid 3.  Note: routine ipxwafs2 is invoked 
     for interpolation option '0' (bilinear) and routine ipxwafs3 
     is invoked for interpolation option '2' (neighbor).
-6)  ipxwafs - Same as experiment 9 except a specially modified version
+6)  ipxwafs - Same as experiment 5 except a specially modified version
     of copygb is used to call iplib routine ipxwafs instead of ipxwafs2. 
     ipxwafs and ipxwafs2 are the same except the latter accounts for bitmaps.
 7)  makgds - A fortran program to test routine makgds.  Routine is called
