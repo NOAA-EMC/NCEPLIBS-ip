@@ -1,4 +1,5 @@
- SUBROUTINE GDSWZD00(KGDS,IOPT,NPTS,FILL,XPTS,YPTS,RLON,RLAT,NRET,  &
+ SUBROUTINE GDSWZD00(IGDTNUM,IGDTMPL,IGDTLEN,IOPT,NPTS,FILL, &
+                     XPTS,YPTS,RLON,RLAT,NRET,  &
                      LROT,CROT,SROT,LMAP,XLON,XLAT,YLON,YLAT,AREA)
 !$$$  SUBPROGRAM DOCUMENTATION BLOCK
 !
@@ -64,7 +65,9 @@
 !$$$
  IMPLICIT NONE
 !
- INTEGER,             INTENT(IN   ) :: IOPT, KGDS(200)
+ INTEGER,             INTENT(IN   ) :: IGDTNUM, IGDTLEN
+ INTEGER(KIND=4),     INTENT(IN   ) :: IGDTMPL(IGDTLEN)
+ INTEGER,             INTENT(IN   ) :: IOPT
  INTEGER,             INTENT(IN   ) :: LMAP, LROT, NPTS
  INTEGER,             INTENT(  OUT) :: NRET
 !
@@ -75,11 +78,13 @@
  REAL,                INTENT(  OUT) :: XLON(NPTS),XLAT(NPTS)
  REAL,                INTENT(  OUT) :: YLON(NPTS),YLAT(NPTS),AREA(NPTS)
 !
+ INTEGER(KIND=4),     PARAMETER     :: MISSING=b'11111111111111111111111111111111'
+!
  REAL,                PARAMETER     :: RERTH=6.3712E6
  REAL,                PARAMETER     :: PI=3.14159265358979
  REAL,                PARAMETER     :: DPR=180./PI
 !
- INTEGER                            :: IM, JM, ISCAN, N
+ INTEGER                            :: IM, JM, ISCAN, N, ISCALE
 !
  REAL                               :: DLAT, DLON, DSLAT, HI
  REAL                               :: RLATD, RLATU
@@ -87,14 +92,19 @@
  REAL                               :: XMAX, XMIN, YMAX, YMIN
 !
 ! - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
- IF(KGDS(1).EQ.000) THEN
-   IM=KGDS(2)
-   JM=KGDS(3)
-   RLAT1=KGDS(4)*1.E-3
-   RLON1=KGDS(5)*1.E-3
-   RLAT2=KGDS(7)*1.E-3
-   RLON2=KGDS(8)*1.E-3
-   ISCAN=MOD(KGDS(11)/128,2)
+ IF(IGDTNUM.EQ.0) THEN
+   IM=IGDTMPL(8)
+   JM=IGDTMPL(9)
+   IF(IGDTMPL(10)==0.AND.IGDTMPL(11)==MISSING)THEN
+     ISCALE=10**6
+   ELSE
+     ISCALE=IGDTMPL(10)*IGDTMPL(11)
+   ENDIF
+   RLAT1=FLOAT(IGDTMPL(12)/ISCALE)
+   RLON1=FLOAT(IGDTMPL(13)/ISCALE)
+   RLAT2=FLOAT(IGDTMPL(15)/ISCALE)
+   RLON2=FLOAT(IGDTMPL(16)/ISCALE)
+   ISCAN=MOD(IGDTMPL(19)/128,2)
    HI=(-1.)**ISCAN
    DLON=HI*(MOD(HI*(RLON2-RLON1)-1+3600,360.)+1)/(IM-1)
    DLAT=(RLAT2-RLAT1)/(JM-1)
