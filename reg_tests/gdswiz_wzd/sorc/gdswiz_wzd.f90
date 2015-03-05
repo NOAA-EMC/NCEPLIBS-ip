@@ -63,9 +63,16 @@
 
 ! the grids that will be tested.
 
- integer :: grd3(200)    ! ncep grid3; one-degree lat/lon, for gdswiz00 and gdswzd00 routines
- data grd3 / 0, 360, 181, 90000, 0, 128, -90000,  &
-            -1000, 1000, 1000, 0, 0, 0, 0, 0, 0, 0, 0, 0, 255, 180*0/
+ integer(kind=4), parameter :: missing=b'11111111111111111111111111111111'
+
+ integer, allocatable :: igdtmpl(:)
+ integer              :: igdtlen
+ integer              :: igdtnum
+
+ integer, parameter :: igdtlen3 = 19 ! ncep grid3; one-degree lat/lon
+ integer            :: igdtmpl3(igdtlen3)
+ data igdtmpl3 / 0, 255, missing, 255, missing, 255, missing, 360, 181, 0, missing, &
+                 90000000, 0, 24, -90000000, 359000000, 1000000, 1000000, 0 /
 
  integer :: grd8(200)    ! ncep grid8; mercator, for gdswiz01 and gdswzd01 routines
  data grd8 / 1, 116, 44, -48670, 3104, 128, 61050,  &
@@ -127,9 +134,12 @@
  kgds=0
  select case (trim(grid))
    case ('3')
-     kgds=grd3
-     imdl=kgds(2)
-     jmdl=kgds(3)
+     igdtnum=0
+     igdtlen=igdtlen3
+     allocate(igdtmpl(igdtlen))
+     igdtmpl=igdtmpl3
+     imdl=igdtmpl(8)
+     jmdl=igdtmpl(9)
    case ('8')
      kgds=grd8
      imdl=kgds(2)
@@ -212,7 +222,7 @@
  npts = imdl * jmdl
 
  if (wzd) then
-   call gdswzd(kgds, iopt, npts, fill, xpts, ypts, rlon, rlat, &
+   call gdswzd(igdtnum, igdtmpl, igdtlen, kgds, iopt, npts, fill, xpts, ypts, rlon, rlat, &
                nret, lrot, crot, srot, lmap, xlon, xlat, ylon, ylat, area)
  else
    call gdswiz(kgds, iopt, npts, fill, xpts, ypts, rlon, rlat, &
@@ -252,7 +262,7 @@
  ypts=fill
 
  if (wzd) then
-   call gdswzd(kgds, iopt, npts, fill, xpts, ypts, rlon, rlat,&
+   call gdswzd(igdtnum, igdtmpl, igdtlen, kgds, iopt, npts, fill, xpts, ypts, rlon, rlat, &
                nret, lrot, crot, srot, lmap, xlon, xlat, ylon, ylat, area)
  else
    call gdswiz(kgds, iopt, npts, fill, xpts, ypts, rlon, rlat, &
@@ -348,6 +358,7 @@
  if (badpts > 0) print*,"NUMBER OF BAD POINTS: ", badpts
  print*,'MAX DIFFERENCES IN X/Y CALCULATIONS: ', maxdiffx, maxdiffy
 
+ deallocate (igdtmpl)
  deallocate (xpts,ypts,rlat,rlon,crot,srot,xlon,xlat,ylon,ylat,area)
 
  98 continue
