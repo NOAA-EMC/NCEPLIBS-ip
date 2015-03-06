@@ -58,6 +58,11 @@ MAKE="gmake"
 #-----------------------------------------------------------------------------
 
 for WHICHIP in ctl test; do  # the 'control' or 'test' IPLIB
+
+  cd gdswiz_wzd/sorc
+  ln -fs gdswiz_wzd_${WHICHIP}.f90  gdswiz_wzd.f90
+  cd ../..
+
   for PRECISION in 4 8 d; do  # single ("4"), double ("8") or mixed ("d") precison IPLIB
 
     case $PRECISION in
