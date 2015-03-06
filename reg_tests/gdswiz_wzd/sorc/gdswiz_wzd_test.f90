@@ -74,9 +74,11 @@
  data igdtmpl3 / 0, 255, missing, 255, missing, 255, missing, 360, 181, 0, missing, &
                  90000000, 0, 24, -90000000, 359000000, 1000000, 1000000, 0 /
 
- integer :: grd8(200)    ! ncep grid8; mercator, for gdswiz01 and gdswzd01 routines
- data grd8 / 1, 116, 44, -48670, 3104, 128, 61050,  &
-             0, 22500, 0, 64, 318830, 318830, 0, 0, 0, 0, 0, 0, 255, 180*0/
+ integer, parameter :: igdtlen8 = 19 ! ncep grid8; mercator 
+ integer(kind=4)    :: igdtmpl8(igdtlen8)  
+ data igdtmpl8 / 6, 255, missing, 255, missing, 255, missing, 116, 44, &
+                 -48670000, 3104000, 24, 22500000, 61050000, 0, 64, 0, &
+                  318830000, 318830000/
 
  integer :: grd127(200)  ! ncep grid 127; gaussian (t254), for gdswiz04 and gdswzd04 routines
  data grd127 /4, 768, 384, 89642, 0, 128, -89642,  &
@@ -141,9 +143,12 @@
      imdl=igdtmpl(8)
      jmdl=igdtmpl(9)
    case ('8')
-     kgds=grd8
-     imdl=kgds(2)
-     jmdl=kgds(3)
+     igdtnum=10
+     igdtlen=igdtlen8
+     allocate(igdtmpl(igdtlen))
+     igdtmpl=igdtmpl8
+     imdl=igdtmpl(8)
+     jmdl=igdtmpl(9)
    case ('201')
      call grid_201(wzd)
      goto 98

@@ -138,7 +138,7 @@
      ELSE
        IS1=JM/2
      ENDIF
-   ELSEIF(IGDTNUM==0)then
+   ELSEIF(IGDTNUM==0.OR.IGDTNUM==10)then
      IM=IGDTMPL(8)
      JM=IGDTMPL(9)
      NM=IM*JM
@@ -212,8 +212,9 @@
                  LROT,CROT,SROT,LMAP,XLON,XLAT,YLON,YLAT,AREA)
 ! - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 !  MERCATOR CYLINDRICAL
- ELSEIF(KGDS(1).EQ.001) THEN
-   CALL GDSWZD01(KGDS,IOPF,NPTS,FILL,XPTS,YPTS,RLON,RLAT,NRET, &
+ ELSEIF(IGDTNUM.EQ.10) THEN
+   CALL GDSWZD01(IGDTNUM,IGDTMPL,IGDTLEN,IOPF,NPTS,FILL, &
+                 XPTS,YPTS,RLON,RLAT,NRET, &
                  LROT,CROT,SROT,LMAP,XLON,XLAT,YLON,YLAT,AREA)
 ! - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 !  LAMBERT CONFORMAL CONICAL
