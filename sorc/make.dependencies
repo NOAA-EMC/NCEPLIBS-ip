@@ -1,3 +1,4 @@
+ earth_radius.o : earth_radius.f90
  gausslat.o : gausslat.f90
  gdswiz00.o : gdswiz00.f90
  gdswiz01.o : gdswiz01.f90

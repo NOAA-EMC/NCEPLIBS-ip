@@ -3,6 +3,7 @@ FPP_FILES =
 
 # The list of regular source files
 FSRC_FILES = \
+ earth_radius.f90 \
  gausslat.f90 \
  gdswiz00.f90 \
  gdswiz01.f90 \
