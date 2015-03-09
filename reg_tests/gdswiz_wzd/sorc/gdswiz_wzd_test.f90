@@ -114,9 +114,15 @@
  data grd202 /202, 0, 0, -7491, -144134, 136, 954, 835,  &
               126, 108, 64, 0, 0, 0, 0, 0, 0, 0, 0, 255, 180*0/
 
- integer :: grd218(200)  ! lambert conformal (ncep grid 218) for gdswiz03 and gdswzd03 routines
- data grd218 /3, 614, 428, 12190, -133459, 8, -95000,  &
-              12191, 12191, 0, 64, 25000, 25000, 0, 0, 0, 0, 0, 0, 255, 180*0/
+!integer :: grd218(200)  ! lambert conformal (ncep grid 218) for gdswiz03 and gdswzd03 routines
+!data grd218 /3, 614, 428, 12190, -133459, 8, -95000,  &
+!             12191, 12191, 0, 64, 25000, 25000, 0, 0, 0, 0, 0, 0, 255, 180*0/
+
+ integer, parameter :: igdtlen218 = 22 ! ncep grid8; mercator 
+ integer(kind=4)    :: igdtmpl218(igdtlen218)  
+ data igdtmpl218 / 6, 255, missing, 255, missing, 255, missing, 614, 428, &
+                   12190000, 226541000, 56, 25000000, 265000000, &
+                   12191000, 12191000, 0, 64, 25000000, 25000000, -90000000, 0/
 
  i1=1
  call getarg(i1,routine)
@@ -182,9 +188,12 @@
      jmdl=kgds(3)
      if (wzd) kgds(7) = 100000
    case ('218')
-     kgds=grd218
-     imdl=kgds(2)
-     jmdl=kgds(3)
+     igdtnum=30
+     igdtlen=igdtlen218
+     allocate(igdtmpl(igdtlen))
+     igdtmpl=igdtmpl218
+     imdl=igdtmpl(8)
+     jmdl=igdtmpl(9)
    case default
      print*,"ENTER GRID NUMBER TO TEST"
      stop

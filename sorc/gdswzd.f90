@@ -138,7 +138,7 @@
      ELSE
        IS1=JM/2
      ENDIF
-   ELSEIF(IGDTNUM==0.OR.IGDTNUM==10)then
+   ELSEIF(IGDTNUM==0.OR.IGDTNUM==10.OR.IGDTNUM==30)then
      IM=IGDTMPL(8)
      JM=IGDTMPL(9)
      NM=IM*JM
@@ -218,8 +218,9 @@
                  LROT,CROT,SROT,LMAP,XLON,XLAT,YLON,YLAT,AREA)
 ! - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 !  LAMBERT CONFORMAL CONICAL
- ELSEIF(KGDS(1).EQ.003) THEN
-   CALL GDSWZD03(KGDS,IOPF,NPTS,FILL,XPTS,YPTS,RLON,RLAT,NRET, &
+ ELSEIF(IGDTNUM==30) THEN
+   CALL GDSWZD03(IGDTNUM,IGDTMPL,IGDTLEN,IOPF,NPTS,FILL, &
+                 XPTS,YPTS,RLON,RLAT,NRET, &
                  LROT,CROT,SROT,LMAP,XLON,XLAT,YLON,YLAT,AREA)
 ! - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 !  GAUSSIAN CYLINDRICAL
