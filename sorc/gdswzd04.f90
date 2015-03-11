@@ -1,4 +1,5 @@
- SUBROUTINE GDSWZD04(KGDS,IOPT,NPTS,FILL,XPTS,YPTS,RLON,RLAT,NRET, &
+ SUBROUTINE GDSWZD04(IGDTNUM,IGDTMPL,IGDTLEN,IOPT,NPTS,FILL, &
+                     XPTS,YPTS,RLON,RLAT,NRET, &
                      LROT,CROT,SROT,LMAP,XLON,XLAT,YLON,YLAT,AREA)
 !$$$  SUBPROGRAM DOCUMENTATION BLOCK
 !
@@ -71,7 +72,9 @@
 !$$$
  IMPLICIT NONE
 !
- INTEGER,         INTENT(IN   ) :: IOPT, KGDS(200)
+ INTEGER,         INTENT(IN   ) :: IGDTNUM, IGDTLEN
+ INTEGER(KIND=4), INTENT(IN   ) :: IGDTMPL(IGDTLEN)
+ INTEGER,         INTENT(IN   ) :: IOPT
  INTEGER,         INTENT(IN   ) :: LROT, LMAP, NPTS
  INTEGER,         INTENT(  OUT) :: NRET
 !
@@ -82,151 +85,26 @@
  REAL,            INTENT(  OUT) :: XLON(NPTS),XLAT(NPTS)
  REAL,            INTENT(  OUT) :: YLON(NPTS),YLAT(NPTS),AREA(NPTS)
 !
- REAL,            PARAMETER     :: RERTH=6.3712E6
  REAL,            PARAMETER     :: PI=3.14159265358979
  REAL,            PARAMETER     :: DPR=180./PI
 !
  INTEGER                        :: ISCAN, JSCAN, IM, JM
  INTEGER                        :: J, JA, JG, JH, J1
- INTEGER                        :: N
+ INTEGER                        :: ISCALE, N
 !
  REAL,            ALLOCATABLE   :: ALAT(:),BLAT(:),ALAT_JSCAN(:)
  REAL,            ALLOCATABLE   :: ALAT_TEMP(:),BLAT_TEMP(:)
- REAL                           :: DLON, HI
+ REAL                           :: DLON, HI, RERTH
  REAL                           :: RLATA, RLATB, RLAT1, RLON1, RLON2
  REAL                           :: WB, WLAT, WLATA, WLATB
  REAL                           :: XMAX, XMIN, YMAX, YMIN, YPTSA, YPTSB
  REAL,            ALLOCATABLE   :: YLAT_ROW(:)
 ! - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
- IF(KGDS(1).EQ.004) THEN
-   IM=KGDS(2)
-   JM=KGDS(3)
-   RLAT1=KGDS(4)*1.E-3
-   RLON1=KGDS(5)*1.E-3
-   RLON2=KGDS(8)*1.E-3
-   JG=KGDS(10)*2
-   ISCAN=MOD(KGDS(11)/128,2)
-   JSCAN=MOD(KGDS(11)/64,2)
-   HI=(-1.)**ISCAN
-   JH=(-1)**JSCAN
-   DLON=HI*(MOD(HI*(RLON2-RLON1)-1+3600,360.)+1)/(IM-1)
-   ALLOCATE(ALAT_TEMP(JG))
-   ALLOCATE(BLAT_TEMP(JG))
-   CALL SPLAT(4,JG,ALAT_TEMP,BLAT_TEMP)
-   ALLOCATE(ALAT(0:JG+1))
-   ALLOCATE(BLAT(0:JG+1))
-   DO JA=1,JG
-     ALAT(JA)=DPR*ASIN(ALAT_TEMP(JA))
-     BLAT(JA)=BLAT_TEMP(JA)
-   ENDDO
-   DEALLOCATE(ALAT_TEMP,BLAT_TEMP)
-   ALAT(0)=180.-ALAT(1)
-   ALAT(JG+1)=-ALAT(0)
-   BLAT(0)=-BLAT(1)
-   BLAT(JG+1)=BLAT(0)
-   J1=1
-   DO WHILE(J1.LT.JG.AND.RLAT1.LT.(ALAT(J1)+ALAT(J1+1))/2)
-     J1=J1+1
-   ENDDO
-   IF(LMAP.EQ.1)THEN
-     ALLOCATE(ALAT_JSCAN(JG))
-     DO JA=1,JG
-       ALAT_JSCAN(J1+JH*(JA-1))=ALAT(JA)
-     ENDDO
-     ALLOCATE(YLAT_ROW(0:JG+1))
-     DO JA=2,(JG-1)
-       YLAT_ROW(JA)=2.0/(ALAT_JSCAN(JA+1)-ALAT_JSCAN(JA-1))
-     ENDDO
-     YLAT_ROW(1)=1.0/(ALAT_JSCAN(2)-ALAT_JSCAN(1))
-     YLAT_ROW(0)=YLAT_ROW(1)
-     YLAT_ROW(JG)=1.0/(ALAT_JSCAN(JG)-ALAT_JSCAN(JG-1))
-     YLAT_ROW(JG+1)=YLAT_ROW(JG)
-     DEALLOCATE(ALAT_JSCAN)
-   ENDIF
-   XMIN=0
-   XMAX=IM+1
-   IF(IM.EQ.NINT(360/ABS(DLON))) XMAX=IM+2
-   YMIN=0.5
-   YMAX=JM+0.5
-   NRET=0
+ CALL EARTH_RADIUS(IGDTMPL,IGDTLEN,RERTH)
 ! - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-!  TRANSLATE GRID COORDINATES TO EARTH COORDINATES
-   IF(IOPT.EQ.0.OR.IOPT.EQ.1) THEN
-     DO N=1,NPTS
-       IF(XPTS(N).GE.XMIN.AND.XPTS(N).LE.XMAX.AND. &
-          YPTS(N).GE.YMIN.AND.YPTS(N).LE.YMAX) THEN
-         RLON(N)=MOD(RLON1+DLON*(XPTS(N)-1)+3600,360.)
-         J=YPTS(N)
-         WB=YPTS(N)-J
-         RLATA=ALAT(J1+JH*(J-1))
-         RLATB=ALAT(J1+JH*J)
-         RLAT(N)=RLATA+WB*(RLATB-RLATA)
-         NRET=NRET+1
-         IF(LROT.EQ.1) THEN
-           CROT(N)=1
-           SROT(N)=0
-         ENDIF
-         IF(LMAP.EQ.1) THEN
-           XLON(N)=1/DLON
-           XLAT(N)=0.
-           YLON(N)=0.
-           YLAT(N)=YLAT_ROW(NINT(YPTS(N)))
-           WLATA=BLAT(J1+JH*(J-1))
-           WLATB=BLAT(J1+JH*J)
-           WLAT=WLATA+WB*(WLATB-WLATA)
-           AREA(N)=RERTH**2*WLAT*DLON/DPR
-         ENDIF
-       ELSE
-         RLON(N)=FILL
-         RLAT(N)=FILL
-       ENDIF
-     ENDDO
-! - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-!  TRANSLATE EARTH COORDINATES TO GRID COORDINATES
-   ELSEIF(IOPT.EQ.-1) THEN
-     DO N=1,NPTS
-       XPTS(N)=FILL
-       YPTS(N)=FILL
-       IF(ABS(RLON(N)).LE.360.AND.ABS(RLAT(N)).LE.90) THEN
-         XPTS(N)=1+HI*MOD(HI*(RLON(N)-RLON1)+3600,360.)/DLON
-         JA=MIN(INT((JG+1)/180.*(90-RLAT(N))),JG)
-         IF(RLAT(N).GT.ALAT(JA)) JA=MAX(JA-2,0)
-         IF(RLAT(N).LT.ALAT(JA+1)) JA=MIN(JA+2,JG)
-         IF(RLAT(N).GT.ALAT(JA)) JA=JA-1
-         IF(RLAT(N).LT.ALAT(JA+1)) JA=JA+1
-         YPTSA=1+JH*(JA-J1)
-         YPTSB=1+JH*(JA+1-J1)
-         WB=(ALAT(JA)-RLAT(N))/(ALAT(JA)-ALAT(JA+1))
-         YPTS(N)=YPTSA+WB*(YPTSB-YPTSA)
-         IF(XPTS(N).GE.XMIN.AND.XPTS(N).LE.XMAX.AND. &
-            YPTS(N).GE.YMIN.AND.YPTS(N).LE.YMAX) THEN
-           NRET=NRET+1
-           IF(LROT.EQ.1) THEN
-             CROT(N)=1
-             SROT(N)=0
-           ENDIF
-           IF(LMAP.EQ.1) THEN
-             XLON(N)=1/DLON
-             XLAT(N)=0.
-             YLON(N)=0.
-             YLAT(N)=YLAT_ROW(NINT(YPTS(N)))
-             WLATA=BLAT(JA)
-             WLATB=BLAT(JA+1)
-             WLAT=WLATA+WB*(WLATB-WLATA)
-             AREA(N)=RERTH**2*WLAT*DLON/DPR
-           ENDIF
-         ELSE
-           XPTS(N)=FILL
-           YPTS(N)=FILL
-         ENDIF
-       ENDIF
-     ENDDO
-   ENDIF
-   DEALLOCATE(ALAT, BLAT)
-   IF (ALLOCATED(YLAT_ROW)) DEALLOCATE(YLAT_ROW)
-! - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-!  PROJECTION UNRECOGNIZED
- ELSE
+!  ENSURE PROJECTION IS GAUSSAIN.  ROUTINE ONLY WORKS FOR SPHERICAL
+!  EARTHS.
+ IF(IGDTNUM/=40.OR.RERTH<0.) THEN
    IF(IOPT.GE.0) THEN
      DO N=1,NPTS
        RLON(N)=FILL
@@ -239,6 +117,134 @@
        YPTS(N)=FILL
      ENDDO
    ENDIF
+   RETURN
  ENDIF
+ IM=IGDTMPL(8)
+ JM=IGDTMPL(9)
+ ISCALE=IGDTMPL(10)*IGDTMPL(11)
+ IF(ISCALE==0) ISCALE=1E6
+ RLAT1=FLOAT(IGDTMPL(12))/FLOAT(ISCALE)
+ RLON1=FLOAT(IGDTMPL(13))/FLOAT(ISCALE)
+ RLON2=FLOAT(IGDTMPL(16))/FLOAT(ISCALE)
+ JG=IGDTMPL(18)*2
+ ISCAN=MOD(IGDTMPL(19)/128,2)
+ JSCAN=MOD(IGDTMPL(19)/64,2)
+ HI=(-1.)**ISCAN
+ JH=(-1)**JSCAN
+ DLON=HI*(MOD(HI*(RLON2-RLON1)-1+3600,360.)+1)/(IM-1)
+ ALLOCATE(ALAT_TEMP(JG))
+ ALLOCATE(BLAT_TEMP(JG))
+ CALL SPLAT(4,JG,ALAT_TEMP,BLAT_TEMP)
+ ALLOCATE(ALAT(0:JG+1))
+ ALLOCATE(BLAT(0:JG+1))
+ DO JA=1,JG
+   ALAT(JA)=DPR*ASIN(ALAT_TEMP(JA))
+   BLAT(JA)=BLAT_TEMP(JA)
+ ENDDO
+ DEALLOCATE(ALAT_TEMP,BLAT_TEMP)
+ ALAT(0)=180.-ALAT(1)
+ ALAT(JG+1)=-ALAT(0)
+ BLAT(0)=-BLAT(1)
+ BLAT(JG+1)=BLAT(0)
+ J1=1
+ DO WHILE(J1.LT.JG.AND.RLAT1.LT.(ALAT(J1)+ALAT(J1+1))/2)
+   J1=J1+1
+ ENDDO
+ IF(LMAP.EQ.1)THEN
+   ALLOCATE(ALAT_JSCAN(JG))
+   DO JA=1,JG
+     ALAT_JSCAN(J1+JH*(JA-1))=ALAT(JA)
+   ENDDO
+   ALLOCATE(YLAT_ROW(0:JG+1))
+   DO JA=2,(JG-1)
+     YLAT_ROW(JA)=2.0/(ALAT_JSCAN(JA+1)-ALAT_JSCAN(JA-1))
+   ENDDO
+   YLAT_ROW(1)=1.0/(ALAT_JSCAN(2)-ALAT_JSCAN(1))
+   YLAT_ROW(0)=YLAT_ROW(1)
+   YLAT_ROW(JG)=1.0/(ALAT_JSCAN(JG)-ALAT_JSCAN(JG-1))
+   YLAT_ROW(JG+1)=YLAT_ROW(JG)
+   DEALLOCATE(ALAT_JSCAN)
+ ENDIF
+ XMIN=0
+ XMAX=IM+1
+ IF(IM.EQ.NINT(360/ABS(DLON))) XMAX=IM+2
+ YMIN=0.5
+ YMAX=JM+0.5
+ NRET=0
+! - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+!  TRANSLATE GRID COORDINATES TO EARTH COORDINATES
+ IF(IOPT.EQ.0.OR.IOPT.EQ.1) THEN
+   DO N=1,NPTS
+     IF(XPTS(N).GE.XMIN.AND.XPTS(N).LE.XMAX.AND. &
+        YPTS(N).GE.YMIN.AND.YPTS(N).LE.YMAX) THEN
+       RLON(N)=MOD(RLON1+DLON*(XPTS(N)-1)+3600,360.)
+       J=YPTS(N)
+       WB=YPTS(N)-J
+       RLATA=ALAT(J1+JH*(J-1))
+       RLATB=ALAT(J1+JH*J)
+       RLAT(N)=RLATA+WB*(RLATB-RLATA)
+       NRET=NRET+1
+       IF(LROT.EQ.1) THEN
+         CROT(N)=1
+         SROT(N)=0
+       ENDIF
+       IF(LMAP.EQ.1) THEN
+         XLON(N)=1/DLON
+         XLAT(N)=0.
+         YLON(N)=0.
+         YLAT(N)=YLAT_ROW(NINT(YPTS(N)))
+         WLATA=BLAT(J1+JH*(J-1))
+         WLATB=BLAT(J1+JH*J)
+         WLAT=WLATA+WB*(WLATB-WLATA)
+         AREA(N)=RERTH**2*WLAT*DLON/DPR
+       ENDIF
+     ELSE
+       RLON(N)=FILL
+       RLAT(N)=FILL
+     ENDIF
+   ENDDO
+! - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+!  TRANSLATE EARTH COORDINATES TO GRID COORDINATES
+ ELSEIF(IOPT.EQ.-1) THEN
+   DO N=1,NPTS
+     XPTS(N)=FILL
+     YPTS(N)=FILL
+     IF(ABS(RLON(N)).LE.360.AND.ABS(RLAT(N)).LE.90) THEN
+       XPTS(N)=1+HI*MOD(HI*(RLON(N)-RLON1)+3600,360.)/DLON
+       JA=MIN(INT((JG+1)/180.*(90-RLAT(N))),JG)
+       IF(RLAT(N).GT.ALAT(JA)) JA=MAX(JA-2,0)
+       IF(RLAT(N).LT.ALAT(JA+1)) JA=MIN(JA+2,JG)
+       IF(RLAT(N).GT.ALAT(JA)) JA=JA-1
+       IF(RLAT(N).LT.ALAT(JA+1)) JA=JA+1
+       YPTSA=1+JH*(JA-J1)
+       YPTSB=1+JH*(JA+1-J1)
+       WB=(ALAT(JA)-RLAT(N))/(ALAT(JA)-ALAT(JA+1))
+       YPTS(N)=YPTSA+WB*(YPTSB-YPTSA)
+       IF(XPTS(N).GE.XMIN.AND.XPTS(N).LE.XMAX.AND. &
+          YPTS(N).GE.YMIN.AND.YPTS(N).LE.YMAX) THEN
+         NRET=NRET+1
+         IF(LROT.EQ.1) THEN
+           CROT(N)=1
+           SROT(N)=0
+         ENDIF
+         IF(LMAP.EQ.1) THEN
+           XLON(N)=1/DLON
+           XLAT(N)=0.
+           YLON(N)=0.
+           YLAT(N)=YLAT_ROW(NINT(YPTS(N)))
+           WLATA=BLAT(JA)
+           WLATB=BLAT(JA+1)
+           WLAT=WLATA+WB*(WLATB-WLATA)
+           AREA(N)=RERTH**2*WLAT*DLON/DPR
+         ENDIF
+       ELSE
+         XPTS(N)=FILL
+         YPTS(N)=FILL
+       ENDIF
+     ENDIF
+   ENDDO
+ ENDIF
+ DEALLOCATE(ALAT, BLAT)
+ IF (ALLOCATED(YLAT_ROW)) DEALLOCATE(YLAT_ROW)
 ! - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
  END SUBROUTINE GDSWZD04

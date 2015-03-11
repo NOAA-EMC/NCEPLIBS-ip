@@ -80,9 +80,15 @@
                  -48670000, 3104000, 24, 22500000, 61050000, 0, 64, 0, &
                   318830000, 318830000/
 
- integer :: grd127(200)  ! ncep grid 127; gaussian (t254), for gdswiz04 and gdswzd04 routines
- data grd127 /4, 768, 384, 89642, 0, 128, -89642,  &
-             -469, 469, 192, 0, 0, 255, 0, 0, 0, 0, 0, 0, 255, 180*0/
+!integer :: grd127(200)  ! ncep grid 127; gaussian (t254), for gdswiz04 and gdswzd04 routines
+!data grd127 /4, 768, 384, 89642, 0, 128, -89642,  &
+!            -469, 469, 192, 0, 0, 255, 0, 0, 0, 0, 0, 0, 255, 180*0/
+
+ integer, parameter :: igdtlen127=19
+ integer(kind=4)    :: igdtmpl127(igdtlen127)
+ data igdtmpl127 /6, 255, missing, 255, missing, 255, missing, 768, 384, &
+                  0, missing, 89642000, 0, 48, -89642000, 359531000,  &
+                  469000, 192, 0/
 
  integer :: grd203(200)  ! nam e-grid, for gdswizcb and gdswzdcb routines
  data grd203 /203, 669, 1165, -7450, -144140, 136, 54000,  &
@@ -163,9 +169,12 @@
      imdl=kgds(2)
      jmdl=kgds(3)
    case ('127')
-     kgds=grd127
-     imdl=kgds(2)
-     jmdl=kgds(3)
+     igdtnum=40
+     igdtlen=igdtlen127
+     allocate(igdtmpl(igdtlen))
+     igdtmpl=igdtmpl127
+     imdl=igdtmpl(8)
+     jmdl=igdtmpl(9)
    case ('202')
      kgds=grd202
      imdl=kgds(7)
