@@ -1,4 +1,5 @@
- SUBROUTINE GDSWZD05(KGDS,IOPT,NPTS,FILL,XPTS,YPTS,RLON,RLAT,NRET, &
+ SUBROUTINE GDSWZD05(IGDTNUM,IGDTMPL,IGDTLEN,IOPT,NPTS,FILL, &
+                     XPTS,YPTS,RLON,RLAT,NRET, &
                      LROT,CROT,SROT,LMAP,XLON,XLAT,YLON,YLAT,AREA)
 !$$$  SUBPROGRAM DOCUMENTATION BLOCK
 !
@@ -66,7 +67,9 @@
 !$$$
  IMPLICIT NONE
 !
- INTEGER,          INTENT(IN   ) :: IOPT, KGDS(200)
+ INTEGER,          INTENT(IN   ) :: IGDTNUM, IGDTLEN
+ INTEGER(KIND=4),  INTENT(IN   ) :: IGDTMPL(IGDTLEN)
+ INTEGER,          INTENT(IN   ) :: IOPT
  INTEGER,          INTENT(IN   ) :: LMAP, LROT, NPTS
  INTEGER,          INTENT(  OUT) :: NRET
 !
@@ -77,7 +80,6 @@
  REAL,             INTENT(  OUT) :: XLON(NPTS),XLAT(NPTS)
  REAL,             INTENT(  OUT) :: YLON(NPTS),YLAT(NPTS),AREA(NPTS)
 !
- REAL,             PARAMETER     :: RERTH=6.3712E6
  REAL,             PARAMETER     :: PI=3.14159265358979
  REAL,             PARAMETER     :: DPR=180./PI
 !
@@ -87,136 +89,15 @@
  REAL                            :: CLAT, DI, DJ, DE, DE2
  REAL                            :: DX, DY, DXS, DYS
  REAL                            :: DR, DR2, H, HI, HJ
- REAL                            :: ORIENT, RLAT1, RLON1
+ REAL                            :: ORIENT, RLAT1, RLON1, RERTH
  REAL                            :: XMAX, XMIN, YMAX, YMIN
  REAL                            :: XP, YP
 ! - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
- IF(KGDS(1).EQ.005) THEN
-   IM=KGDS(2)
-   JM=KGDS(3)
-   RLAT1=KGDS(4)*1.E-3
-   RLON1=KGDS(5)*1.E-3
-   IROT=MOD(KGDS(6)/8,2)
-   ORIENT=KGDS(7)*1.E-3
-   DX=KGDS(8)
-   DY=KGDS(9)
-   IPROJ=MOD(KGDS(10)/128,2)
-   ISCAN=MOD(KGDS(11)/128,2)
-   JSCAN=MOD(KGDS(11)/64,2)
-   H=(-1.)**IPROJ
-   HI=(-1.)**ISCAN
-   HJ=(-1.)**(1-JSCAN)
-   DXS=DX*HI
-   DYS=DY*HJ
-   DE=(1.+SIN(60./DPR))*RERTH
-   DR=DE*COS(RLAT1/DPR)/(1+H*SIN(RLAT1/DPR))
-   XP=1-H*SIN((RLON1-ORIENT)/DPR)*DR/DXS
-   YP=1+COS((RLON1-ORIENT)/DPR)*DR/DYS
-   DE2=DE**2
-   XMIN=0
-   XMAX=IM+1
-   YMIN=0
-   YMAX=JM+1
-   NRET=0
+ CALL EARTH_RADIUS(IGDTMPL,IGDTLEN,RERTH)
 ! - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-!  TRANSLATE GRID COORDINATES TO EARTH COORDINATES
-   IF(IOPT.EQ.0.OR.IOPT.EQ.1) THEN
-     DO N=1,NPTS
-       IF(XPTS(N).GE.XMIN.AND.XPTS(N).LE.XMAX.AND. &
-          YPTS(N).GE.YMIN.AND.YPTS(N).LE.YMAX) THEN
-         DI=(XPTS(N)-XP)*DXS
-         DJ=(YPTS(N)-YP)*DYS
-         DR2=DI**2+DJ**2
-         IF(DR2.LT.DE2*1.E-6) THEN
-           RLON(N)=0.
-           RLAT(N)=H*90.
-         ELSE
-           RLON(N)=MOD(ORIENT+H*DPR*ATAN2(DI,-DJ)+3600,360.)
-           RLAT(N)=H*DPR*ASIN((DE2-DR2)/(DE2+DR2))
-         ENDIF
-         NRET=NRET+1
-         IF(LROT.EQ.1) THEN
-           IF(IROT.EQ.1) THEN
-             CROT(N)=H*COS((RLON(N)-ORIENT)/DPR)
-             SROT(N)=SIN((RLON(N)-ORIENT)/DPR)
-           ELSE
-             CROT(N)=1
-             SROT(N)=0
-           ENDIF
-         ENDIF
-         IF(LMAP.EQ.1) THEN
-           IF(DR2.LT.DE2*1.E-6) THEN
-             XLON(N)=0.
-             XLAT(N)=-SIN((RLON(N)-ORIENT)/DPR)/DPR*DE/DXS/2
-             YLON(N)=0.
-             YLAT(N)=H*COS((RLON(N)-ORIENT)/DPR)/DPR*DE/DYS/2
-             AREA(N)=RERTH**2*ABS(DXS)*ABS(DYS)*4/DE2
-           ELSE
-             DR=SQRT(DR2)
-             CLAT=COS(RLAT(N)/DPR)
-             XLON(N)=H*COS((RLON(N)-ORIENT)/DPR)/DPR*DR/DXS
-             XLAT(N)=-SIN((RLON(N)-ORIENT)/DPR)/DPR*DR/DXS/CLAT
-             YLON(N)=SIN((RLON(N)-ORIENT)/DPR)/DPR*DR/DYS
-             YLAT(N)=H*COS((RLON(N)-ORIENT)/DPR)/DPR*DR/DYS/CLAT
-             AREA(N)=RERTH**2*CLAT**2*ABS(DXS)*ABS(DYS)/DR2
-           ENDIF
-         ENDIF
-       ELSE
-         RLON(N)=FILL
-         RLAT(N)=FILL
-       ENDIF
-     ENDDO
-! - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-!  TRANSLATE EARTH COORDINATES TO GRID COORDINATES
-   ELSEIF(IOPT.EQ.-1) THEN
-     DO N=1,NPTS
-       IF(ABS(RLON(N)).LE.360.AND.ABS(RLAT(N)).LE.90.AND. &
-                                     H*RLAT(N).NE.-90) THEN
-         DR=DE*TAN((90-H*RLAT(N))/2/DPR)
-         XPTS(N)=XP+H*SIN((RLON(N)-ORIENT)/DPR)*DR/DXS
-         YPTS(N)=YP-COS((RLON(N)-ORIENT)/DPR)*DR/DYS
-         IF(XPTS(N).GE.XMIN.AND.XPTS(N).LE.XMAX.AND. &
-            YPTS(N).GE.YMIN.AND.YPTS(N).LE.YMAX) THEN
-           NRET=NRET+1
-           IF(LROT.EQ.1) THEN
-             IF(IROT.EQ.1) THEN
-               CROT(N)=H*COS((RLON(N)-ORIENT)/DPR)
-               SROT(N)=SIN((RLON(N)-ORIENT)/DPR)
-             ELSE
-               CROT(N)=1
-               SROT(N)=0
-             ENDIF
-           ENDIF
-           IF(LMAP.EQ.1) THEN
-             DR2=DR**2
-             IF(DR2.LT.DE2*1.E-6) THEN
-               XLON(N)=0.
-               XLAT(N)=-SIN((RLON(N)-ORIENT)/DPR)/DPR*DE/DXS/2
-               YLON(N)=0.
-               YLAT(N)=H*COS((RLON(N)-ORIENT)/DPR)/DPR*DE/DYS/2
-               AREA(N)=RERTH**2*ABS(DXS)*ABS(DYS)*4/DE2
-             ELSE
-               CLAT=COS(RLAT(N)/DPR)
-               XLON(N)=H*COS((RLON(N)-ORIENT)/DPR)/DPR*DR/DXS
-               XLAT(N)=-SIN((RLON(N)-ORIENT)/DPR)/DPR*DR/DXS/CLAT
-               YLON(N)=SIN((RLON(N)-ORIENT)/DPR)/DPR*DR/DYS
-               YLAT(N)=H*COS((RLON(N)-ORIENT)/DPR)/DPR*DR/DYS/CLAT
-               AREA(N)=RERTH**2*CLAT**2*ABS(DXS)*ABS(DYS)/DR2
-             ENDIF
-           ENDIF
-         ELSE
-           XPTS(N)=FILL
-           YPTS(N)=FILL
-         ENDIF
-       ELSE
-         XPTS(N)=FILL
-         YPTS(N)=FILL
-       ENDIF
-     ENDDO
-   ENDIF
-! - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-!  PROJECTION UNRECOGNIZED
- ELSE
+!  ENSURE PROJECTION IS POLAR.  ROUTINE ONLY WORKS FOR SPHERICAL
+!  EARTHS.
+ IF(IGDTNUM/=20.OR.RERTH<0.) THEN
    IF(IOPT.GE.0) THEN
      DO N=1,NPTS
        RLON(N)=FILL
@@ -229,6 +110,129 @@
        YPTS(N)=FILL
      ENDDO
    ENDIF
+   RETURN
+ ENDIF
+ IM=IGDTMPL(8)
+ JM=IGDTMPL(9)
+ RLAT1=FLOAT(IGDTMPL(10))*1.E-6
+ RLON1=FLOAT(IGDTMPL(11))*1.E-6
+ IROT=MOD(IGDTMPL(12)/8,2)
+ ORIENT=FLOAT(IGDTMPL(14))*1.E-6
+ DX=FLOAT(IGDTMPL(15))*1.E-3
+ DY=FLOAT(IGDTMPL(16))*1.E-3
+ IPROJ=MOD(IGDTMPL(17)/128,2)
+ ISCAN=MOD(IGDTMPL(18)/128,2)
+ JSCAN=MOD(IGDTMPL(18)/64,2)
+ H=(-1.)**IPROJ
+ HI=(-1.)**ISCAN
+ HJ=(-1.)**(1-JSCAN)
+ DXS=DX*HI
+ DYS=DY*HJ
+ DE=(1.+SIN(60./DPR))*RERTH
+ DR=DE*COS(RLAT1/DPR)/(1+H*SIN(RLAT1/DPR))
+ XP=1-H*SIN((RLON1-ORIENT)/DPR)*DR/DXS
+ YP=1+COS((RLON1-ORIENT)/DPR)*DR/DYS
+ DE2=DE**2
+ XMIN=0
+ XMAX=IM+1
+ YMIN=0
+ YMAX=JM+1
+ NRET=0
+! - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+!  TRANSLATE GRID COORDINATES TO EARTH COORDINATES
+ IF(IOPT.EQ.0.OR.IOPT.EQ.1) THEN
+   DO N=1,NPTS
+     IF(XPTS(N).GE.XMIN.AND.XPTS(N).LE.XMAX.AND. &
+        YPTS(N).GE.YMIN.AND.YPTS(N).LE.YMAX) THEN
+       DI=(XPTS(N)-XP)*DXS
+       DJ=(YPTS(N)-YP)*DYS
+       DR2=DI**2+DJ**2
+       IF(DR2.LT.DE2*1.E-6) THEN
+         RLON(N)=0.
+         RLAT(N)=H*90.
+       ELSE
+         RLON(N)=MOD(ORIENT+H*DPR*ATAN2(DI,-DJ)+3600,360.)
+         RLAT(N)=H*DPR*ASIN((DE2-DR2)/(DE2+DR2))
+       ENDIF
+       NRET=NRET+1
+       IF(LROT.EQ.1) THEN
+         IF(IROT.EQ.1) THEN
+           CROT(N)=H*COS((RLON(N)-ORIENT)/DPR)
+           SROT(N)=SIN((RLON(N)-ORIENT)/DPR)
+         ELSE
+           CROT(N)=1
+           SROT(N)=0
+         ENDIF
+       ENDIF
+       IF(LMAP.EQ.1) THEN
+         IF(DR2.LT.DE2*1.E-6) THEN
+           XLON(N)=0.
+           XLAT(N)=-SIN((RLON(N)-ORIENT)/DPR)/DPR*DE/DXS/2
+           YLON(N)=0.
+           YLAT(N)=H*COS((RLON(N)-ORIENT)/DPR)/DPR*DE/DYS/2
+           AREA(N)=RERTH**2*ABS(DXS)*ABS(DYS)*4/DE2
+         ELSE
+           DR=SQRT(DR2)
+           CLAT=COS(RLAT(N)/DPR)
+           XLON(N)=H*COS((RLON(N)-ORIENT)/DPR)/DPR*DR/DXS
+           XLAT(N)=-SIN((RLON(N)-ORIENT)/DPR)/DPR*DR/DXS/CLAT
+           YLON(N)=SIN((RLON(N)-ORIENT)/DPR)/DPR*DR/DYS
+           YLAT(N)=H*COS((RLON(N)-ORIENT)/DPR)/DPR*DR/DYS/CLAT
+           AREA(N)=RERTH**2*CLAT**2*ABS(DXS)*ABS(DYS)/DR2
+         ENDIF
+       ENDIF
+     ELSE
+       RLON(N)=FILL
+       RLAT(N)=FILL
+     ENDIF
+   ENDDO
+! - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+!  TRANSLATE EARTH COORDINATES TO GRID COORDINATES
+ ELSEIF(IOPT.EQ.-1) THEN
+   DO N=1,NPTS
+     IF(ABS(RLON(N)).LE.360.AND.ABS(RLAT(N)).LE.90.AND. &
+                                   H*RLAT(N).NE.-90) THEN
+       DR=DE*TAN((90-H*RLAT(N))/2/DPR)
+       XPTS(N)=XP+H*SIN((RLON(N)-ORIENT)/DPR)*DR/DXS
+       YPTS(N)=YP-COS((RLON(N)-ORIENT)/DPR)*DR/DYS
+       IF(XPTS(N).GE.XMIN.AND.XPTS(N).LE.XMAX.AND. &
+          YPTS(N).GE.YMIN.AND.YPTS(N).LE.YMAX) THEN
+         NRET=NRET+1
+         IF(LROT.EQ.1) THEN
+           IF(IROT.EQ.1) THEN
+             CROT(N)=H*COS((RLON(N)-ORIENT)/DPR)
+             SROT(N)=SIN((RLON(N)-ORIENT)/DPR)
+           ELSE
+             CROT(N)=1
+             SROT(N)=0
+           ENDIF
+         ENDIF
+         IF(LMAP.EQ.1) THEN
+           DR2=DR**2
+           IF(DR2.LT.DE2*1.E-6) THEN
+             XLON(N)=0.
+             XLAT(N)=-SIN((RLON(N)-ORIENT)/DPR)/DPR*DE/DXS/2
+             YLON(N)=0.
+             YLAT(N)=H*COS((RLON(N)-ORIENT)/DPR)/DPR*DE/DYS/2
+             AREA(N)=RERTH**2*ABS(DXS)*ABS(DYS)*4/DE2
+           ELSE
+             CLAT=COS(RLAT(N)/DPR)
+             XLON(N)=H*COS((RLON(N)-ORIENT)/DPR)/DPR*DR/DXS
+             XLAT(N)=-SIN((RLON(N)-ORIENT)/DPR)/DPR*DR/DXS/CLAT
+             YLON(N)=SIN((RLON(N)-ORIENT)/DPR)/DPR*DR/DYS
+             YLAT(N)=H*COS((RLON(N)-ORIENT)/DPR)/DPR*DR/DYS/CLAT
+             AREA(N)=RERTH**2*CLAT**2*ABS(DXS)*ABS(DYS)/DR2
+           ENDIF
+         ENDIF
+       ELSE
+         XPTS(N)=FILL
+         YPTS(N)=FILL
+       ENDIF
+     ELSE
+       XPTS(N)=FILL
+       YPTS(N)=FILL
+     ENDIF
+   ENDDO
  ENDIF
 ! - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
  END SUBROUTINE GDSWZD05
