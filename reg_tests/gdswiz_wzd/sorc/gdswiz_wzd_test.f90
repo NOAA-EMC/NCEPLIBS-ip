@@ -93,7 +93,7 @@
  integer, parameter :: igdtlen212=18
  integer(kind=4)    :: igdtmpl212(igdtlen212)
  data igdtmpl212 /6, 255, missing, 255, missing, 255, missing, 512, 512, &
-                  -20826000, 145000000, 56, 60000000, -80000000, 47625000, 47625000, &
+                  -20826000, 145000000, 56, 60000000, 280000000, 47625000, 47625000, &
                   0, 0/ 
 
  integer :: grd222(200)  ! afwa nh polar, oblate spheroid earth for gdswiz05 and gdswzd05
@@ -102,13 +102,19 @@
  data grd222 /5,2*512,-20826,145000,72,-80000,2*47625,0,  &
               9*0,255,180*0/
 
- integer :: grd213(200)  ! afwa sh polar, spherical earth for gdswiz05 and gdswzd05 routines.
-                         ! note, there is a difference in how gdswiz05
-                         ! and gdswzd05 define the orientation angle.
-                         ! gdswzd05 assumes +100 degrees for this grid.
-                         ! this is handled with logic below.
- data grd213/5,2*512,20826,-125000,8,-80000,2*47625,128, &
-             9*0,255,180*0/
+!integer :: grd213(200)  ! afwa sh polar, spherical earth for gdswiz05 and gdswzd05 routines.
+!                        ! note, there is a difference in how gdswiz05
+!                        ! and gdswzd05 define the orientation angle.
+!                        ! gdswzd05 assumes +100 degrees for this grid.
+!                        ! this is handled with logic below.
+!data grd213/5,2*512,20826,-125000,8,-80000,2*47625,128, &
+!            9*0,255,180*0/
+
+ integer, parameter :: igdtlen213=18
+ integer(kind=4)    :: igdtmpl213(igdtlen213)
+ data igdtmpl213 /6, 255, missing, 255, missing, 255, missing, 512, 512, &
+                  20826000, 235000000, 56, -60000000, 100000000, 47625000, 47625000, &
+                  128, 0/ 
 
  integer :: grd205(200)  ! nam 12km b-grid, for gdswizcd and gdswzdcd routines
  data grd205 /205, 954, 835, -7491, -144134, 136, 54000,  &
@@ -193,10 +199,12 @@
      imdl=kgds(2)
      jmdl=kgds(3)
    case ('213')
-     kgds=grd213
-     imdl=kgds(2)
-     jmdl=kgds(3)
-     if (wzd) kgds(7) = 100000
+     igdtnum=20
+     igdtlen=igdtlen213
+     allocate(igdtmpl(igdtlen))
+     igdtmpl=igdtmpl213
+     imdl=igdtmpl(8)
+     jmdl=igdtmpl(9)
    case ('218')
      igdtnum=30
      igdtlen=igdtlen218
