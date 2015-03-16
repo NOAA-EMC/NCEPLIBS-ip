@@ -78,7 +78,6 @@
  REAL,                INTENT(  OUT) :: XLON(NPTS),XLAT(NPTS)
  REAL,                INTENT(  OUT) :: YLON(NPTS),YLAT(NPTS),AREA(NPTS)
 !
- REAL,                PARAMETER     :: RERTH=6.3712E6
  REAL,                PARAMETER     :: PI=3.14159265358979
  REAL,                PARAMETER     :: DPR=180./PI
 !
@@ -87,36 +86,85 @@
  REAL                               :: DLAT, DLON, DSLAT, HI
  REAL                               :: RLATD, RLATU
  REAL                               :: RLAT1, RLON1, RLAT2, RLON2
+ REAL                               :: RERTH, ECCEN_SQUARED
  REAL                               :: XMAX, XMIN, YMAX, YMIN
 !
 ! - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
- IF(IGDTNUM.EQ.0) THEN
-   IM=IGDTMPL(8)
-   JM=IGDTMPL(9)
-   ISCALE=IGDTMPL(10)*IGDTMPL(11)
-   IF(ISCALE==0) ISCALE=1E6
-   RLAT1=FLOAT(IGDTMPL(12))/FLOAT(ISCALE)
-   RLON1=FLOAT(IGDTMPL(13))/FLOAT(ISCALE)
-   RLAT2=FLOAT(IGDTMPL(15))/FLOAT(ISCALE)
-   RLON2=FLOAT(IGDTMPL(16))/FLOAT(ISCALE)
-   ISCAN=MOD(IGDTMPL(19)/128,2)
-   HI=(-1.)**ISCAN
-   DLON=HI*(MOD(HI*(RLON2-RLON1)-1+3600,360.)+1)/(IM-1)
-   DLAT=(RLAT2-RLAT1)/(JM-1)
-   XMIN=0
-   XMAX=IM+1
-   IF(IM.EQ.NINT(360/ABS(DLON))) XMAX=IM+2
-   YMIN=0
-   YMAX=JM+1
-   NRET=0
+ CALL EARTH_RADIUS(IGDTMPL,IGDTLEN,RERTH,ECCEN_SQUARED)
+! - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+!  ENSURE PROJECTION IS EQUIDISTANT CYCLINDRICAL AND EARTH RADIUS
+!  IS DEFINED.
+ IF(IGDTNUM/=0.OR.RERTH<0.) THEN
+   IF(IOPT.GE.0) THEN
+     DO N=1,NPTS
+       RLON(N)=FILL
+       RLAT(N)=FILL
+     ENDDO
+   ENDIF
+   IF(IOPT.LE.0) THEN
+     DO N=1,NPTS
+       XPTS(N)=FILL
+       YPTS(N)=FILL
+     ENDDO
+   ENDIF
+   RETURN
+ ENDIF
+! - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+ IM=IGDTMPL(8)
+ JM=IGDTMPL(9)
+ ISCALE=IGDTMPL(10)*IGDTMPL(11)
+ IF(ISCALE==0) ISCALE=1E6
+ RLAT1=FLOAT(IGDTMPL(12))/FLOAT(ISCALE)
+ RLON1=FLOAT(IGDTMPL(13))/FLOAT(ISCALE)
+ RLAT2=FLOAT(IGDTMPL(15))/FLOAT(ISCALE)
+ RLON2=FLOAT(IGDTMPL(16))/FLOAT(ISCALE)
+ ISCAN=MOD(IGDTMPL(19)/128,2)
+ HI=(-1.)**ISCAN
+ DLON=HI*(MOD(HI*(RLON2-RLON1)-1+3600,360.)+1)/(IM-1)
+ DLAT=(RLAT2-RLAT1)/(JM-1)
+ XMIN=0
+ XMAX=IM+1
+ IF(IM.EQ.NINT(360/ABS(DLON))) XMAX=IM+2
+ YMIN=0
+ YMAX=JM+1
+ NRET=0
 ! - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 !  TRANSLATE GRID COORDINATES TO EARTH COORDINATES
-   IF(IOPT.EQ.0.OR.IOPT.EQ.1) THEN
-     DO N=1,NPTS
-       IF(XPTS(N).GE.XMIN.AND.XPTS(N).LE.XMAX.AND. &
+ IF(IOPT.EQ.0.OR.IOPT.EQ.1) THEN
+   DO N=1,NPTS
+     IF(XPTS(N).GE.XMIN.AND.XPTS(N).LE.XMAX.AND. &
+        YPTS(N).GE.YMIN.AND.YPTS(N).LE.YMAX) THEN
+       RLON(N)=MOD(RLON1+DLON*(XPTS(N)-1)+3600,360.)
+       RLAT(N)=MIN(MAX(RLAT1+DLAT*(YPTS(N)-1),-90.),90.)
+       NRET=NRET+1
+       IF(LROT.EQ.1) THEN
+         CROT(N)=1
+         SROT(N)=0
+       ENDIF
+       IF(LMAP.EQ.1) THEN
+         XLON(N)=1/DLON
+         XLAT(N)=0.
+         YLON(N)=0.
+         YLAT(N)=1/DLAT
+         RLATU=MIN(MAX(RLAT(N)+DLAT/2,-90.),90.)
+         RLATD=MIN(MAX(RLAT(N)-DLAT/2,-90.),90.)
+         DSLAT=SIN(RLATU/DPR)-SIN(RLATD/DPR)
+         AREA(N)=RERTH**2*ABS(DSLAT*DLON)/DPR
+       ENDIF
+     ELSE
+       RLON(N)=FILL
+       RLAT(N)=FILL
+     ENDIF
+   ENDDO
+! - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+!  TRANSLATE EARTH COORDINATES TO GRID COORDINATES
+ ELSEIF(IOPT.EQ.-1) THEN
+   DO N=1,NPTS
+     IF(ABS(RLON(N)).LE.360.AND.ABS(RLAT(N)).LE.90) THEN
+       XPTS(N)=1+HI*MOD(HI*(RLON(N)-RLON1)+3600,360.)/DLON
+       YPTS(N)=1+(RLAT(N)-RLAT1)/DLAT
+       IF(XPTS(N).GE.XMIN.AND.XPTS(N).LE.XMAX.AND.  &
           YPTS(N).GE.YMIN.AND.YPTS(N).LE.YMAX) THEN
-         RLON(N)=MOD(RLON1+DLON*(XPTS(N)-1)+3600,360.)
-         RLAT(N)=MIN(MAX(RLAT1+DLAT*(YPTS(N)-1),-90.),90.)
          NRET=NRET+1
          IF(LROT.EQ.1) THEN
            CROT(N)=1
@@ -133,59 +181,14 @@
            AREA(N)=RERTH**2*ABS(DSLAT*DLON)/DPR
          ENDIF
        ELSE
-         RLON(N)=FILL
-         RLAT(N)=FILL
-       ENDIF
-     ENDDO
-! - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-!  TRANSLATE EARTH COORDINATES TO GRID COORDINATES
-   ELSEIF(IOPT.EQ.-1) THEN
-     DO N=1,NPTS
-       IF(ABS(RLON(N)).LE.360.AND.ABS(RLAT(N)).LE.90) THEN
-         XPTS(N)=1+HI*MOD(HI*(RLON(N)-RLON1)+3600,360.)/DLON
-         YPTS(N)=1+(RLAT(N)-RLAT1)/DLAT
-         IF(XPTS(N).GE.XMIN.AND.XPTS(N).LE.XMAX.AND.  &
-            YPTS(N).GE.YMIN.AND.YPTS(N).LE.YMAX) THEN
-           NRET=NRET+1
-           IF(LROT.EQ.1) THEN
-             CROT(N)=1
-             SROT(N)=0
-           ENDIF
-           IF(LMAP.EQ.1) THEN
-             XLON(N)=1/DLON
-             XLAT(N)=0.
-             YLON(N)=0.
-             YLAT(N)=1/DLAT
-             RLATU=MIN(MAX(RLAT(N)+DLAT/2,-90.),90.)
-             RLATD=MIN(MAX(RLAT(N)-DLAT/2,-90.),90.)
-             DSLAT=SIN(RLATU/DPR)-SIN(RLATD/DPR)
-             AREA(N)=RERTH**2*ABS(DSLAT*DLON)/DPR
-           ENDIF
-         ELSE
-           XPTS(N)=FILL
-           YPTS(N)=FILL
-         ENDIF
-       ELSE
          XPTS(N)=FILL
          YPTS(N)=FILL
        ENDIF
-     ENDDO
-   ENDIF
-! - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-!  PROJECTION UNRECOGNIZED
- ELSE
-   IF(IOPT.GE.0) THEN
-     DO N=1,NPTS
-       RLON(N)=FILL
-       RLAT(N)=FILL
-     ENDDO
-   ENDIF
-   IF(IOPT.LE.0) THEN
-     DO N=1,NPTS
+     ELSE
        XPTS(N)=FILL
        YPTS(N)=FILL
-     ENDDO
-   ENDIF
+     ENDIF
+   ENDDO
  ENDIF
 ! - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
  END SUBROUTINE GDSWZD00
