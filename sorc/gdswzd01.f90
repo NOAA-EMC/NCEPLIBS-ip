@@ -87,16 +87,16 @@
  INTEGER                          :: IM, JM, N
 !
  REAL                             :: DLON, DPHI, DY
- REAL                             :: HI, HJ, RERTH
+ REAL                             :: HI, HJ, RERTH, ECCEN_SQUARED
  REAL                             :: RLAT1, RLON1, RLON2, RLATI
  REAL                             :: XMAX, XMIN, YMAX, YMIN
  REAL                             :: YE
 ! - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
- CALL EARTH_RADIUS(IGDTMPL,IGDTLEN,RERTH)
+ CALL EARTH_RADIUS(IGDTMPL,IGDTLEN,RERTH,ECCEN_SQUARED)
 ! - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 !  ENSURE PROJECTION IS MERCATOR.  ROUTINE ONLY WORKS FOR SPHERICAL
 !  EARTHS.
- IF(IGDTNUM/=10.OR.RERTH<0.) THEN
+ IF(IGDTNUM/=10.OR.RERTH<0..OR.ECCEN_SQUARED/=0.0) THEN
    IF(IOPT.GE.0) THEN
      DO N=1,NPTS
        RLON(N)=FILL

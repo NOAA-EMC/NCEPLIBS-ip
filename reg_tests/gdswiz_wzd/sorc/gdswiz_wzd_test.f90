@@ -96,11 +96,17 @@
                   -20826000, 145000000, 56, 60000000, 280000000, 47625000, 47625000, &
                   0, 0/ 
 
- integer :: grd222(200)  ! afwa nh polar, oblate spheroid earth for gdswiz05 and gdswzd05
-                         ! routines.  note gdswzd05 does not have this option and 
-                         ! treats it as spherical.
- data grd222 /5,2*512,-20826,145000,72,-80000,2*47625,0,  &
-              9*0,255,180*0/
+!integer :: grd222(200)  ! afwa nh polar, oblate spheroid earth for gdswiz05 and gdswzd05
+!                        ! routines.  note gdswzd05 does not have this option and 
+!                        ! treats it as spherical.
+!data grd222 /5,2*512,-20826,145000,72,-80000,2*47625,0,  &
+!             9*0,255,180*0/
+
+ integer, parameter :: igdtlen222=18
+ integer(kind=4)    :: igdtmpl222(igdtlen222)
+ data igdtmpl222 /5, 255, missing, 255, missing, 255, missing, 512, 512, &
+                  -20826000, 145000000, 56, 60000000, 280000000, 47625000, 47625000, &
+                  0, 0/ 
 
 !integer :: grd213(200)  ! afwa sh polar, spherical earth for gdswiz05 and gdswzd05 routines.
 !                        ! note, there is a difference in how gdswiz05
@@ -195,9 +201,12 @@
      imdl=igdtmpl(8)
      jmdl=igdtmpl(9)
    case ('222')
-     kgds=grd222
-     imdl=kgds(2)
-     jmdl=kgds(3)
+     igdtnum=20
+     igdtlen=igdtlen222
+     allocate(igdtmpl(igdtlen))
+     igdtmpl=igdtmpl222
+     imdl=igdtmpl(8)
+     jmdl=igdtmpl(9)
    case ('213')
      igdtnum=20
      igdtlen=igdtlen213

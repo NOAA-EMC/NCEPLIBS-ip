@@ -82,22 +82,27 @@
 !
  REAL,             PARAMETER     :: PI=3.14159265358979
  REAL,             PARAMETER     :: DPR=180./PI
+ REAL,             PARAMETER     :: PI2=PI/2.0
+ REAL,             PARAMETER     :: PI4=PI/4.0
 !
  INTEGER                         :: IM, JM, IPROJ, IROT
- INTEGER                         :: ISCAN, JSCAN, N
+ INTEGER                         :: ISCAN, JSCAN, N, ITER
 !
+ LOGICAL                         :: ELLIPTICAL
+!
+ REAL                            :: ALAT, ALAT1, ALONG, MC, DIFF 
+ REAL                            :: E, E_OVER_2, T, TC, RHO
  REAL                            :: CLAT, DI, DJ, DE, DE2
  REAL                            :: DX, DY, DXS, DYS
  REAL                            :: DR, DR2, H, HI, HJ
- REAL                            :: ORIENT, RLAT1, RLON1, RERTH
+ REAL                            :: ORIENT, RLAT1, RLON1, RERTH, E2
  REAL                            :: XMAX, XMIN, YMAX, YMIN
- REAL                            :: XP, YP
+ REAL                            :: SLAT, SLATR, XP, YP
 ! - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
- CALL EARTH_RADIUS(IGDTMPL,IGDTLEN,RERTH)
+ CALL EARTH_RADIUS(IGDTMPL,IGDTLEN,RERTH,E2)
 ! - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-!  ENSURE PROJECTION IS POLAR.  ROUTINE ONLY WORKS FOR SPHERICAL
-!  EARTHS.
- IF(IGDTNUM/=20.OR.RERTH<0.) THEN
+!  ENSURE PROJECTION IS POLAR.  
+ IF(IGDTNUM/=20.OR.RERTH<0..OR.E2<0.0) THEN
    IF(IOPT.GE.0) THEN
      DO N=1,NPTS
        RLON(N)=FILL
@@ -112,11 +117,15 @@
    ENDIF
    RETURN
  ENDIF
+ ELLIPTICAL=.FALSE.  ! ELLIPTICAL EARTH
+ IF(E2>0.0)ELLIPTICAL=.TRUE.
  IM=IGDTMPL(8)
  JM=IGDTMPL(9)
  RLAT1=FLOAT(IGDTMPL(10))*1.E-6
  RLON1=FLOAT(IGDTMPL(11))*1.E-6
  IROT=MOD(IGDTMPL(12)/8,2)
+ SLAT=FLOAT(ABS(IGDTMPL(13)))*1.E-6
+ SLATR=SLAT/DPR
  ORIENT=FLOAT(IGDTMPL(14))*1.E-6
  DX=FLOAT(IGDTMPL(15))*1.E-3
  DY=FLOAT(IGDTMPL(16))*1.E-3
@@ -128,11 +137,28 @@
  HJ=(-1.)**(1-JSCAN)
  DXS=DX*HI
  DYS=DY*HJ
- DE=(1.+SIN(60./DPR))*RERTH
- DR=DE*COS(RLAT1/DPR)/(1+H*SIN(RLAT1/DPR))
- XP=1-H*SIN((RLON1-ORIENT)/DPR)*DR/DXS
- YP=1+COS((RLON1-ORIENT)/DPR)*DR/DYS
- DE2=DE**2
+!
+! FIND X/Y OF POLE
+ IF (.NOT.ELLIPTICAL) THEN
+   DE=(1.+SIN(SLAT/DPR))*RERTH
+   DR=DE*COS(RLAT1/DPR)/(1+H*SIN(RLAT1/DPR))
+   XP=1-H*SIN((RLON1-ORIENT)/DPR)*DR/DXS
+   YP=1+COS((RLON1-ORIENT)/DPR)*DR/DYS
+   DE2=DE**2
+ ELSE  ! ELLIPTICAL
+   E=SQRT(E2)
+   E_OVER_2=E*0.5
+   ALAT=H*RLAT1/DPR
+   ALONG = (RLON1-ORIENT)/DPR
+   T=TAN(PI4-ALAT/2.)/((1.-E*SIN(ALAT))/  &
+     (1.+E*SIN(ALAT)))**(E_OVER_2)
+   TC=TAN(PI4-SLATR/2.)/((1.-E*SIN(SLATR))/  &
+     (1.+E*SIN(SLATR)))**(E_OVER_2)
+   MC=COS(SLATR)/SQRT(1.0-E2*(SIN(SLATR)**2))
+   RHO=RERTH*MC*T/TC
+   YP = 1.0 + RHO*COS(H*ALONG)/DYS
+   XP = 1.0 - RHO*SIN(H*ALONG)/DXS
+ ENDIF ! ELLIPTICAL?
  XMIN=0
  XMAX=IM+1
  YMIN=0
@@ -141,6 +167,7 @@
 ! - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 !  TRANSLATE GRID COORDINATES TO EARTH COORDINATES
  IF(IOPT.EQ.0.OR.IOPT.EQ.1) THEN
+   IF(.NOT.ELLIPTICAL)THEN
    DO N=1,NPTS
      IF(XPTS(N).GE.XMIN.AND.XPTS(N).LE.XMAX.AND. &
         YPTS(N).GE.YMIN.AND.YPTS(N).LE.YMAX) THEN
@@ -186,9 +213,44 @@
        RLAT(N)=FILL
      ENDIF
    ENDDO
+   ELSE  !ELLIPTICAL
+      DO N=1,NPTS
+         IF(XPTS(N).GE.XMIN.AND.XPTS(N).LE.XMAX.AND.  &
+            YPTS(N).GE.YMIN.AND.YPTS(N).LE.YMAX) THEN
+           DI=(XPTS(N)-XP)*DXS
+           DJ=(YPTS(N)-YP)*DYS
+           RHO=SQRT(DI*DI+DJ*DJ)
+           T=(RHO*TC)/(RERTH*MC)
+           IF(ABS(YPTS(N)-YP)<0.01)THEN
+             IF(DI>0.0) ALONG=ORIENT+H*90.0
+             IF(DI<=0.0) ALONG=ORIENT-H*90.0
+           ELSE
+             ALONG=ORIENT+H*ATAN(DI/(-DJ))*DPR
+             IF(DJ>0) ALONG=ALONG+180.
+           END IF
+           ALAT1=PI2-2.0*ATAN(T)
+           DO ITER=1,10
+             ALAT = PI2 - 2.0*ATAN(T*(((1.0-E*SIN(ALAT1))/  &
+                   (1.0+E*SIN(ALAT1)))**(E_OVER_2)))
+             DIFF = ABS(ALAT-ALAT1)*DPR
+             IF (DIFF < 0.000001) EXIT
+             ALAT1=ALAT
+           ENDDO
+           RLAT(N)=H*ALAT*DPR
+           RLON(N)=ALONG
+           IF(RLON(N)<0.0) RLON(N)=RLON(N)+360.
+           IF(RLON(N)>360.0) RLON(N)=RLON(N)-360.0
+           NRET=NRET+1
+         ELSE
+           RLON(N)=FILL
+           RLAT(N)=FILL
+         ENDIF
+       ENDDO
+     ENDIF ! ELLIPTICAL
 ! - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 !  TRANSLATE EARTH COORDINATES TO GRID COORDINATES
  ELSEIF(IOPT.EQ.-1) THEN
+     IF(.NOT.ELLIPTICAL)THEN
    DO N=1,NPTS
      IF(ABS(RLON(N)).LE.360.AND.ABS(RLAT(N)).LE.90.AND. &
                                    H*RLAT(N).NE.-90) THEN
@@ -233,6 +295,30 @@
        YPTS(N)=FILL
      ENDIF
    ENDDO
+     ELSE ! ELLIPTICAL CALCS
+       DO N=1,NPTS
+         IF(ABS(RLON(N)).LE.360.AND.ABS(RLAT(N)).LE.90.AND.  &
+                                        H*RLAT(N).NE.-90) THEN
+           ALAT = H*RLAT(N)/DPR
+           ALONG = (RLON(N)-ORIENT)/DPR
+           T=TAN(PI4-ALAT*0.5)/((1.-E*SIN(ALAT))/  &
+             (1.+E*SIN(ALAT)))**(E_OVER_2)
+           RHO=RERTH*MC*T/TC
+           XPTS(N)= XP + RHO*SIN(H*ALONG) / DXS
+           YPTS(N)= YP - RHO*COS(H*ALONG) / DYS
+           IF(XPTS(N).GE.XMIN.AND.XPTS(N).LE.XMAX.AND.  &
+              YPTS(N).GE.YMIN.AND.YPTS(N).LE.YMAX) THEN
+             NRET=NRET+1
+           ELSE
+             XPTS(N)=FILL
+             YPTS(N)=FILL
+           ENDIF
+         ELSE
+           XPTS(N)=FILL
+           YPTS(N)=FILL
+         ENDIF
+       ENDDO
+     ENDIF
  ENDIF
 ! - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
  END SUBROUTINE GDSWZD05

@@ -93,16 +93,16 @@
  REAL                          :: AN, ANTR, CLAT, DI, DJ
  REAL                          :: DX, DY, DXS, DYS, DLON, DLON1
  REAL                          :: DE, DE2, DR, DR2
- REAL                          :: H, HI, HJ, RERTH
+ REAL                          :: H, HI, HJ, RERTH, ECCEN_SQUARED
  REAL                          :: ORIENT, RLAT1, RLON1
  REAL                          :: RLATI1, RLATI2
  REAL                          :: XMAX, XMIN, YMAX, YMIN, XP, YP
 ! - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
- CALL EARTH_RADIUS(IGDTMPL,IGDTLEN,RERTH)
+ CALL EARTH_RADIUS(IGDTMPL,IGDTLEN,RERTH,ECCEN_SQUARED)
 ! - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 !  ENSURE PROJECTION IS LAMBERT.  ROUTINE ONLY WORKS FOR SPHERICAL
 !  EARTHS.
- IF(IGDTNUM/=30.OR.RERTH<0.) THEN
+ IF(IGDTNUM/=30.OR.RERTH<0..OR.ECCEN_SQUARED/=0.0) THEN
    IF(IOPT.GE.0) THEN
      DO N=1,NPTS
        RLON(N)=FILL

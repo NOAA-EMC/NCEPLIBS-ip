@@ -94,16 +94,15 @@
 !
  REAL,            ALLOCATABLE   :: ALAT(:),BLAT(:),ALAT_JSCAN(:)
  REAL,            ALLOCATABLE   :: ALAT_TEMP(:),BLAT_TEMP(:)
- REAL                           :: DLON, HI, RERTH
+ REAL                           :: DLON, HI, RERTH, ECCEN_SQUARED
  REAL                           :: RLATA, RLATB, RLAT1, RLON1, RLON2
  REAL                           :: WB, WLAT, WLATA, WLATB
  REAL                           :: XMAX, XMIN, YMAX, YMIN, YPTSA, YPTSB
  REAL,            ALLOCATABLE   :: YLAT_ROW(:)
 ! - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
- CALL EARTH_RADIUS(IGDTMPL,IGDTLEN,RERTH)
+ CALL EARTH_RADIUS(IGDTMPL,IGDTLEN,RERTH,ECCEN_SQUARED)
 ! - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-!  ENSURE PROJECTION IS GAUSSAIN.  ROUTINE ONLY WORKS FOR SPHERICAL
-!  EARTHS.
+!  ENSURE PROJECTION IS GAUSSAIN AND RADIUS OF EARTH IS DEFINED.
  IF(IGDTNUM/=40.OR.RERTH<0.) THEN
    IF(IOPT.GE.0) THEN
      DO N=1,NPTS
