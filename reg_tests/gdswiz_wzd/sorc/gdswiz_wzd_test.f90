@@ -43,7 +43,8 @@
 
  implicit none
 
- character*3   :: grid, routine
+ character*4   :: grid
+ character*3   :: routine
  character*100 :: outfile
 
  integer*4 :: i1
@@ -123,16 +124,17 @@
                   20826000, 235000000, 56, -60000000, 100000000, 47625000, 47625000, &
                   128, 0/ 
 
-!integer :: grd205(200)  ! nam 12km b-grid, for gdswizcd and gdswzdcd routines
-!data grd205 /205, 954, 835, -7491, -144134, 136, 54000,  &
-!            -106000, 126, 108, 64, 44540, 14800, 0, 0, 0, 0, 0, 0, 255, 180*0/
-
- integer, parameter :: igdtlen205=22
- integer(kind=4)    :: igdtmpl205(igdtlen205)
- data igdtmpl205 /6, 255, missing, 255, missing, 255, missing, 954, 835, &
+ integer, parameter :: igdtlen205h=22
+ integer(kind=4)    :: igdtmpl205h(igdtlen205h)
+ data igdtmpl205h/6, 255, missing, 255, missing, 255, missing, 954, 835, &
                   0, missing, -7491000, -144134000, 56, 44540000, 14800000, &
                   126000, 108000, 64, -36000000, 254000000, 0 /
 
+ integer, parameter :: igdtlen205v=22
+ integer(kind=4)    :: igdtmpl205v(igdtlen205v)
+ data igdtmpl205v/6, 255, missing, 255, missing, 255, missing, 954, 835, &
+                  0, missing, -7422000, -144140000, 56, 44506000, 14887000, &
+                  126000, 108000, 64, -36000000, 254000000, 0 /
 
  integer :: grd202(200)  ! nam 12km b-grid, for gdswizca and gdswzdca routines
  data grd202 /202, 0, 0, -7491, -144134, 136, 954, 835,  &
@@ -197,11 +199,18 @@
      kgds=grd202
      imdl=kgds(7)
      jmdl=kgds(8)
-   case ('205')
+   case ('205h')
      igdtnum=1
-     igdtlen=igdtlen205
+     igdtlen=igdtlen205h
      allocate(igdtmpl(igdtlen))
-     igdtmpl=igdtmpl205
+     igdtmpl=igdtmpl205h
+     imdl=igdtmpl(8)
+     jmdl=igdtmpl(9)
+   case ('205v')
+     igdtnum=1
+     igdtlen=igdtlen205v
+     allocate(igdtmpl(igdtlen))
+     igdtmpl=igdtmpl205v
      imdl=igdtmpl(8)
      jmdl=igdtmpl(9)
    case ('212')

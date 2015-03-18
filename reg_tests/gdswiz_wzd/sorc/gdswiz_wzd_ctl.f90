@@ -43,7 +43,8 @@
 
  implicit none
 
- character*3   :: grid, routine
+ character*4   :: grid
+ character*3   :: routine
  character*100 :: outfile
 
  integer*4 :: i1
@@ -97,9 +98,13 @@
  data grd213/5,2*512,20826,-125000,8,-80000,2*47625,128, &
              9*0,255,180*0/
 
- integer :: grd205(200)  ! nam 12km b-grid, for gdswizcd and gdswzdcd routines
- data grd205 /205, 954, 835, -7491, -144134, 136, 54000,  &
+ integer :: grd205h(200)  ! nam 12km b-grid, for gdswizcd and gdswzdcd routines
+ data grd205h /205, 954, 835, -7491, -144134, 136, 54000,  &
              -106000, 126, 108, 64, 44540, 14800, 0, 0, 0, 0, 0, 0, 255, 180*0/
+
+ integer :: grd205v(200)  ! nam 12km b-grid, for gdswizcd and gdswzdcd routines
+ data grd205v /205, 954, 835, -7422, -144140, 136, 54000,  &
+             -106000, 126, 108, 64, 44506, 14887, 0, 0, 0, 0, 0, 0, 255, 180*0/
 
  integer :: grd202(200)  ! nam 12km b-grid, for gdswizca and gdswzdca routines
  data grd202 /202, 0, 0, -7491, -144134, 136, 954, 835,  &
@@ -149,8 +154,12 @@
      kgds=grd202
      imdl=kgds(7)
      jmdl=kgds(8)
-   case ('205')
-     kgds=grd205
+   case ('205h')
+     kgds=grd205h
+     imdl=kgds(2)
+     jmdl=kgds(3)
+   case ('205v')
+     kgds=grd205v
      imdl=kgds(2)
      jmdl=kgds(3)
    case ('212')

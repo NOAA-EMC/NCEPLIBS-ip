@@ -86,7 +86,7 @@ for routine in "WIZ" "WZD"  # test gdswiz and gdswzd separately
 do
   echo
   echo RUN REGRESSION TEST FOR GDS${routine} ROUTINES 
-  for grids in "3" "8" "203" "127" "212" "213" "218" "205" "201" "202" "222"
+  for grids in "3" "8" "203" "127" "212" "213" "218" "205h" "205v" "201" "202" "222"
   do
     echo
     for bytesize in "4" "8" "d"  # test each library version
