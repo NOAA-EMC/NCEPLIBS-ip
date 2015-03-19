@@ -130,6 +130,12 @@
                   0, missing, -7491000, -144134000, 56, 44540000, 14800000, &
                   126000, 108000, 64, -36000000, 254000000, 0 /
 
+ integer, parameter :: igdtlen205i=22
+ integer(kind=4)    :: igdtmpl205i(igdtlen205h)
+ data igdtmpl205i/6, 255, missing, 255, missing, 255, missing, 954, 835, &
+                  0, missing, 44540000, 14800000, 56, -7491000, -144134000, &
+                  126000, 108000, 128, -36000000, 254000000, 0 /
+
  integer, parameter :: igdtlen205v=22
  integer(kind=4)    :: igdtmpl205v(igdtlen205v)
  data igdtmpl205v/6, 255, missing, 255, missing, 255, missing, 954, 835, &
@@ -204,6 +210,13 @@
      igdtlen=igdtlen205h
      allocate(igdtmpl(igdtlen))
      igdtmpl=igdtmpl205h
+     imdl=igdtmpl(8)
+     jmdl=igdtmpl(9)
+   case ('205i')
+     igdtnum=1
+     igdtlen=igdtlen205i
+     allocate(igdtmpl(igdtlen))
+     igdtmpl=igdtmpl205i
      imdl=igdtmpl(8)
      jmdl=igdtmpl(9)
    case ('205v')

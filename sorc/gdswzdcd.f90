@@ -80,9 +80,9 @@
  REAL(KIND=KD),           PARAMETER     :: PI=3.14159265358979_KD
  REAL(KIND=KD),           PARAMETER     :: DPR=180._KD/PI
 !
- INTEGER                                :: IROT,IM,JM,ISCAN,JSCAN,N,ISCALE
+ INTEGER                                :: IROT,IM,JM,N,ISCALE
 !
- REAL(KIND=KD)                          :: HI,HJ,HS,HS2,RERTH
+ REAL(KIND=KD)                          :: HS,HS2,RERTH
  REAL(KIND=KD)                          :: RLAT1,RLON1,RLAT0,RLON0,RLAT2,RLON2
  REAL(KIND=KD)                          :: SLAT1,CLAT1,SLAT0,CLAT0
  REAL(KIND=KD)                          :: SLON,SLAT2,CLAT2,CLON2
@@ -125,10 +125,6 @@
  IROT=MOD(IGDTMPL(14)/8,2)
  IM=IGDTMPL(8)
  JM=IGDTMPL(9)
- ISCAN=MOD(IGDTMPL(19)/128,2)
- JSCAN=MOD(IGDTMPL(19)/64,2)
- HI=(-1.)**ISCAN
- HJ=(-1.)**(1-JSCAN)
  SLAT1=SIN(RLAT1/DPR)
  CLAT1=COS(RLAT1/DPR)
  SLAT0=SIN(RLAT0/DPR)
@@ -167,9 +163,9 @@
        RLONR=WBD+(XPTS(N)-1._KD)*DLONS
        RLATR=SBD+(YPTS(N)-1._KD)*DLATS
        IF(RLONR <= 0._KD) THEN
-         HS=-HI
+         HS=-1.0_KD
        ELSE
-         HS=HI
+         HS=1.0_KD
        ENDIF
        CLONR=COS(RLONR/DPR)
        SLATR=SIN(RLATR/DPR)
