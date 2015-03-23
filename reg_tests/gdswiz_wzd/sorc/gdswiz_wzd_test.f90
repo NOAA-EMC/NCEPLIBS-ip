@@ -95,7 +95,7 @@
  integer(kind=4)    :: igdtmpl203h(igdtlen203h)
  data igdtmpl203h/6, 255, missing, 255, missing, 255, missing, 669, 1165, &
                   0, missing, -7450000, 215860000, 56, 44560100, 14744800, &
-                  89820, 77320, 68, -36000000, 254000000, 0 /
+                  179641, 77320, 68, -36000000, 254000000, 0 /
 
  integer, parameter :: igdtlen212=18
  integer(kind=4)    :: igdtmpl212(igdtlen212)
