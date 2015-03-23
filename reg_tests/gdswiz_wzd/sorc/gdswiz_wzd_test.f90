@@ -50,7 +50,7 @@
  integer*4 :: i1
  integer   :: nret, lrot, lmap, iopt, npts, imdl, jmdl
  integer   :: i, j, n, iret, kgds(200), nscan, kscan, is1, nm
- integer   :: ii, jj, iii, jjj, badpts
+ integer   :: ii, jj, iii, jjj, badpts, i_offset_odd
 
  logical   :: wzd
 
@@ -87,9 +87,15 @@
                   0, missing, 89642000, 0, 48, -89642000, 359531000,  &
                   469000, 192, 0/
 
- integer :: grd203(200)  ! nam e-grid, for gdswizcb and gdswzdcb routines
- data grd203 /203, 669, 1165, -7450, -144140, 136, 54000,  &
-              -106000, 90, 77, 64, 0, 0, 0, 0, 0, 0, 0, 0, 255, 180*0/
+!integer :: grd203(200)  ! nam e-grid, for gdswizcb and gdswzdcb routines
+!data grd203 /203, 669, 1165, -7450, -144140, 136, 54000,  &
+!             -106000, 90, 77, 64, 0, 0, 0, 0, 0, 0, 0, 0, 255, 180*0/
+
+ integer, parameter :: igdtlen203h=22
+ integer(kind=4)    :: igdtmpl203h(igdtlen203h)
+ data igdtmpl203h/6, 255, missing, 255, missing, 255, missing, 669, 1165, &
+                  0, missing, -7450000, 215860000, 56, 44560100, 14744800, &
+                  89820, 77320, 68, -36000000, 254000000, 0 /
 
  integer, parameter :: igdtlen212=18
  integer(kind=4)    :: igdtmpl212(igdtlen212)
@@ -184,10 +190,13 @@
    case ('201')
      call grid_201(wzd)
      goto 98
-   case ('203')
-     kgds=grd203
-     imdl=kgds(2)
-     jmdl=kgds(3)
+   case ('203h')
+     igdtnum=1
+     igdtlen=igdtlen203h
+     allocate(igdtmpl(igdtlen))
+     igdtmpl=igdtmpl203h
+     imdl=igdtmpl(8)
+     jmdl=igdtmpl(9)
    case ('127')
      igdtnum=40
      igdtlen=igdtlen127
@@ -360,15 +369,16 @@
  maxdiffx = -99999.
  maxdiffy = -99999.
 
- if (kgds(1) == 203) then
-   kscan=mod(kgds(11)/256,2)
+ if (grid == "203h") then
+   I_OFFSET_ODD=MOD(IGDTMPL(19)/8,2)
+   kscan=I_OFFSET_ODD
    if(kscan.eq.0) THEN
      is1=(jmdl+1)/2
    else
      is1=jmdl/2
    endif
    nm=imdl*jmdl
-   nscan=mod(kgds(11)/32,2)
+   nscan=mod(IGDTMPL(19)/32,2)
    badpts = 0
    do iii = 1, imdl    ! here iii/jjj are the conventional i/j
    do jjj = 1, jmdl

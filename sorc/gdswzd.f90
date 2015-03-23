@@ -110,60 +110,59 @@
 !
  INTEGER                       :: IS1, IM, JM, NM, KSCAN, NSCAN, N
  INTEGER                       :: IOPF, NN, I, J
+ INTEGER                       :: I_OFFSET_ODD, I_OFFSET_EVEN
 ! - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 !  COMPUTE GRID COORDINATES FOR ALL GRID POINTS
  IF(IOPT.EQ.0) THEN
-   IF(KGDS(1).EQ.201) THEN
-     IM=KGDS(7)*2-1
-     JM=KGDS(8)
-     KSCAN=MOD(KGDS(11)/256,2)
-     IF(KSCAN.EQ.0) THEN
-       IS1=(JM+1)/2
-       NM=(IM/2+1)*JM-JM/2
-     ELSE
-       IS1=JM/2
-       NM=IM/2*JM+JM/2
-     ENDIF
-   ELSEIF(KGDS(1).EQ.202) THEN
-     IM=KGDS(7)
-     JM=KGDS(8)
-     NM=IM*JM
-   ELSEIF(KGDS(1).EQ.203) THEN
-     IM=KGDS(2)
-     JM=KGDS(3)
-     NM=IM*JM
-     KSCAN=MOD(KGDS(11)/256,2)
-     IF(KSCAN.EQ.0) THEN
-       IS1=(JM+1)/2
-     ELSE
-       IS1=JM/2
-     ENDIF
-   ELSEIF(IGDTNUM==0.OR.IGDTNUM==10.OR.IGDTNUM==20.OR. &
-          IGDTNUM==30.OR.IGDTNUM==40.OR.IGDTNUM==1)THEN
+   IF(IGDTNUM==0) THEN
      IM=IGDTMPL(8)
      JM=IGDTMPL(9)
      NM=IM*JM
-   ELSE
-     IM=KGDS(2)
-     JM=KGDS(3)
+     NSCAN=MOD(IGDTMPL(19)/32,2)
+   ELSEIF(IGDTNUM==1) THEN
+     IM=IGDTMPL(8)
+     JM=IGDTMPL(9)
      NM=IM*JM
+     I_OFFSET_ODD=MOD(IGDTMPL(19)/8,2)
+     I_OFFSET_EVEN=MOD(IGDTMPL(19)/4,2)
+     IF(I_OFFSET_ODD/=I_OFFSET_EVEN)THEN
+       IF(I_OFFSET_ODD==0) THEN
+         IS1=(JM+1)/2
+       ELSE
+         IS1=JM/2
+       ENDIF
+     ENDIF
+     NSCAN=MOD(IGDTMPL(19)/32,2)
+   ELSEIF(IGDTNUM==10) THEN
+     IM=IGDTMPL(8)
+     JM=IGDTMPL(9)
+     NM=IM*JM
+     NSCAN=MOD(IGDTMPL(16)/32,2)
+   ELSEIF(IGDTNUM==20) THEN
+     IM=IGDTMPL(8)
+     JM=IGDTMPL(9)
+     NM=IM*JM
+     NSCAN=MOD(IGDTMPL(18)/32,2)
+   ELSEIF(IGDTNUM==30) THEN
+     IM=IGDTMPL(8)
+     JM=IGDTMPL(9)
+     NM=IM*JM
+     NSCAN=MOD(IGDTMPL(18)/32,2)
+   ELSEIF(IGDTNUM==40)THEN
+     IM=IGDTMPL(8)
+     JM=IGDTMPL(9)
+     NM=IM*JM
+     NSCAN=MOD(IGDTMPL(19)/32,2)
+   ELSE ! PROJECTION NOT RECOGNIZED
+     RLAT=FILL
+     RLON=FILL
+     XPTS=FILL
+     YPTS=FILL
+     RETURN
    ENDIF
-   NSCAN=MOD(KGDS(11)/32,2)
    IF(NM.LE.NPTS) THEN
-     IF(KGDS(1).EQ.201) THEN
-       DO N=1,NM
-         NN=2*N-1+KSCAN
-         IF(NSCAN.EQ.0) THEN
-           J=(NN-1)/IM+1
-           I=NN-IM*(J-1)
-         ELSE
-           I=(NN-1)/JM+1
-           J=NN-JM*(I-1)
-         ENDIF
-         XPTS(N)=IS1+(I-(J-KSCAN))/2
-         YPTS(N)=(I+(J-KSCAN))/2
-       ENDDO
-     ELSEIF(KGDS(1).EQ.203) THEN
+     IF(IGDTNUM==1.AND.(I_OFFSET_ODD/=I_OFFSET_EVEN)) THEN
+       KSCAN=I_OFFSET_ODD
        DO N=1,NM
          IF(NSCAN.EQ.0) THEN
            J=(N-1)/IM+1
@@ -195,25 +194,30 @@
        XPTS(N)=FILL
        YPTS(N)=FILL
      ENDDO
-   ELSE
-     DO N=1,NPTS
-       XPTS(N)=FILL
-       YPTS(N)=FILL
-     ENDDO
+   ELSE  ! NM > NPTS
+     RLAT=FILL
+     RLON=FILL
+     XPTS=FILL
+     YPTS=FILL
+     RETURN
    ENDIF
    IOPF=1
- ELSE
+ ELSE  ! IOPT /= 0
    IOPF=IOPT
- ENDIF
+   IF(IGDTNUM==1) THEN
+     I_OFFSET_ODD=MOD(IGDTMPL(19)/8,2)
+     I_OFFSET_EVEN=MOD(IGDTMPL(19)/4,2)
+   ENDIF
+ ENDIF ! IOPT CHECK
 ! - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 !  EQUIDISTANT CYLINDRICAL
- IF(IGDTNUM.EQ.0) THEN
+ IF(IGDTNUM==0) THEN
    CALL GDSWZD00(IGDTNUM,IGDTMPL,IGDTLEN,IOPF,NPTS,FILL, &
                  XPTS,YPTS,RLON,RLAT,NRET, &
                  LROT,CROT,SROT,LMAP,XLON,XLAT,YLON,YLAT,AREA)
 ! - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 !  MERCATOR CYLINDRICAL
- ELSEIF(IGDTNUM.EQ.10) THEN
+ ELSEIF(IGDTNUM==10) THEN
    CALL GDSWZD01(IGDTNUM,IGDTMPL,IGDTLEN,IOPF,NPTS,FILL, &
                  XPTS,YPTS,RLON,RLAT,NRET, &
                  LROT,CROT,SROT,LMAP,XLON,XLAT,YLON,YLAT,AREA)
@@ -236,19 +240,10 @@
                  XPTS,YPTS,RLON,RLAT,NRET, &
                  LROT,CROT,SROT,LMAP,XLON,XLAT,YLON,YLAT,AREA)
 ! - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-!  STAGGERED ROTATED EQUIDISTANT CYLINDRICAL
- ELSEIF(KGDS(1).EQ.201) THEN
-   CALL GDSWZDC9(KGDS,IOPF,NPTS,FILL,XPTS,YPTS,RLON,RLAT,NRET, &
-                 LROT,CROT,SROT,LMAP,XLON,XLAT,YLON,YLAT,AREA)
-! - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-!  ROTATED EQUIDISTANT CYLINDRICAL
- ELSEIF(KGDS(1).EQ.202) THEN
-   CALL GDSWZDCA(KGDS,IOPF,NPTS,FILL,XPTS,YPTS,RLON,RLAT,NRET, &
-                 LROT,CROT,SROT,LMAP,XLON,XLAT,YLON,YLAT,AREA)
-! - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 !  2-D E-STAGGERED ROTATED EQUIDISTANT CYLINDRICAL
- ELSEIF(KGDS(1).EQ.203) THEN
-   CALL GDSWZDCB(KGDS,IOPF,NPTS,FILL,XPTS,YPTS,RLON,RLAT,NRET, &
+ ELSEIF(IGDTNUM==1.AND.(I_OFFSET_ODD/=I_OFFSET_EVEN)) THEN
+   CALL GDSWZDCB(IGDTNUM,IGDTMPL,IGDTLEN,IOPF,NPTS,FILL,  &
+                 XPTS,YPTS,RLON,RLAT,NRET, &
                  LROT,CROT,SROT,LMAP,XLON,XLAT,YLON,YLAT,AREA)
 ! - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 !  2-D B-STAGGERED ROTATED EQUIDISTANT CYLINDRICAL
@@ -260,16 +255,12 @@
 !  PROJECTION UNRECOGNIZED
  ELSE
    IF(IOPT.GE.0) THEN
-     DO N=1,NPTS
-       RLON(N)=FILL
-       RLAT(N)=FILL
-     ENDDO
+     RLON=FILL
+     RLAT=FILL
    ENDIF
    IF(IOPT.LE.0) THEN
-     DO N=1,NPTS
-       XPTS(N)=FILL
-       YPTS(N)=FILL
-     ENDDO
+     XPTS=FILL
+     YPTS=FILL
    ENDIF
  ENDIF
 ! - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
