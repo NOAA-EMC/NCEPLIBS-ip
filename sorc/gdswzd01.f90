@@ -92,23 +92,17 @@
  REAL                             :: XMAX, XMIN, YMAX, YMIN
  REAL                             :: YE
 ! - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+! IS THIS A MERCATOR GRID?
+ IF(IGDTNUM/=10) THEN
+   CALL GDSWZD01_ERROR(IOPT,FILL,RLAT,RLON,XPTS,YPTS,NPTS)
+   RETURN
+ ENDIF
+! - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
  CALL EARTH_RADIUS(IGDTMPL,IGDTLEN,RERTH,ECCEN_SQUARED)
 ! - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-!  ENSURE PROJECTION IS MERCATOR.  ROUTINE ONLY WORKS FOR SPHERICAL
-!  EARTHS.
- IF(IGDTNUM/=10.OR.RERTH<0..OR.ECCEN_SQUARED/=0.0) THEN
-   IF(IOPT.GE.0) THEN
-     DO N=1,NPTS
-       RLON(N)=FILL
-       RLAT(N)=FILL
-     ENDDO
-   ENDIF
-   IF(IOPT.LE.0) THEN
-     DO N=1,NPTS
-       XPTS(N)=FILL
-       YPTS(N)=FILL
-     ENDDO
-   ENDIF
+! ROUTINE ONLY WORKS FOR SPHERICAL EARTHS.
+ IF(RERTH<0..OR.ECCEN_SQUARED/=0.0) THEN
+   CALL GDSWZD01_ERROR(IOPT,FILL,RLAT,RLON,XPTS,YPTS,NPTS)
    RETURN
  ENDIF
 ! - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -190,3 +184,24 @@
  ENDIF
 ! - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
  END SUBROUTINE GDSWZD01
+! - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+ SUBROUTINE GDSWZD01_ERROR(IOPT,FILL,RLAT,RLON,XPTS,YPTS,NPTS)
+
+ IMPLICIT NONE
+
+ INTEGER, INTENT(IN   ) :: IOPT, NPTS
+
+ REAL,    INTENT(IN   ) :: FILL
+ REAL,    INTENT(  OUT) :: RLAT(NPTS),RLON(NPTS)
+ REAL,    INTENT(  OUT) :: XPTS(NPTS),YPTS(NPTS)
+
+ IF(IOPT>=0) THEN
+   RLON=FILL
+   RLAT=FILL
+ ENDIF
+ IF(IOPT<=0) THEN
+   XPTS=FILL
+   YPTS=FILL
+ ENDIF
+
+ END SUBROUTINE GDSWZD01_ERROR

@@ -93,29 +93,26 @@
  REAL(KIND=KD)                          :: SLAT,CLAT,CLON,WBD,SBD,NBD,EBD,TERM1,TERM2
  REAL                                   :: XMIN,XMAX,YMIN,YMAX
 ! - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+! IS THIS A ROTATED LAT/LON GRID?
+ IF(IGDTNUM/=1)THEN
+   CALL GDSWZDCD_ERROR(IOPT,FILL,RLAT,RLON,XPTS,YPTS,NPTS)
+   RETURN
+ ENDIF
+! - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+! IS THE EARTH RADIUS DEFINED?
  CALL EARTH_RADIUS(IGDTMPL,IGDTLEN,DUM1,DUM2)
  RERTH=DUM1
+ IF(RERTH<0.)THEN
+   CALL GDSWZDCD_ERROR(IOPT,FILL,RLAT,RLON,XPTS,YPTS,NPTS)
+   RETURN
+ ENDIF
 ! - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 !  IS THIS AN "E"-STAGGER GRID?  ROUTINE CAN'T PROCESS THOSE.
  I_OFFSET_ODD=MOD(IGDTMPL(19)/8,2)
  I_OFFSET_EVEN=MOD(IGDTMPL(19)/4,2)
  J_OFFSET=MOD(IGDTMPL(19)/2,2)
-! - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-!  ENSURE PROJECTION IS ROTATED EQUIDISTANT CYCLINDRICAL AND 
-!  EARTH RADIUS IS DEFINED.
- IF(IGDTNUM/=1.OR.RERTH<0..OR.(I_OFFSET_ODD/=I_OFFSET_EVEN)) THEN
-   IF(IOPT.GE.0) THEN
-     DO N=1,NPTS
-       RLON(N)=FILL
-       RLAT(N)=FILL
-     ENDDO
-   ENDIF
-   IF(IOPT.LE.0) THEN
-     DO N=1,NPTS
-       XPTS(N)=FILL
-       YPTS(N)=FILL
-     ENDDO
-   ENDIF
+ IF(I_OFFSET_ODD/=I_OFFSET_EVEN) THEN
+   CALL GDSWZDCD_ERROR(IOPT,FILL,RLAT,RLON,XPTS,YPTS,NPTS)
    RETURN
  ENDIF
 ! - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -312,3 +309,24 @@
  ENDIF
 ! - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
  END SUBROUTINE GDSWZDCD
+! - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+ SUBROUTINE GDSWZDCD_ERROR(IOPT,FILL,RLAT,RLON,XPTS,YPTS,NPTS)
+
+ IMPLICIT NONE
+
+ INTEGER, INTENT(IN   ) :: IOPT, NPTS
+
+ REAL,    INTENT(IN   ) :: FILL
+ REAL,    INTENT(  OUT) :: RLAT(NPTS),RLON(NPTS)
+ REAL,    INTENT(  OUT) :: XPTS(NPTS),YPTS(NPTS)
+
+ IF(IOPT>=0) THEN
+   RLON=FILL
+   RLAT=FILL
+ ENDIF
+ IF(IOPT<=0) THEN
+   XPTS=FILL
+   YPTS=FILL
+ ENDIF
+
+ END SUBROUTINE GDSWZDCD_ERROR

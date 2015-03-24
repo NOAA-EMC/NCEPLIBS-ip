@@ -88,25 +88,18 @@
  REAL                               :: RLAT1, RLON1, RLAT2, RLON2
  REAL                               :: RERTH, ECCEN_SQUARED
  REAL                               :: XMAX, XMIN, YMAX, YMIN
-!
+! - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+! IS THIS AN EQUIDISTANT CYCLINDRICAL GRID?
+ IF(IGDTNUM/=0)THEN
+   CALL GDSWZD00_ERROR(IOPT,FILL,RLAT,RLON,XPTS,YPTS,NPTS)
+   RETURN
+ ENDIF
 ! - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
  CALL EARTH_RADIUS(IGDTMPL,IGDTLEN,RERTH,ECCEN_SQUARED)
 ! - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-!  ENSURE PROJECTION IS EQUIDISTANT CYCLINDRICAL AND EARTH RADIUS
-!  IS DEFINED.
- IF(IGDTNUM/=0.OR.RERTH<0.) THEN
-   IF(IOPT.GE.0) THEN
-     DO N=1,NPTS
-       RLON(N)=FILL
-       RLAT(N)=FILL
-     ENDDO
-   ENDIF
-   IF(IOPT.LE.0) THEN
-     DO N=1,NPTS
-       XPTS(N)=FILL
-       YPTS(N)=FILL
-     ENDDO
-   ENDIF
+!  ENSURE EARTH RADIUS IS DEFINED.
+ IF(RERTH<0.) THEN
+   CALL GDSWZD00_ERROR(IOPT,FILL,RLAT,RLON,XPTS,YPTS,NPTS)
    RETURN
  ENDIF
 ! - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -192,3 +185,24 @@
  ENDIF
 ! - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
  END SUBROUTINE GDSWZD00
+! - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+ SUBROUTINE GDSWZD00_ERROR(IOPT,FILL,RLAT,RLON,XPTS,YPTS,NPTS)
+
+ IMPLICIT NONE
+
+ INTEGER, INTENT(IN   ) :: IOPT, NPTS
+
+ REAL,    INTENT(IN   ) :: FILL
+ REAL,    INTENT(  OUT) :: RLAT(NPTS),RLON(NPTS)
+ REAL,    INTENT(  OUT) :: XPTS(NPTS),YPTS(NPTS)
+
+ IF(IOPT>=0) THEN
+   RLON=FILL
+   RLAT=FILL
+ ENDIF
+ IF(IOPT<=0) THEN
+   XPTS=FILL
+   YPTS=FILL
+ ENDIF
+
+ END SUBROUTINE GDSWZD00_ERROR

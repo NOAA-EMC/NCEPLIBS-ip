@@ -98,23 +98,17 @@
  REAL                          :: RLATI1, RLATI2
  REAL                          :: XMAX, XMIN, YMAX, YMIN, XP, YP
 ! - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+! IS THIS A LAMBERT CONFORMAL GRID?
+ IF(IGDTNUM/=30)THEN
+   CALL GDSWZD03_ERROR(IOPT,FILL,RLAT,RLON,XPTS,YPTS,NPTS)
+   RETURN
+ ENDIF
+! - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
  CALL EARTH_RADIUS(IGDTMPL,IGDTLEN,RERTH,ECCEN_SQUARED)
 ! - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-!  ENSURE PROJECTION IS LAMBERT.  ROUTINE ONLY WORKS FOR SPHERICAL
-!  EARTHS.
- IF(IGDTNUM/=30.OR.RERTH<0..OR.ECCEN_SQUARED/=0.0) THEN
-   IF(IOPT.GE.0) THEN
-     DO N=1,NPTS
-       RLON(N)=FILL
-       RLAT(N)=FILL
-     ENDDO
-   ENDIF
-   IF(IOPT.LE.0) THEN
-     DO N=1,NPTS
-       XPTS(N)=FILL
-       YPTS(N)=FILL
-     ENDDO
-   ENDIF
+! ROUTINE ONLY WORKS FOR SPHERICAL EARTHS.
+ IF(RERTH<0..OR.ECCEN_SQUARED/=0.0) THEN
+   CALL GDSWZD03_ERROR(IOPT,FILL,RLAT,RLON,XPTS,YPTS,NPTS)
    RETURN
  ENDIF
 ! - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -259,3 +253,24 @@
  ENDIF
 ! - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
  END SUBROUTINE GDSWZD03
+! - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+ SUBROUTINE GDSWZD03_ERROR(IOPT,FILL,RLAT,RLON,XPTS,YPTS,NPTS)
+
+ IMPLICIT NONE
+
+ INTEGER, INTENT(IN   ) :: IOPT, NPTS
+
+ REAL,    INTENT(IN   ) :: FILL
+ REAL,    INTENT(  OUT) :: RLAT(NPTS),RLON(NPTS)
+ REAL,    INTENT(  OUT) :: XPTS(NPTS),YPTS(NPTS)
+
+ IF(IOPT>=0) THEN
+   RLON=FILL
+   RLAT=FILL
+ ENDIF
+ IF(IOPT<=0) THEN
+   XPTS=FILL
+   YPTS=FILL
+ ENDIF
+
+ END SUBROUTINE GDSWZD03_ERROR

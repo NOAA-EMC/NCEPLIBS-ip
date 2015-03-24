@@ -99,22 +99,17 @@
  REAL                            :: XMAX, XMIN, YMAX, YMIN
  REAL                            :: SLAT, SLATR, XP, YP
 ! - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+! IS THIS A POLAR STEREOGRAPHIC GRID?
+ IF(IGDTNUM/=20)THEN
+   CALL GDSWZD05_ERROR(IOPT,FILL,RLAT,RLON,XPTS,YPTS,NPTS)
+   RETURN
+ ENDIF
+! - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
  CALL EARTH_RADIUS(IGDTMPL,IGDTLEN,RERTH,E2)
 ! - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-!  ENSURE PROJECTION IS POLAR.  
- IF(IGDTNUM/=20.OR.RERTH<0..OR.E2<0.0) THEN
-   IF(IOPT.GE.0) THEN
-     DO N=1,NPTS
-       RLON(N)=FILL
-       RLAT(N)=FILL
-     ENDDO
-   ENDIF
-   IF(IOPT.LE.0) THEN
-     DO N=1,NPTS
-       XPTS(N)=FILL
-       YPTS(N)=FILL
-     ENDDO
-   ENDIF
+! IS THE EARTH RADIUS AND ECCENTICITY DEFINED?
+ IF(RERTH<0..OR.E2<0.0) THEN
+   CALL GDSWZD05_ERROR(IOPT,FILL,RLAT,RLON,XPTS,YPTS,NPTS)
    RETURN
  ENDIF
  ELLIPTICAL=.FALSE.  ! ELLIPTICAL EARTH
@@ -322,3 +317,24 @@
  ENDIF
 ! - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
  END SUBROUTINE GDSWZD05
+! - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+ SUBROUTINE GDSWZD05_ERROR(IOPT,FILL,RLAT,RLON,XPTS,YPTS,NPTS)
+
+ IMPLICIT NONE
+
+ INTEGER, INTENT(IN   ) :: IOPT, NPTS
+
+ REAL,    INTENT(IN   ) :: FILL
+ REAL,    INTENT(  OUT) :: RLAT(NPTS),RLON(NPTS)
+ REAL,    INTENT(  OUT) :: XPTS(NPTS),YPTS(NPTS)
+
+ IF(IOPT>=0) THEN
+   RLON=FILL
+   RLAT=FILL
+ ENDIF
+ IF(IOPT<=0) THEN
+   XPTS=FILL
+   YPTS=FILL
+ ENDIF
+
+ END SUBROUTINE GDSWZD05_ERROR

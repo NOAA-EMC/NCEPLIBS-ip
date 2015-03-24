@@ -100,24 +100,20 @@
  REAL                           :: XMAX, XMIN, YMAX, YMIN, YPTSA, YPTSB
  REAL,            ALLOCATABLE   :: YLAT_ROW(:)
 ! - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
- CALL EARTH_RADIUS(IGDTMPL,IGDTLEN,RERTH,ECCEN_SQUARED)
-! - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-!  ENSURE PROJECTION IS GAUSSAIN AND RADIUS OF EARTH IS DEFINED.
- IF(IGDTNUM/=40.OR.RERTH<0.) THEN
-   IF(IOPT.GE.0) THEN
-     DO N=1,NPTS
-       RLON(N)=FILL
-       RLAT(N)=FILL
-     ENDDO
-   ENDIF
-   IF(IOPT.LE.0) THEN
-     DO N=1,NPTS
-       XPTS(N)=FILL
-       YPTS(N)=FILL
-     ENDDO
-   ENDIF
+! IS THIS A GAUSSIAN GRID?
+ IF(IGDTNUM/=40) THEN
+   CALL GDSWZD04_ERROR(IOPT,FILL,RLAT,RLON,XPTS,YPTS,NPTS)
    RETURN
  ENDIF
+! - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+ CALL EARTH_RADIUS(IGDTMPL,IGDTLEN,RERTH,ECCEN_SQUARED)
+! - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+! ENSURE RADIUS OF EARTH IS DEFINED.
+ IF(RERTH<0.) THEN
+   CALL GDSWZD04_ERROR(IOPT,FILL,RLAT,RLON,XPTS,YPTS,NPTS)
+   RETURN
+ ENDIF
+! - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
  IM=IGDTMPL(8)
  JM=IGDTMPL(9)
  ISCALE=IGDTMPL(10)*IGDTMPL(11)
@@ -247,3 +243,24 @@
  IF (ALLOCATED(YLAT_ROW)) DEALLOCATE(YLAT_ROW)
 ! - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
  END SUBROUTINE GDSWZD04
+! - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+ SUBROUTINE GDSWZD04_ERROR(IOPT,FILL,RLAT,RLON,XPTS,YPTS,NPTS)
+
+ IMPLICIT NONE
+
+ INTEGER, INTENT(IN   ) :: IOPT, NPTS
+
+ REAL,    INTENT(IN   ) :: FILL
+ REAL,    INTENT(  OUT) :: RLAT(NPTS),RLON(NPTS)
+ REAL,    INTENT(  OUT) :: XPTS(NPTS),YPTS(NPTS)
+
+ IF(IOPT>=0) THEN
+   RLON=FILL
+   RLAT=FILL
+ ENDIF
+ IF(IOPT<=0) THEN
+   XPTS=FILL
+   YPTS=FILL
+ ENDIF
+
+ END SUBROUTINE GDSWZD04_ERROR

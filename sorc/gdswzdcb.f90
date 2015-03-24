@@ -108,19 +108,21 @@
  REAL(KIND=KD)                  :: XLONF,XLATF,YLONF,YLATF
  REAL                           :: XMAX, XMIN, YMAX, YMIN, XPTF, YPTF
 ! - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+! IS THIS A ROTATED LAT/LON GRID?
  IF(IGDTNUM/=1)THEN
    CALL GDSWZDCB_ERROR(IOPT,FILL,RLAT,RLON,XPTS,YPTS,NPTS)
    RETURN
  ENDIF
 ! - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+! IS THE EARTH RADIUS DEFINED?
  CALL EARTH_RADIUS(IGDTMPL,IGDTLEN,DUM1,DUM2)
+ RERTH=DUM1
  IF(RERTH<0.)THEN
    CALL GDSWZDCB_ERROR(IOPT,FILL,RLAT,RLON,XPTS,YPTS,NPTS)
    RETURN
  ENDIF
- RERTH=DUM1
 ! - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-!  IS THIS AN "E"-STAGGER GRID? 
+! IS THIS AN "E"-STAGGER GRID? 
  I_OFFSET_ODD=MOD(IGDTMPL(19)/8,2)
  I_OFFSET_EVEN=MOD(IGDTMPL(19)/4,2)
  IF(I_OFFSET_ODD==I_OFFSET_EVEN) THEN
@@ -322,11 +324,11 @@
  REAL,    INTENT(  OUT) :: RLAT(NPTS),RLON(NPTS)
  REAL,    INTENT(  OUT) :: XPTS(NPTS),YPTS(NPTS)
 
- IF(IOPT.GE.0) THEN
+ IF(IOPT>=0) THEN
    RLON=FILL
    RLAT=FILL
  ENDIF
- IF(IOPT.LE.0) THEN
+ IF(IOPT<=0) THEN
    XPTS=FILL
    YPTS=FILL
  ENDIF
