@@ -76,9 +76,13 @@
  data grd127 /4, 768, 384, 89642, 0, 128, -89642,  &
              -469, 469, 192, 0, 0, 255, 0, 0, 0, 0, 0, 0, 255, 180*0/
 
- integer :: grd203(200)  ! nam e-grid, for gdswizcb and gdswzdcb routines
- data grd203 /203, 669, 1165, -7450, -144140, 136, 54000,  &
+ integer :: grd203h(200)  ! nam e-grid, for gdswizcb and gdswzdcb routines
+ data grd203h /203, 669, 1165, -7450, -144140, 136, 54000,  &
               -106000, 90, 77, 64, 0, 0, 0, 0, 0, 0, 0, 0, 255, 180*0/
+
+ integer :: grd203v(200)  ! nam e-grid, for gdswizcb and gdswzdcb routines
+ data grd203v /203, 669, 1165, -7450, -144140, 136, 54000,  &
+              -106000, 90, 77, 320, 0, 0, 0, 0, 0, 0, 0, 0, 255, 180*0/
 
  integer :: grd212(200)  ! afwa nh polar, spherical earth, for gdswiz05 and gdswzd05 routines
  data grd212 /5,2*512,-20826,145000,8,-80000,2*47625,0,  &
@@ -142,8 +146,12 @@
    case ('201')
      call grid_201(wzd)
      goto 98
-   case ('203')
-     kgds=grd203
+   case ('203h')
+     kgds=grd203h
+     imdl=kgds(2)
+     jmdl=kgds(3)
+   case ('203v')
+     kgds=grd203v
      imdl=kgds(2)
      jmdl=kgds(3)
    case ('127')

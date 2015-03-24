@@ -87,15 +87,17 @@
                   0, missing, 89642000, 0, 48, -89642000, 359531000,  &
                   469000, 192, 0/
 
-!integer :: grd203(200)  ! nam e-grid, for gdswizcb and gdswzdcb routines
-!data grd203 /203, 669, 1165, -7450, -144140, 136, 54000,  &
-!             -106000, 90, 77, 64, 0, 0, 0, 0, 0, 0, 0, 0, 255, 180*0/
-
  integer, parameter :: igdtlen203h=22
  integer(kind=4)    :: igdtmpl203h(igdtlen203h)
  data igdtmpl203h/6, 255, missing, 255, missing, 255, missing, 669, 1165, &
                   0, missing, -7450000, 215860000, 56, 44560100, 14744800, &
                   179641, 77320, 68, -36000000, 254000000, 0 /
+
+ integer, parameter :: igdtlen203v=22
+ integer(kind=4)    :: igdtmpl203v(igdtlen203v)
+ data igdtmpl203v/6, 255, missing, 255, missing, 255, missing, 669, 1165, &
+                  0, missing, -7450000, 215860000, 56, 44560100, 14744800, &
+                  179641, 77320, 72, -36000000, 254000000, 0 /
 
  integer, parameter :: igdtlen212=18
  integer(kind=4)    :: igdtmpl212(igdtlen212)
@@ -195,6 +197,13 @@
      igdtlen=igdtlen203h
      allocate(igdtmpl(igdtlen))
      igdtmpl=igdtmpl203h
+     imdl=igdtmpl(8)
+     jmdl=igdtmpl(9)
+   case ('203v')
+     igdtnum=1
+     igdtlen=igdtlen203v
+     allocate(igdtmpl(igdtlen))
+     igdtmpl=igdtmpl203v
      imdl=igdtmpl(8)
      jmdl=igdtmpl(9)
    case ('127')
@@ -369,7 +378,7 @@
  maxdiffx = -99999.
  maxdiffy = -99999.
 
- if (grid == "203h") then
+ if (grid == "203h" .or. grid == "203v") then
    I_OFFSET_ODD=MOD(IGDTMPL(19)/8,2)
    kscan=I_OFFSET_ODD
    if(kscan.eq.0) THEN
