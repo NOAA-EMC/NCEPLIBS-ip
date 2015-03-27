@@ -1,0 +1,19 @@
+################################################################################
+# This makefile was produced by fmjif at 17:21:11 on 97/02/24.
+SHELL=	/bin/sh
+CMD=	copygb2_4
+FOPTS=  -O3 -g -convert big_endian -auto -mkl
+LOPTS=  -mkl
+INCS=	-I/nwprod/lib/incmod/g2_4
+OBJS=	copygb2.o
+LIBS= -L/nwprod/lib  -lg2_4 -lw3nco_4 -lbacio_4 -lip_4 -lsp_4 \
+        -lpng -ljasper -lz
+################################################################################
+$(CMD):	$(OBJS)
+	ifort $(LOPTS) $(OBJS) $(LIBS) -o $(CMD)
+	mv $(CMD) ../exec
+	rm $(OBJS)
+copygb2.o:	copygb2.f
+	ifort -c $(INCS) $(FOPTS) $*.f
+clean:	
+	-rm -f $(OBJS) $(CMD) ../exec/$(CMD)

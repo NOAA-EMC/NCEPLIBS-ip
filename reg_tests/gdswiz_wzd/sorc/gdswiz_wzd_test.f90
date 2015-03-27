@@ -73,12 +73,12 @@
  integer, parameter :: igdtlen3 = 19 ! ncep grid3; one-degree lat/lon
  integer(kind=4)    :: igdtmpl3(igdtlen3)
  data igdtmpl3 / 6, 255, missing, 255, missing, 255, missing, 360, 181, 0, missing, &
-                 90000000, 0, 24, -90000000, 359000000, 1000000, 1000000, 0 /
+                 90000000, 0, 56, -90000000, 359000000, 1000000, 1000000, 0 /
 
  integer, parameter :: igdtlen8 = 19 ! ncep grid8; mercator 
  integer(kind=4)    :: igdtmpl8(igdtlen8)  
  data igdtmpl8 / 6, 255, missing, 255, missing, 255, missing, 116, 44, &
-                 -48670000, 3104000, 24, 22500000, 61050000, 0, 64, 0, &
+                 -48670000, 3104000, 56, 22500000, 61050000, 0, 64, 0, &
                   318830000, 318830000/
 
  integer, parameter :: igdtlen127=19

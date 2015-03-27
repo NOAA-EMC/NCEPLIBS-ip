@@ -1,0 +1,19 @@
+################################################################################
+# This makefile was produced by fmjif at 17:21:11 on 97/02/24.
+SHELL=	/bin/sh
+CMD=	copygb2_8
+FOPTS=  -O3 -g -r8 -i8 -convert big_endian -auto -mkl
+LOPTS=  -mkl
+INCS=	-I/global/noscrub/George.Gayno/g2_lib/v2.5.0/incmod/g2_v2.5.0_8
+OBJS=	copygb2.o
+LIBS= /global/noscrub/George.Gayno/g2_lib/v2.5.0/libg2_v2.5.0_8.a -L/nwprod/lib -lw3nco_8 -lbacio_8 -lip_8 -lsp_8 \
+        -lpng -ljasper -lz
+################################################################################
+$(CMD):	$(OBJS)
+	ifort $(LOPTS) $(OBJS) $(LIBS) -o $(CMD)
+	mv $(CMD) ../exec
+	rm $(OBJS)
+copygb2.o:	copygb2.f
+	ifort -c $(INCS) $(FOPTS) $*.f
+clean:	
+	-rm -f $(OBJS) $(CMD) ../exec/$(CMD)
