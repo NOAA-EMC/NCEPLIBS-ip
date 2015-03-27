@@ -27,7 +27,7 @@ grid[218]="30 6 255 -1 255 -1 255 -1 614 428 12190000 226541000 56 25000000 2650
 
 for bytesize in 4 d 8 # test all three byte versions of library.
 do
-  COPYGB2=${EXEC_DIR}/copygb2_$bytesize
+  COPYGB2=${EXEC_DIR}/copygb2_test_$bytesize
   for option in 0 1 2 3 "4 0 -1" 6
   do
     if [[ $option == "4 0 -1" ]];then # spectral option does not work with bitmaps.
