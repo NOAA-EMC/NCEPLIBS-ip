@@ -301,7 +301,7 @@
  npts = imdl * jmdl
 
  if (wzd) then
-   call gdswzd(igdtnum, igdtmpl, igdtlen, kgds, iopt, npts, fill, xpts, ypts, rlon, rlat, &
+   call gdswzd(igdtnum, igdtmpl, igdtlen, iopt, npts, fill, xpts, ypts, rlon, rlat, &
                nret, lrot, crot, srot, lmap, xlon, xlat, ylon, ylat, area)
  else
    call gdswiz(kgds, iopt, npts, fill, xpts, ypts, rlon, rlat, &
@@ -341,7 +341,7 @@
  ypts=fill
 
  if (wzd) then
-   call gdswzd(igdtnum, igdtmpl, igdtlen, kgds, iopt, npts, fill, xpts, ypts, rlon, rlat, &
+   call gdswzd(igdtnum, igdtmpl, igdtlen, iopt, npts, fill, xpts, ypts, rlon, rlat, &
                nret, lrot, crot, srot, lmap, xlon, xlat, ylon, ylat, area)
  else
    call gdswiz(kgds, iopt, npts, fill, xpts, ypts, rlon, rlat, &

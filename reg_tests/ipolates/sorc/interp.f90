@@ -31,7 +31,9 @@
 !-------------------------------------------------------------------------
 
  use get_input_data, only : input_data, &
-                            input_kgds, &
+                            gdtmpl_input, &
+                            gdtlen_input, &
+                            gdtnum_input, & 
                             input_bitmap, &
                             i_input, j_input
 
@@ -45,15 +47,20 @@
  integer     :: ip, ipopt(20), output_kgds(200)
  integer     :: km, ibi, mi, iret, i, j
  integer     :: i_output, j_output, mo, no, ibo
+ integer(kind=4), allocatable :: gdtmpl_output(:)
+ integer     :: gdtlen_output, gdtnum_output
 
  logical*1, allocatable :: output_bitmap(:,:)
 
  real, allocatable :: output_rlat(:,:), output_rlon(:,:)
  real, allocatable :: output_data(:,:)
 
- integer :: grd3(200)    ! global one-degree lat/lon
- data grd3 / 0, 360, 181, 90000, 0, 128, -90000,  &
-            -1000, 1000, 1000, 0, 0, 0, 0, 0, 0, 0, 0, 0, 255, 180*0/
+ integer(kind=4), parameter   :: missing=b'11111111111111111111111111111111'
+
+ integer, parameter :: gdtlen3 = 19 ! one-degree lat/lon
+ integer(kind=4)    :: gdtmpl3(gdtlen3)
+ data gdtmpl3 / 6, 255, missing, 255, missing, 255, missing, 360, 181, 0, missing, &
+                90000000, 0, 56, -90000000, 359000000, 1000000, 1000000, 0 /
 
  integer :: grd8(200)    ! mercator
  data grd8 / 1, 116, 44, -48670, 3104, 128, 61050,  &
@@ -85,9 +92,12 @@
 
  select case (trim(grid))
    case ('3')
-     output_kgds = grd3
-     i_output = output_kgds(2)
-     j_output = output_kgds(3)
+     gdtnum_output=0
+     gdtlen_output=gdtlen3
+     allocate(gdtmpl_output(gdtlen_output))
+     gdtmpl_output=gdtmpl3
+     i_output = gdtmpl_output(8)
+     j_output = gdtmpl_output(9)
    case ('8')
      output_kgds = grd8
      i_output = output_kgds(2)
@@ -167,8 +177,9 @@
  allocate (output_data(i_output,j_output))
  allocate (output_bitmap(i_output,j_output))
 
- call ipolates(ip, ipopt, input_kgds, output_kgds, mi, mo,&
-               km, ibi, input_bitmap, input_data, &
+ call ipolates(ip, ipopt, gdtnum_input, gdtmpl_input, gdtlen_input, & 
+               gdtnum_output, gdtmpl_output, gdtlen_output, &
+               mi, mo, km, ibi, input_bitmap, input_data, &
                no, output_rlat, output_rlon, ibo, output_bitmap, output_data, iret)
 
  deallocate(input_bitmap, input_data)

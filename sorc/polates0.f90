@@ -1,4 +1,5 @@
- SUBROUTINE POLATES0(IPOPT,KGDSI,KGDSO,MI,MO,KM,IBI,LI,GI, &
+ SUBROUTINE POLATES0(IPOPT,GDTNUMI,GDTMPLI,GDTLENI,GDTNUMO,GDTMPLO,GDTLENO, &
+                     MI,MO,KM,IBI,LI,GI, &
                      NO,RLAT,RLON,IBO,LO,GO,IRET)
 !$$$  SUBPROGRAM DOCUMENTATION BLOCK
 !
@@ -92,8 +93,12 @@
 !$$$
  IMPLICIT NONE
 !
- INTEGER,               INTENT(IN   ):: IPOPT(20),KGDSI(200)
- INTEGER,               INTENT(IN   ):: KGDSO(200),MI,MO,KM
+ INTEGER,        INTENT(IN   ) :: GDTNUMI, GDTLENI
+ INTEGER(KIND=4),INTENT(IN   ) :: GDTMPLI(GDTLENI)
+ INTEGER,        INTENT(IN   ) :: GDTNUMO, GDTLENO
+ INTEGER(KIND=4),INTENT(IN   ) :: GDTMPLO(GDTLENO)
+ INTEGER,               INTENT(IN   ):: IPOPT(20)
+ INTEGER,               INTENT(IN   ):: MI,MO,KM
  INTEGER,               INTENT(IN   ):: IBI(KM)
  INTEGER,               INTENT(INOUT):: NO
  INTEGER,               INTENT(  OUT):: IRET, IBO(KM)
@@ -118,6 +123,7 @@
  INTEGER,SAVE                        :: NOX=-1,IRETX=-1
 !
  REAL,ALLOCATABLE                    :: CROT(:),SROT(:)
+ REAL,ALLOCATABLE                    :: XLON(:),XLAT(:),YLON(:),YLAT(:),AREA(:)
  REAL                                :: WX(2),WY(2)
  REAL                                :: XPTS(MO),YPTS(MO)
  REAL                                :: PMP,XIJ,YIJ,XF,YF,G,W
@@ -132,28 +138,41 @@
  MSPIRAL=MAX(IPOPT(2),0)
 ! - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 !  SAVE OR SKIP WEIGHT COMPUTATION
- IF(IRET.EQ.0.AND.(KGDSO(1).LT.0.OR. &
-    ANY(KGDSI.NE.KGDSIX).OR.ANY(KGDSO.NE.KGDSOX))) THEN
+   IF(IRET==0)THEN
+!cggg IF(IRET.EQ.0.AND.(KGDSO(1).LT.0.OR. &
+!cggg    ANY(KGDSI.NE.KGDSIX).OR.ANY(KGDSO.NE.KGDSOX))) THEN
 ! - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 !  COMPUTE NUMBER OF OUTPUT POINTS AND THEIR LATITUDES AND LONGITUDES.
-   IF(KGDSO(1).GE.0) THEN
+   IF(GDTNUMO.GE.0) THEN
      ALLOCATE (CROT(MO))
      ALLOCATE (SROT(MO))
-     CALL GDSWIZ(KGDSO, 0,MO,FILL,XPTS,YPTS,RLON,RLAT,NO,0,CROT,SROT)
-     DEALLOCATE (CROT,SROT)
+     ALLOCATE (XLON(MO))
+     ALLOCATE (XLAT(MO))
+     ALLOCATE (YLON(MO))
+     ALLOCATE (YLAT(MO))
+     ALLOCATE (AREA(MO))
+     CALL GDSWZD(GDTNUMO,GDTMPLO,GDTLENO, 0,MO,FILL,XPTS,YPTS, &
+                 RLON,RLAT,NO,0,CROT,SROT,0,XLON,XLAT,YLON,YLAT,AREA)
+     DEALLOCATE (CROT,SROT,XLON,XLAT,YLON,YLAT,AREA)
      IF(NO.EQ.0) IRET=3
    ENDIF
 ! - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 !  LOCATE INPUT POINTS
    ALLOCATE (CROT(NO))
    ALLOCATE (SROT(NO))
-   CALL GDSWIZ(KGDSI,-1,NO,FILL,XPTS,YPTS,RLON,RLAT,NV,0,CROT,SROT)
-   DEALLOCATE (CROT,SROT)
+   ALLOCATE (XLON(MO))
+   ALLOCATE (XLAT(MO))
+   ALLOCATE (YLON(MO))
+   ALLOCATE (YLAT(MO))
+   ALLOCATE (AREA(MO))
+   CALL GDSWZD(GDTNUMI,GDTMPLI,GDTLENI,-1,NO,FILL,XPTS,YPTS,RLON,RLAT,NV, &
+               0,CROT,SROT,0,XLON,XLAT,YLON,YLAT,AREA)
+   DEALLOCATE (CROT,SROT,XLON,XLAT,YLON,YLAT,AREA)
    IF(IRET.EQ.0.AND.NV.EQ.0) IRET=2
 ! - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 !  ALLOCATE AND SAVE GRID DATA
-   KGDSIX=KGDSI
-   KGDSOX=KGDSO
+!cggg   KGDSIX=KGDSI
+!cggg   KGDSOX=KGDSO
    IF(NOX.NE.NO) THEN
      IF(NOX.GE.0) DEALLOCATE(RLATX,RLONX,NXY,WXY)
      ALLOCATE(RLATX(NO),RLONX(NO),NXY(2,2,NO),WXY(2,2,NO))
@@ -163,7 +182,7 @@
 ! - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 !  COMPUTE WEIGHTS
    IF(IRET.EQ.0) THEN
-     CALL IJKGDS0(KGDSI,IJKGDSA)
+     CALL IJKGDS0(GDTNUMI,GDTMPLI,GDTLENI,IJKGDSA)
 !$OMP PARALLEL DO PRIVATE(N,XIJ,YIJ,IJX,IJY,XF,YF,J,I,WX,WY)
      DO N=1,NO
        RLONX(N)=RLON(N)
@@ -194,7 +213,7 @@
 ! - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 !  INTERPOLATE OVER ALL FIELDS
  IF(IRET.EQ.0.AND.IRETX.EQ.0) THEN
-   IF(KGDSO(1).GE.0) THEN
+   IF(GDTNUMO.GE.0) THEN
      NO=NOX
      DO N=1,NO
        RLON(N)=RLONX(N)
@@ -265,11 +284,11 @@
      IBO(K)=IBI(K)
      IF(.NOT.ALL(LO(1:NO,K))) IBO(K)=1
    ENDDO
-   IF(KGDSO(1).EQ.0) CALL POLFIXS(NO,MO,KM,RLAT,RLON,IBO,LO,GO)
+   IF(GDTNUMO.EQ.0) CALL POLFIXS(NO,MO,KM,RLAT,RLON,IBO,LO,GO)
 ! - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
  ELSE
    IF(IRET.EQ.0) IRET=IRETX
-   IF(KGDSO(1).GE.0) NO=0
+   IF(GDTNUMO.GE.0) NO=0
  ENDIF
 ! - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
  END SUBROUTINE POLATES0
