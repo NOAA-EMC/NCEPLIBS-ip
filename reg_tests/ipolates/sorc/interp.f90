@@ -45,7 +45,7 @@
 
  integer*4   :: i1
  integer     :: ip, ipopt(20), output_kgds(200)
- integer     :: km, ibi, mi, iret, i, j
+ integer     :: km, ibi, mi, iret, i, j, n
  integer     :: i_output, j_output, mo, no, ibo
  integer(kind=4), allocatable :: gdtmpl_output(:)
  integer     :: gdtlen_output, gdtnum_output
@@ -177,12 +177,15 @@
  allocate (output_data(i_output,j_output))
  allocate (output_bitmap(i_output,j_output))
 
+ do n=1,2
+
+ print*,'- CALL IPOLATES, ITERATION: ', n
  call ipolates(ip, ipopt, gdtnum_input, gdtmpl_input, gdtlen_input, & 
                gdtnum_output, gdtmpl_output, gdtlen_output, &
                mi, mo, km, ibi, input_bitmap, input_data, &
                no, output_rlat, output_rlon, ibo, output_bitmap, output_data, iret)
 
- deallocate(input_bitmap, input_data)
+!deallocate(input_bitmap, input_data)
 
  if (iret /= 0) then
    print*,'- BAD STATUS FROM IPOLATES: ', iret
@@ -204,10 +207,16 @@
  enddo
  enddo
 
- output_file = "./grid" // trim(grid) // ".opt" // interp_opt // ".bin" 
+ if(n==1) output_file = "./grid" // trim(grid) // ".opt" // interp_opt // ".bin1" 
+ if(n==2) output_file = "./grid" // trim(grid) // ".opt" // interp_opt // ".bin2" 
  open (12, file=output_file, access="direct", err=38, recl=mo*4)
  write (12, err=38, rec=1) real(output_data,4)
  close (12)
+
+ output_bitmap=.false.
+ output_data=-999.
+
+ enddo
 
  deallocate (output_rlat, output_rlon, output_data, output_bitmap)
 

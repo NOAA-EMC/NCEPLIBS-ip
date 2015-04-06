@@ -119,8 +119,9 @@
  INTEGER                             :: MSPIRAL,I1,J1,IXS,JXS
  INTEGER                             :: MX,KXS,KXT,IX,JX,NX
  INTEGER,ALLOCATABLE,SAVE            :: NXY(:,:,:)
- INTEGER,SAVE                        :: KGDSIX(200)=-1,KGDSOX(200)=-1
  INTEGER,SAVE                        :: NOX=-1,IRETX=-1
+!
+ LOGICAL                             :: SAME_GRIDI, SAME_GRIDO
 !
  REAL,ALLOCATABLE                    :: CROT(:),SROT(:)
  REAL,ALLOCATABLE                    :: XLON(:),XLAT(:),YLON(:),YLAT(:),AREA(:)
@@ -137,10 +138,12 @@
  PMP=MP*0.01
  MSPIRAL=MAX(IPOPT(2),0)
 ! - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+ CALL CHECK_GRIDS(GDTNUMI,GDTMPLI,GDTLENI,GDTNUMO,GDTMPLO,GDTLENO, &
+                  SAME_GRIDI,SAME_GRIDO) 
+! - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 !  SAVE OR SKIP WEIGHT COMPUTATION
-   IF(IRET==0)THEN
-!cggg IF(IRET.EQ.0.AND.(KGDSO(1).LT.0.OR. &
-!cggg    ANY(KGDSI.NE.KGDSIX).OR.ANY(KGDSO.NE.KGDSOX))) THEN
+ IF(IRET==0.AND.(GDTNUMO<0.OR..NOT.SAME_GRIDI.OR..NOT.SAME_GRIDO))THEN
+   print*,'compute weights'
 ! - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 !  COMPUTE NUMBER OF OUTPUT POINTS AND THEIR LATITUDES AND LONGITUDES.
    IF(GDTNUMO.GE.0) THEN
@@ -171,8 +174,6 @@
    IF(IRET.EQ.0.AND.NV.EQ.0) IRET=2
 ! - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 !  ALLOCATE AND SAVE GRID DATA
-!cggg   KGDSIX=KGDSI
-!cggg   KGDSOX=KGDSO
    IF(NOX.NE.NO) THEN
      IF(NOX.GE.0) DEALLOCATE(RLATX,RLONX,NXY,WXY)
      ALLOCATE(RLATX(NO),RLONX(NO),NXY(2,2,NO),WXY(2,2,NO))
@@ -292,3 +293,52 @@
  ENDIF
 ! - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
  END SUBROUTINE POLATES0
+! - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+ SUBROUTINE CHECK_GRIDS(GDTNUMI,GDTMPLI,GDTLENI,GDTNUMO,GDTMPLO,GDTLENO, &
+                        SAME_GRIDI, SAME_GRIDO) 
+
+ IMPLICIT NONE
+
+ INTEGER,        INTENT(IN   ) :: GDTNUMI, GDTLENI
+ INTEGER(KIND=4),INTENT(IN   ) :: GDTMPLI(GDTLENI)
+ INTEGER,        INTENT(IN   ) :: GDTNUMO, GDTLENO
+ INTEGER(KIND=4),INTENT(IN   ) :: GDTMPLO(GDTLENO)
+
+ INTEGER, SAVE                 :: GDTNUMI_SAVE=-9999 
+ INTEGER, SAVE                 :: GDTLENI_SAVE=-9999
+ INTEGER, SAVE                 :: GDTMPLI_SAVE(1000)=-9999
+ INTEGER, SAVE                 :: GDTNUMO_SAVE=-9999 
+ INTEGER, SAVE                 :: GDTLENO_SAVE=-9999
+ INTEGER, SAVE                 :: GDTMPLO_SAVE(1000)=-9999
+
+ LOGICAL,        INTENT(  OUT) :: SAME_GRIDI, SAME_GRIDO
+
+ SAME_GRIDI=.FALSE.
+ IF(GDTNUMI==GDTNUMI_SAVE)THEN
+   IF(GDTLENI==GDTLENI_SAVE)THEN
+     IF(ALL(GDTMPLI==GDTMPLI_SAVE(1:GDTLENI)))THEN
+       SAME_GRIDI=.TRUE.
+     ENDIF
+   ENDIF
+ ENDIF
+
+ GDTNUMI_SAVE=GDTNUMI
+ GDTLENI_SAVE=GDTLENI
+ GDTMPLI_SAVE(1:GDTLENI)=GDTMPLI
+ GDTMPLI_SAVE(GDTLENI+1:1000)=-9999
+
+ SAME_GRIDO=.FALSE.
+ IF(GDTNUMO==GDTNUMO_SAVE)THEN
+   IF(GDTLENO==GDTLENO_SAVE)THEN
+     IF(ALL(GDTMPLO==GDTMPLO_SAVE(1:GDTLENO)))THEN
+       SAME_GRIDO=.TRUE.
+     ENDIF
+   ENDIF
+ ENDIF
+
+ GDTNUMO_SAVE=GDTNUMO
+ GDTLENO_SAVE=GDTLENO
+ GDTMPLO_SAVE(1:GDTLENO)=GDTMPLO
+ GDTMPLO_SAVE(GDTLENO+1:1000)=-9999
+
+ END SUBROUTINE CHECK_GRIDS
