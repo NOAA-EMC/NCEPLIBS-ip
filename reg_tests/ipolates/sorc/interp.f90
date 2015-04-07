@@ -43,12 +43,12 @@
  character*3             :: grid
  character*100           :: output_file
 
- integer*4   :: i1
- integer     :: ip, ipopt(20), output_kgds(200)
- integer     :: km, ibi, mi, iret, i, j, n
- integer     :: i_output, j_output, mo, no, ibo
+ integer(kind=4)              :: i1
+ integer                      :: ip, ipopt(20)
+ integer                      :: km, ibi, mi, iret, i, j, n
+ integer                      :: i_output, j_output, mo, no, ibo
  integer(kind=4), allocatable :: gdtmpl_output(:)
- integer     :: gdtlen_output, gdtnum_output
+ integer                      :: gdtlen_output, gdtnum_output
 
  logical*1, allocatable :: output_bitmap(:,:)
 
@@ -62,29 +62,42 @@
  data gdtmpl3 / 6, 255, missing, 255, missing, 255, missing, 360, 181, 0, missing, &
                 90000000, 0, 56, -90000000, 359000000, 1000000, 1000000, 0 /
 
- integer :: grd8(200)    ! mercator
- data grd8 / 1, 116, 44, -48670, 3104, 128, 61050,  &
-             0, 22500, 0, 64, 318830, 318830, 0, 0, 0, 0, 0, 0, 255, 180*0/
+ integer, parameter :: gdtlen8 = 19 ! ncep grid8; mercator
+ integer(kind=4)    :: gdtmpl8(gdtlen8)
+ data gdtmpl8 / 6, 255, missing, 255, missing, 255, missing, 116, 44, &
+                -48670000, 3104000, 56, 22500000, 61050000, 0, 64, 0, &
+                 318830000, 318830000/
 
- integer :: grd127(200)  ! gaussian (t254)
- data grd127 /4, 768, 384, 89642, 0, 128, -89642,  &
-             -469, 469, 192, 0, 0, 255, 0, 0, 0, 0, 0, 0, 255, 180*0/
+ integer, parameter :: gdtlen127=19
+ integer(kind=4)    :: gdtmpl127(gdtlen127)
+ data gdtmpl127 /6, 255, missing, 255, missing, 255, missing, 768, 384, &
+                 0, missing, 89642000, 0, 48, -89642000, 359531000,  &
+                 469000, 192, 0/
 
- integer :: grd203(200)  ! nam 12km e-grid
- data grd203 /203, 669, 1165, -7450, -144140, 136, 54000,  &
-              -106000, 90, 77, 64, 0, 0, 0, 0, 0, 0, 0, 0, 255, 180*0/
+ integer, parameter :: gdtlen203=22
+ integer(kind=4)    :: gdtmpl203(gdtlen203)
+ data gdtmpl203/6, 255, missing, 255, missing, 255, missing, 669, 1165, &
+                0, missing, -7450000, 215860000, 56, 44560100, 14744800, &
+                179641, 77320, 68, -36000000, 254000000, 0 /
 
- integer :: grd205(200)  ! nam 12km b-grid
- data grd205 /205, 954, 835, -7491, -144134, 136, 54000,  &
-             -106000, 126, 90, 64, 44540, 14800, 0, 0, 0, 0, 0, 0, 255, 180*0/
+ integer, parameter :: gdtlen205=22
+ integer(kind=4)    :: gdtmpl205(gdtlen205)
+ data gdtmpl205/6, 255, missing, 255, missing, 255, missing, 954, 835, &
+                0, missing, -7491200, 215866300, 56, 44539600, 14801500, &
+                126000, 108000, 64, -36000000, 254000000, 0 /
 
- integer :: grd212(200)  ! afwa nh polar, spherical earth
- data grd212 /5,2*512,-20826,145000,8,-80000,2*47625,0,  &
-              9*0,255,180*0/
+ integer, parameter :: gdtlen212=18
+ integer(kind=4)    :: gdtmpl212(gdtlen212)
+ data gdtmpl212 /6, 255, missing, 255, missing, 255, missing, 512, 512, &
+                 -20826000, 145000000, 56, 60000000, 280000000, 47625000, 47625000, &
+                 0, 0/
 
- integer :: grd218(200)  ! lambert conformal (ncep grid 218) 
- data grd218 /3, 614, 428, 12190, -133459, 8, -95000,  &
-              12191, 12191, 0, 64, 25000, 25000, 0, 0, 0, 0, 0, 0, 255, 180*0/
+ integer, parameter :: gdtlen218 = 22 ! ncep grid 218; lambert conf
+ integer(kind=4)    :: gdtmpl218(gdtlen218)
+ data gdtmpl218 / 6, 255, missing, 255, missing, 255, missing, 614, 428, &
+                  12190000, 226541000, 56, 25000000, 265000000, &
+                  12191000, 12191000, 0, 64, 25000000, 25000000, -90000000, 0/
+
  i1=1
  call getarg(i1, grid)
  i1=2
@@ -99,29 +112,47 @@
      i_output = gdtmpl_output(8)
      j_output = gdtmpl_output(9)
    case ('8')
-     output_kgds = grd8
-     i_output = output_kgds(2)
-     j_output = output_kgds(3)
+     gdtnum_output=10
+     gdtlen_output=gdtlen8
+     allocate(gdtmpl_output(gdtlen_output))
+     gdtmpl_output=gdtmpl8
+     i_output = gdtmpl_output(8)
+     j_output = gdtmpl_output(9)
    case ('127')
-     output_kgds = grd127
-     i_output = output_kgds(2)
-     j_output = output_kgds(3)
+     gdtnum_output=40
+     gdtlen_output=gdtlen127
+     allocate(gdtmpl_output(gdtlen_output))
+     gdtmpl_output=gdtmpl127
+     i_output = gdtmpl_output(8)
+     j_output = gdtmpl_output(9)
    case ('203')
-     output_kgds = grd203
-     i_output = output_kgds(2)
-     j_output = output_kgds(3)
+     gdtnum_output=1
+     gdtlen_output=gdtlen203
+     allocate(gdtmpl_output(gdtlen_output))
+     gdtmpl_output=gdtmpl203
+     i_output = gdtmpl_output(8)
+     j_output = gdtmpl_output(9)
    case ('205')
-     output_kgds = grd205
-     i_output = output_kgds(2)
-     j_output = output_kgds(3)
+     gdtnum_output=1
+     gdtlen_output=gdtlen205
+     allocate(gdtmpl_output(gdtlen_output))
+     gdtmpl_output=gdtmpl205
+     i_output = gdtmpl_output(8)
+     j_output = gdtmpl_output(9)
    case ('212')
-     output_kgds = grd212
-     i_output = output_kgds(2)
-     j_output = output_kgds(3)
+     gdtnum_output=20
+     gdtlen_output=gdtlen212
+     allocate(gdtmpl_output(gdtlen_output))
+     gdtmpl_output=gdtmpl212
+     i_output = gdtmpl_output(8)
+     j_output = gdtmpl_output(9)
    case ('218')
-     output_kgds = grd218
-     i_output = output_kgds(2)
-     j_output = output_kgds(3)
+     gdtnum_output=30
+     gdtlen_output=gdtlen218
+     allocate(gdtmpl_output(gdtlen_output))
+     gdtmpl_output=gdtmpl218
+     i_output = gdtmpl_output(8)
+     j_output = gdtmpl_output(9)
    case default
      print*,"ERROR: ENTER VALID GRID NUMBER."
      stop 55

@@ -152,7 +152,7 @@
 !data grd218 /3, 614, 428, 12190, -133459, 8, -95000,  &
 !             12191, 12191, 0, 64, 25000, 25000, 0, 0, 0, 0, 0, 0, 255, 180*0/
 
- integer, parameter :: igdtlen218 = 22 ! ncep grid8; mercator 
+ integer, parameter :: igdtlen218 = 22 ! ncep grid 218; lambert conf
  integer(kind=4)    :: igdtmpl218(igdtlen218)  
  data igdtmpl218 / 6, 255, missing, 255, missing, 255, missing, 614, 428, &
                    12190000, 226541000, 56, 25000000, 265000000, &
