@@ -138,8 +138,8 @@
  PMP=MP*0.01
  MSPIRAL=MAX(IPOPT(2),0)
 ! - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
- CALL CHECK_GRIDS(GDTNUMI,GDTMPLI,GDTLENI,GDTNUMO,GDTMPLO,GDTLENO, &
-                  SAME_GRIDI,SAME_GRIDO) 
+ CALL CHECK_GRIDS0(GDTNUMI,GDTMPLI,GDTLENI,GDTNUMO,GDTMPLO,GDTLENO, &
+                   SAME_GRIDI,SAME_GRIDO) 
 ! - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 !  SAVE OR SKIP WEIGHT COMPUTATION
  IF(IRET==0.AND.(GDTNUMO<0.OR..NOT.SAME_GRIDI.OR..NOT.SAME_GRIDO))THEN
@@ -294,8 +294,8 @@
 ! - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
  END SUBROUTINE POLATES0
 ! - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
- SUBROUTINE CHECK_GRIDS(GDTNUMI,GDTMPLI,GDTLENI,GDTNUMO,GDTMPLO,GDTLENO, &
-                        SAME_GRIDI, SAME_GRIDO) 
+ SUBROUTINE CHECK_GRIDS0(GDTNUMI,GDTMPLI,GDTLENI,GDTNUMO,GDTMPLO,GDTLENO, &
+                         SAME_GRIDI, SAME_GRIDO) 
 
  IMPLICIT NONE
 
@@ -341,4 +341,4 @@
  GDTMPLO_SAVE(1:GDTLENO)=GDTMPLO
  GDTMPLO_SAVE(GDTLENO+1:1000)=-9999
 
- END SUBROUTINE CHECK_GRIDS
+ END SUBROUTINE CHECK_GRIDS0

@@ -1,4 +1,5 @@
- SUBROUTINE POLATES1(IPOPT,KGDSI,KGDSO,MI,MO,KM,IBI,LI,GI, &
+ SUBROUTINE POLATES1(IPOPT,GDTNUMI,GDTMPLI,GDTLENI,GDTNUMO,GDTMPLO,GDTLENO, &
+                     MI,MO,KM,IBI,LI,GI, &
                      NO,RLAT,RLON,IBO,LO,GO,IRET)
 !$$$  SUBPROGRAM DOCUMENTATION BLOCK
 !
@@ -96,8 +97,12 @@
 !$$$
  IMPLICIT NONE
 !
- INTEGER,                INTENT(IN   ):: IPOPT(20),KGDSI(200)
- INTEGER,                INTENT(IN   ):: KGDSO(200),MI,MO,KM
+ INTEGER,        INTENT(IN   ) :: GDTNUMI, GDTLENI
+ INTEGER(KIND=4),INTENT(IN   ) :: GDTMPLI(GDTLENI)
+ INTEGER,        INTENT(IN   ) :: GDTNUMO, GDTLENO
+ INTEGER(KIND=4),INTENT(IN   ) :: GDTMPLO(GDTLENO)
+ INTEGER,                INTENT(IN   ):: IPOPT(20)
+ INTEGER,                INTENT(IN   ):: MI,MO,KM
  INTEGER,                INTENT(IN   ):: IBI(KM)
  INTEGER,                INTENT(INOUT):: NO
  INTEGER,                INTENT(  OUT):: IRET, IBO(KM)
@@ -115,15 +120,17 @@
  INTEGER                              :: IJX(4),IJY(4)
  INTEGER                              :: MCON,MP,N,I,J,K
  INTEGER                              :: NK,NV,IJKGDS1
- INTEGER,            SAVE             :: KGDSIX(200)=-1,KGDSOX(200)=-1
  INTEGER,            SAVE             :: NOX=-1,IRETX=-1
  INTEGER,            ALLOCATABLE,SAVE :: NXY(:,:,:),NC(:)
+!
+ LOGICAL                              :: SAME_GRIDI, SAME_GRIDO
 !
  REAL                                 :: PMP,XIJ,YIJ,XF,YF
  REAL                                 :: G,W,GMIN,GMAX
  REAL                                 :: WX(4),WY(4)
  REAL                                 :: XPTS(MO),YPTS(MO)
- REAL,               ALLOCATABLE      :: DUM1(:),DUM2(:)
+ REAL,               ALLOCATABLE      :: DUM1(:),DUM2(:),DUM3(:)
+ REAL,               ALLOCATABLE      :: DUM4(:),DUM5(:),DUM6(:),DUM7(:)
  REAL,               ALLOCATABLE,SAVE :: RLATX(:),RLONX(:),WXY(:,:,:)
 ! - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 !  SET PARAMETERS
@@ -134,28 +141,42 @@
  IF(MP.LT.0.OR.MP.GT.100) IRET=32
  PMP=MP*0.01
 ! - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+ CALL CHECK_GRIDS1(GDTNUMI,GDTMPLI,GDTLENI,GDTNUMO,GDTMPLO,GDTLENO, &
+                  SAME_GRIDI,SAME_GRIDO)
+! - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 !  SAVE OR SKIP WEIGHT COMPUTATION
- IF(IRET.EQ.0.AND.(KGDSO(1).LT.0.OR.ANY(KGDSI.NE.KGDSIX).OR.ANY(KGDSO.NE.KGDSOX))) THEN
+ IF(IRET.EQ.0.AND.(GDTNUMO.LT.0.OR..NOT.SAME_GRIDI.OR..NOT.SAME_GRIDO))THEN
+   print*,'compute weights'
 ! - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 !  COMPUTE NUMBER OF OUTPUT POINTS AND THEIR LATITUDES AND LONGITUDES.
-   IF(KGDSO(1).GE.0) THEN
+   IF(GDTNUMO.GE.0) THEN
      ALLOCATE(DUM1(MO))
      ALLOCATE(DUM2(MO))
-     CALL GDSWIZ(KGDSO, 0,MO,FILL,XPTS,YPTS,RLON,RLAT,NO,0,DUM1,DUM2)
-     DEALLOCATE(DUM1,DUM2)
+     ALLOCATE(DUM3(MO))
+     ALLOCATE(DUM4(MO))
+     ALLOCATE(DUM5(MO))
+     ALLOCATE(DUM6(MO))
+     ALLOCATE(DUM7(MO))
+     CALL GDSWZD(GDTNUMO,GDTMPLO,GDTLENO, 0,MO,FILL,XPTS,YPTS,RLON,RLAT,NO,0, &
+                 DUM1,DUM2,0,DUM3,DUM4,DUM5,DUM6,DUM7)
+     DEALLOCATE(DUM1,DUM2,DUM3,DUM4,DUM5,DUM6,DUM7)
      IF(NO.EQ.0) IRET=3
    ENDIF
 ! - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 !  LOCATE INPUT POINTS
    ALLOCATE(DUM1(NO))
    ALLOCATE(DUM2(NO))
-   CALL GDSWIZ(KGDSI,-1,NO,FILL,XPTS,YPTS,RLON,RLAT,NV,0,DUM1,DUM2)
-   DEALLOCATE(DUM1,DUM2)
+   ALLOCATE(DUM3(MO))
+   ALLOCATE(DUM4(MO))
+   ALLOCATE(DUM5(MO))
+   ALLOCATE(DUM6(MO))
+   ALLOCATE(DUM7(MO))
+   CALL GDSWZD(GDTNUMI,GDTMPLI,GDTLENI,-1,NO,FILL,XPTS,YPTS,RLON,RLAT, &
+               NV,0,DUM1,DUM2,0,DUM3,DUM4,DUM5,DUM6,DUM7)
+   DEALLOCATE(DUM1,DUM2,DUM3,DUM4,DUM5,DUM6,DUM7)
    IF(IRET.EQ.0.AND.NV.EQ.0) IRET=2
 ! - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 !  ALLOCATE AND SAVE GRID DATA
-   KGDSIX=KGDSI
-   KGDSOX=KGDSO
    IF(NOX.NE.NO) THEN
      IF(NOX.GE.0) DEALLOCATE(RLATX,RLONX,NC,NXY,WXY)
      ALLOCATE(RLATX(NO),RLONX(NO),NC(NO),NXY(4,4,NO),WXY(4,4,NO))
@@ -165,7 +186,7 @@
 ! - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 !  COMPUTE WEIGHTS
    IF(IRET.EQ.0) THEN
-     CALL IJKGDS0(KGDSI,IJKGDSA)
+     CALL IJKGDS0(GDTNUMI,GDTMPLI,GDTLENI,IJKGDSA)
 !$OMP PARALLEL DO PRIVATE(N,XIJ,YIJ,IJX,IJY,XF,YF,J,I,WX,WY)
      DO N=1,NO
        RLONX(N)=RLON(N)
@@ -219,7 +240,7 @@
 ! - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 !  INTERPOLATE OVER ALL FIELDS
  IF(IRET.EQ.0.AND.IRETX.EQ.0) THEN
-   IF(KGDSO(1).GE.0) THEN
+   IF(GDTNUMO.GE.0) THEN
      NO=NOX
      DO N=1,NO
        RLON(N)=RLONX(N)
@@ -263,11 +284,60 @@
      IBO(K)=IBI(K)
      IF(.NOT.ALL(LO(1:NO,K))) IBO(K)=1
    ENDDO
-   IF(KGDSO(1).EQ.0) CALL POLFIXS(NO,MO,KM,RLAT,RLON,IBO,LO,GO)
+   IF(GDTNUMO.EQ.0) CALL POLFIXS(NO,MO,KM,RLAT,RLON,IBO,LO,GO)
 ! - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
  ELSE
    IF(IRET.EQ.0) IRET=IRETX
-   IF(KGDSO(1).GE.0) NO=0
+   IF(GDTNUMO.GE.0) NO=0
  ENDIF
 ! - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
  END SUBROUTINE POLATES1
+! - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+ SUBROUTINE CHECK_GRIDS1(GDTNUMI,GDTMPLI,GDTLENI,GDTNUMO,GDTMPLO,GDTLENO, &
+                        SAME_GRIDI, SAME_GRIDO)
+
+ IMPLICIT NONE
+
+ INTEGER,        INTENT(IN   ) :: GDTNUMI, GDTLENI
+ INTEGER(KIND=4),INTENT(IN   ) :: GDTMPLI(GDTLENI)
+ INTEGER,        INTENT(IN   ) :: GDTNUMO, GDTLENO
+ INTEGER(KIND=4),INTENT(IN   ) :: GDTMPLO(GDTLENO)
+
+ INTEGER, SAVE                 :: GDTNUMI_SAVE=-9999
+ INTEGER, SAVE                 :: GDTLENI_SAVE=-9999
+ INTEGER, SAVE                 :: GDTMPLI_SAVE(1000)=-9999
+ INTEGER, SAVE                 :: GDTNUMO_SAVE=-9999
+ INTEGER, SAVE                 :: GDTLENO_SAVE=-9999
+ INTEGER, SAVE                 :: GDTMPLO_SAVE(1000)=-9999
+
+ LOGICAL,        INTENT(  OUT) :: SAME_GRIDI, SAME_GRIDO
+
+ SAME_GRIDI=.FALSE.
+ IF(GDTNUMI==GDTNUMI_SAVE)THEN
+   IF(GDTLENI==GDTLENI_SAVE)THEN
+     IF(ALL(GDTMPLI==GDTMPLI_SAVE(1:GDTLENI)))THEN
+       SAME_GRIDI=.TRUE.
+     ENDIF
+   ENDIF
+ ENDIF
+
+ GDTNUMI_SAVE=GDTNUMI
+ GDTLENI_SAVE=GDTLENI
+ GDTMPLI_SAVE(1:GDTLENI)=GDTMPLI
+ GDTMPLI_SAVE(GDTLENI+1:1000)=-9999
+
+ SAME_GRIDO=.FALSE.
+ IF(GDTNUMO==GDTNUMO_SAVE)THEN
+   IF(GDTLENO==GDTLENO_SAVE)THEN
+     IF(ALL(GDTMPLO==GDTMPLO_SAVE(1:GDTLENO)))THEN
+       SAME_GRIDO=.TRUE.
+     ENDIF
+   ENDIF
+ ENDIF
+
+ GDTNUMO_SAVE=GDTNUMO
+ GDTLENO_SAVE=GDTLENO
+ GDTMPLO_SAVE(1:GDTLENO)=GDTMPLO
+ GDTMPLO_SAVE(GDTLENO+1:1000)=-9999
+
+ END SUBROUTINE CHECK_GRIDS1

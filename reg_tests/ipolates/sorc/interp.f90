@@ -88,9 +88,9 @@
 
  integer, parameter :: gdtlen212=18
  integer(kind=4)    :: gdtmpl212(gdtlen212)
- data gdtmpl212 /6, 255, missing, 255, missing, 255, missing, 512, 512, &
-                 -20826000, 145000000, 56, 60000000, 280000000, 47625000, 47625000, &
-                 0, 0/
+ data gdtmpl212 /6, 255, missing, 255, missing, 255, missing, 513, 513, &
+                 -20826000, 235000000, 56, 60000000, 280000000, 47625000, 47625000, &
+                 0, 64/
 
  integer, parameter :: gdtlen218 = 22 ! ncep grid 218; lambert conf
  integer(kind=4)    :: gdtmpl218(gdtlen218)
