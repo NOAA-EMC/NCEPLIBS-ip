@@ -1,4 +1,6 @@
- SUBROUTINE IPOLATEV(IP,IPOPT,KGDSI,KGDSO,MI,MO,KM,IBI,LI,UI,VI, &
+ SUBROUTINE IPOLATEV(IP,IPOPT,GDTNUMI,GDTMPLI,GDTLENI, &
+                     GDTNUMO,GDTMPLO,GDTLENO, &
+                     MI,MO,KM,IBI,LI,UI,VI, &
                      NO,RLAT,RLON,CROT,SROT,IBO,LO,UO,VO,IRET)
 !$$$  SUBPROGRAM DOCUMENTATION BLOCK
 !
@@ -171,7 +173,10 @@
 !
  INTEGER,               INTENT(IN   ):: IP, IPOPT(20), IBI(KM)
  INTEGER,               INTENT(IN   ):: KM, MI, MO
- INTEGER,               INTENT(INOUT):: KGDSI(200), KGDSO(200)
+ INTEGER,        INTENT(IN   ) :: GDTNUMI, GDTLENI
+ INTEGER(KIND=4),INTENT(IN   ) :: GDTMPLI(GDTLENI)
+ INTEGER,        INTENT(IN   ) :: GDTNUMO, GDTLENO
+ INTEGER(KIND=4),INTENT(IN   ) :: GDTMPLO(GDTLENO)
  INTEGER,               INTENT(  OUT):: IBO(KM), IRET, NO
 !
  LOGICAL*1,             INTENT(IN   ):: LI(MI,KM)
@@ -182,50 +187,43 @@
  REAL,                  INTENT(INOUT):: RLAT(MO),RLON(MO)
  REAL,                  INTENT(  OUT):: UO(MO,KM),VO(MO,KM)
 !
- INTEGER                             :: K, N, KGDSI11, KGDSO11
-! - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
- IF(KGDSI(1).EQ.201.OR.KGDSI(1).EQ.203) THEN
-   KGDSI11=KGDSI(11)
-   KGDSI(11)=IOR(KGDSI(11),256)
- ENDIF
- IF(KGDSO(1).EQ.201.OR.KGDSO(1).EQ.203) THEN
-   KGDSO11=KGDSO(11)
-   KGDSO(11)=IOR(KGDSO(11),256)
- ENDIF
+ INTEGER                             :: K, N
 ! - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 !  BILINEAR INTERPOLATION
  IF(IP.EQ.0) THEN
-   CALL POLATEV0(IPOPT,KGDSI,KGDSO,MI,MO,KM,IBI,LI,UI,VI,&
+   CALL POLATEV0(IPOPT,GDTNUMI,GDTMPLI,GDTLENI, &
+                 GDTNUMO,GDTMPLO,GDTLENO, &
+                 MI,MO,KM,IBI,LI,UI,VI,&
                  NO,RLAT,RLON,CROT,SROT,IBO,LO,UO,VO,IRET)
 ! - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 !  BICUBIC INTERPOLATION
- ELSEIF(IP.EQ.1) THEN
-   CALL POLATEV1(IPOPT,KGDSI,KGDSO,MI,MO,KM,IBI,LI,UI,VI,&
-                 NO,RLAT,RLON,CROT,SROT,IBO,LO,UO,VO,IRET)
+!ELSEIF(IP.EQ.1) THEN
+!  CALL POLATEV1(IPOPT,KGDSI,KGDSO,MI,MO,KM,IBI,LI,UI,VI,&
+!                NO,RLAT,RLON,CROT,SROT,IBO,LO,UO,VO,IRET)
 ! - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 !  NEIGHBOR INTERPOLATION
- ELSEIF(IP.EQ.2) THEN
-   CALL POLATEV2(IPOPT,KGDSI,KGDSO,MI,MO,KM,IBI,LI,UI,VI,&
-                 NO,RLAT,RLON,CROT,SROT,IBO,LO,UO,VO,IRET)
+!ELSEIF(IP.EQ.2) THEN
+!  CALL POLATEV2(IPOPT,KGDSI,KGDSO,MI,MO,KM,IBI,LI,UI,VI,&
+!                NO,RLAT,RLON,CROT,SROT,IBO,LO,UO,VO,IRET)
 ! - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 !  BUDGET INTERPOLATION
- ELSEIF(IP.EQ.3) THEN
-   CALL POLATEV3(IPOPT,KGDSI,KGDSO,MI,MO,KM,IBI,LI,UI,VI,&
-                 NO,RLAT,RLON,CROT,SROT,IBO,LO,UO,VO,IRET)
+!ELSEIF(IP.EQ.3) THEN
+!  CALL POLATEV3(IPOPT,KGDSI,KGDSO,MI,MO,KM,IBI,LI,UI,VI,&
+!                NO,RLAT,RLON,CROT,SROT,IBO,LO,UO,VO,IRET)
 ! - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 !  SPECTRAL INTERPOLATION
- ELSEIF(IP.EQ.4) THEN
-   CALL POLATEV4(IPOPT,KGDSI,KGDSO,MI,MO,KM,IBI,LI,UI,VI,&
-                 NO,RLAT,RLON,CROT,SROT,IBO,LO,UO,VO,IRET)
+!ELSEIF(IP.EQ.4) THEN
+!  CALL POLATEV4(IPOPT,KGDSI,KGDSO,MI,MO,KM,IBI,LI,UI,VI,&
+!                NO,RLAT,RLON,CROT,SROT,IBO,LO,UO,VO,IRET)
 ! - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 !  NEIGHBOR-BUDGET INTERPOLATION
- ELSEIF(IP.EQ.6) THEN
-   CALL POLATEV6(IPOPT,KGDSI,KGDSO,MI,MO,KM,IBI,LI,UI,VI,&
-                 NO,RLAT,RLON,CROT,SROT,IBO,LO,UO,VO,IRET)
+!ELSEIF(IP.EQ.6) THEN
+!  CALL POLATEV6(IPOPT,KGDSI,KGDSO,MI,MO,KM,IBI,LI,UI,VI,&
+!                NO,RLAT,RLON,CROT,SROT,IBO,LO,UO,VO,IRET)
 ! - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 !  UNRECOGNIZED INTERPOLATION METHOD
  ELSE
-   IF(KGDSO(1).GE.0) NO=0
+   IF(GDTNUMO.GE.0) NO=0
    DO K=1,KM
      IBO(K)=1
      DO N=1,NO
@@ -237,10 +235,4 @@
    IRET=1
  ENDIF
 ! - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
- IF(KGDSI(1).EQ.201.OR.KGDSI(1).EQ.203) THEN
-   KGDSI(11)=KGDSI11
- ENDIF
- IF(KGDSO(1).EQ.201.OR.KGDSO(1).EQ.203) THEN
-   KGDSO(11)=KGDSO11
- ENDIF
  END SUBROUTINE IPOLATEV

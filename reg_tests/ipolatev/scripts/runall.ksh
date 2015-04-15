@@ -83,6 +83,7 @@ EXEC_DIR=$REG_DIR/ipolatev/exec
 
 # input u/v wind data
 INPUT_DATA=$REG_DIR/ipolatev/data/gfs.500mb.winds.grb
+INPUT_DATA2=$REG_DIR/ipolatev/data/gfs.500mb.winds.grb2
 
 WORK=${WORK_DIR}/ipolatev.${num_threads}threads
 rm -fr $WORK
@@ -94,7 +95,7 @@ cp $INPUT_DATA  $WORK_CTL/fort.9
 WORK_TEST=${WORK}/test
 mkdir -p $WORK_TEST
 cp $EXEC_DIR/ipolatev_test_*.exe $WORK_TEST
-cp $INPUT_DATA  $WORK_TEST/fort.9
+cp $INPUT_DATA2  $WORK_TEST/fort.9
 
 ulimit -s 2048000
 
@@ -103,7 +104,7 @@ reg_test_failed=0
 for grids in "3" "8" "127" "203" "205" "212" "218" 
 do
   echo
-  for option in "0" "1" "2" "3" "4" "6"  # interpolation option
+  for option in "0"
   do
     for bytesize in "4" "8" "d"  # the three byte versions of the library
     do
