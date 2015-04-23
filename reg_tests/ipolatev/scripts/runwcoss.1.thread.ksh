@@ -9,9 +9,11 @@
 #BSUB -R affinity[core]
 #BSUB -R rusage[mem=500]
 #BSUB -R span[ptile=1]
-#BSUB -W 0:05
+#BSUB -W 0:10
 
 set -x
+
+export REG_DIR=${PWD}/../..
 
 ./runall.ksh 1
 
