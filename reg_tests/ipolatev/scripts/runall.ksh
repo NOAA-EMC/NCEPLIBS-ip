@@ -80,7 +80,7 @@ REG_DIR=${REG_DIR:-../..}
 
 # where control and test programs are
 EXEC_DIR=$REG_DIR/ipolatev/exec
-#cggg GRADS_DIR=$REG_DIR/ipolatev/grads
+GRADS_DIR=$REG_DIR/ipolatev/grads
 
 # input u/v wind data
 INPUT_DATA=$REG_DIR/ipolatev/data/gfs.500mb.winds.grb
@@ -105,7 +105,7 @@ reg_test_failed=0
 for grids in "3" "8" "127" "203" "205" "212" "218" 
 do
   echo
-  for option in "3"
+  for option in "6"
   do
     for bytesize in "4" "8" "d"  # the three byte versions of the library
     do
@@ -147,7 +147,7 @@ do
       if ((ctl_failed == 1));then
         FAILED_DIR=$WORK_CTL/failed.grid${grids}.opt${option}.${bytesize}byte
         mkdir -p $FAILED_DIR
-#cggg        cp $GRADS_DIR/grid*${grids}*.ctl $FAILED_DIR
+        cp $GRADS_DIR/grid*${grids}*.ctl $FAILED_DIR
         if [ -s $WORK_CTL/ctl.log ]; then
           mv $WORK_CTL/ctl.log $FAILED_DIR
         fi
@@ -164,7 +164,7 @@ do
       if ((test_failed == 1));then
         FAILED_DIR=$WORK_TEST/failed.grid${grids}.opt${option}.${bytesize}byte
         mkdir -p $FAILED_DIR
-#cggg        cp $GRADS_DIR/grid*${grids}*.ctl $FAILED_DIR
+        cp $GRADS_DIR/grid*${grids}*.ctl $FAILED_DIR
         if [ -s $WORK_TEST/test.log ]; then
           mv $WORK_TEST/test.log $FAILED_DIR
         fi
