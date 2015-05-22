@@ -4,7 +4,7 @@
 # Script to run the copygb regression test on WCOSS.
 #
 # Invoke this script as follows:
-# bsub < run.wcoss.lsf
+# "cat run.wcoss.lsf | bsub"
 #-----------------------------------------------------
 
 #BSUB -oo copygb.log
@@ -13,7 +13,7 @@
 #BSUB -J copygb
 #BSUB -R affinity[core]
 #BSUB -R rusage[mem=2500]
-#BSUB -P GFS-MTN
+#BSUB -P GFS-T2O
 #BSUB -W 3:00
 
 set -x
