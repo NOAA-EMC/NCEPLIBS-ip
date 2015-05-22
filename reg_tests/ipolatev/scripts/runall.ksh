@@ -105,7 +105,7 @@ reg_test_failed=0
 for grids in "3" "8" "127" "203" "205" "212" "218" 
 do
   echo
-  for option in "6"
+  for option in "4"
   do
     for bytesize in "4" "8" "d"  # the three byte versions of the library
     do

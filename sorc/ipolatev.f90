@@ -218,9 +218,11 @@
                  NO,RLAT,RLON,CROT,SROT,IBO,LO,UO,VO,IRET)
 ! - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 !  SPECTRAL INTERPOLATION
-!ELSEIF(IP.EQ.4) THEN
-!  CALL POLATEV4(IPOPT,KGDSI,KGDSO,MI,MO,KM,IBI,LI,UI,VI,&
-!                NO,RLAT,RLON,CROT,SROT,IBO,LO,UO,VO,IRET)
+ ELSEIF(IP.EQ.4) THEN
+   CALL POLATEV4(IPOPT,GDTNUMI,GDTMPLI,GDTLENI, &
+                 GDTNUMO,GDTMPLO,GDTLENO, &
+                 MI,MO,KM,IBI,LI,UI,VI,&
+                 NO,RLAT,RLON,CROT,SROT,IBO,LO,UO,VO,IRET)
 ! - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 !  NEIGHBOR-BUDGET INTERPOLATION
  ELSEIF(IP.EQ.6) THEN
