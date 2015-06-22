@@ -31,10 +31,12 @@ do
   for option in 0 1 2 3 "4 0 -1" 6
   do
     if [[ $option == "4 0 -1" ]];then # spectral option does not work with bitmaps.
-      INPUT_FILE=/global/save/George.Gayno/iplib_branches/ip_grib2/reg_tests/copygb2/data/elevation.grb2
+#     INPUT_FILE=/global/save/George.Gayno/iplib_branches/ip_grib2/reg_tests/copygb2/data/elevation.grb2
+      INPUT_FILE=/global/save/George.Gayno/iplib_branches/ip_grib2/reg_tests/copygb2/data/uv_wind.grb2
       opt=4
     else
-      INPUT_FILE=/global/save/George.Gayno/iplib_branches/ip_grib2/reg_tests/copygb2/data/mxsnoalb.grb2
+#     INPUT_FILE=/global/save/George.Gayno/iplib_branches/ip_grib2/reg_tests/copygb2/data/mxsnoalb.grb2
+      INPUT_FILE=/global/save/George.Gayno/iplib_branches/ip_grib2/reg_tests/copygb2/data/uv_wind.grb2
       opt=$option
     fi
     for gridnum in 4 8 127 212 218

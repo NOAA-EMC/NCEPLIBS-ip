@@ -1371,18 +1371,14 @@ C  COMPUTE REGULARIZED GRIDS AND INTERPOLATE FIELD
         IGDS=0
         IGDS(2)=K1
         IGDS(5)=NGDT1
-cggg
-        print*,'ngdt1 ',ngdt1
+
         kgdt1_len=getgdtlen(ngdt1)
-        print*,'kgdt1 ',kgdt1(1:kgdt1_len)
 
         CALL GDT2GDS(IGDS,KGDT1,IDEFN1,IDEF1,KGDS1,IGI,IRET)
         IGDS(2)=K2
         IGDS(5)=NGDT2
 
-        print*,'ngdt2 ',ngdt2
         kgdt2_len=getgdtlen(ngdt2)
-        print*,'kgdt2 ',kgdt2(1:kgdt2_len)
 
         CALL GDT2GDS(IGDS,KGDT2,IDEFN,IDEF,KGDS2,IGI,IRET)
         K1F=LENGDSF(KGDS1,KGDS1F)
@@ -1474,7 +1470,6 @@ C  REGLR TO REGLR SCALAR
       gdtmpl1_4=gdtmpl1
       gdtmpl2_4=gdtmpl2
       IF(K1F.EQ.1.AND.K2F.EQ.1.AND.IV.EQ.0) THEN
-        print*,'got here 1'
         CALL IPOLATES(IP,IPOPT,gdtnum1,gdtmpl1_4,gdtlen1,
      &                gdtnum2,gdtmpl2_4,gdtlen2,K1,K2,1,IB1,L1,F1,
      &                KI,RLAT,RLON,IB2,L2,F2,IRET)
@@ -1511,13 +1506,14 @@ c         ENDIF
 c       ENDIF
 C - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 C  REGLR TO REGLR VECTOR
-c     ELSEIF(K1F.EQ.1.AND.K2F.EQ.1.AND.IV.NE.0) THEN
-c       CALL IPOLATEV(IP,IPOPT,KGDS1,KGDS2,K1,K2,1,IB1,L1,F1,G1,
-c    &                KI,RLAT,RLON,CROT,SROT,IB2,L2,F2,G2,IRET)
-c       IF(IRET.EQ.0.AND.KI.EQ.K2-1) THEN
-c         F2(K2)=0
-c         G2(K2)=0
-c       ENDIF
+      ELSEIF(K1F.EQ.1.AND.K2F.EQ.1.AND.IV.NE.0) THEN
+        CALL IPOLATEV(IP,IPOPT,gdtnum1,gdtmpl1_4,gdtlen1,
+     &                gdtnum2,gdtmpl2_4,gdtlen2,K1,K2,1,IB1,L1,F1,G1,
+     &                KI,RLAT,RLON,CROT,SROT,IB2,L2,F2,G2,IRET)
+        IF(IRET.EQ.0.AND.KI.EQ.K2-1) THEN
+          F2(K2)=0
+          G2(K2)=0
+        ENDIF
 C - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 C  IRREG TO REGLR VECTOR
 c     ELSEIF(K1F.NE.1.AND.K2F.EQ.1.AND.IV.NE.0) THEN
