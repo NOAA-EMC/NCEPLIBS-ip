@@ -40,6 +40,8 @@ do
     for gridnum in 4 8 127 212 218
     do
       $COPYGB2 -g "${grid[gridnum]}" -i"${option}" -x $INPUT_FILE grid${gridnum}.opt${opt}.${bytesize}byte.grb2
+      /nwprod/util/exec/wgrib2 -V grid${gridnum}.opt${opt}.${bytesize}byte.grb2 >> log
+      /global/save/George.Gayno/grads/g2ctl/grb2ctl_nmm grid${gridnum}.opt${opt}.${bytesize}byte.grb2 grid${gridnum}.opt${opt}.${bytesize}byte.ctl
     done
   done
 done

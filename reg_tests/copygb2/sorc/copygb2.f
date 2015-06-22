@@ -1331,6 +1331,7 @@ C$$$
 
       INTEGER IPOPT(20)
       INTEGER KGDT1(*),KGDT2(*),IGDS(5)
+      integer :: kgdt1_len, kgdt2_len
       INTEGER IDEF1(IDEFN1)
       INTEGER KGDS1(200),KGDS2(200)
       LOGICAL*1 L1(K1),L2(K2)
@@ -1370,9 +1371,19 @@ C  COMPUTE REGULARIZED GRIDS AND INTERPOLATE FIELD
         IGDS=0
         IGDS(2)=K1
         IGDS(5)=NGDT1
+cggg
+        print*,'ngdt1 ',ngdt1
+        kgdt1_len=getgdtlen(ngdt1)
+        print*,'kgdt1 ',kgdt1(1:kgdt1_len)
+
         CALL GDT2GDS(IGDS,KGDT1,IDEFN1,IDEF1,KGDS1,IGI,IRET)
         IGDS(2)=K2
         IGDS(5)=NGDT2
+
+        print*,'ngdt2 ',ngdt2
+        kgdt2_len=getgdtlen(ngdt2)
+        print*,'kgdt2 ',kgdt2(1:kgdt2_len)
+
         CALL GDT2GDS(IGDS,KGDT2,IDEFN,IDEF,KGDS2,IGI,IRET)
         K1F=LENGDSF(KGDS1,KGDS1F)
         IF(K1F.EQ.K1) K1F=1
@@ -1387,7 +1398,8 @@ C  COMPUTE REGULARIZED GRIDS AND INTERPOLATE FIELD
         IF(K1F.GT.0.AND.K2F.GT.0) THEN
           CALL INTGRIB1(K1F,KGDS1F,K2F,KGDS2F,MRL,MRO,
      &                  IV,IP,IPOPT,KGDS1,K1,IB1,L1,F1,G1,KGDS2,K2,
-     &                  IB2,L2,F2,G2,IRET)
+     &                  IB2,L2,F2,G2,ngdt1,kgdt1_len,kgdt1,
+     &                  ngdt2,kgdt2_len,kgdt2,iret)
         ELSE
           IRET=101
         ENDIF
@@ -1397,7 +1409,8 @@ C - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 C-----------------------------------------------------------------------
       SUBROUTINE INTGRIB1(K1F,KGDS1F,K2F,KGDS2F,MRL,MRO,
      &                    IV,IP,IPOPT,KGDS1,K1,IB1,L1,F1,G1,KGDS2,K2,
-     &                    IB2,L2,F2,G2,IRET)
+     &                    IB2,L2,F2,G2,GDTNUM1,GDTLEN1,GDTMPL1,
+     &                    GDTNUM2,GDTLEN2,GDTMPL2,IRET)
 C$$$  SUBPROGRAM DOCUMENTATION BLOCK
 C
 C SUBPROGRAM:    INTGRIB1    INTERPOLATE FIELD
@@ -1443,6 +1456,11 @@ C ATTRIBUTES:
 C   LANGUAGE: FORTRAN
 C
 C$$$
+      integer::gdtnum1,gdtlen1,gdtmpl1(gdtlen1)
+      integer::gdtnum2,gdtlen2,gdtmpl2(gdtlen2)
+      integer(kind=4)::gdtmpl1_4(gdtlen1)
+      integer(kind=4)::gdtmpl2_4(gdtlen2)
+
       INTEGER IPOPT(20)
       INTEGER KGDS1(200),KGDS2(200)
       LOGICAL*1 L1(K1),L2(K2)
@@ -1453,94 +1471,97 @@ C$$$
       REAL RLAT(MRL),RLON(MRL),CROT(MRO),SROT(MRO)
 C - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 C  REGLR TO REGLR SCALAR
+      gdtmpl1_4=gdtmpl1
+      gdtmpl2_4=gdtmpl2
       IF(K1F.EQ.1.AND.K2F.EQ.1.AND.IV.EQ.0) THEN
-        CALL IPOLATES(IP,IPOPT,KGDS1,KGDS2,K1,K2,1,IB1,L1,F1,
+        print*,'got here 1'
+        CALL IPOLATES(IP,IPOPT,gdtnum1,gdtmpl1_4,gdtlen1,
+     &                gdtnum2,gdtmpl2_4,gdtlen2,K1,K2,1,IB1,L1,F1,
      &                KI,RLAT,RLON,IB2,L2,F2,IRET)
 C - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 C  IRREG TO REGLR SCALAR
-      ELSEIF(K1F.NE.1.AND.K2F.EQ.1.AND.IV.EQ.0) THEN
-        CALL IPXWAFS2(1,K1,K1F,1,
-     &                KGDS1,IB1,L1,F1,KGDS1F,IB1F,L1F,F1F,IRET)
-        IF(IRET.EQ.0) THEN
-          CALL IPOLATES(IP,IPOPT,KGDS1F,KGDS2,K1F,K2,1,IB1F,L1F,F1F,
-     &                  KI,RLAT,RLON,IB2,L2,F2,IRET)
-        ENDIF
+c      ELSEIF(K1F.NE.1.AND.K2F.EQ.1.AND.IV.EQ.0) THEN
+c       CALL IPXWAFS2(1,K1,K1F,1,
+c    &                KGDS1,IB1,L1,F1,KGDS1F,IB1F,L1F,F1F,IRET)
+c       IF(IRET.EQ.0) THEN
+c         CALL IPOLATES(IP,IPOPT,KGDS1F,KGDS2,K1F,K2,1,IB1F,L1F,F1F,
+c    &                  KI,RLAT,RLON,IB2,L2,F2,IRET)
+c       ENDIF
 C - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 C  REGLR TO IRREG SCALAR
-      ELSEIF(K1F.EQ.1.AND.K2F.NE.1.AND.IV.EQ.0) THEN
-        CALL IPOLATES(IP,IPOPT,KGDS1,KGDS2F,K1,K2F,1,IB1,L1,F1,
-     &                KI,RLAT,RLON,IB2F,L2F,F2F,IRET)
-        IF(IRET.EQ.0) THEN
-          CALL IPXWAFS2(-1,K2,K2F,1,
-     &                  KGDS2,IB2,L2,F2,KGDS2F,IB2F,L2F,F2F,IRET)
-        ENDIF
+c     ELSEIF(K1F.EQ.1.AND.K2F.NE.1.AND.IV.EQ.0) THEN
+c       CALL IPOLATES(IP,IPOPT,KGDS1,KGDS2F,K1,K2F,1,IB1,L1,F1,
+c    &                KI,RLAT,RLON,IB2F,L2F,F2F,IRET)
+c       IF(IRET.EQ.0) THEN
+c         CALL IPXWAFS2(-1,K2,K2F,1,
+c    &                  KGDS2,IB2,L2,F2,KGDS2F,IB2F,L2F,F2F,IRET)
+c       ENDIF
 C - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 C  IRREG TO IRREG SCALAR
-      ELSEIF(K1F.NE.1.AND.K2F.NE.1.AND.IV.EQ.0) THEN
-        CALL IPXWAFS2(1,K1,K1F,1,
-     &                KGDS1,IB1,L1,F1,KGDS1F,IB1F,L1F,F1F,IRET)
-        IF(IRET.EQ.0) THEN
-          CALL IPOLATES(IP,IPOPT,KGDS1F,KGDS2F,K1F,K2F,1,IB1F,L1F,F1F,
-     &                  KI,RLAT,RLON,IB2F,L2F,F2F,IRET)
-          IF(IRET.EQ.0) THEN
-            CALL IPXWAFS2(-1,K2,K2F,1,
-     &                    KGDS2,IB2,L2,F2,KGDS2F,IB2F,L2F,F2F,IRET)
-          ENDIF
-        ENDIF
+c     ELSEIF(K1F.NE.1.AND.K2F.NE.1.AND.IV.EQ.0) THEN
+c       CALL IPXWAFS2(1,K1,K1F,1,
+c    &                KGDS1,IB1,L1,F1,KGDS1F,IB1F,L1F,F1F,IRET)
+c       IF(IRET.EQ.0) THEN
+c         CALL IPOLATES(IP,IPOPT,KGDS1F,KGDS2F,K1F,K2F,1,IB1F,L1F,F1F,
+c    &                  KI,RLAT,RLON,IB2F,L2F,F2F,IRET)
+c         IF(IRET.EQ.0) THEN
+c           CALL IPXWAFS2(-1,K2,K2F,1,
+c    &                    KGDS2,IB2,L2,F2,KGDS2F,IB2F,L2F,F2F,IRET)
+c         ENDIF
+c       ENDIF
 C - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 C  REGLR TO REGLR VECTOR
-      ELSEIF(K1F.EQ.1.AND.K2F.EQ.1.AND.IV.NE.0) THEN
-        CALL IPOLATEV(IP,IPOPT,KGDS1,KGDS2,K1,K2,1,IB1,L1,F1,G1,
-     &                KI,RLAT,RLON,CROT,SROT,IB2,L2,F2,G2,IRET)
-        IF(IRET.EQ.0.AND.KI.EQ.K2-1) THEN
-          F2(K2)=0
-          G2(K2)=0
-        ENDIF
+c     ELSEIF(K1F.EQ.1.AND.K2F.EQ.1.AND.IV.NE.0) THEN
+c       CALL IPOLATEV(IP,IPOPT,KGDS1,KGDS2,K1,K2,1,IB1,L1,F1,G1,
+c    &                KI,RLAT,RLON,CROT,SROT,IB2,L2,F2,G2,IRET)
+c       IF(IRET.EQ.0.AND.KI.EQ.K2-1) THEN
+c         F2(K2)=0
+c         G2(K2)=0
+c       ENDIF
 C - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 C  IRREG TO REGLR VECTOR
-      ELSEIF(K1F.NE.1.AND.K2F.EQ.1.AND.IV.NE.0) THEN
-        CALL IPXWAFS2(1,K1,K1F,1,
-     &                KGDS1,IB1,L1,F1,KGDS1F,IB1F,L1F,F1F,IRET)
-        CALL IPXWAFS2(1,K1,K1F,1,
-     &                KGDS1,IB1,L1,G1,KGDS1F,IB1F,L1F,G1F,IRET)
-        IF(IRET.EQ.0) THEN
-          CALL IPOLATEV(IP,IPOPT,KGDS1F,KGDS2,K1F,K2,1,
-     &                  IB1F,L1F,F1F,G1F,
-     &                  KI,RLAT,RLON,CROT,SROT,IB2,L2,F2,G2,IRET)
-          IF(IRET.EQ.0.AND.KI.EQ.K2-1) THEN
-            F2(K2)=0
-            G2(K2)=0
-          ENDIF
-        ENDIF
+c     ELSEIF(K1F.NE.1.AND.K2F.EQ.1.AND.IV.NE.0) THEN
+c       CALL IPXWAFS2(1,K1,K1F,1,
+c    &                KGDS1,IB1,L1,F1,KGDS1F,IB1F,L1F,F1F,IRET)
+c       CALL IPXWAFS2(1,K1,K1F,1,
+c    &                KGDS1,IB1,L1,G1,KGDS1F,IB1F,L1F,G1F,IRET)
+c       IF(IRET.EQ.0) THEN
+c         CALL IPOLATEV(IP,IPOPT,KGDS1F,KGDS2,K1F,K2,1,
+c    &                  IB1F,L1F,F1F,G1F,
+c    &                  KI,RLAT,RLON,CROT,SROT,IB2,L2,F2,G2,IRET)
+c         IF(IRET.EQ.0.AND.KI.EQ.K2-1) THEN
+c           F2(K2)=0
+c           G2(K2)=0
+c         ENDIF
+c       ENDIF
 C - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 C  REGLR TO IRREG VECTOR
-      ELSEIF(K1F.EQ.1.AND.K2F.NE.1.AND.IV.NE.0) THEN
-        CALL IPOLATEV(IP,IPOPT,KGDS1,KGDS2F,K1,K2F,1,IB1,L1,F1,G1,
-     &                KI,RLAT,RLON,CROT,SROT,IB2F,L2F,F2F,G2F,IRET)
-        IF(IRET.EQ.0) THEN
-          CALL IPXWAFS2(-1,K2,K2F,1,
-     &                  KGDS2,IB2,L2,F2,KGDS2F,IB2F,L2F,F2F,IRET)
-          CALL IPXWAFS2(-1,K2,K2F,1,
-     &                  KGDS2,IB2,L2,G2,KGDS2F,IB2F,L2F,G2F,IRET)
-        ENDIF
+c     ELSEIF(K1F.EQ.1.AND.K2F.NE.1.AND.IV.NE.0) THEN
+c       CALL IPOLATEV(IP,IPOPT,KGDS1,KGDS2F,K1,K2F,1,IB1,L1,F1,G1,
+c    &                KI,RLAT,RLON,CROT,SROT,IB2F,L2F,F2F,G2F,IRET)
+c       IF(IRET.EQ.0) THEN
+c         CALL IPXWAFS2(-1,K2,K2F,1,
+c    &                  KGDS2,IB2,L2,F2,KGDS2F,IB2F,L2F,F2F,IRET)
+c         CALL IPXWAFS2(-1,K2,K2F,1,
+c    &                  KGDS2,IB2,L2,G2,KGDS2F,IB2F,L2F,G2F,IRET)
+c       ENDIF
 C - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 C  IRREG TO IRREG VECTOR
-      ELSEIF(K1F.NE.1.AND.K2F.NE.1.AND.IV.NE.0) THEN
-        CALL IPXWAFS2(1,K1,K1F,1,
-     &                KGDS1,IB1,L1,F1,KGDS1F,IB1F,L1F,F1F,IRET)
-        CALL IPXWAFS2(1,K1,K1F,1,
-     &                KGDS1,IB1,L1,G1,KGDS1F,IB1F,L1F,G1F,IRET)
-        IF(IRET.EQ.0) THEN
-          CALL IPOLATEV(IP,IPOPT,KGDS1F,KGDS2F,K1F,K2F,1,
-     &                  IB1F,L1F,F1F,G1F,
-     &                  KI,RLAT,RLON,CROT,SROT,IB2F,L2F,F2F,G2F,IRET)
-          IF(IRET.EQ.0) THEN
-            CALL IPXWAFS2(-1,K2,K2F,1,
-     &                    KGDS2,IB2,L2,F2,KGDS2F,IB2F,L2F,F2F,IRET)
-            CALL IPXWAFS2(-1,K2,K2F,1,
-     &                    KGDS2,IB2,L2,G2,KGDS2F,IB2F,L2F,G2F,IRET)
-          ENDIF
-        ENDIF
+c     ELSEIF(K1F.NE.1.AND.K2F.NE.1.AND.IV.NE.0) THEN
+c       CALL IPXWAFS2(1,K1,K1F,1,
+c    &                KGDS1,IB1,L1,F1,KGDS1F,IB1F,L1F,F1F,IRET)
+c
+c       IF(IRET.EQ.0) THEN
+c         CALL IPOLATEV(IP,IPOPT,KGDS1F,KGDS2F,K1F,K2F,1,
+c    &                  IB1F,L1F,F1F,G1F,
+c    &                  KI,RLAT,RLON,CROT,SROT,IB2F,L2F,F2F,G2F,IRET)
+c         IF(IRET.EQ.0) THEN
+c           CALL IPXWAFS2(-1,K2,K2F,1,
+c    &                    KGDS2,IB2,L2,F2,KGDS2F,IB2F,L2F,F2F,IRET)
+c           CALL IPXWAFS2(-1,K2,K2F,1,
+c    &                    KGDS2,IB2,L2,G2,KGDS2F,IB2F,L2F,G2F,IRET)
+c         ENDIF
+c       ENDIF
       ENDIF
 C - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
       END
