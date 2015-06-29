@@ -1,4 +1,6 @@
- SUBROUTINE IPXWAFS(IDIR,M1,M2,KM,KGDS1,F1,KGDS2,F2,IRET)
+ SUBROUTINE IPXWAFS(IDIR, NUMPTS_THIN, NUMPTS_FULL, KM, NUM_OPT, OPT_PTS, &
+                    IGDTLEN, IGDTMPL_THIN, DATA_THIN,  &
+                    IGDTMPL_FULL, DATA_FULL, IRET)
 !$$$  SUBPROGRAM DOCUMENTATION BLOCK
 !
 ! SUBPROGRAM:  IPXWAFS    EXPAND OR CONTRACT WAFS GRIDS
@@ -53,19 +55,26 @@
 !$$$
  IMPLICIT NONE
 !
- INTEGER,               INTENT(IN   ):: IDIR, KM, M1, M2
- INTEGER,               INTENT(INOUT):: KGDS1(200),KGDS2(200)
- INTEGER,               INTENT(  OUT):: IRET
+ INTEGER,               INTENT(IN   ) :: NUM_OPT
+ INTEGER,               INTENT(INOUT) :: OPT_PTS(NUM_OPT)
+ INTEGER,               INTENT(IN   ) :: IDIR, KM, NUMPTS_THIN, NUMPTS_FULL
+ INTEGER,               INTENT(IN   ) :: IGDTLEN
+ INTEGER(KIND=4),       INTENT(INOUT) :: IGDTMPL_THIN(IGDTLEN)
+ INTEGER(KIND=4),       INTENT(INOUT) :: IGDTMPL_FULL(IGDTLEN)
+ INTEGER,               INTENT(  OUT) :: IRET
 !
- REAL,                  INTENT(INOUT):: F1(M1,KM),F2(M2,KM)
+ REAL,                  INTENT(INOUT) :: DATA_THIN(NUMPTS_THIN,KM)
+ REAL,                  INTENT(INOUT) :: DATA_FULL(NUMPTS_FULL,KM)
 !
- INTEGER                             :: I, J, K, NPWAFS(73)
- INTEGER                             :: IA, IB, IM, IM1, IM2
- INTEGER                             :: IS1, IS2, ISCAN
+ INTEGER(KIND=4), PARAMETER           :: MISSING=B'11111111111111111111111111111111'
 !
- REAL                                :: DLON, HI
- REAL                                :: RAT1, RAT2, RLON1, RLON2
- REAL                                :: WA, WB, X1, X2
+ INTEGER                              :: BIT3_SCAN_MODE, I, J, K
+ INTEGER                              :: IA, IB, IM, IM1, IM2, NPWAFS(73)
+ INTEGER                              :: IS1, IS2, ISCAN, ISCALE
+!
+ REAL                                 :: DLON, HI
+ REAL                                 :: RAT1, RAT2, RLON1, RLON2
+ REAL                                 :: WA, WB, X1, X2
 !
  DATA NPWAFS/ &
        73, 73, 73, 73, 73, 73, 73, 73, 72, 72, 72, 71, 71, 71, 70,&
@@ -79,23 +88,19 @@
 ! - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 !  EXPAND THINNED GDS TO FULL GDS
  IF(IDIR.GT.0) THEN
-   IF(MOD(KGDS1(11)/32,2).EQ.0.AND.KGDS1(20).EQ.33) THEN
-     KGDS2(1:18)=KGDS1(1:18)
-     IM=0
-     DO J=22,21+KGDS1(3)
-       IM=MAX(IM,KGDS1(J))
-     ENDDO
-     KGDS2(2)=IM
-     RLON1=KGDS2(5)*1.E-3
-     RLON2=KGDS2(8)*1.E-3
-     ISCAN=MOD(KGDS2(11)/128,2)
+   BIT3_SCAN_MODE=MOD(IGDTMPL_THIN(19)/32,2)
+   IF(BIT3_SCAN_MODE==0)THEN
+     IGDTMPL_FULL=IGDTMPL_THIN
+     IM=MAXVAL(OPT_PTS)
+     IGDTMPL_FULL(8)=IM
+     ISCALE=IGDTMPL_FULL(10)*IGDTMPL_FULL(11)
+     IF(ISCALE==0) ISCALE=1E6
+     RLON1=FLOAT(IGDTMPL_FULL(13))/FLOAT(ISCALE)
+     RLON2=FLOAT(IGDTMPL_FULL(16))/FLOAT(ISCALE)
+     ISCAN=MOD(IGDTMPL_FULL(19)/128,2)
      HI=(-1.)**ISCAN
      DLON=HI*(MOD(HI*(RLON2-RLON1)-1+3600,360.)+1)/(IM-1)
-     KGDS2(9)=NINT(DLON*1.E3)
-     KGDS2(19)=0
-     KGDS2(20)=255
-     KGDS2(21)=0
-     KGDS2(22)=0
+     IGDTMPL_FULL(17)=NINT(DLON*ISCALE)
    ELSE
      IRET=1
    ENDIF
@@ -103,32 +108,14 @@
 !  CONTRACT FULL GDS TO THINNED GDS
  ELSEIF(IDIR.LT.0) THEN
 !  PL PARAMETERS PROVIDED
-   IF(MOD(KGDS2(11)/32,2).EQ.0.AND.KGDS2(20).EQ.255.AND.KGDS1(22).GT.0) THEN
-     KGDS1(1:18)=KGDS2(1:18)
-     KGDS1(2)=65535
-     KGDS1(9)=65535
-     KGDS1(19)=0
-     KGDS1(20)=33
-     KGDS1(21)=0
-     DO J=1,KGDS2(3)
-       KGDS1(21)=KGDS1(21)+KGDS1(21+J)
-     ENDDO
-!  PL PARAMETERS DEFAULT TO THOSE FOR NCEP GRIDS 37-44
-   ELSEIF(MOD(KGDS2(11)/32,2).EQ.0.AND.KGDS2(20).EQ.255.AND. &
-          KGDS1(22).LE.0.AND. &
-          KGDS2(1).EQ.0.AND.KGDS2(2).EQ.73.AND.KGDS2(3).EQ.73.AND. &
-          KGDS2(9).EQ.1250.AND.KGDS2(10).EQ.1250.AND. &
-         (KGDS2(4).EQ.0.OR.KGDS2(4).EQ.-90000)) THEN
-     KGDS1(1:18)=KGDS2(1:18)
-     KGDS1(2)=65535
-     KGDS1(9)=65535
-     KGDS1(19)=0
-     KGDS1(20)=33
-     KGDS1(21)=3447
-     IF(KGDS1(4).EQ.0) THEN
-       KGDS1(22:94)=NPWAFS
+   IF(IGDTMPL_FULL(8)==73)THEN
+     IGDTMPL_THIN=IGDTMPL_FULL
+     IGDTMPL_THIN(8)=MISSING
+     IGDTMPL_THIN(17)=MISSING
+     IF(IGDTMPL_THIN(12)==0) THEN  ! lat of point 1 is equator
+       OPT_PTS=NPWAFS
      ELSE
-       KGDS1(22:94)=NPWAFS(73:1:-1)
+       OPT_PTS=NPWAFS(73:1:-1)
      ENDIF
    ELSE
      IRET=1
@@ -143,10 +130,10 @@
      DO K=1,KM
        IS1=0
        IS2=0
-       DO J=1,KGDS2(3)
-         IM1=KGDS1(21+J)
-         IM2=KGDS2(2)
-         RAT1=REAL(IM1-1)/REAL(IM2-1)
+       DO J=1,IGDTMPL_FULL(9)
+         IM1=OPT_PTS(J)
+         IM2=IGDTMPL_FULL(8)
+         RAT1=FLOAT(IM1-1)/FLOAT(IM2-1)
          DO I=1,IM2
            X1=(I-1)*RAT1+1
            IA=X1
@@ -154,7 +141,7 @@
            IB=IA+1
            WA=IB-X1
            WB=X1-IA
-           F2(IS2+I,K)=WA*F1(IS1+IA,K)+WB*F1(IS1+IB,K)
+           DATA_FULL(IS2+I,K)=WA*DATA_THIN(IS1+IA,K)+WB*DATA_THIN(IS1+IB,K)
          ENDDO
          IS1=IS1+IM1
          IS2=IS2+IM2
@@ -166,10 +153,10 @@
      DO K=1,KM
        IS1=0
        IS2=0
-       DO J=1,KGDS2(3)
-         IM1=KGDS1(21+J)
-         IM2=KGDS2(2)
-         RAT2=REAL(IM2-1)/REAL(IM1-1)
+       DO J=1,IGDTMPL_FULL(9)
+         IM1=OPT_PTS(J)
+         IM2=IGDTMPL_FULL(8)
+         RAT2=FLOAT(IM2-1)/FLOAT(IM1-1)
          DO I=1,IM1
            X2=(I-1)*RAT2+1
            IA=X2
@@ -177,7 +164,7 @@
            IB=IA+1
            WA=IB-X2
            WB=X2-IA
-           F1(IS1+I,K)=WA*F2(IS2+IA,K)+WB*F2(IS2+IB,K)
+           DATA_THIN(IS1+I,K)=WA*DATA_FULL(IS2+IA,K)+WB*DATA_FULL(IS2+IB,K)
          ENDDO
          IS1=IS1+IM1
          IS2=IS2+IM2
