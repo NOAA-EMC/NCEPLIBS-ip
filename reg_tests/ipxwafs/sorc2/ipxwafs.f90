@@ -8,13 +8,13 @@
 
  character*150   :: input_file, output_file
 
- integer         :: listsec0(2), lengrib
+ integer(kind=4) :: listsec0(2), lengrib
  integer(kind=4) :: igds(5), lcgrib
- integer         :: num_opt_pts
- integer         :: idir, km, m1, m2
- integer         :: j, jdisc, jpdtn, jgdtn, k
- integer         :: jids(200), jgdt(200), jpdt(200)
- integer         :: lugi, iret, iunit
+ integer         :: num_opt_pts, istat
+ integer         :: idir, km, m1, m2, igdtlen
+ integer(kind=4) :: j, jdisc, jpdtn, jgdtn, k
+ integer(kind=4) :: jids(200), jgdt(200), jpdt(200)
+ integer(kind=4) :: lugi, iret, iunit
  integer(kind=4), allocatable, target :: opt_pts(:), igdtmpl1(:), igdtmpl2(:)
  
  logical         :: unpack
@@ -90,10 +90,11 @@
    opt_pts=-999
  endif
 
- allocate(igdtmpl1(gfld1%igdtlen))
+ igdtlen=gfld1%igdtlen
+ allocate(igdtmpl1(igdtlen))
  igdtmpl1 = gfld1%igdtmpl
 
- allocate(igdtmpl2(gfld1%igdtlen))
+ allocate(igdtmpl2(igdtlen))
  igdtmpl2 = -999
 
  allocate(data1(m1))
@@ -103,16 +104,17 @@
  data2=-9999.
 
  km=1
+ print*,"- CALL IPXWAFS"
  if (idir == 1) then
-   call ipxwafs(idir, m1, m2, km, num_opt_pts, opt_pts, gfld1%igdtlen, igdtmpl1, &
-                data1, igdtmpl2, data2, iret)
+   call ipxwafs(idir, m1, m2, km, num_opt_pts, opt_pts, igdtlen, igdtmpl1, &
+                data1, igdtmpl2, data2, istat)
  else
-   call ipxwafs(idir, m2, m1, km, num_opt_pts, opt_pts, gfld1%igdtlen, igdtmpl2, &
-                data2, igdtmpl1, data1, iret)
+   call ipxwafs(idir, m2, m1, km, num_opt_pts, opt_pts, igdtlen, igdtmpl2, &
+                data2, igdtmpl1, data1, istat)
  endif
 
- if (iret /= 0) then
-   print*,'error in ipxwafs. iret: ', iret
+ if (istat /= 0) then
+   print*,'error in ipxwafs. iret: ', istat
    stop
  endif
 
