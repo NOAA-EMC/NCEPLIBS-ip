@@ -12,16 +12,18 @@
  integer(kind=4) :: igds(5), lcgrib
  integer         :: num_opt_pts, istat
  integer         :: idir, km, m1, m2, igdtlen
+ integer         :: ib1, ib2
  integer(kind=4) :: j, jdisc, jpdtn, jgdtn, k
  integer(kind=4) :: jids(200), jgdt(200), jpdt(200)
  integer(kind=4) :: lugi, iret, iunit
  integer(kind=4), allocatable, target :: opt_pts(:), igdtmpl1(:), igdtmpl2(:)
  
- logical         :: unpack
+ logical                        :: unpack
+ logical*1, allocatable, target :: bmap1(:), bmap2(:)
 
  real, allocatable, target :: data1(:), data2(:)
 
- type(gribfield) :: gfld1, gfld2
+ type(gribfield)           :: gfld1, gfld2
 
  input_file="./fort.9"
  print*,"- OPEN AND READ FILE ", trim(input_file)
@@ -90,6 +92,18 @@
    opt_pts=-999
  endif
 
+ if (gfld1%ibmap==0) then
+   print*,"- FILE HAS A BITMAP"
+   ib1=1  ! has bitmap
+   allocate(bmap1(m1))
+   bmap1=gfld1%bmap
+   allocate(bmap2(m2))
+   bmap2=.false.
+ else
+   ib1=0
+ endif
+ ib2=0  ! output from ipxwafs2, 1 if bitmap
+
  igdtlen=gfld1%igdtlen
  allocate(igdtmpl1(igdtlen))
  igdtmpl1 = gfld1%igdtmpl
@@ -104,13 +118,26 @@
  data2=-9999.
 
  km=1
- print*,"- CALL IPXWAFS"
  if (idir == 1) then
-   call ipxwafs(idir, m1, m2, km, num_opt_pts, opt_pts, igdtlen, igdtmpl1, &
-                data1, igdtmpl2, data2, istat)
+   if (gfld1%ibmap==0) then
+     print*,"- CALL IPXWAFS2 TO CREATE FULL GRID"
+     call ipxwafs2(idir, m1, m2, km, num_opt_pts, opt_pts, igdtlen, igdtmpl1, &
+                   data1, ib1, bmap1, igdtmpl2, data2, ib2, bmap2, istat)
+   else
+     print*,"- CALL IPXWAFS TO CREATE FULL GRID"
+     call ipxwafs(idir, m1, m2, km, num_opt_pts, opt_pts, igdtlen, igdtmpl1, &
+                  data1, igdtmpl2, data2, istat)
+   endif
  else
-   call ipxwafs(idir, m2, m1, km, num_opt_pts, opt_pts, igdtlen, igdtmpl2, &
-                data2, igdtmpl1, data1, istat)
+   if (gfld1%ibmap==0) then
+     print*,"- CALL IPXWAFS2 TO CREATE THIN GRID"
+     call ipxwafs2(idir, m2, m1, km, num_opt_pts, opt_pts, igdtlen, igdtmpl2, &
+                   data2, ib2, bmap2, igdtmpl1, data1, ib1, bmap1, istat)
+   else
+     print*,"- CALL IPXWAFS TO CREATE THIN GRID"
+     call ipxwafs(idir, m2, m1, km, num_opt_pts, opt_pts, igdtlen, igdtmpl2, &
+                  data2, igdtmpl1, data1, istat)
+   endif
  endif
 
  if (istat /= 0) then
@@ -171,7 +198,13 @@
  gfld2%idrtlen=gfld1%idrtlen
  gfld2%idrtmpl=>gfld1%idrtmpl
 
- gfld2%ibmap=255
+ if (ib2==1)then
+   gfld2%ibmap=0
+   gfld2%bmap=>bmap2
+ else
+   gfld2%ibmap=255
+ endif
+
  gfld2%fld=>data2
 
  lcgrib=gfld2%ngrdpts*4
