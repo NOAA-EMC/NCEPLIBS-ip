@@ -102,7 +102,7 @@
  else
    ib1=0
  endif
- ib2=0  ! output from ipxwafs2, 1 if bitmap
+ ib2=0  ! output from ipxwafs2/3, 1 if bitmap
 
  igdtlen=gfld1%igdtlen
  allocate(igdtmpl1(igdtlen))
@@ -120,8 +120,11 @@
  km=1
  if (idir == 1) then
    if (gfld1%ibmap==0) then
-     print*,"- CALL IPXWAFS2 TO CREATE FULL GRID"
-     call ipxwafs2(idir, m1, m2, km, num_opt_pts, opt_pts, igdtlen, igdtmpl1, &
+!    print*,"- CALL IPXWAFS2 TO CREATE FULL GRID"
+!    call ipxwafs2(idir, m1, m2, km, num_opt_pts, opt_pts, igdtlen, igdtmpl1, &
+!                  data1, ib1, bmap1, igdtmpl2, data2, ib2, bmap2, istat)
+     print*,"- CALL IPXWAFS3 TO CREATE FULL GRID"
+     call ipxwafs3(idir, m1, m2, km, num_opt_pts, opt_pts, igdtlen, igdtmpl1, &
                    data1, ib1, bmap1, igdtmpl2, data2, ib2, bmap2, istat)
    else
      print*,"- CALL IPXWAFS TO CREATE FULL GRID"
@@ -130,8 +133,11 @@
    endif
  else
    if (gfld1%ibmap==0) then
-     print*,"- CALL IPXWAFS2 TO CREATE THIN GRID"
-     call ipxwafs2(idir, m2, m1, km, num_opt_pts, opt_pts, igdtlen, igdtmpl2, &
+!    print*,"- CALL IPXWAFS2 TO CREATE THIN GRID"
+!    call ipxwafs2(idir, m2, m1, km, num_opt_pts, opt_pts, igdtlen, igdtmpl2, &
+!                  data2, ib2, bmap2, igdtmpl1, data1, ib1, bmap1, istat)
+     print*,"- CALL IPXWAFS3 TO CREATE THIN GRID"
+     call ipxwafs3(idir, m2, m1, km, num_opt_pts, opt_pts, igdtlen, igdtmpl2, &
                    data2, ib2, bmap2, igdtmpl1, data1, ib1, bmap1, istat)
    else
      print*,"- CALL IPXWAFS TO CREATE THIN GRID"
