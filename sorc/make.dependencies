@@ -28,7 +28,6 @@
  ipxwafs2.o : ipxwafs2.f90
  ipxwafs3.o : ipxwafs3.f90
  ipxwafs.o : ipxwafs.f90
- makgds.o : makgds.f90
  movect.o : movect.f90
  polates0.o : polates0.f90
  polates1.o : polates1.f90 
