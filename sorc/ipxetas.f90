@@ -1,4 +1,6 @@
- SUBROUTINE IPXETAS(IDIR,M1,M2,KM,KGDS1,F1,KGDS2,F2,IRET)
+ SUBROUTINE IPXETAS(IDIR, GDTNUMI, GDTLEN, GDTMPLI, NPTS_INPUT,  &
+                    BITMAP_INPUT, DATA_INPUT, GDTNUMO, GDTMPLO, &
+                    NPTS_OUTPUT, BITMAP_OUTPUT, DATA_OUTPUT, IRET)
 !$$$  SUBPROGRAM DOCUMENTATION BLOCK
 !
 ! SUBPROGRAM:  IPXETAS    EXPAND OR CONTRACT ETA GRIDS
@@ -46,122 +48,112 @@
 !$$$
  IMPLICIT NONE
 !
- INTEGER,                INTENT(IN   ) :: IDIR, M1, M2, KM
- INTEGER,                INTENT(INOUT) :: KGDS1(200), KGDS2(200)
- INTEGER,                INTENT(  OUT) :: IRET
-!
- REAL,                   INTENT(INOUT) :: F1(M1,KM),F2(M2,KM)
-!
- INTEGER                               :: IM, JM, K, N, NM
-!
- REAL                                  :: W
+ INTEGER, INTENT(IN   )            :: IDIR
+ INTEGER, INTENT(IN   )            :: GDTNUMI, GDTLEN
+ INTEGER(KIND=4), INTENT(IN   )    :: GDTMPLI(GDTLEN)
+ INTEGER, INTENT(IN   )            :: NPTS_INPUT, NPTS_OUTPUT
+ INTEGER, INTENT(  OUT)            :: GDTNUMO
+ INTEGER(KIND=4), INTENT(  OUT)    :: GDTMPLO(GDTLEN)
+ INTEGER, INTENT(  OUT)            :: IRET
+
+ LOGICAL(KIND=1), INTENT(IN   )    :: BITMAP_INPUT(NPTS_INPUT)
+ LOGICAL(KIND=1), INTENT(  OUT)    :: BITMAP_OUTPUT(NPTS_OUTPUT)
+
+ REAL, INTENT(IN  )                :: DATA_INPUT(NPTS_INPUT)
+ REAL, INTENT(OUT)                 :: DATA_OUTPUT(NPTS_OUTPUT)
+
+ INTEGER                           :: SCAN_MODE, ISCALE, IP, IPOPT(20)
+ INTEGER                           :: IBI(1), IBO(1), J, KM, NO
+
+ REAL                              :: DLONS
+ REAL, ALLOCATABLE                 :: OUTPUT_RLAT(:), OUTPUT_RLON(:)
 ! - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-!  TRANSFORM GDS
- IRET=0
-!  EXPAND STAGGERED GDS TO FULL GDS
- IF(IDIR.GT.0.AND.KGDS1(1).EQ.201) THEN
-   KGDS2(1:22)=KGDS1(1:22)
-   KGDS2(1)=202
-   KGDS2(7)=KGDS1(7)*2-1
-   KGDS2(2)=KGDS2(7)*KGDS2(8)
-!  CONTRACT FULL GDS TO STAGGERED GDS
- ELSEIF(IDIR.LT.0.AND.KGDS2(1).EQ.202) THEN
-   KGDS1(1:22)=KGDS2(1:22)
-   KGDS1(1)=201
-   KGDS1(7)=KGDS2(7)/2+1
-   KGDS1(2)=KGDS1(7)*KGDS1(8)-KGDS1(8)/2
- ELSE
+ IRET = 0
+! - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+! ROUTINE ONLY WORKS FOR ROTATED LAT/LON GRIDS.
+ IF (GDTNUMI/=1) THEN
    IRET=1
+   RETURN
  ENDIF
-! - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-!  TRANSFORM FIELDS
- IF(IRET.EQ.0) THEN
-   IM=KGDS2(7)
-   JM=KGDS2(8)
-   NM=(IM*JM+1)/2
-! - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-!  EXPAND STAGGERED MASS FIELDS TO FULL MASS FIELDS
-   IF(IDIR.EQ.1) THEN
-     DO K=1,KM
-       DO N=1,NM
-         F2(N*2-1,K)=F1(N,K)
-       ENDDO
-       DO N=1,IM*JM-NM
-         F2(N*2,K)=0
-         W=0
-!  COLLECT DATA POINT TO THE SOUTH OF VACANT POINT
-         IF(N-IM/2.GE.1) THEN
-           F2(N*2,K)=F2(N*2,K)+F1(N-IM/2,K)
-           W=W+1
-         ENDIF
-!  COLLECT DATA POINT TO THE WEST OF VACANT POINT
-         IF(MOD(N,IM).NE.IM/2+1) THEN
-           F2(N*2,K)=F2(N*2,K)+F1(N,K)
-           W=W+1
-         ENDIF
-!  COLLECT DATA POINT TO THE EAST OF VACANT POINT
-         IF(MOD(N,IM).NE.0) THEN
-           F2(N*2,K)=F2(N*2,K)+F1(N+1,K)
-           W=W+1
-         ENDIF
-!  COLLECT DATA POINT TO THE NORTH OF VACANT POINT
-         IF(N+1+IM/2.LE.NM) THEN
-           F2(N*2,K)=F2(N*2,K)+F1(N+1+IM/2,K)
-           W=W+1
-         ENDIF
-         F2(N*2,K)=F2(N*2,K)/W
-       ENDDO
-     ENDDO
-! - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-!  EXPAND STAGGERED WIND FIELDS TO FULL WIND FIELDS
-   ELSEIF(IDIR.EQ.2) THEN
-     DO K=1,KM
-       DO N=1,IM*JM-NM
-         F2(N*2,K)=F1(N,K)
-       ENDDO
-       DO N=1,NM
-         F2(N*2-1,K)=0
-         W=0
-!  COLLECT DATA POINT TO THE SOUTH OF VACANT POINT
-         IF(N-1-IM/2.GE.1) THEN
-           F2(N*2-1,K)=F2(N*2-1,K)+F1(N-1-IM/2,K)
-           W=W+1
-         ENDIF
-!  COLLECT DATA POINT TO THE WEST OF VACANT POINT
-         IF(MOD(N,IM).NE.1) THEN
-           F2(N*2-1,K)=F2(N*2-1,K)+F1(N-1,K)
-           W=W+1
-         ENDIF
-!  COLLECT DATA POINT TO THE EAST OF VACANT POINT
-         IF(MOD(N,IM).NE.IM/2+1) THEN
-           F2(N*2-1,K)=F2(N*2-1,K)+F1(N,K)
-           W=W+1
-         ENDIF
-!  COLLECT DATA POINT TO THE NORTH OF VACANT POINT
-         IF(N+IM/2.LE.IM*JM-NM) THEN
-           F2(N*2-1,K)=F2(N*2-1,K)+F1(N+IM/2,K)
-           W=W+1
-         ENDIF
-         F2(N*2-1,K)=F2(N*2-1,K)/W
-       ENDDO
-     ENDDO
-! - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-!  CONTRACT FULL MASS FIELDS TO STAGGERED MASS FIELDS
-   ELSEIF(IDIR.EQ.-1) THEN
-     DO K=1,KM
-       DO N=1,NM
-         F1(N,K)=F2(N*2-1,K)
-       ENDDO
-     ENDDO
-! - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-!  CONTRACT FULL WIND FIELDS TO STAGGERED WIND FIELDS
-   ELSEIF(IDIR.EQ.-2) THEN
-     DO K=1,KM
-       DO N=1,IM*JM-NM
-         F1(N,K)=F2(N*2,K)
-       ENDDO
-     ENDDO
+
+ SCAN_MODE=GDTMPLI(19)
+ IF((SCAN_MODE==68.OR.SCAN_MODE==72).AND.(IDIR<-2.OR.IDIR>-1))THEN
+   GDTNUMO=GDTNUMI
+   GDTMPLO=GDTMPLI
+   GDTMPLO(19)=64
+   GDTMPLO(8)=GDTMPLO(8)*2-1
+   IF((GDTMPLO(8)*GDTMPLO(9))/=NPTS_OUTPUT)THEN
+     IRET=3
+     RETURN
    ENDIF
+   ISCALE=GDTMPLO(10)*GDTMPLO(11)
+   IF(ISCALE==0) ISCALE=1E6
+   DLONS=FLOAT(GDTMPLO(17))/FLOAT(ISCALE)
+   DLONS=DLONS*0.5
+   GDTMPLO(17)=NINT(DLONS*FLOAT(ISCALE))
+ ELSEIF(SCAN_MODE==64.AND.IDIR==-1)THEN  ! FULL TO H-GRID
+   GDTNUMO=GDTNUMI
+   GDTMPLO=GDTMPLI
+   GDTMPLO(19)=68
+   GDTMPLO(8)=(GDTMPLO(8)+1)/2
+   IF((GDTMPLO(8)*GDTMPLO(9))/=NPTS_OUTPUT)THEN
+     IRET=3
+     RETURN
+   ENDIF
+   ISCALE=GDTMPLO(10)*GDTMPLO(11)
+   IF(ISCALE==0) ISCALE=1E6
+   DLONS=FLOAT(GDTMPLO(17))/FLOAT(ISCALE)
+   DLONS=DLONS*2.0
+   GDTMPLO(17)=NINT(DLONS*FLOAT(ISCALE))
+ ELSEIF(SCAN_MODE==64.AND.IDIR==-2)THEN  ! FULL TO V-GRID
+   GDTNUMO=GDTNUMI
+   GDTMPLO=GDTMPLI
+   GDTMPLO(19)=72
+   GDTMPLO(8)=(GDTMPLO(8)+1)/2
+   IF((GDTMPLO(8)*GDTMPLO(9))/=NPTS_OUTPUT)THEN
+     IRET=3
+     RETURN
+   ENDIF
+   ISCALE=GDTMPLO(10)*GDTMPLO(11)
+   IF(ISCALE==0) ISCALE=1E6
+   DLONS=FLOAT(GDTMPLO(17))/FLOAT(ISCALE)
+   DLONS=DLONS*2.0
+   GDTMPLO(17)=NINT(DLONS*FLOAT(ISCALE))
+ ELSE
+   IRET=2
+   RETURN
  ENDIF
+
+ KM=1
+ IP=0
+ IPOPT=0
+ IBI=1
+ IBO=0
+
+ ALLOCATE(OUTPUT_RLAT(NPTS_OUTPUT))
+ ALLOCATE(OUTPUT_RLON(NPTS_OUTPUT))
+
+ CALL IPOLATES(IP, IPOPT, GDTNUMI, GDTMPLI, GDTLEN, &
+               GDTNUMO, GDTMPLO, GDTLEN, &
+               NPTS_INPUT, NPTS_OUTPUT, KM, IBI, BITMAP_INPUT, DATA_INPUT, &
+               NO, OUTPUT_RLAT, OUTPUT_RLON, IBO, BITMAP_OUTPUT, DATA_OUTPUT, IRET)
+
+ DEALLOCATE(OUTPUT_RLAT, OUTPUT_RLON)
+
+ IF(IRET /= 0)THEN
+   PRINT*,'- PROBLEM IN IPOLATES: ', IRET
+   RETURN
+ ENDIF
+
+! - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+! REPLACE ANY UNDEFINED POINTS ALONG THE LEFT AND RIGHT EDGES.
+ DO J=1, GDTMPLO(9)
+   BITMAP_OUTPUT(J*GDTMPLO(8))=BITMAP_OUTPUT(J*GDTMPLO(8)-1)
+   DATA_OUTPUT(J*GDTMPLO(8))=DATA_OUTPUT(J*GDTMPLO(8)-1)
+   BITMAP_OUTPUT((J-1)*GDTMPLO(8)+1)=BITMAP_OUTPUT((J-1)*GDTMPLO(8)+2)
+   DATA_OUTPUT((J-1)*GDTMPLO(8)+1)=DATA_OUTPUT((J-1)*GDTMPLO(8)+2)
+ ENDDO
+
+ RETURN
 ! - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
  END SUBROUTINE IPXETAS
