@@ -9,8 +9,9 @@
  integer(kind=4)                      :: lugi, iunit, iret
  integer(kind=4)                      :: j, jdisc, jpdtn, jgdtn, k
  integer(kind=4)                      :: jids(200), jgdt(200), jpdt(200)
- integer                              :: idir, npts_input, npts_output, km
- integer                              :: igdtnum_output, istat
+ integer                              :: idir, npts_input, npts_output
+ integer                              :: igdtnum_input, igdtnum_output, istat
+ integer                              :: igdtlen
  integer(kind=4), allocatable, target :: igdtmpl_input(:), igdtmpl_output(:)
 
  logical                              :: unpack
@@ -69,8 +70,8 @@
    idir=0
    npts_output = gfld_input%igdtmpl(9) * (gfld_input%igdtmpl(8)*2-1)
  else
-   idir=-1   ! full to hpnts
-!  idir=-2   ! full to vpnts
+!  idir=-1   ! full to hpnts
+   idir=-2   ! full to vpnts
    npts_output = gfld_input%igdtmpl(9) * (gfld_input%igdtmpl(8)+1)/2
  endif
 
@@ -94,7 +95,10 @@
  allocate(bitmap_output(npts_output))
  bitmap_input=.true.
 
- call ipxetas(idir, gfld_input%igdtnum, gfld_input%igdtlen, igdtmpl_input, & 
+ igdtnum_input=gfld_input%igdtnum
+ igdtlen=gfld_input%igdtlen
+
+ call ipxetas(idir, igdtnum_input, igdtlen, igdtmpl_input, & 
               npts_input, bitmap_input, data_input, igdtnum_output,  &
               igdtmpl_output, npts_output, bitmap_output, data_output, istat)
 

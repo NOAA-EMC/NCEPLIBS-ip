@@ -1,4 +1,4 @@
-EXEC    =ipxetas.exe
+EXEC    =ipxetas.exe.dbyte
 FC	=ifort
 FOPTS	= -O0 -r8 -I/nwprod/lib/g2/v2.5.0/incmod/g2_v2.5.0_d -openmp -check all
 LIB1	=/nwprod/lib/libbacio_v2.0.1_4.a   
