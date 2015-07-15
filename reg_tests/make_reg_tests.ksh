@@ -69,10 +69,6 @@ MAKE="gmake"
 
 for WHICHIP in ctl test; do  # the 'control' or 'test' IPLIB
 
-  cd gdswiz_wzd/sorc
-  ln -fs gdswiz_wzd_${WHICHIP}.f90  gdswiz_wzd.f90
-  cd ../..
-
   cd ipolatev/sorc
   ln -fs get_input_data_${WHICHIP}.f90 get_input_data.f90
   ln -fs interp_${WHICHIP}.f90 interp.f90

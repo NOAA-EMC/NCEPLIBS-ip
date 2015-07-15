@@ -1,7 +1,7 @@
 #!/bin/ksh
 
 #--------------------------------------------------------------------
-# Test the gdswiz and gdswzd suite of routines using a Fortran
+# Test the gdswzd suite of routines using a Fortran
 # program.
 #
 # The program is compiled with all three byte versions
@@ -12,12 +12,12 @@
 #  > 8 byte integer/8 byte float  ($bytesize=8)
 #  > 8 byte float/4 byte integer  ($bytesize=d)
 #
-# The gdswiz and gdswzd routines compute the following fields:
+# The gdswzd routines compute the following fields:
 #
 # - lat/lon from i/j OR i/j from lat lon
 # - clockwise vector rotation sines/cosines
-# - dx/dlon, dx/dlat, dy/dlon, dy/dlat  (gdswzd only)
-# - grid box area (gdswzd only)
+# - dx/dlon, dx/dlat, dy/dlon, dy/dlat 
+# - grid box area 
 #
 # The routines are called twice for each grid to test both the
 # i/j to lat/lon AND lat/lon to i/j transforms.  This is controled by setting
@@ -26,7 +26,7 @@
 # message is printed to standard output and the regression test
 # is considered failed.
 #
-# All fields computed from each call to gdswiz/wzd are output to a binary file.
+# All fields computed from each call to gdswzd are output to a binary file.
 # The file naming convention is: grid${gridnum}.iopt${0/m1}.bin.
 # The files from the 'control' and 'test' ip libraries are compared
 # and if not bit identical, the regression test fails.
@@ -36,14 +36,14 @@
 # 003        one-degree global lat/lon (ncep grid 3)
 # 008        mercator (ncep grid 8)
 # 127        t254 gaussian (ncep grid 127)
-# 201        rotated lat/lon e-staggered (number refers to gds octet 6)
-#            tests routines gdswizc9 and gdswzdc9
-# 202        rotated lat/lon b-staggered (number refers to gds octet 6)
-#            tests routines gdswizca and gdswzdca
-# 203        rotated lat/lon e-staggered (number refers to gds octet 6)
-#            tests routines gdswizcb and gdswzdcb
-# 205        rotated lat/lon b-staggered (number refers to gds octet 6)
-#            tests routines gdswizcd and gdswzdcd
+# 203h       rotated lat/lon e-staggered (number meaningless)
+#            this is the old 12km eta grid - 'h' points
+# 203v       rotated lat/lon e-staggered (number meaningless)
+#            this is the old 12km eta grid - 'v' points
+# 205h       rotated lat/lon b-staggered (number meaningless)
+#            this is the 12km nam grid - 'h' points
+# 205v       rotated lat/lon b-staggered (number meaningless)
+#            this is the 12km nam grid - 'v' points
 # 212        nh polar stereographic, spherical earth (number meaningless)
 # 213        sh polar stereographic, spherical earth (number meaningless)
 # 218        lambert conformal (ncep grid 218)
@@ -82,11 +82,11 @@ cp $EXEC_DIR/gdswiz_wzd_test_*.exe $WORK_TEST
 
 reg_test_failed=0
 
-for routine in "WIZ" "WZD"  # test gdswiz and gdswzd separately
+for routine in "WZD"  # test gdswiz and gdswzd separately
 do
   echo
   echo RUN REGRESSION TEST FOR GDS${routine} ROUTINES 
-  for grids in "3" "8" "203" "127" "212" "213" "218" "205h" "205v" "201" "202" "222"
+  for grids in "3" "8" "127" "203h" "203v" "212" "222" "213" "205h" "205v" "218"
   do
     echo
     for bytesize in "4" "8" "d"  # test each library version
@@ -99,7 +99,7 @@ do
 
       cd $WORK_CTL
       CTL_LOG=ctl.${routine}.${bytesize}byte.grid${grids}.log
-      gdswiz_wzd_ctl_${bytesize}.exe "$routine" "$grids" > $CTL_LOG
+      gdswiz_wzd_ctl_${bytesize}.exe "$grids" > $CTL_LOG
       status=$?
 # did 'control' executable run without error?
       if ((status != 0));then
@@ -110,7 +110,7 @@ do
 
       cd $WORK_TEST
       TEST_LOG=test.${routine}.${bytesize}byte.grid${grids}.log
-      gdswiz_wzd_test_${bytesize}.exe "$routine" "$grids" > $TEST_LOG
+      gdswiz_wzd_test_${bytesize}.exe "$grids" > $TEST_LOG
       status=$?
 # did 'test' executable run without error?
       if ((status != 0));then

@@ -1,5 +1,5 @@
-dset ^./grid201.bin
-undef 99999
+dset ^./grid203h.bin
+undef 9.999E+20
 xdef 669 linear 0.000000 1.0
 ydef 1165 linear 0.000000 1.0
 tdef 1 linear 00z01jan1980 1dy
