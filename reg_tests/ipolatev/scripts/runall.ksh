@@ -19,13 +19,15 @@
 #    3 - one-degree global lat/lon (ncep grid 3)
 #    8 - mercator (ncep grid 8)
 #  127 - t254 gaussian (ncep grid 127)
-#  203 - rotated lat/lon e-staggered (number refers to gds octet 6)
-#  205 - rotated lat/lon b-staggered (number refers to gds octet 6)
+#  203 - rotated lat/lon e-staggered (number meaningless)
+#        this is the old 12km eta grid - 'v' pts
+#  205 - rotated lat/lon b-staggered (number meaningless)
+#        this is the 12km nam grid - 'h' pts
 #  212 - nh polar stereographic, spherical earth (number meaningless)
 #  218 - lambert conformal (ncep grid 218)
 #
-# The input u/v data is: ../data/gfs.500mb.winds.grb
-# It is in grib 1 format.
+# The input u/v data is: ../data/gfs.500mb.winds.grb2
+# It is in grib 2 format.
 #
 # Use all possible ipolatev interpolation options:
 #
@@ -83,8 +85,7 @@ EXEC_DIR=$REG_DIR/ipolatev/exec
 GRADS_DIR=$REG_DIR/ipolatev/grads
 
 # input u/v wind data
-INPUT_DATA=$REG_DIR/ipolatev/data/gfs.500mb.winds.grb
-INPUT_DATA2=$REG_DIR/ipolatev/data/gfs.500mb.winds.grb2
+INPUT_DATA=$REG_DIR/ipolatev/data/gfs.500mb.winds.grb2
 
 WORK=${WORK_DIR}/ipolatev.${num_threads}threads
 rm -fr $WORK
@@ -96,7 +97,7 @@ cp $INPUT_DATA  $WORK_CTL/fort.9
 WORK_TEST=${WORK}/test
 mkdir -p $WORK_TEST
 cp $EXEC_DIR/ipolatev_test_*.exe $WORK_TEST
-cp $INPUT_DATA2  $WORK_TEST/fort.9
+cp $INPUT_DATA  $WORK_TEST/fort.9
 
 ulimit -s 2048000
 

@@ -19,13 +19,15 @@
 #    3 - one-degree global lat/lon (ncep grid 3)
 #    8 - mercator (ncep grid 8)
 #  127 - t254 gaussian (ncep grid 127)
-#  203 - rotated lat/lon e-staggered (number refers to gds octet 6)
-#  205 - rotated lat/lon b-staggered (number refers to gds octet 6)
+#  203 - rotated lat/lon e-staggered (number meaningless)
+#        this is the old 12km eta grid - 'h' pts
+#  205 - rotated lat/lon b-staggered (number meaningless)
+#        this is the 12km nam grid - 'h' pts
 #  212 - nh polar stereographic, spherical earth (number meaningless)
 #  218 - lambert conformal (ncep grid 218)
 #
-# The input data is: ../data/global_tg3clim.1x1.grb
-# It is in grib 1 format.
+# The input data is: ../data/global_tbot.1x1.grb2
+# It is in grib 2 format.
 #
 # Use all possible ipolates interpolation options:
 #
@@ -80,7 +82,7 @@ REG_DIR=${REG_DIR:-../..}
 
 EXEC_DIR=$REG_DIR/ipolates/exec
 
-INPUT_DATA=$REG_DIR/ipolates/data/global_tg3clim.1x1.grb
+INPUT_DATA=$REG_DIR/ipolates/data/global_tbot.1x1.grb2
 
 WORK=$WORK_DIR/ipolates.${num_threads}threads
 rm -fr $WORK

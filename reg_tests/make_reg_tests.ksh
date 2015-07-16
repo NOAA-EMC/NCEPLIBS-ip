@@ -69,12 +69,6 @@ MAKE="gmake"
 
 for WHICHIP in ctl test; do  # the 'control' or 'test' IPLIB
 
-  cd ipolatev/sorc
-  ln -fs get_input_data_${WHICHIP}.f90 get_input_data.f90
-  ln -fs interp_${WHICHIP}.f90 interp.f90
-  ln -fs ipolatev_driver_${WHICHIP}.f90 ipolatev_driver.f90
-  cd ../..
-
   for PRECISION in 4 8 d; do  # single ("4"), double ("8") or mixed ("d") precison IPLIB
 
     case $PRECISION in

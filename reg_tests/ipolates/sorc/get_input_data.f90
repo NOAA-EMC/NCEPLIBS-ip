@@ -1,18 +1,18 @@
  module get_input_data       
 
 !------------------------------------------------------------------------
-! read the data that will be interpolated.  data is a global one-degree
-! grid of land substrate temperatures.  water points are masked out
+! Read the data that will be interpolated.  Data is a global one-degree
+! grid of land substrate temperatures.  Water points are masked out
 ! with a bitmap.
 !------------------------------------------------------------------------
 
- integer(kind=4), allocatable, public   :: gdtmpl_input(:)
- integer, public                :: gdtlen_input, gdtnum_input
- integer, public                :: i_input, j_input
+ integer(kind=4), allocatable, public :: gdtmpl_input(:)
+ integer, public                      :: gdtlen_input, gdtnum_input
+ integer, public                      :: i_input, j_input
 
- logical*1, allocatable, public :: input_bitmap(:)
+ logical*1, allocatable, public       :: input_bitmap(:)
 
- real, allocatable, public      :: input_data(:)
+ real, allocatable, public            :: input_data(:)
 
  contains
 

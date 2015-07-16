@@ -1,11 +1,11 @@
  program ipolates_driver
 
 !-----------------------------------------------------------------
-! interpolate a global lat/lon grid of scalars to several
+! Interpolate a global lat/lon grid of scalars to several
 ! grids of various projections using all ipolates 
 ! interpolation options.
 !
-! the ipolates series of routines is threaded, so it is compiled
+! The ipolates series of routines is threaded, so it is compiled
 ! and run with threads.
 !-----------------------------------------------------------------
 

@@ -3,7 +3,7 @@
 !-------------------------------------------------------------------------
 ! Call the vector polates routines to interpolate the input data
 ! using all available interpolation methods (neighbor, bilinear, etc.)
-! several output grids of various map projections are tested.
+! Several output grids of various map projections are tested.
 !
 ! The routine reads in two arguments from stnd input.  The first is
 ! the grid to which you want to interpolate the data.
@@ -12,8 +12,10 @@
 !    3 -  one-degree global lat/lon (ncep grid 3)
 !    8 -  mercator (ncep grid 8)
 !  127 -  t254 gaussian (ncep grid 127)
-!  203 -  rotated lat/lon e-staggered (number refers to gds octet 6)
-!  205 -  rotated lat/lon b-staggered (number refers to gds octet 6)
+!  203 -  rotated lat/lon e-staggered (number meaningless)
+!         this is the old 12km eta grid - "v" pts
+!  205 -  rotated lat/lon b-staggered (number meaningless)
+!         this is the 12km nam grid - "h" pts
 !  212 -  nh polar stereographic, spherical earth (number meaningless)
 !  218 -  lambert conformal (ncep grid 218)
 !
@@ -37,22 +39,22 @@
 
  implicit none
 
- character*1             :: interp_opt
- character*3             :: grid
- character*100           :: output_file
+ character*1                  :: interp_opt
+ character*3                  :: grid
+ character*100                :: output_file
 
- integer*4   :: i1
- integer     :: ip, ipopt(20), output_kgds(200)
- integer     :: km, ibi, mi, iret, i, j
- integer     :: i_output, j_output, mo, no, ibo
+ integer*4                    :: i1
+ integer                      :: ip, ipopt(20), output_kgds(200)
+ integer                      :: km, ibi, mi, iret, i, j
+ integer                      :: i_output, j_output, mo, no, ibo
  integer(kind=4), allocatable :: gdtmpl_output(:)
  integer                      :: gdtlen_output, gdtnum_output
 
- logical*1, allocatable :: output_bitmap(:,:)
+ logical*1, allocatable       :: output_bitmap(:,:)
 
- real, allocatable :: output_rlat(:,:), output_rlon(:,:)
- real, allocatable :: output_crot(:,:), output_srot(:,:)
- real, allocatable :: output_u_data(:,:), output_v_data(:,:)
+ real, allocatable            :: output_rlat(:,:), output_rlon(:,:)
+ real, allocatable            :: output_crot(:,:), output_srot(:,:)
+ real, allocatable            :: output_u_data(:,:), output_v_data(:,:)
 
  integer(kind=4), parameter   :: missing=b'11111111111111111111111111111111'
 
@@ -67,25 +69,25 @@
                 -48670000, 3104000, 56, 22500000, 61050000, 0, 64, 0, &
                  318830000, 318830000/
 
- integer, parameter :: gdtlen127=19
+ integer, parameter :: gdtlen127=19  ! t254 gaussian
  integer(kind=4)    :: gdtmpl127(gdtlen127)
  data gdtmpl127 /6, 255, missing, 255, missing, 255, missing, 768, 384, &
                  0, missing, 89642000, 0, 48, -89642000, 359531000,  &
                  469000, 192, 0/
 
- integer, parameter :: gdtlen203=22  ! "v" point grid
+ integer, parameter :: gdtlen203=22  ! 12km eta grid - "v" point grid
  integer(kind=4)    :: gdtmpl203(gdtlen203)
  data gdtmpl203/6, 255, missing, 255, missing, 255, missing, 669, 1165, &
                 0, missing, -7450000, 215860000, 56, 44560100, 14744800, &
                 179641, 77320, 72, -36000000, 254000000, 0 /
 
- integer, parameter :: gdtlen205=22
+ integer, parameter :: gdtlen205=22  ! 12km nam grid - "h" point grid
  integer(kind=4)    :: gdtmpl205(gdtlen205)
  data gdtmpl205/6, 255, missing, 255, missing, 255, missing, 954, 835, &
                 0, missing, -7491200, 215866300, 56, 44539600, 14801500, &
                 126000, 108000, 64, -36000000, 254000000, 0 /
 
- integer, parameter :: gdtlen212=18
+ integer, parameter :: gdtlen212=18  ! nh polar stereographic
  integer(kind=4)    :: gdtmpl212(gdtlen212)
  data gdtmpl212 /6, 255, missing, 255, missing, 255, missing, 513, 513, &
                  -20826000, 235000000, 56, 60000000, 280000000, 47625000, 47625000, &

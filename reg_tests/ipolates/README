@@ -22,7 +22,7 @@ These ipolates routines have threads, so this regression test is run twice -
 with 1 and 4 threads.
 
 The input substrate temperature data is located in the ./data subdirectory.
-It is in grib1 format.
+It is in grib 2 format.
 
 This temperature data is interpolated to the following grids:
 
@@ -31,8 +31,10 @@ grid #       description
 003          one-degree global lat/lon (ncep grid 3)
 008          mercator (ncep grid 8)
 127          t254 gaussian (ncep grid 127)
-203          rotated lat/lon e-staggered (number refers to gds octet 6)
-205          rotated lat/lon b-staggered (number refers to gds octet 6)
+203          rotated lat/lon e-staggered (number meaningless)
+             this is the old 12km eta grid - 'h' pts
+205          rotated lat/lon b-staggered (number meaningless)
+             this is the 12km nam grid - 'h' pts
 212          nh polar stereographic, spherical earth (number meaningless)
 218          lambert conformal (ncep grid 218)
 
@@ -69,14 +71,25 @@ the ./grads subdirectory.  There is one ".ctl" file for each grid number.
 
 List of iplib routines tested:
 
+check_grids0
+check_grids1
+check_grids2
+earth_radius
 gdswiz
 gdswiz00
+gdswiz00_error
 gdswiz01
+gdswiz01_error
 gdswiz03
+gdswiz03_error
 gdswiz04
+gdswiz04_error
 gdswiz05
+gdswiz05_error
 gdswizcb
+gdswizcb_error
 gdswizcd
+gdswizcd_error
 ijkgds0
 ijkgds1
 ipolates

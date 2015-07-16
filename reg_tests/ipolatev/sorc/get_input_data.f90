@@ -1,19 +1,19 @@
  module get_input_data       
 
 !------------------------------------------------------------------------
-! read the data that will be interpolated.  data is a global one-degree
-! grid of 500 mb u and v-component winds.  there is no bitmap, so
+! Read the data that will be interpolated.  Data is a global one-degree
+! grid of 500 mb u and v-component winds.  There is no bitmap, so
 ! create one from the landmask record.
 !------------------------------------------------------------------------
 
  integer(kind=4), allocatable, public   :: gdtmpl_input(:)
- integer, public                :: gdtlen_input, gdtnum_input
- integer, public                :: i_input, j_input
+ integer, public                        :: gdtlen_input, gdtnum_input
+ integer, public                        :: i_input, j_input
 
- logical*1, allocatable, public :: input_bitmap(:)
+ logical*1, allocatable, public         :: input_bitmap(:)
 
- real, allocatable, public      :: input_u_data(:)
- real, allocatable, public      :: input_v_data(:)
+ real, allocatable, public              :: input_u_data(:)
+ real, allocatable, public              :: input_v_data(:)
 
  contains
 
@@ -65,7 +65,7 @@
  jpdt(2) = 2      ! search for parameter number - u wind
  unpack  = .true. ! unpack data
 
- print*,"- DEGRIB DATA"
+ print*,"- DEGRIB U-WIND DATA"
  call getgb2(iunit, lugi, j, jdisc, jids, jpdtn, jpdt, jgdtn, jgdt, &
              unpack, k, gfld, iret)
 
@@ -110,7 +110,7 @@
  jpdt(2) = 3      ! search for parameter number - v wind
  unpack  = .true. ! unpack data
 
- print*,"- DEGRIB DATA"
+ print*,"- DEGRIB V-WIND DATA"
  call getgb2(iunit, lugi, j, jdisc, jids, jpdtn, jpdt, jgdtn, jgdt, &
              unpack, k, gfld, iret)
 
@@ -146,7 +146,7 @@
  jpdt(2) = 0      ! search for parameter number - land cover
  unpack  = .true. ! unpack data
 
- print*,"- DEGRIB DATA"
+ print*,"- DEGRIB MASK DATA"
  call getgb2(iunit, lugi, j, jdisc, jids, jpdtn, jpdt, jgdtn, jgdt, &
              unpack, k, gfld, iret)
 

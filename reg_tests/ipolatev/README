@@ -22,7 +22,7 @@ These ipolatev routines have threads, so this regression test is run twice -
 with 1 and 4 threads.
 
 The input u/v wind data is located in the ./data subdirectory.
-It is in grib1 format.
+It is in grib 2 format.
 
 This wind data is interpolated to the following grids:
 
@@ -31,8 +31,10 @@ grid #       description
 003          one-degree global lat/lon (ncep grid 3)
 008          mercator (ncep grid 8)
 127          t254 gaussian (ncep grid 127)
-203          rotated lat/lon e-staggered (number refers to gds octet 6)
-205          rotated lat/lon b-staggered (number refers to gds octet 6)
+203          rotated lat/lon e-staggered (number meaningless)
+             this is the old 12km eta grid - 'v' pts
+205          rotated lat/lon b-staggered (number meaningless)
+             this is the 12km nam grid - 'h' pts
 212          nh polar stereographic, spherical earth (number meaningless)
 218          lambert conformal (ncep grid 218)
 
@@ -69,14 +71,27 @@ the ./grads subdirectory.  There is one ".ctl" file for each grid number.
 
 List of routines tested:
 
-gdswiz     
-gdswiz00   
-gdswiz01  
-gdswiz03 
-gdswiz04  
-gdswiz05  
-gdswizcb  
-gdswizcd  
+check_grids0v
+check_grids1v
+check_grids2v
+check_grids3v
+check_grids6v
+earth_radius
+gdswzd    
+gdswzd00   
+gdswzd00_error
+gdswzd01  
+gdswzd01_error
+gdswzd03 
+gdswzd03_error
+gdswzd04  
+gdswzd04_error
+gdswzd05  
+gdswzd05_error
+gdswzdcb  
+gdswzdcb_error
+gdswzdcd  
+gdswzdcd_error
 ijkgds0   
 ijkgds1   
 ipolatev  
