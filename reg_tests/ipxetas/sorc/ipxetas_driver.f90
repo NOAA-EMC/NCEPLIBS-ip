@@ -1,87 +1,93 @@
- program ipxetas_driver     
+ program driver
 
-!------------------------------------------------------------------------
-! Test routine ipxetas, which transforms between staggered eta (rotated
-! lat/lon) grids.
+!----------------------------------------------------------------------------
+! Test iplib routine ipxetas as follows:
 !
-! Reads an input file of vegetation greenness on a 'filled'
-! 12km eta grid, then calls routine ipxetas to do the following:
+!  1) Convert land/sea mask on a rotated lat/lon "e"-staggered "h" point
+!     grid to a rotated lat/lon unstaggerd "full" grid.
+!  2) Convert u-component wind on a rotated lat/lon "e"-staggered "v" point
+!     grid to a rotated lat/lon unstaggerd "full" grid.
+!  3) Convert land/sea mask on a rotated lat/lon unstaggered "full" grid
+!     to a rotated lat/lon "e"-staggered "h" point grid.
+!  4) Convert land/sea mask on a rotated lat/lon unstaggered "full" grid
+!     to a rotated lat/lon "e"-staggered "v" point grid.
 !
-! 1) create a staggered mass grid from the full grid.
-! 2) create a staggered velocity grid from the full grid.
-! 3) create a full grid from the staggered mass grid created by step (1)
-! 4) create a full grid from the staggered vel grid created by step (2)
-!
-! The output from the first two steps is written to binary file,
-! "staggered.bin".  The output from the last two steps is written to
-! binary file, "full.bin".
-!
-! Note: I don't think this routine works for full grids with an even
-! number of points in the x-direction.  So, the input test 
-! data (full grid) has an odd number of points.
-!------------------------------------------------------------------------
+! All input files are in grib 2 format.  The converted output data is
+! also grib 2.
+!----------------------------------------------------------------------------
+
+ use grib_mod
 
  implicit none
 
- character*100                  :: file_full
+ character(len=2)                     :: option
+ character(len=100)                   :: input_file, output_file
 
- integer                        :: idir, km, m1_m, m1_v, m2, i, j, nn, iend
- integer                        :: kgds_full(200), kgds_stag(200)
- integer                        :: i_full, j_full, i_stag, j_stag
- integer                        :: iret, lskip, jpds(200), jgds(200), kpds(200)
- integer                        :: lugi, numbytes, numpts, message_num
- integer, parameter             :: iunit=9
+ integer                              :: lugi, iunit, iret
+ integer                              :: j, jdisc, jpdtn, jgdtn, k
+ integer                              :: jids(200), jgdt(200), jpdt(200)
+ integer                              :: idir, npts_input, npts_output
+ integer                              :: igdtnum_input, igdtnum_output, istat
+ integer                              :: igdtlen
+ integer(kind=4)                      :: i1
+ integer        , allocatable, target :: igdtmpl_output(:)
+ integer(kind=4), allocatable         :: igdtmpl_input4(:), igdtmpl_output4(:)
 
- logical*1, allocatable         :: bitmap_full(:,:)
+ logical                              :: unpack
+ logical*1, allocatable, target       :: bitmap_input(:), bitmap_output(:)
+ 
+ real, allocatable, target            :: data_input(:), data_output(:)
 
- real, allocatable              :: data_full(:,:), data_stag_m(:), data_stag_v(:)
- real, allocatable              :: data_full_m(:,:), data_full_v(:,:)
- real, allocatable              :: data_stag_m_2d(:,:), data_stag_v_2d(:,:)
+ type(gribfield)                      :: gfld_input, gfld_output
 
-!-------------------------------------------------------------------------------
-! read in eta grid of vegetation greenness.  data is on the full 
-! (not staggered) grid.
-!-------------------------------------------------------------------------------
+ option="xx"
+ i1=1
+ call getarg(i1, option)
 
- file_full="./fort.9"
- print*,"- OPEN AND READ FILE ", trim(file_full)
- call baopenr (iunit, file_full, iret)
+ select case (trim(option))
+   case ('0')
+     idir=0       ! "H" or "V" grid to full grid
+   case ('-1')
+     idir=-1      ! full grid to "H"
+   case ('-2')
+     idir=-2      ! full grid to "V"
+   case default
+     print*,"ERROR: ENTER VALID OPTION."
+     stop 24
+ end select
+
+ input_file="./fort.9"
+ print*,"- OPEN AND READ FILE ", trim(input_file)
+ iunit=9
+ call baopenr (iunit, input_file, iret)
 
  if (iret /= 0) then
    print*,'- BAD OPEN OF FILE, IRET IS ', iret
    stop 2
  end if
 
- lugi       = 0
- lskip      = -1
- jpds       = -1
- jgds       = -1
- jpds(5)    = 255   
- kpds       = jpds
- kgds_full  = jgds
+ j       = 0      ! search at beginning of file
+ jdisc   = -1     ! search for any discipline
+ jpdtn   = -1     ! search for any product definition template number
+ jgdtn   =  1     ! search for grid definition template number 1 - rot lat/lon grid
+ jids    = -9999  ! array of values in identification section, set to wildcard
+ jgdt    = -9999  ! array of values in grid definition template 3.m
+ jpdt    = -9999  ! array of values in product definition template 4.n
+ unpack  = .true. ! unpack data
+ lugi    = 0      ! no index file
 
- print*,"- GET GRIB HEADER"
- call getgbh(iunit, lugi, lskip, jpds, jgds, numbytes,  &
-             numpts, message_num, kpds, kgds_full, iret)
+ nullify(gfld_input%idsect)
+ nullify(gfld_input%local)
+ nullify(gfld_input%list_opt)
+ nullify(gfld_input%igdtmpl)
+ nullify(gfld_input%ipdtmpl)
+ nullify(gfld_input%coord_list)
+ nullify(gfld_input%idrtmpl)
+ nullify(gfld_input%bmap)
+ nullify(gfld_input%fld)
 
- if (iret /= 0) then
-   print*,"- BAD DEGRIB OF HEADER. IRET IS ", iret
-   stop 3
- else
-   print*,'- SUCCESSFULL DEGRIB OF HEADER'
- end if
-
- i_full = kgds_full(7)
- j_full = kgds_full(8)
-
- allocate(data_full(i_full,j_full))
- allocate(bitmap_full(i_full,j_full))
-
- print*,"- DEGRIB DATA"
- call getgb(iunit, lugi, numpts, lskip, jpds, jgds, &
-            numpts, lskip, kpds, kgds_full, bitmap_full, data_full, iret)
-
- deallocate (bitmap_full)
+ call getgb2(iunit, lugi, j, jdisc, jids, jpdtn, jpdt, jgdtn, jgdt, &
+             unpack, k, gfld_input, iret)
 
  if (iret /= 0) then
    print*,"- BAD DEGRIB OF DATA. IRET IS ", iret
@@ -92,150 +98,89 @@
 
  call baclose (iunit, iret)
 
-!-------------------------------------------------------------------------------
-! call ipxetas to created staggered mass grid from the full grid.
-!-------------------------------------------------------------------------------
+ print*,'- SCAN MODE IS: ', gfld_input%igdtmpl(19)
+ print*,'- DIMENSION OF GRID: ', gfld_input%igdtmpl(8), gfld_input%igdtmpl(9)
 
- km   = 1 ! interpolate one field 
- m2   = i_full * j_full
-
- m1_m = (i_full * j_full + 1) / 2   ! number of mass points
-
- idir = -1  ! calculate mass grid
-
- allocate (data_stag_m(m1_m))
-
- call ipxetas(idir, m1_m, m2, km, kgds_stag, data_stag_m, kgds_full, data_full, iret)
-
- if (iret /= 0) then
-   print*,"- BAD CALL TO IPXETAS. IRET IS ", iret
-   stop 4
+ if (idir==0)then
+   npts_output = gfld_input%igdtmpl(9) * (gfld_input%igdtmpl(8)*2-1)
  else
-   print*,"- SUCCESSFULL CALL TO IPXETAS FOR FULL TO MASS GRID."
- end if
+   npts_output = gfld_input%igdtmpl(9) * (gfld_input%igdtmpl(8)+1)/2
+ endif
 
- print*,'- KGDS_FULL ',kgds_full(1:20)
- print*,'- KGDS_STAG ',kgds_stag(1:20)
+ npts_input = gfld_input%ngrdpts
 
-!-------------------------------------------------------------------------------
-! call ipxetas to create staggered velocity grid.
-!-------------------------------------------------------------------------------
+ allocate(igdtmpl_input4(gfld_input%igdtlen))
+ igdtmpl_input4=gfld_input%igdtmpl
 
- idir = -2  ! calculate velocity grid from full grid.
+ allocate(igdtmpl_output4(gfld_input%igdtlen))
+ igdtmpl_output4=igdtmpl_input4
 
- m1_v = (i_full * j_full + 1) / 2 - 1  ! number of velocity points.
+ allocate(data_input(npts_input))
+ data_input=gfld_input%fld
 
- allocate (data_stag_v(m1_v))
+ allocate(bitmap_input(npts_input))
+ bitmap_input=.true.
 
- call ipxetas(idir, m1_v, m2, km, kgds_stag, data_stag_v, kgds_full, data_full, iret)
+ allocate(data_output(npts_output))
+ data_output=-999.
 
- deallocate(data_full)
+ allocate(bitmap_output(npts_output))
+ bitmap_input=.true.
 
- if (iret /= 0) then
-   print*,"- BAD CALL TO IPXETAS. IRET IS ", iret
-   stop 46
+ igdtnum_input=gfld_input%igdtnum
+ igdtlen=gfld_input%igdtlen
+
+ call ipxetas(idir, igdtnum_input, igdtlen, igdtmpl_input4, & 
+              npts_input, bitmap_input, data_input, igdtnum_output,  &
+              igdtmpl_output4, npts_output, bitmap_output, data_output, istat)
+
+ if (istat /= 0) then
+   print*,"- PROBLEM IN IPXETAS. ISTAT IS: ", istat
+   stop 5
+ endif
+
+ nullify(gfld_output%idsect)
+ nullify(gfld_output%local)
+ nullify(gfld_output%list_opt)
+ nullify(gfld_output%igdtmpl)
+ nullify(gfld_output%ipdtmpl)
+ nullify(gfld_output%coord_list)
+ nullify(gfld_output%idrtmpl)
+ nullify(gfld_output%bmap)
+ nullify(gfld_output%fld)
+
+ gfld_output=gfld_input
+ gfld_output%ngrdpts=npts_output
+ allocate(igdtmpl_output(gfld_input%igdtlen))
+ igdtmpl_output=igdtmpl_output4
+ gfld_output%igdtmpl=>igdtmpl_output
+ gfld_output%idrtmpl=>gfld_input%idrtmpl
+ gfld_output%idrtmpl=0
+ gfld_output%idrtmpl(3)=gfld_input%idrtmpl(3)
+ gfld_output%fld=>data_output
+
+ if(any(.not.bitmap_output)) then
+   gfld_output%ibmap=0
+   gfld_output%bmap=>bitmap_output
  else
-   print*,"- SUCCESSFULL CALL TO IPXETAS FOR FULL TO VELOCITY GRID."
- end if
+   gfld_output%ibmap=255
+ endif
 
- print*,'- KGDS_FULL ',kgds_full(1:20)
- print*,'- KGDS_STAG ',kgds_stag(1:20)
-
-!-------------------------------------------------------------------------------
-! convert staggered arrays to 2d for display in grads.
-!-------------------------------------------------------------------------------
-
- i_stag = kgds_stag(7)
- j_stag = kgds_stag(8)
-
- allocate (data_stag_m_2d(i_stag,j_stag))
- data_stag_m_2d = -9999.
-
- nn = 0
- do j = 1, j_stag
- do i = 1, i_stag
-   if (mod(j,2) == 0 .and. i == i_stag) cycle
-   nn = nn + 1
-   data_stag_m_2d(i,j) = data_stag_m(nn)
- enddo
- enddo
-
- allocate (data_stag_v_2d(i_stag,j_stag))
- data_stag_v_2d = -9999.
-
- nn = 0
- do j = 1, j_stag
- do i = 1, i_stag
-   if (mod(j,2) /= 0 .and. i == i_stag) cycle
-   nn = nn + 1
-   data_stag_v_2d(i,j) = data_stag_v(nn)
- enddo
- enddo
-
- open (33, file="./staggered.bin", access='direct', recl=i_stag*j_stag*4, err=77)
- write (33, rec=1, err=77) real(data_stag_m_2d,4)
- write (33, rec=2, err=77) real(data_stag_v_2d,4)
- close (33)
-
- deallocate (data_stag_m_2d, data_stag_v_2d)
-
-!-------------------------------------------------------------------------------
-! call ipxetas to create full field from staggered mass field.
-!-------------------------------------------------------------------------------
-
- idir = 1
- allocate (data_full_m(i_full,j_full))
- data_full_m = -9999.
-
- call ipxetas(idir, m1_m, m2, km, kgds_stag, data_stag_m, kgds_full, data_full_m, iret)
-
- deallocate (data_stag_m)
-
+ output_file="./output.grb2"
+ print*,"- OPEN AND WRITE FILE ", trim(output_file)
+ iunit=10
+ call baopenw(iunit, output_file, iret)
  if (iret /= 0) then
-   print*,"- BAD CALL TO IPXETAS. IRET IS ", iret
-   stop 47
- else
-   print*,"- SUCCESSFULL CALL TO IPXETAS FOR MASS TO FULL GRID."
- end if
+   print*,"- PROBLEM OPENING FILE. IRET: ", iret
+   stop 21
+ endif
 
- print*,'- KGDS_FULL ',kgds_full(1:20)
- print*,'- KGDS_STAG ',kgds_stag(1:20)
-
-!-------------------------------------------------------------------------------
-! call ipxetas to create full field from staggered velocity field.
-!-------------------------------------------------------------------------------
-
- idir = 2
- allocate (data_full_v(i_full,j_full))
- data_full_v = -9999.
-
- call ipxetas(idir, m1_v, m2, km, kgds_stag, data_stag_v, kgds_full, data_full_v, iret)
-
- deallocate (data_stag_v)
-
+ call putgb2(iunit, gfld_output, iret)
  if (iret /= 0) then
-   print*,"- BAD CALL TO IPXETAS. IRET IS ", iret
-   stop 48
- else
-   print*,"- SUCCESSFULL CALL TO IPXETAS FOR VELOCITY TO FULL GRID."
- end if
+   print*,"- PROBLEM WRITING FILE. IRET: ", iret
+   stop 22
+ endif
 
- print*,'- KGDS_FULL ',kgds_full(1:20)
- print*,'- KGDS_STAG ',kgds_stag(1:20)
+ call baclose(iunit, iret)
 
- open (38, file="./full.bin", access='direct', recl=i_full*j_full*4, err=77)
- write (38, rec=1, err=77) real(data_full_m,4)
- write (38, rec=2, err=77) real(data_full_v,4)
- close (38)
-
- deallocate (data_full_m, data_full_v)
-
- print*,'- NORMAL TERMINATION'
-
- stop 
-
- 77 continue
- print*,'- ERROR WRITING BINARY FILE'
- stop 88
-
- end program ipxetas_driver
+ end program driver
