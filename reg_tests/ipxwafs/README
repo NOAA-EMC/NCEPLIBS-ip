@@ -1,14 +1,19 @@
-Test ip routine ipxwafs by transforming a global grid of
-600 mb temperature (on ncep grid 3) to wafs grids 37 thru 44 using a 
-specially modified version of copygb.
+Test ip routines ipxwafs, ipxwafs2 and ipxwafs3 by transforming between
+full and thinned WAFS grids.  The full grids have the same number of
+points in each row.  In the thinned grids, the number of points in each
+row decrease toward the pole. These transforms are performed using a
+Fortran program.
 
-After the global to wafs grid transforms are completed, copygb is
-invoked again to interpolate a grid of 600 mb temperature on each 
-wafs grid back to ncep grid 3.
+The program reads in a grib 2 file of data on the full/thinned WAFS
+grid and transforms it to its thinned/full counterpart.  Routine
+ipxwafs transforms data without bitmaps.  Routines ipxwafs2 and
+ipxwafs3 transform data with bitmaps - the former uses bilinear
+interpolation and the latter uses nearest neighbor.  The transformed
+data is written to a grib 2 file.
 
-The special copygb source code and the make-related files 
-are in the ./sorc subdirectory.  The code is compiled with all
-byte versions of the 'control' and 'test' ip libraries:
+The program source code and the make-related files are in the
+./sorc subdirectory.  The code is compiled with all byte
+versions of the 'control' and 'test' ip libraries:
 
   > 4 byte integer/4 byte float
   > 8 byte integer/8 byte float
@@ -19,36 +24,29 @@ in the /reg_tests directory.  See the /reg_tests/README
 file for more information.  The executables (a total
 of six) are stored in the ./exec subdirectory.
 
-These input datasets (field of 600 mb temperature), are located
-in the ./data subdirectory of THE IPXWAFS2_3 REGRESSION test.
-They are in grib 1 format:
-  grid.3.grb             (600 mb temps on ncep grib 3)
-  wafs.${wafs_grib}.grb  (600 mb temps on each wafs grid)
+The input data for the program is located in the /data subdirectory.
+All input data are in grib 2 format.  The files are:
 
-Note: routine ipxwafs and ipxwafs2 are the same except the latter
-accounts for bitmaps.  The ops version of copygb uses the latter
-routine for all interpolation options except '2' (neighbor).
-The specially modified version calls ipxwafs instead.  Since the
-test datasets do not have bitmaps (a field of 600 mb temperatures)
-the specially modified copygb and ops copygb give the same answer.
+  wafs.37.full.bitmap.grb2 (soil T on full WAFS grid #37 - land only)
+  wafs.37.full.grb2        (600 mb T on full WAFS grid #37)
+  wafs.37.thin.bitmap.grb2 (soil T on thinned WAFS grid #37 - land only)
+  wafs.37.thin.grb2        (600 mb T on thinned WAFS grid #37)
+  wafs.44.full.bitmap.grb2 (soil T on full WAFS grid #44 - land only)
+  wafs.44.full.grb2        (600 mb T on full WAFS grid #44)
+  wafs.44.thin.bitmap.grb2 (soil T on thinned WAFS grid #44 - land only)
+  wafs.44.thin.grb2        (600 mb T on thinned WAFS grid #44)
 
 This regression test is run by the runall.ksh script
 in the ./scripts subdirectory.  The runall.ksh script
 is run by the Runall.${machine}.ksh driver script located
 in /reg_tests.
 
-All output from copygb is in grib 1.  If the grib 1 files from the
+All output from the program is in grib 2.  If the grib 2 files from the
 'control' and 'test' libraries are not bit identical, the
 regression test is considered failed.
 
 List of iplib routines tested:
 
-gdswiz            
-gdswiz00         
-ijkgds0         
-ijkgds1        
-ipolates       
 ipxwafs        
-makgds         
-polates0       
-polfixs       
+ipxwafs2
+ipxwafs3

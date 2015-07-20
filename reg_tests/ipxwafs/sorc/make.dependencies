@@ -1,1 +1,1 @@
- copygb.o : copygb.f
+ ipxwafs_driver.o : ipxwafs_driver.f90

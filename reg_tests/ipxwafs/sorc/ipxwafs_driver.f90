@@ -1,29 +1,55 @@
  program driver
 
+!----------------------------------------------------------------------------
+! Test iplib routine ipxwafs, ipxwafs2 and ipxwafs3 by transforming
+! data on a thinned/full WAFS grid to its full/thinned counterpart.
+!
+! All input files are in grib 2 format.  The converted output data is
+! also grib 2.
+!----------------------------------------------------------------------------
+
  use grib_mod
 
  implicit none
 
- character(len=1), allocatable :: cgrib(:)
+ character(len=1)               :: option
+ character(len=1), allocatable  :: cgrib(:)
+ character(len=150)             :: input_file, output_file
 
- character*150   :: input_file, output_file
-
- integer(kind=4) :: listsec0(2), lengrib
- integer(kind=4) :: igds(5), lcgrib
- integer         :: num_opt_pts, istat
- integer         :: idir, km, m1, m2, igdtlen
- integer         :: ib1, ib2
- integer(kind=4) :: j, jdisc, jpdtn, jgdtn, k
- integer(kind=4) :: jids(200), jgdt(200), jpdt(200)
- integer(kind=4) :: lugi, iret, iunit
- integer(kind=4), allocatable, target :: opt_pts(:), igdtmpl1(:), igdtmpl2(:)
+ integer(kind=4)                :: i1
+ integer                        :: listsec0(2), lengrib
+ integer                        :: igds(5), lcgrib
+ integer                        :: num_opt_pts, istat
+ integer                        :: idir, km, m1, m2, igdtlen
+ integer                        :: ib1, ib2
+ integer                        :: j, jdisc, jpdtn, jgdtn, k
+ integer                        :: jids(200), jgdt(200), jpdt(200)
+ integer                        :: lugi, iret, iunit
+ integer(kind=4), allocatable   :: opt_pts_4(:), igdtmpl1_4(:), igdtmpl2_4(:)
+ integer, allocatable, target   :: opt_pts(:), igdtmpl2(:)
  
  logical                        :: unpack
  logical*1, allocatable, target :: bmap1(:), bmap2(:)
 
- real, allocatable, target :: data1(:), data2(:)
+ real, allocatable, target      :: data1(:), data2(:)
 
- type(gribfield)           :: gfld1, gfld2
+ type(gribfield)                :: gfld1, gfld2
+
+ option="xx"
+ i1=1
+ call getarg(i1, option)
+
+ select case (option)
+   case ('1')
+     print*,"- WILL TEST ROUTINE IPXWAFS"
+   case ('2')
+     print*,"- WILL TEST ROUTINE IPXWAFS2"
+   case ('3')
+     print*,"- WILL TEST ROUTINE IPXWAFS3"
+   case default
+     print*,"ERROR: ENTER VALID OPTION."
+     stop 24
+ end select
 
  input_file="./fort.9"
  print*,"- OPEN AND READ FILE ", trim(input_file)
@@ -78,8 +104,8 @@
    m1=gfld1%ngrdpts
    m2=73*73
    num_opt_pts=gfld1%num_opt
-   allocate(opt_pts(num_opt_pts))
-   opt_pts=gfld1%list_opt
+   allocate(opt_pts_4(num_opt_pts))
+   opt_pts_4=gfld1%list_opt
  else
    print*,"- THIS IS A FULL GRID."
    print*,"- TOTAL NUMBER OF GRID POINTS: ", gfld1%ngrdpts
@@ -88,8 +114,8 @@
    m1=gfld1%ngrdpts
    m2=3447
    num_opt_pts=73
-   allocate(opt_pts(num_opt_pts))
-   opt_pts=-999
+   allocate(opt_pts_4(num_opt_pts))
+   opt_pts_4=-999
  endif
 
  if (gfld1%ibmap==0) then
@@ -105,11 +131,11 @@
  ib2=0  ! output from ipxwafs2/3, 1 if bitmap
 
  igdtlen=gfld1%igdtlen
- allocate(igdtmpl1(igdtlen))
- igdtmpl1 = gfld1%igdtmpl
+ allocate(igdtmpl1_4(igdtlen))
+ igdtmpl1_4 = gfld1%igdtmpl
 
- allocate(igdtmpl2(igdtlen))
- igdtmpl2 = -999
+ allocate(igdtmpl2_4(igdtlen))
+ igdtmpl2_4 = -999
 
  allocate(data1(m1))
  data1 = gfld1%fld
@@ -118,37 +144,59 @@
  data2=-9999.
 
  km=1
- if (idir == 1) then
-   if (gfld1%ibmap==0) then
-!    print*,"- CALL IPXWAFS2 TO CREATE FULL GRID"
-!    call ipxwafs2(idir, m1, m2, km, num_opt_pts, opt_pts, igdtlen, igdtmpl1, &
-!                  data1, ib1, bmap1, igdtmpl2, data2, ib2, bmap2, istat)
-     print*,"- CALL IPXWAFS3 TO CREATE FULL GRID"
-     call ipxwafs3(idir, m1, m2, km, num_opt_pts, opt_pts, igdtlen, igdtmpl1, &
-                   data1, ib1, bmap1, igdtmpl2, data2, ib2, bmap2, istat)
-   else
-     print*,"- CALL IPXWAFS TO CREATE FULL GRID"
-     call ipxwafs(idir, m1, m2, km, num_opt_pts, opt_pts, igdtlen, igdtmpl1, &
-                  data1, igdtmpl2, data2, istat)
+ if (idir == 1) then         ! create full grid
+   if (gfld1%ibmap==0) then  ! input data has bitmap
+     if (option=='2') then
+       print*,"- CALL IPXWAFS2 TO CREATE FULL GRID"
+       call ipxwafs2(idir, m1, m2, km, num_opt_pts, opt_pts_4, igdtlen, igdtmpl1_4, &
+                     data1, ib1, bmap1, igdtmpl2_4, data2, ib2, bmap2, istat)
+     elseif (option=='3') then
+       print*,"- CALL IPXWAFS3 TO CREATE FULL GRID"
+       call ipxwafs3(idir, m1, m2, km, num_opt_pts, opt_pts_4, igdtlen, igdtmpl1_4, &
+                     data1, ib1, bmap1, igdtmpl2_4, data2, ib2, bmap2, istat)
+     else  ! must use ipxwafs2 or ipxwafs3 for bitmap data
+       print*,"- BAD OPTION"
+       stop 67
+     endif
+   else  ! input data has no bitmap
+     if (option=='1') then
+       print*,"- CALL IPXWAFS TO CREATE FULL GRID"
+       call ipxwafs(idir, m1, m2, km, num_opt_pts, opt_pts_4, igdtlen, igdtmpl1_4, &
+                    data1, igdtmpl2_4, data2, istat)
+     else  ! must use ipxwafs for non-bitmapped data
+       print*,"- BAD OPTION"
+       stop 68
+     endif
    endif
- else
-   if (gfld1%ibmap==0) then
-!    print*,"- CALL IPXWAFS2 TO CREATE THIN GRID"
-!    call ipxwafs2(idir, m2, m1, km, num_opt_pts, opt_pts, igdtlen, igdtmpl2, &
-!                  data2, ib2, bmap2, igdtmpl1, data1, ib1, bmap1, istat)
-     print*,"- CALL IPXWAFS3 TO CREATE THIN GRID"
-     call ipxwafs3(idir, m2, m1, km, num_opt_pts, opt_pts, igdtlen, igdtmpl2, &
-                   data2, ib2, bmap2, igdtmpl1, data1, ib1, bmap1, istat)
-   else
-     print*,"- CALL IPXWAFS TO CREATE THIN GRID"
-     call ipxwafs(idir, m2, m1, km, num_opt_pts, opt_pts, igdtlen, igdtmpl2, &
-                  data2, igdtmpl1, data1, istat)
+ else                         ! create thin grid
+   if (gfld1%ibmap==0) then   ! input data has bitmap
+     if (option=='2') then
+       print*,"- CALL IPXWAFS2 TO CREATE THIN GRID"
+       call ipxwafs2(idir, m2, m1, km, num_opt_pts, opt_pts_4, igdtlen, igdtmpl2_4, &
+                     data2, ib2, bmap2, igdtmpl1_4, data1, ib1, bmap1, istat)
+     elseif (option=='3') then
+       print*,"- CALL IPXWAFS3 TO CREATE THIN GRID"
+       call ipxwafs3(idir, m2, m1, km, num_opt_pts, opt_pts_4, igdtlen, igdtmpl2_4, &
+                     data2, ib2, bmap2, igdtmpl1_4, data1, ib1, bmap1, istat)
+     else  ! must use ipxwafs2 or ipxwafs3 for bitmap data
+       print*,"- BAD OPTION"
+       stop 64
+     endif
+   else                     ! input data has no bitmap
+     if (option=='1') then
+       print*,"- CALL IPXWAFS TO CREATE THIN GRID"
+       call ipxwafs(idir, m2, m1, km, num_opt_pts, opt_pts_4, igdtlen, igdtmpl2_4, &
+                    data2, igdtmpl1_4, data1, istat)
+     else  ! must use ipxwafs for non-bitmapped data
+       print*,"- BAD OPTION"
+       stop 63
+     endif
    endif
  endif
 
  if (istat /= 0) then
-   print*,'error in ipxwafs. iret: ', istat
-   stop
+   print*,'- ERROR IN IPXWAFS.  ISTAT: ', istat
+   stop 17
  endif
 
  nullify(gfld2%idsect)
@@ -181,19 +229,25 @@
  gfld2%ngrdpts=m2
  if (idir == 1) then
    gfld2%num_opt=0
+   allocate(opt_pts(0))
+   gfld2%list_opt=>opt_pts
  else
    gfld2%num_opt=num_opt_pts
    gfld2%numoct_opt=1
+   allocate(opt_pts(num_opt_pts))
+   opt_pts=opt_pts_4
    gfld2%list_opt=>opt_pts
    gfld2%interp_opt=1
  endif
  gfld2%igdtnum=gfld1%igdtnum
+ allocate(igdtmpl2(gfld2%igdtlen))
+ igdtmpl2=igdtmpl2_4
  gfld2%igdtmpl=>igdtmpl2
 
 ! Section 4
 
  gfld2%num_coord=gfld1%num_coord
- gfld2%coord_list=gfld1%coord_list
+ allocate(gfld2%coord_list(gfld2%num_coord))
  gfld2%ipdtnum=gfld1%ipdtnum
  gfld2%ipdtlen=gfld1%ipdtlen
  gfld2%ipdtmpl=>gfld1%ipdtmpl
@@ -209,6 +263,7 @@
    gfld2%bmap=>bmap2
  else
    gfld2%ibmap=255
+   allocate(gfld2%bmap(gfld2%ngrdpts))
  endif
 
  gfld2%fld=>data2
@@ -232,7 +287,7 @@
  igds(5)=gfld2%igdtnum
 
  call addgrid(cgrib,lcgrib,igds,gfld2%igdtmpl,gfld2%igdtlen,  &
-                   opt_pts,gfld2%num_opt,iret)
+              gfld2%list_opt,gfld2%num_opt,iret)
  if (iret /= 0) then
    print*,"- ERROR IN ROUTINE ADDGRID"
    stop 9

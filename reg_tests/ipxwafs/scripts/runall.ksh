@@ -1,16 +1,20 @@
 #!/bin/ksh
 
 #-------------------------------------------------------------------------------
-# Test ip routine ipxwafs by transforming a global grid of 600 mb
-# temperature (on ncep grid 3) to wafs grids 37 thru 44 using a specially 
-# modified version of copygb.  A similar transform is done by gfs 
-# job exgfs_grib_wafs.sh.ecf.
+# Test ip routines ipxwafs, ipxwafs2 and ipxwafs3 by transforming between
+# full and thinned WAFS grids.  The full grids have the same number of
+# points in each row.  In the thinned grids, the number of points in each
+# row decrease toward the pole. These transforms are performed using a
+# Fortran program.
 #
-# After the global to wafs grid transforms are completed, copygb is 
-# invoked again to interpolate files of 600 mb temperature on each wafs grid
-# back to ncep grid 3.
+# The program reads in a grib 2 file of data on the full/thinned WAFS
+# grid and transforms it to its thinned/full counterpart.  Routine
+# ipxwafs transforms data without bitmaps.  Routines ipxwafs2 and
+# ipxwafs3 transform data with bitmaps - the former uses bilinear
+# interpolation and the latter uses nearest neighbor.  The transformed
+# data is written to a grib 2 file.
 #
-# The copygb executables are located under the ./exec subdirectory.
+# The program executables are located under the ./exec subdirectory.
 # There is one executable for all three byte versions of the
 # 'control' and 'test' ip library:
 #
@@ -19,25 +23,33 @@
 #  > 8 byte integer/8 byte float  ($bytesize=8)
 #  > 8 byte float/4 byte integer  ($bytesize=d)
 #
-# The input data for these tests is located in the /data subdirectory
-# of the ipxwafs2_3 regression test.  They are in grib 1 format:
-#   grid.3.grb             (600 mb temps on ncep grib 3)
-#   wafs.${wafs_grib}.grb  (600 mb temps on each wafs grid)
+# The input data for the program is located in the /data subdirectory.
+# All input data are in grib 2 format.  The files are:
 #
-# Note: routine ipxwafs and ipxwafs2 are the same except the latter
-# accounts for bitmaps.  The ops version of copygb uses the latter
-# routine for all interpolation options except '2' (neighbor).
-# the specially modified version calls ipxwafs instead.  Since the
-# test dataset does not have a bitmap (a field of 600 mb temperatures)
-# the specially modified copygb and ops copygb give the same answer.
+#   wafs.37.full.bitmap.grb2 (soil T on full WAFS grid #37 - land only)
+#   wafs.37.full.grb2        (600 mb T on full WAFS grid #37)
+#   wafs.37.thin.bitmap.grb2 (soil T on thinned WAFS grid #37 - land only)
+#   wafs.37.thin.grb2        (600 mb T on thinned WAFS grid #37)
+#   wafs.44.full.bitmap.grb2 (soil T on full WAFS grid #44 - land only)
+#   wafs.44.full.grb2        (600 mb T on full WAFS grid #44)
+#   wafs.44.thin.bitmap.grb2 (soil T on thinned WAFS grid #44 - land only)
+#   wafs.44.thin.grb2        (600 mb T on thinned WAFS grid #44)
 #
-# If the output files (grib 1 format) from the control and test ip libraries
+# The 'control' and 'test' executables run in their own working directories:
+# $WORK_CTL and $WORK_TEST.
+#
+# If the output files (grib 2 format) from the control and test ip libraries
 # are not bit identical, then the regression test has failed.  When this
-# happens, the output files are saved in a subdirectory under
-# $WORK_CTL and $WORK_TEST:
+# happens, the log and output files are saved in the working directories
+# with the following naming convention:
 #
-# ./failed.regl.to.wafs/${wafs_grid}.${bytesize}byte.grb
-# ./failed.wafs.to.regl/grid3.from${wafs_grid}.${bytesize}byte.grb
+#  > log.${transform}.${routine}.grid${wafs_grid}.${bytesize}byte.failed
+#  > output.${transform}.${routine}.grid${wafs_grid}.${bytesize}byte.failed.grb2
+#
+# where: $tranform is "thin2full" or "full2thin"
+# where: $routine is "ipxwafs", "ipxwafs2" or "ipxwafs3"
+# where: $wafs_grid is "37" or "44"
+# where: $bytesize is the library byte size: "4" "8" "d"
 #
 # This script is run by the Runall.${machine}.ksh driver script located
 # in /reg_tests.
@@ -51,146 +63,197 @@ echo
 
 WORK_DIR=${WORK_DIR:-/stmpp1/$LOGNAME/regression}
 
-REG_DIR=${REG_DIR:-../..}
-
-TEST_EXEC_DIR=$REG_DIR/ipxwafs/exec
-CTL_EXEC_DIR=$REG_DIR/ipxwafs/exec
-
-DATA_DIR=$REG_DIR/ipxwafs2_3/data
+REG_DIR=${REG_DIR:-$(pwd)/..}
+EXEC_DIR=$REG_DIR/exec
+DATA_DIR=$REG_DIR/data
 
 WORK=$WORK_DIR/ipxwafs
 rm -fr $WORK
 mkdir -p $WORK
-mkdir -p $WORK/input_data
-cp $DATA_DIR/* $WORK/input_data
+
 WORK_CTL=${WORK}/ctl
 mkdir -p $WORK_CTL
-cp $CTL_EXEC_DIR/copygb_ctl* $WORK_CTL
+cp $EXEC_DIR/ipxwafs_ctl* $WORK_CTL
+
 WORK_TEST=${WORK}/test
 mkdir -p $WORK_TEST
-cp $TEST_EXEC_DIR/copygb_test* $WORK_TEST
+cp $EXEC_DIR/ipxwafs_test* $WORK_TEST
 
 reg_test_failed=0
 
-echo
-echo CONVERT FROM REGULAR GRID TO WAFS GRIDS.
+echo CONVERT FROM THINNED WAFS GRIDS TO FULL GRIDS
 for bytesize in "4" "8" "d"  # test all byte versions of iplib
 do
+
   echo
   echo TEST $bytesize BYTE VERSION OF LIBRARY.
-  echo
-  for wafs_grid in "37" "38" "39" "40" "41" "42" "43" "44"
+
+  for wafs_grid in "37" "44"
   do
-    echo CONVERT TO WAFS GRID ${wafs_grid}.
-    for ipopt in "0" 
+
+    echo
+    echo CONVERT FROM WAFS GRID ${wafs_grid}.
+    echo
+    for routine in "ipxwafs" "ipxwafs2" "ipxwafs3"
     do
-      echo TEST INTERPOLATION OPTION $ipopt
+
+      echo TEST ROUTINE $routine
+
+      case $routine in
+      "ipxwafs")
+         INPUT_DATA=$DATA_DIR/wafs.${wafs_grid}.thin.grb2
+         cp $INPUT_DATA $WORK_CTL/fort.9
+         cp $INPUT_DATA $WORK_TEST/fort.9
+         opt=1 ;;
+      "ipxwafs2")
+         INPUT_DATA=$DATA_DIR/wafs.${wafs_grid}.thin.bitmap.grb2
+         cp $INPUT_DATA $WORK_CTL/fort.9
+         cp $INPUT_DATA $WORK_TEST/fort.9
+         opt=2 ;;
+      "ipxwafs3")
+         INPUT_DATA=$DATA_DIR/wafs.${wafs_grid}.thin.bitmap.grb2
+         cp $INPUT_DATA $WORK_CTL/fort.9
+         cp $INPUT_DATA $WORK_TEST/fort.9
+         opt=3 ;;
+      esac
 
       ctl_failed=0
       test_failed=0
 
       cd $WORK_TEST
-      copygb_test_${bytesize} -g${wafs_grid} -i${ipopt} -x ../input_data/grid.3.grb ${wafs_grid}.grb 
+      ipxwafs_test_${bytesize} ${opt} > log
       status=$?
       if ((status != 0))
       then
         echo "** TEST RUN FAILED **"
+        mv log log.thin2full.${routine}.grid${wafs_grid}.${bytesize}byte.failed
         reg_test_failed=1
         test_failed=1
       fi
 
       cd $WORK_CTL
-      copygb_ctl_${bytesize} -g${wafs_grid} -i${ipopt} -x ../input_data/grid.3.grb ${wafs_grid}.grb
+      ipxwafs_ctl_${bytesize} ${opt} > log
       status=$?
       if ((status != 0))
       then
         echo "** CONTROL RUN FAILED **"
+        mv log log.thin2full.${routine}.grid${wafs_grid}.${bytesize}byte.failed
         reg_test_failed=1
         ctl_failed=1
       fi
 
       if ((ctl_failed == 0 && test_failed == 0));then
-        cmp $WORK_CTL/${wafs_grid}.grb $WORK_TEST/${wafs_grid}.grb
+        cmp $WORK_CTL/output.grb2 $WORK_TEST/output.grb2
         status=$?
         if ((status != 0))
         then
           echo "** GRIB FILES NOT BIT IDENTICAL. REGRESSION TEST FAILED."
-          FAILED_DIR=$WORK_CTL/failed.regl.to.wafs
-          mkdir -p $FAILED_DIR
-          mv $WORK_CTL/${wafs_grid}.grb $FAILED_DIR/${wafs_grid}.${bytesize}byte.grb
-          FAILED_DIR=$WORK_TEST/failed.regl.to.wafs
-          mkdir -p $FAILED_DIR
-          mv $WORK_TEST/${wafs_grid}.grb $FAILED_DIR/${wafs_grid}.${bytesize}byte.grb
+          mv $WORK_CTL/log $WORK_CTL/log.thin2full.${routine}.grid${wafs_grid}.${bytesize}byte.failed
+          mv $WORK_CTL/output.grb2 $WORK_CTL/output.thin2full.${routine}.grid${wafs_grid}.${bytesize}byte.failed.grb2
+          mv $WORK_TEST/log $WORK_TEST/log.thin2full.${routine}.grid${wafs_grid}.${bytesize}byte.failed
+          mv $WORK_TEST/output.grb2 $WORK_TEST/output.thin2full.${routine}.grid${wafs_grid}.${bytesize}byte.failed.grb2
           reg_test_failed=1
         fi
       fi
 
-      rm -f $WORK_CTL/${wafs_grid}.grb $WORK_TEST/${wafs_grid}.grb
+      rm -f $WORK_CTL/output.grb2
+      rm -f $WORK_CTL/log
+      rm -f $WORK_CTL/fort.9
+      rm -f $WORK_TEST/output.grb2
+      rm -f $WORK_TEST/log
+      rm -f $WORK_TEST/fort.9
 
     done
   done
 done
 
 echo
-echo CONVERT FROM WAFS GRIDS TO REGULAR GRIDS.
-for bytesize in "4" "8" "d"
+echo CONVERT FROM FULL WAFS GRIDS TO THINNED GRIDS
+
+for bytesize in "4" "8" "d"  # test all byte versions of iplib
 do
+
   echo
   echo TEST $bytesize BYTE VERSION OF LIBRARY.
-  echo
-  for wafs_grid in "37" "38" "39" "40" "41" "42" "43" "44"
+
+  for wafs_grid in "37" "44"
   do
 
-    echo CONVERT FROM WAFS GRID ${wafs_grid}.
-    for ipopt in "0" 
+    echo
+    echo CONVERT TO WAFS GRID ${wafs_grid}.
+    echo
+    for routine in "ipxwafs" "ipxwafs2" "ipxwafs3"
     do
-      echo TEST INTERPOLATION OPTION $ipopt
+
+      echo TEST ROUTINE $routine
+
+      case $routine in
+      "ipxwafs")
+         INPUT_DATA=$DATA_DIR/wafs.${wafs_grid}.full.grb2
+         cp $INPUT_DATA $WORK_CTL/fort.9
+         cp $INPUT_DATA $WORK_TEST/fort.9
+         opt=1 ;;
+      "ipxwafs2")
+         INPUT_DATA=$DATA_DIR/wafs.${wafs_grid}.full.bitmap.grb2
+         cp $INPUT_DATA $WORK_CTL/fort.9
+         cp $INPUT_DATA $WORK_TEST/fort.9
+         opt=2 ;;
+      "ipxwafs3")
+         INPUT_DATA=$DATA_DIR/wafs.${wafs_grid}.full.bitmap.grb2
+         cp $INPUT_DATA $WORK_CTL/fort.9
+         cp $INPUT_DATA $WORK_TEST/fort.9
+         opt=3 ;;
+      esac
 
       ctl_failed=0
       test_failed=0
 
       cd $WORK_TEST
-      copygb_test_${bytesize} -g3 -i${ipopt} -x ../input_data/wafs.${wafs_grid}.grb  grid3.from${wafs_grid}.grb
+      ipxwafs_test_${bytesize} ${opt} > log
       status=$?
       if ((status != 0))
       then
         echo "** TEST RUN FAILED **"
+        mv log log.full2thin.${routine}.grid${wafs_grid}.${bytesize}byte.failed
         reg_test_failed=1
         test_failed=1
       fi
 
       cd $WORK_CTL
-      copygb_ctl_${bytesize} -g3 -i${ipopt} -x ../input_data/wafs.${wafs_grid}.grb  grid3.from${wafs_grid}.grb
+      ipxwafs_ctl_${bytesize} ${opt} > log
       status=$?
       if ((status != 0))
       then
         echo "** CONTROL RUN FAILED **"
+        mv log log.full2thin.${routine}.grid${wafs_grid}.${bytesize}byte.failed
         reg_test_failed=1
         ctl_failed=1
       fi
 
       if ((ctl_failed == 0 && test_failed == 0));then
-        cmp $WORK_CTL/grid3.from${wafs_grid}.grb $WORK_TEST/grid3.from${wafs_grid}.grb
+        cmp $WORK_CTL/output.grb2 $WORK_TEST/output.grb2
         status=$?
         if ((status != 0))
         then
           echo "** GRIB FILES NOT BIT IDENTICAL. REGRESSION TEST FAILED."
-          FAILED_DIR=$WORK_CTL/failed.wafs.to.regl
-          mkdir -p $FAILED_DIR
-          mv $WORK_CTL/grid3.from${wafs_grid}.grb $FAILED_DIR/grid3.from${wafs_grid}.${bytesize}byte.grb
-          FAILED_DIR=$WORK_TEST/failed.wafs.to.regl
-          mkdir -p $FAILED_DIR
-          mv $WORK_TEST/grid3.from${wafs_grid}.grb $FAILED_DIR/grid3.from${wafs_grid}.${bytesize}byte.grb
+          mv $WORK_CTL/log $WORK_CTL/log.full2thin.${routine}.grid${wafs_grid}.${bytesize}byte.failed
+          mv $WORK_CTL/output.grb2 $WORK_CTL/output.full2thin.${routine}.grid${wafs_grid}.${bytesize}byte.failed.grb2
+          mv $WORK_TEST/log $WORK_TEST/log.full2thin.${routine}.grid${wafs_grid}.${bytesize}byte.failed
+          mv $WORK_TEST/output.grb2 $WORK_TEST/output.full2thin.${routine}.grid${wafs_grid}.${bytesize}byte.failed.grb2
           reg_test_failed=1
         fi
       fi
 
-      rm -f $WORK_CTL/grid3.from${wafs_grid}.grb $WORK_TEST/grid3.from${wafs_grid}.grb
+      rm -f $WORK_CTL/output.grb2
+      rm -f $WORK_CTL/log
+      rm -f $WORK_CTL/fort.9
+      rm -f $WORK_TEST/output.grb2
+      rm -f $WORK_TEST/log
+      rm -f $WORK_TEST/fort.9
 
     done
   done
 done
-
 if ((reg_test_failed == 0));then
   echo
   echo "<<< IPXWAFS REGRESSION TEST PASSED. >>>"
