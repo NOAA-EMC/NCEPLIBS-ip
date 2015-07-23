@@ -1,0 +1,28 @@
+#!/bin/ksh
+ 
+#-----------------------------------------------------
+# Driver script to run the copygb2 regression test
+# on WCOSS.
+#
+# Invoke this script as follows:
+# cat run.wcoss.lsf | bsub
+#-----------------------------------------------------
+
+#BSUB -oo copygb2.log
+#BSUB -eo copygb2.log
+#BSUB -q dev_shared
+#BSUB -J copygb
+#BSUB -R affinity[core]
+#BSUB -R rusage[mem=1000]
+#BSUB -P GFS-T2O
+#BSUB -W 0:20
+
+set -x
+
+export REG_DIR=${LS_SUBCWD}/../..
+
+export WORK_DIR="/ptmpp1/$LOGNAME/regression"
+
+$REG_DIR/copygb2/scripts/copygb2.ksh
+
+exit 0

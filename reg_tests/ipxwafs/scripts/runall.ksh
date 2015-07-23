@@ -63,9 +63,9 @@ echo
 
 WORK_DIR=${WORK_DIR:-/stmpp1/$LOGNAME/regression}
 
-REG_DIR=${REG_DIR:-$(pwd)/..}
-EXEC_DIR=$REG_DIR/exec
-DATA_DIR=$REG_DIR/data
+REG_DIR=${REG_DIR:-../..}
+EXEC_DIR=$REG_DIR/ipxwafs/exec
+DATA_DIR=$REG_DIR/ipxwafs/data
 
 WORK=$WORK_DIR/ipxwafs
 rm -fr $WORK

@@ -43,15 +43,9 @@ bsub -e $LOG_FILE -o $LOG_FILE -q "dev_shared" -P "GFS-T2O" \
 bsub -e $LOG_FILE -o $LOG_FILE -q "dev_shared" -P "GFS-T2O" \
      -J "ipxwafs" -R affinity[core] -R "rusage[mem=100]" -W 0:05 -w 'ended(ipxetas)' $REG_DIR/ipxwafs/scripts/runall.ksh 
 
-bsub -e $LOG_FILE -o $LOG_FILE -q "dev_shared" -P "GFS-T2O" \
-     -J "ipxwafs23" -R affinity[core] -R "rusage[mem=100]" -W 0:05 -w 'ended(ipxwafs)' $REG_DIR/ipxwafs2_3/scripts/runall.ksh 
-
-bsub -e $LOG_FILE -o $LOG_FILE -q "dev_shared" -P "GFS-T2O" \
-     -J "makgds" -R affinity[core] -R "rusage[mem=100]" -W 0:02 -w 'ended(ipxwafs23)' $REG_DIR/makgds/scripts/runall.ksh 
-
 bsub -e $LOG_FILE -o $LOG_FILE -q "dev_shared" -P "GFS-T2O" -a openmp -n 1 \
      -J "ipolates1" -R affinity[core] -R "rusage[mem=500]" -R span[ptile=1] \
-     -W 0:30 -w 'ended(makgds)' $REG_DIR/ipolates/scripts/runall.ksh 1
+     -W 0:30 -w 'ended(ipxwafs)' $REG_DIR/ipolates/scripts/runall.ksh 1
 
 bsub -e $LOG_FILE -o $LOG_FILE -q "dev_shared" -P "GFS-T2O" -a openmp -n 4 \
      -J "ipolates4" -R affinity[core] -R "rusage[mem=300]" -R span[ptile=4] \
