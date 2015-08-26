@@ -188,9 +188,9 @@
  INTEGER,               INTENT(IN   ) :: IP, IPOPT(20), IBI(KM)
  INTEGER,               INTENT(IN   ) :: KM, MI, MO
  INTEGER,               INTENT(IN   ) :: IGDTNUMI, IGDTLENI
- INTEGER(KIND=4),       INTENT(IN   ) :: IGDTMPLI(IGDTLENI)
+ INTEGER,               INTENT(IN   ) :: IGDTMPLI(IGDTLENI)
  INTEGER,               INTENT(IN   ) :: IGDTNUMO, IGDTLENO
- INTEGER(KIND=4),       INTENT(IN   ) :: IGDTMPLO(IGDTLENO)
+ INTEGER,               INTENT(IN   ) :: IGDTMPLO(IGDTLENO)
  INTEGER,               INTENT(  OUT) :: IBO(KM), IRET, NO
 !
  LOGICAL*1,             INTENT(IN   ) :: LI(MI,KM)

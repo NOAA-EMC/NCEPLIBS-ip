@@ -6,7 +6,7 @@
 ! create one from the landmask record.
 !------------------------------------------------------------------------
 
- integer(kind=4), allocatable, public   :: gdtmpl_input(:)
+ integer,         allocatable, public   :: gdtmpl_input(:)
  integer, public                        :: gdtlen_input, gdtnum_input
  integer, public                        :: i_input, j_input
 

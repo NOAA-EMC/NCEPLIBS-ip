@@ -49,7 +49,7 @@
  integer                      :: ip, ipopt(20)
  integer                      :: km, ibi, mi, iret, i, j
  integer                      :: i_output, j_output, mo, no, ibo
- integer(kind=4), allocatable :: gdtmpl_output(:)
+ integer        , allocatable :: gdtmpl_output(:)
  integer                      :: gdtlen_output, gdtnum_output
 
  logical*1, allocatable       :: output_bitmap(:,:)
@@ -57,45 +57,45 @@
  real, allocatable            :: output_rlat(:,:), output_rlon(:,:)
  real, allocatable            :: output_data(:,:)
 
- integer(kind=4), parameter   :: missing=b'11111111111111111111111111111111'
+ integer        , parameter   :: missing=b'11111111111111111111111111111111'
 
  integer, parameter :: gdtlen3 = 19 ! one-degree lat/lon
- integer(kind=4)    :: gdtmpl3(gdtlen3)
+ integer            :: gdtmpl3(gdtlen3)
  data gdtmpl3 / 6, 255, missing, 255, missing, 255, missing, 360, 181, 0, missing, &
                 90000000, 0, 56, -90000000, 359000000, 1000000, 1000000, 0 /
 
  integer, parameter :: gdtlen8 = 19 ! ncep grid8; mercator
- integer(kind=4)    :: gdtmpl8(gdtlen8)
+ integer            :: gdtmpl8(gdtlen8)
  data gdtmpl8 / 6, 255, missing, 255, missing, 255, missing, 116, 44, &
                 -48670000, 3104000, 56, 22500000, 61050000, 0, 64, 0, &
                  318830000, 318830000/
 
  integer, parameter :: gdtlen127=19  ! t254 gaussain
- integer(kind=4)    :: gdtmpl127(gdtlen127)
+ integer            :: gdtmpl127(gdtlen127)
  data gdtmpl127 /6, 255, missing, 255, missing, 255, missing, 768, 384, &
                  0, missing, 89642000, 0, 48, -89642000, 359531000,  &
                  469000, 192, 0/
 
  integer, parameter :: gdtlen203=22  ! 12km eta, 'h' pts
- integer(kind=4)    :: gdtmpl203(gdtlen203)
+ integer            :: gdtmpl203(gdtlen203)
  data gdtmpl203/6, 255, missing, 255, missing, 255, missing, 669, 1165, &
                 0, missing, -7450000, 215860000, 56, 44560100, 14744800, &
                 179641, 77320, 68, -36000000, 254000000, 0 /
 
  integer, parameter :: gdtlen205=22  ! 12km nam, 'h' pts
- integer(kind=4)    :: gdtmpl205(gdtlen205)
+ integer            :: gdtmpl205(gdtlen205)
  data gdtmpl205/6, 255, missing, 255, missing, 255, missing, 954, 835, &
                 0, missing, -7491200, 215866300, 56, 44539600, 14801500, &
                 126000, 108000, 64, -36000000, 254000000, 0 /
 
  integer, parameter :: gdtlen212=18  ! nh polar
- integer(kind=4)    :: gdtmpl212(gdtlen212)
+ integer            :: gdtmpl212(gdtlen212)
  data gdtmpl212 /6, 255, missing, 255, missing, 255, missing, 513, 513, &
                  -20826000, 235000000, 56, 60000000, 280000000, 47625000, 47625000, &
                  0, 64/
 
  integer, parameter :: gdtlen218 = 22 ! ncep grid 218; lambert conf
- integer(kind=4)    :: gdtmpl218(gdtlen218)
+ integer            :: gdtmpl218(gdtlen218)
  data gdtmpl218 / 6, 255, missing, 255, missing, 255, missing, 614, 428, &
                   12190000, 226541000, 56, 25000000, 265000000, &
                   12191000, 12191000, 0, 64, 25000000, 25000000, -90000000, 0/

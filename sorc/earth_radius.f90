@@ -33,8 +33,8 @@
 !$$$
  IMPLICIT NONE
 !
- INTEGER                               :: IGDTLEN
- INTEGER(KIND=4),        INTENT(IN   ) :: IGDTMPL(IGDTLEN)
+ INTEGER,                INTENT(IN   ) :: IGDTLEN
+ INTEGER,                INTENT(IN   ) :: IGDTMPL(IGDTLEN)
 !
  REAL,                   INTENT(  OUT) :: ECCEN_SQUARED
  REAL,                   INTENT(  OUT) :: RADIUS

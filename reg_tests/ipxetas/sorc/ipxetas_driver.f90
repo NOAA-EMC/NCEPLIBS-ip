@@ -31,7 +31,7 @@
  integer                              :: igdtlen
  integer(kind=4)                      :: i1
  integer        , allocatable, target :: igdtmpl_output(:)
- integer(kind=4), allocatable         :: igdtmpl_input4(:), igdtmpl_output4(:)
+ integer        , allocatable         :: igdtmpl_input(:)
 
  logical                              :: unpack
  logical*1, allocatable, target       :: bitmap_input(:), bitmap_output(:)
@@ -109,11 +109,11 @@
 
  npts_input = gfld_input%ngrdpts
 
- allocate(igdtmpl_input4(gfld_input%igdtlen))
- igdtmpl_input4=gfld_input%igdtmpl
+ allocate(igdtmpl_input(gfld_input%igdtlen))
+ igdtmpl_input=gfld_input%igdtmpl
 
- allocate(igdtmpl_output4(gfld_input%igdtlen))
- igdtmpl_output4=igdtmpl_input4
+ allocate(igdtmpl_output(gfld_input%igdtlen))
+ igdtmpl_output=igdtmpl_input
 
  allocate(data_input(npts_input))
  data_input=gfld_input%fld
@@ -130,9 +130,9 @@
  igdtnum_input=gfld_input%igdtnum
  igdtlen=gfld_input%igdtlen
 
- call ipxetas(idir, igdtnum_input, igdtlen, igdtmpl_input4, & 
+ call ipxetas(idir, igdtnum_input, igdtlen, igdtmpl_input, & 
               npts_input, bitmap_input, data_input, igdtnum_output,  &
-              igdtmpl_output4, npts_output, bitmap_output, data_output, istat)
+              igdtmpl_output, npts_output, bitmap_output, data_output, istat)
 
  if (istat /= 0) then
    print*,"- PROBLEM IN IPXETAS. ISTAT IS: ", istat
@@ -151,8 +151,6 @@
 
  gfld_output=gfld_input
  gfld_output%ngrdpts=npts_output
- allocate(igdtmpl_output(gfld_input%igdtlen))
- igdtmpl_output=igdtmpl_output4
  gfld_output%igdtmpl=>igdtmpl_output
  gfld_output%idrtmpl=>gfld_input%idrtmpl
  gfld_output%idrtmpl=0

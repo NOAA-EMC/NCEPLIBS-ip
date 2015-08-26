@@ -64,73 +64,73 @@
 ! of the ncep g2 library.
 !-----------------------------------------------------------------------
 
- integer(kind=4), parameter   :: missing=b'11111111111111111111111111111111'
+ integer        , parameter   :: missing=b'11111111111111111111111111111111'
 
- integer(kind=4), allocatable :: igdtmpl(:)
+ integer        , allocatable :: igdtmpl(:)
  integer                      :: igdtlen
  integer                      :: igdtnum
 
  integer, parameter :: igdtlen3 = 19 ! ncep grid3; one-degree lat/lon
- integer(kind=4)    :: igdtmpl3(igdtlen3)
+ integer            :: igdtmpl3(igdtlen3)
  data igdtmpl3 / 6, 255, missing, 255, missing, 255, missing, 360, 181, 0, missing, &
                  90000000, 0, 56, -90000000, 359000000, 1000000, 1000000, 0 /
 
  integer, parameter :: igdtlen8 = 19 ! ncep grid8; mercator 
- integer(kind=4)    :: igdtmpl8(igdtlen8)  
+ integer            :: igdtmpl8(igdtlen8)  
  data igdtmpl8 / 6, 255, missing, 255, missing, 255, missing, 116, 44, &
                  -48670000, 3104000, 56, 22500000, 61050000, 0, 64, 0, &
                   318830000, 318830000/
 
  integer, parameter :: igdtlen127=19  ! t254 gaussain
- integer(kind=4)    :: igdtmpl127(igdtlen127)
+ integer            :: igdtmpl127(igdtlen127)
  data igdtmpl127 /6, 255, missing, 255, missing, 255, missing, 768, 384, &
                   0, missing, 89642000, 0, 48, -89642000, 359531000,  &
                   469000, 192, 0/
 
  integer, parameter :: igdtlen203h=22 ! 12km eta, h pts
- integer(kind=4)    :: igdtmpl203h(igdtlen203h)
+ integer            :: igdtmpl203h(igdtlen203h)
  data igdtmpl203h/6, 255, missing, 255, missing, 255, missing, 669, 1165, &
                   0, missing, -7450000, 215860000, 56, 44560100, 14744800, &
                   179641, 77320, 68, -36000000, 254000000, 0 /
 
  integer, parameter :: igdtlen203v=22 ! 12km eta, v pts
- integer(kind=4)    :: igdtmpl203v(igdtlen203v)
+ integer            :: igdtmpl203v(igdtlen203v)
  data igdtmpl203v/6, 255, missing, 255, missing, 255, missing, 669, 1165, &
                   0, missing, -7450000, 215860000, 56, 44560100, 14744800, &
                   179641, 77320, 72, -36000000, 254000000, 0 /
 
  integer, parameter :: igdtlen212=18 ! nh polar, spherical earth
- integer(kind=4)    :: igdtmpl212(igdtlen212)
+ integer            :: igdtmpl212(igdtlen212)
  data igdtmpl212 /6, 255, missing, 255, missing, 255, missing, 512, 512, &
                   -20826000, 145000000, 56, 60000000, 280000000, 47625000, 47625000, &
                   0, 0/ 
 
  integer, parameter :: igdtlen222=18 ! nh polar, elliptical earth
- integer(kind=4)    :: igdtmpl222(igdtlen222)
+ integer            :: igdtmpl222(igdtlen222)
  data igdtmpl222 /5, 255, missing, 255, missing, 255, missing, 512, 512, &
                   -20826000, 145000000, 56, 60000000, 280000000, 47625000, 47625000, &
                   0, 0/ 
 
  integer, parameter :: igdtlen213=18 ! sh polar, spherical earth
- integer(kind=4)    :: igdtmpl213(igdtlen213)
+ integer            :: igdtmpl213(igdtlen213)
  data igdtmpl213 /6, 255, missing, 255, missing, 255, missing, 512, 512, &
                   20826000, 235000000, 56, -60000000, 100000000, 47625000, 47625000, &
                   128, 0/ 
 
  integer, parameter :: igdtlen205h=22 ! 12km nam, h pts
- integer(kind=4)    :: igdtmpl205h(igdtlen205h)
+ integer            :: igdtmpl205h(igdtlen205h)
  data igdtmpl205h/6, 255, missing, 255, missing, 255, missing, 954, 835, &
                   0, missing, -7491200, 215866300, 56, 44539600, 14801500, &
                   126000, 108000, 64, -36000000, 254000000, 0 /
 
  integer, parameter :: igdtlen205v=22 ! 12km nam, v pts
- integer(kind=4)    :: igdtmpl205v(igdtlen205v)
+ integer            :: igdtmpl205v(igdtlen205v)
  data igdtmpl205v/6, 255, missing, 255, missing, 255, missing, 954, 835, &
                   0, missing, -7491200, 215866300, 56, 44539600, 14801500, &
                   126000, 108000, 78, -36000000, 254000000, 0 /
 
  integer, parameter :: igdtlen218 = 22 ! ncep grid 218; lambert conf
- integer(kind=4)    :: igdtmpl218(igdtlen218)  
+ integer            :: igdtmpl218(igdtlen218)  
  data igdtmpl218 / 6, 255, missing, 255, missing, 255, missing, 614, 428, &
                    12190000, 226541000, 56, 25000000, 265000000, &
                    12191000, 12191000, 0, 64, 25000000, 25000000, -90000000, 0/

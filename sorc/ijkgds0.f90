@@ -54,7 +54,7 @@
  IMPLICIT NONE
 !
  INTEGER,             INTENT(IN   ) :: IGDTNUM, IGDTLEN
- INTEGER(KIND=4),     INTENT(IN   ) :: IGDTMPL(IGDTLEN)
+ INTEGER,             INTENT(IN   ) :: IGDTMPL(IGDTLEN)
  INTEGER,             INTENT(  OUT) :: IJKGDSA(20)
 !
  INTEGER                            :: IM, JM, IWRAP, JG

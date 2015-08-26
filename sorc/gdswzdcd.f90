@@ -77,7 +77,7 @@
  INTEGER,                 PARAMETER     :: KD=SELECTED_REAL_KIND(15,45)
 !
  INTEGER,                 INTENT(IN   ) :: IGDTNUM, IGDTLEN
- INTEGER(KIND=4),         INTENT(IN   ) :: IGDTMPL(IGDTLEN)
+ INTEGER,                 INTENT(IN   ) :: IGDTMPL(IGDTLEN)
  INTEGER,                 INTENT(IN   ) :: IOPT,NPTS,LROT,LMAP
  INTEGER,                 INTENT(  OUT) :: NRET
 !

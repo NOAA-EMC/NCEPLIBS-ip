@@ -1454,8 +1454,6 @@ C
 C$$$
       integer::gdtnum1,gdtlen1,gdtmpl1(gdtlen1)
       integer::gdtnum2,gdtlen2,gdtmpl2(gdtlen2)
-      integer(kind=4)::gdtmpl1_4(gdtlen1)
-      integer(kind=4)::gdtmpl2_4(gdtlen2)
 
       INTEGER IPOPT(20)
       INTEGER KGDS1(200),KGDS2(200)
@@ -1467,11 +1465,9 @@ C$$$
       REAL RLAT(MRL),RLON(MRL),CROT(MRO),SROT(MRO)
 C - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 C  REGLR TO REGLR SCALAR
-      gdtmpl1_4=gdtmpl1
-      gdtmpl2_4=gdtmpl2
       IF(K1F.EQ.1.AND.K2F.EQ.1.AND.IV.EQ.0) THEN
-        CALL IPOLATES(IP,IPOPT,gdtnum1,gdtmpl1_4,gdtlen1,
-     &                gdtnum2,gdtmpl2_4,gdtlen2,K1,K2,1,IB1,L1,F1,
+        CALL IPOLATES(IP,IPOPT,gdtnum1,gdtmpl1,gdtlen1,
+     &                gdtnum2,gdtmpl2,gdtlen2,K1,K2,1,IB1,L1,F1,
      &                KI,RLAT,RLON,IB2,L2,F2,IRET)
 C - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 C  IRREG TO REGLR SCALAR
@@ -1507,8 +1503,8 @@ c       ENDIF
 C - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 C  REGLR TO REGLR VECTOR
       ELSEIF(K1F.EQ.1.AND.K2F.EQ.1.AND.IV.NE.0) THEN
-        CALL IPOLATEV(IP,IPOPT,gdtnum1,gdtmpl1_4,gdtlen1,
-     &                gdtnum2,gdtmpl2_4,gdtlen2,K1,K2,1,IB1,L1,F1,G1,
+        CALL IPOLATEV(IP,IPOPT,gdtnum1,gdtmpl1,gdtlen1,
+     &                gdtnum2,gdtmpl2,gdtlen2,K1,K2,1,IB1,L1,F1,G1,
      &                KI,RLAT,RLON,CROT,SROT,IB2,L2,F2,G2,IRET)
         IF(IRET.EQ.0.AND.KI.EQ.K2-1) THEN
           F2(K2)=0
