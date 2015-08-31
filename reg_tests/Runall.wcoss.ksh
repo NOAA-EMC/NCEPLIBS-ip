@@ -31,44 +31,44 @@ mkdir -p $WORK_DIR
 LOG_FILE=${WORK_DIR}/regression.log
 SUM_FILE=${WORK_DIR}/summary.log
 
-bsub -e $LOG_FILE -o $LOG_FILE -q "dev_shared" -P "GFS-T2O" \
+bsub -e $LOG_FILE -o $LOG_FILE -q "dev_shared" -P "GFS-MTN" \
      -J "gausslat" -R affinity[core] -R "rusage[mem=100]" -W 0:01 $REG_DIR/gausslat/scripts/runall.ksh 
 
-bsub -e $LOG_FILE -o $LOG_FILE -q "dev_shared" -P "GFS-T2O" \
+bsub -e $LOG_FILE -o $LOG_FILE -q "dev_shared" -P "GFS-MTN" \
      -J "gdswzd" -R affinity[core] -R "rusage[mem=300]" -W 0:05 -w 'ended(gausslat)' $REG_DIR/gdswzd/scripts/runall.ksh 
 
-bsub -e $LOG_FILE -o $LOG_FILE -q "dev_shared" -P "GFS-T2O" \
+bsub -e $LOG_FILE -o $LOG_FILE -q "dev_shared" -P "GFS-MTN" \
      -J "ipxwafs" -R affinity[core] -R "rusage[mem=100]" -W 0:05 -w 'ended(gdswzd)' $REG_DIR/ipxwafs/scripts/runall.ksh 
 
-bsub -e $LOG_FILE -o $LOG_FILE -q "dev_shared" -P "GFS-T2O" \
+bsub -e $LOG_FILE -o $LOG_FILE -q "dev_shared" -P "GFS-MTN" \
      -J "ipxwafs23" -R affinity[core] -R "rusage[mem=100]" -W 0:05 -w 'ended(ipxwafs)' $REG_DIR/ipxwafs2_3/scripts/runall.ksh 
 
-bsub -e $LOG_FILE -o $LOG_FILE -q "dev_shared" -P "GFS-T2O" \
+bsub -e $LOG_FILE -o $LOG_FILE -q "dev_shared" -P "GFS-MTN" \
      -J "makgds" -R affinity[core] -R "rusage[mem=100]" -W 0:02 -w 'ended(ipxwafs23)' $REG_DIR/makgds/scripts/runall.ksh 
 
-bsub -e $LOG_FILE -o $LOG_FILE -q "dev_shared" -P "GFS-T2O" -a openmp -n 1 \
+bsub -e $LOG_FILE -o $LOG_FILE -q "dev_shared" -P "GFS-MTN" -a openmp -n 1 \
      -J "ipolates1" -R affinity[core] -R "rusage[mem=500]" -R span[ptile=1] \
      -W 0:30 -w 'ended(makgds)' $REG_DIR/ipolates/scripts/runall.ksh 1
 
-bsub -e $LOG_FILE -o $LOG_FILE -q "dev_shared" -P "GFS-T2O" -a openmp -n 4 \
+bsub -e $LOG_FILE -o $LOG_FILE -q "dev_shared" -P "GFS-MTN" -a openmp -n 4 \
      -J "ipolates4" -R affinity[core] -R "rusage[mem=300]" -R span[ptile=4] \
      -W 0:30 -w 'ended(ipolates1)' $REG_DIR/ipolates/scripts/runall.ksh 4
 
-bsub -e $LOG_FILE -o $LOG_FILE -q "dev_shared" -P "GFS-T2O" \
+bsub -e $LOG_FILE -o $LOG_FILE -q "dev_shared" -P "GFS-MTN" \
      -J "compares" -R affinity[core] -R "rusage[mem=100]" -W 0:10 -w 'ended(ipolates4)' $REG_DIR/ipolates/scripts/compare.ksh
 
-bsub -e $LOG_FILE -o $LOG_FILE -q "dev_shared" -P "GFS-T2O" -a openmp -n 1 \
+bsub -e $LOG_FILE -o $LOG_FILE -q "dev_shared" -P "GFS-MTN" -a openmp -n 1 \
      -J "ipolatev1" -R affinity[core] -R "rusage[mem=500]" -R span[ptile=1] \
      -W 1:00 -w 'ended(compares)' $REG_DIR/ipolatev/scripts/runall.ksh 1
 
-bsub -e $LOG_FILE -o $LOG_FILE -q "dev_shared" -P "GFS-T2O" -a openmp -n 4 \
+bsub -e $LOG_FILE -o $LOG_FILE -q "dev_shared" -P "GFS-MTN" -a openmp -n 4 \
      -J "ipolatev4" -R affinity[core] -R "rusage[mem=300]" -R span[ptile=4] \
      -W 1:00 -w 'ended(ipolatev1)' $REG_DIR/ipolatev/scripts/runall.ksh 4
 
-bsub -e $LOG_FILE -o $LOG_FILE -q "dev_shared" -P "GFS-T2O" \
+bsub -e $LOG_FILE -o $LOG_FILE -q "dev_shared" -P "GFS-MTN" \
      -J "comparev" -R affinity[core] -R "rusage[mem=100]" -W 0:10 -w 'ended(ipolatev4)' $REG_DIR/ipolatev/scripts/compare.ksh
 
-bsub -o $LOG_FILE -q "dev_shared" -P "GFS-T2O" -J "summary" \
+bsub -o $LOG_FILE -q "dev_shared" -P "GFS-MTN" -J "summary" \
      -R affinity[core] -R "rusage[mem=100]" -W 0:01 -w 'ended(comparev)' "grep '<<<' $LOG_FILE >> $SUM_FILE"
 
 exit 0
