@@ -2,7 +2,7 @@
 FPP_FILES =
 
 # The list of regular source files
-FSRC_FILES = ipxetas_driver.f90
+FSRC_FILES = gdswzd_driver.f90
 
 # The complete list of source files
 SRC_FILES = $(FSRC_FILES) \

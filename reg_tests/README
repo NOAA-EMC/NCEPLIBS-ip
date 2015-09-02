@@ -21,29 +21,39 @@ The following steps are required to setup and run the test suite:
    The 'test' libraries are your branch copies, while 
    the 'control' libaries are the head of the trunk.
 
-(2) Link the 'test' and 'control' IPOLATES libraries to the
-    ./reg_tests/lib directory in your branch.  
+(2) Link the 'test' and 'control' IPOLATES libraries and 
+    their include directories (which contain their Fortran
+    module files) to the ./reg_tests/lib directory
+    in your branch.  
 
     The regression test build expects the 'test' and 'control'
-    libraries in the ./reg_tests/lib directory with the 
-    following names:
+    libraries and include directories in the ./reg_tests/lib 
+    directory with the following names:
 
-    libip_ctl_4.a  (4 byte integer/4 byte float, control)
-    libip_ctl_8.a  (8 byte integer/8 byte float, control)
-    libip_ctl_d.a  (4 byte integer/8 byte float, control)
-    libip_test_4.a  (4 byte integer/4 byte float, test)
-    libip_test_8.a  (8 byte integer/8 byte float, test)
-    libip_test_d.a  (4 byte integer/8 byte float, test)
+    libip_ctl_4.a  (4 byte integer/4 byte float library, control)
+    libip_ctl_8.a  (8 byte integer/8 byte float library, control)
+    libip_ctl_d.a  (4 byte integer/8 byte float library, control)
+    libip_test_4.a  (4 byte integer/4 byte float library, test)
+    libip_test_8.a  (8 byte integer/8 byte float library, test)
+    libip_test_d.a  (4 byte integer/8 byte float library, test)
 
-    One way to place these libraries in the ./reg_tests/lib
-    directory is thru unix links.  Suppose the trunk and
-    branch libraries will built using an 'nco-style' installation.
-    First, change to the ./reg_tests/lib directory:
+    incmod_ctl_4  (4 byte integer/4 byte float include dir, control)
+    incmod_ctl_8  (8 byte integer/8 byte float include dir, control)
+    incmod_ctl_d  (4 byte integer/8 byte float include dir, control)
+    incmod_test_4 (4 byte integer/4 byte float include dir, test)
+    incmod_test_8 (8 byte integer/8 byte float include dir, test)
+    incmod_test_d (4 byte integer/8 byte float include dir, test)
+
+    One way to place these libraries and include directories in 
+    the ./reg_tests/lib directory is thru unix links.  Suppose
+    the trunk and branch libraries were built using an
+    'nco-style' installation.  First, change to the
+    ./reg_tests/lib directory:
 
     "cd /branch/reg_tests/lib"
 
-    Then, link each library to the name expected by the regression
-    test build:
+    Then, link each library and include directory to the 
+    name expected by the regression test build:
     
     "ln -s /trunk/ip/vX.Y.Z/libip_vX.Y.Z_4.a  ./libip_ctl_4.a"
     "ln -s /trunk/ip/vX.Y.Z/libip_vX.Y.Z_8.a  ./libip_ctl_8.a"
@@ -51,6 +61,13 @@ The following steps are required to setup and run the test suite:
     "ln -s /branch/ip/vX.Y.Z/libip_vX.Y.Z_4.a ./libip_test_4.a"
     "ln -s /branch/ip/vX.Y.Z/libip_vX.Y.Z_8.a ./libip_test_8.a"
     "ln -s /branch/ip/vX.Y.Z/libip_vX.Y.Z_d.a ./libip_test_d.a"
+
+    "ln -s /trunk/ip/vX.Y.Z/incmod/ip_vX.Y.Z_4  ./incmod_ctl_4"
+    "ln -s /trunk/ip/vX.Y.Z/incmod/ip_vX.Y.Z_8  ./incmod_ctl_8"
+    "ln -s /trunk/ip/vX.Y.Z/incmod/ip_vX.Y.Z_d  ./incmod_ctl_d"
+    "ln -s /branch/ip/vX.Y.Z/incmod/ip_vX.Y.Z_4 ./incmod_test_4"
+    "ln -s /branch/ip/vX.Y.Z/incmod/ip_vX.Y.Z_8 ./incmod_test_8"
+    "ln -s /branch/ip/vX.Y.Z/incmod/ip_vX.Y.Z_d ./incmod_test_d"
 
 (3) Check the ./reg_tests/config-setup/ifort.setup file in your branch.
 
@@ -147,8 +164,8 @@ that exercised every routine.
 
 1)  gausslat - A fortran program that calls routine gausslat 
     to calculate the gaussian latitudes for a t382 grid.
-2)  gdswiz_wzd - A fortran program that calls gdswiz and gdswzd
-    (and all of their child routines) to calculate lat/lon and
+2)  gdswzd - A fortran program that calls gdswzd
+    and all of its child routines to calculate lat/lon and
     other map-related fields for several grids of
     of various map projections.
 3)  ipolates - A fortran program that interpolates a global
@@ -159,30 +176,23 @@ that exercised every routine.
     lat/lon grid of vector u/v wind to several grids of various
     projections using the ipolatev suite of routines.  All
     interpolation options (bilinear, neighbor, etc.) are used.
-5)  ipxetas - A fortran program that reads a field of
-    vegetation greenness on an unstaggered eta grid, then 
-    calls routine ipxetas to do the following transforms:
-      1) Create a staggered mass grid from the unstaggered grid.
-      2) Create a staggered velocity grid from the unstaggered grid.
-      3) Create an unstaggered grid from the staggered mass grid created by step (1)
-      4) Create an unstaggered grid from the staggered vel grid created by step (2)
-6)  ipxwafs2_3 - Test ip routines ipxwafs2 and ipxwafs3 by transforming
+5)  ipxwafs2_3 - Test ip routines ipxwafs2 and ipxwafs3 by transforming
     a global grid of 600 mb temperature (on ncep grid 3) to wafs grids 37 thru 44 
     using copygb. After the global to wafs grid transforms are
     completed, copygb is invoked again to transform temperature data on each
     wafs grid back to ncep grid 3.  Note: routine ipxwafs2 is invoked 
     for interpolation option '0' (bilinear) and routine ipxwafs3 
     is invoked for interpolation option '2' (neighbor).
-7)  ipxwafs - Same as experiment 9 except a specially modified version
+6)  ipxwafs - Same as experiment 5 except a specially modified version
     of copygb is used to call iplib routine ipxwafs instead of ipxwafs2. 
     ipxwafs and ipxwafs2 are the same except the latter accounts for bitmaps.
-8)  makgds - A fortran program to test routine makgds.  Routine is called
+7)  makgds - A fortran program to test routine makgds.  Routine is called
     three times.
       1) Create gds and kgds arrays for ncep grid 3. these arrays hold grid
          description information used by w3 grib library.
       2) Make kgds array for grid 3 from gds array
       3) Make gds array for grid 3 from kgds array
-9)  copygb - The ncep copygb program is used to transform a global lat/lon file of
+8)  copygb - The ncep copygb program is used to transform a global lat/lon file of
     vegetation greenness to numerous standard ncep grids using all available
     interpolation options (bilinear, nearest neighbor, etc.).  Because this 
     test can take over an hour of wall clock time, and calls the same
@@ -202,37 +212,25 @@ sanity check the data.  So when viewing, do a 'set mproj off'.
 More detailed information about each test is described in a README file in that
 test's subdirectory.
 
-Below is a table of each routine in iplib and which regression test(s) invoke it.
+Below is a table of each routine (or module) in iplib and which regression test(s) invoke it.
 
-subroutine name         regression test
+subroutine or
+module name             regression test
 ===============         ===============
 
 gausslat                gausslat
-gdswiz                  gdswiz_wzd, ipolates, ipolatev, ipxwafs, ipxwafs2_3, copygb
-gdswiz00                gdswiz_wzd, ipolates, ipolatev, ipxwafs, ipxwafs2_3, copygb
-gdswiz01                gdswiz_wzd, ipolates, ipolatev, copygb
-gdswiz03                gdswiz_wzd, ipolates, ipolatev, copygb
-gdswiz04                gdswiz_wzd, ipolates, ipolatev, copygb
-gdswiz05                gdswiz_wzd, ipolates, ipolatev, copygb
-gdswizc9                gdswiz_wzd
-gdswizca                gdswiz_wzd
-gdswizcb                gdswiz_wzd, ipolates, ipolatev, copygb
-gdswizcd                gdswiz_wzd, ipolates, ipolatev, copygb
-gdswzd                  gdswiz_wzd
-gdswzd00                gdswiz_wzd
-gdswzd01                gdswiz_wzd
-gdswzd03                gdswiz_wzd
-gdswzd04                gdswiz_wzd
-gdswzd05                gdswiz_wzd
-gdswzdc9                gdswiz_wzd
-gdswzdca                gdswiz_wzd
-gdswzdcb                gdswiz_wzd
-gdswzdcd                gdswiz_wzd
+gdswzd                  gdswzd, ipolates, ipolatev, ipxwafs, ipxwafs2_3, copygb
+gdswzd00                gdswzd, ipolates, ipolatev, ipxwafs, ipxwafs2_3, copygb
+gdswzd01                gdswzd, ipolates, ipolatev, copygb
+gdswzd03                gdswzd, ipolates, ipolatev, copygb
+gdswzd04                gdswzd, ipolates, ipolatev, copygb
+gdswzd05                gdswzd, ipolates, ipolatev, copygb
+gdswzdcb                gdswzd, ipolates, ipolatev, copygb
+gdswzdcd                gdswzd, ipolates, ipolatev, copygb
 ijkgds0                 ipolates, ipolatev, ipxwafs, ipxwafs2_3, copygb
 ijkgds1                 ipolates, ipolatev, ipxwafs, ipxwafs2_3
 ipolates                ipolates, ipxwafs, ipxwafs2_3, copygb
 ipolatev                ipolatev
-ipxetas                 ipxetas
 ipxwafs                 ipxwafs, ipxwafs2_3
 ipxwafs2                ipxwafs2_3, copygb
 ipxwafs3                ipxwafs2_3, copygb
