@@ -21,29 +21,39 @@ The following steps are required to setup and run the test suite:
    The 'test' libraries are your branch copies, while 
    the 'control' libaries are the head of the trunk.
 
-(2) Link the 'test' and 'control' IPOLATES libraries to the
-    ./reg_tests/lib directory in your branch.  
+(2) Link the 'test' and 'control' IPOLATES libraries and 
+    their include directories (which contain their Fortran
+    module files) to the ./reg_tests/lib directory
+    in your branch.  
 
     The regression test build expects the 'test' and 'control'
-    libraries in the ./reg_tests/lib directory with the 
-    following names:
+    libraries and include directories in the ./reg_tests/lib 
+    directory with the following names:
 
-    libip_ctl_4.a  (4 byte integer/4 byte float, control)
-    libip_ctl_8.a  (8 byte integer/8 byte float, control)
-    libip_ctl_d.a  (4 byte integer/8 byte float, control)
-    libip_test_4.a  (4 byte integer/4 byte float, test)
-    libip_test_8.a  (8 byte integer/8 byte float, test)
-    libip_test_d.a  (4 byte integer/8 byte float, test)
+    libip_ctl_4.a  (4 byte integer/4 byte float library, control)
+    libip_ctl_8.a  (8 byte integer/8 byte float library, control)
+    libip_ctl_d.a  (4 byte integer/8 byte float library, control)
+    libip_test_4.a  (4 byte integer/4 byte float library, test)
+    libip_test_8.a  (8 byte integer/8 byte float library, test)
+    libip_test_d.a  (4 byte integer/8 byte float library, test)
 
-    One way to place these libraries in the ./reg_tests/lib
-    directory is thru unix links.  Suppose the trunk and
-    branch libraries will built using an 'nco-style' installation.
-    First, change to the ./reg_tests/lib directory:
+    incmod_ctl_4  (4 byte integer/4 byte float include dir, control)
+    incmod_ctl_8  (8 byte integer/8 byte float include dir, control)
+    incmod_ctl_d  (4 byte integer/8 byte float include dir, control)
+    incmod_test_4 (4 byte integer/4 byte float include dir, test)
+    incmod_test_8 (8 byte integer/8 byte float include dir, test)
+    incmod_test_d (4 byte integer/8 byte float include dir, test)
+
+    One way to place these libraries and include directories in 
+    the ./reg_tests/lib directory is thru unix links.  Suppose
+    the trunk and branch libraries were built using an
+    'nco-style' installation.  First, change to the
+    ./reg_tests/lib directory:
 
     "cd /branch/reg_tests/lib"
 
-    Then, link each library to the name expected by the regression
-    test build:
+    Then, link each library and include directory to the 
+    name expected by the regression test build:
     
     "ln -s /trunk/ip/vX.Y.Z/libip_vX.Y.Z_4.a  ./libip_ctl_4.a"
     "ln -s /trunk/ip/vX.Y.Z/libip_vX.Y.Z_8.a  ./libip_ctl_8.a"
@@ -51,6 +61,13 @@ The following steps are required to setup and run the test suite:
     "ln -s /branch/ip/vX.Y.Z/libip_vX.Y.Z_4.a ./libip_test_4.a"
     "ln -s /branch/ip/vX.Y.Z/libip_vX.Y.Z_8.a ./libip_test_8.a"
     "ln -s /branch/ip/vX.Y.Z/libip_vX.Y.Z_d.a ./libip_test_d.a"
+
+    "ln -s /trunk/ip/vX.Y.Z/incmod/ip_vX.Y.Z_4  ./incmod_ctl_4"
+    "ln -s /trunk/ip/vX.Y.Z/incmod/ip_vX.Y.Z_8  ./incmod_ctl_8"
+    "ln -s /trunk/ip/vX.Y.Z/incmod/ip_vX.Y.Z_d  ./incmod_ctl_d"
+    "ln -s /branch/ip/vX.Y.Z/incmod/ip_vX.Y.Z_4 ./incmod_test_4"
+    "ln -s /branch/ip/vX.Y.Z/incmod/ip_vX.Y.Z_8 ./incmod_test_8"
+    "ln -s /branch/ip/vX.Y.Z/incmod/ip_vX.Y.Z_d ./incmod_test_d"
 
 (3) Check the ./reg_tests/config-setup/ifort.setup file in your branch.
 
@@ -147,10 +164,10 @@ that exercised every routine.
 
 1)  gausslat - A fortran program that calls routine gausslat 
     to calculate the gaussian latitudes for a t382 grid.
-2)  gdswiz_wzd - A fortran program that calls gdswzd and all
-    of its child routines to calculate lat/lon and other
-    map-related fields for several grids of various map
-    map projections.
+2)  gdswzd - A fortran program that calls gdswzd
+    and all of its child routines to calculate lat/lon and
+    other map-related fields for several grids of
+    of various map projections.
 3)  ipolates - A fortran program that interpolates a global
     lat/lon grid of substrate temperature to several grids of various
     projections using the ipolates suite of routines.  All
@@ -164,7 +181,7 @@ that exercised every routine.
 4)  ipolatev - A fortran program that interpolates a global
     lat/lon grid of vector u/v wind to several grids of various
     projections using the ipolatev suite of routines.  All
-    interpolation options:
+    interpolation options are used:
       1) bilinear
       2) neighbor
       3) budget
@@ -215,9 +232,10 @@ sanity check the data.  So when viewing, do a 'set mproj off'.
 More detailed information about each test is described in a README file in that
 test's subdirectory.
 
-Below is a table of each routine in iplib and which regression test(s) invoke it.
+Below is a table of each routine (or module) in iplib and which regression test(s) invoke it.
 
-subroutine name         regression test
+subroutine or
+module name             regression test
 ===============         ===============
 
 check_grids0            ipolates,   ipxetas,  copygb2
@@ -228,28 +246,27 @@ check_grids1v           ipolatev,   copygb2
 check_grids2v           ipolatev,   copygb2
 check_grids3v           ipolatev,   copygb2
 check_grids6v           ipolatev,   copygb2
-earth_radius            gdswiz_wzd, ipolates, ipolatev, ipxetas, copygb2
+earth_radius            gdswzd, ipolates, ipolatev, ipxetas, copygb2
 gausslat                gausslat
-gdswzd                  gdswiz_wzd, ipolates, ipolatev, ipxetas, copygb2
-gdswzd00                gdswiz_wzd, ipolates, ipolatev, copygb2
-gdswzd00_error          gdswiz_wzd, ipolates, ipolatev, copygb2
-gdswzd01                gdswiz_wzd, ipolates, ipolatev, copygb2
-gdswzd01_error          gdswiz_wzd, ipolates, ipolatev, copygb2
-gdswzd03                gdswiz_wzd, ipolates, ipolatev, copygb2
-gdswzd03_error          gdswiz_wzd, ipolates, ipolatev, copygb2
-gdswzd04                gdswiz_wzd, ipolates, ipolatev, copygb2
-gdswzd04_error          gdswiz_wzd, ipolates, ipolatev, copygb2
-gdswzd05                gdswiz_wzd, ipolates, ipolatev, copygb2
-gdswzd05_error          gdswiz_wzd, ipolates, ipolatev, copygb2
-gdswzdcb                gdswiz_wzd, ipolates, ipolatev, ipxetas
-gdswzdcb_error          gdswiz_wzd, ipolates, ipolatev, ipxetas
-gdswzdcd                gdswiz_wzd, ipolates, ipolatev
-gdswzdcd_error          gdswiz_wzd, ipolates, ipolatev
+gdswzd                  gdswzd, ipolates, ipolatev, ipxetas, copygb2
+gdswzd00                gdswzd, ipolates, ipolatev, copygb2
+gdswzd00_error          gdswwzd, ipolates, ipolatev, copygb2
+gdswzd01                gdswzd, ipolates, ipolatev, copygb2
+gdswzd01_error          gdswzd, ipolates, ipolatev, copygb2
+gdswzd03                gdswzd, ipolates, ipolatev, copygb2
+gdswzd03_error          gdswzd, ipolates, ipolatev, copygb2
+gdswzd04                gdswzd, ipolates, ipolatev, copygb2
+gdswzd04_error          gdswzd, ipolates, ipolatev, copygb2
+gdswzd05                gdswzd, ipolates, ipolatev, copygb2
+gdswzd05_error          gdswzd, ipolates, ipolatev, copygb2
+gdswzdcb                gdswzd, ipolates, ipolatev, ipxetas
+gdswzdcb_error          gdswzd, ipolates, ipolatev, ipxetas
+gdswzdcd                gdswzd, ipolates, ipolatev
+gdswzdcd_error          gdswzd, ipolates, ipolatev
 ijkgds0                 ipolates,   ipolatev, ipxetas,  copygb2
 ijkgds1                 ipolates,   ipolatev, ipxetas,  copygb2
 ipolates                ipolates,   ipxetas,  copygb2
 ipolatev                ipolatev,   copygb2
-ipxetas                 ipxetas
 ipxwafs                 ipxwafs
 ipxwafs2                ipxwafs
 ipxwafs3                ipxwafs

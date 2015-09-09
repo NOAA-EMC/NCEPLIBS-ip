@@ -1,4 +1,4 @@
-dset ^./grid205v.bin
+dset ^./grid205.bin
 undef 9.999E+20
 xdef 954 linear 0.000000 1.0
 ydef 835 linear 0.000000 1.0

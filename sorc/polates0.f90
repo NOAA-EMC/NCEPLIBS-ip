@@ -44,6 +44,8 @@
 ! 2009-10-19  IREDELL  SAVE WEIGHTS AND THREAD FOR PERFORMANCE
 ! 2012-06-26  GAYNO    FIX OUT-OF-BOUNDS ERROR.  SEE NCEPLIBS
 !                      TICKET #9.
+! 2015-01-27  GAYNO    REPLACE CALLS TO GDSWIZ WITH NEW MERGED
+!                      VERSION OF GDSWZD.
 ! 2015-07-13  GAYNO    CONVERT TO GRIB 2. REPLACE GRIB 1 KGDS ARRAYS
 !                      WITH GRIB 2 GRID DEFINITION TEMPLATE ARRAYS.
 !
@@ -112,6 +114,9 @@
 !   LANGUAGE: FORTRAN 90
 !
 !$$$
+!
+ USE GDSWZD_MOD
+!
  IMPLICIT NONE
 !
  INTEGER,               INTENT(IN   ) :: IGDTNUMI, IGDTLENI
@@ -144,8 +149,6 @@
 !
  LOGICAL                              :: SAME_GRIDI, SAME_GRIDO
 !
- REAL,ALLOCATABLE                     :: CROT(:),SROT(:)
- REAL,ALLOCATABLE                     :: XLON(:),XLAT(:),YLON(:),YLAT(:),AREA(:)
  REAL                                 :: WX(2),WY(2)
  REAL                                 :: XPTS(MO),YPTS(MO)
  REAL                                 :: PMP,XIJ,YIJ,XF,YF,G,W
@@ -167,30 +170,13 @@
 ! - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 !  COMPUTE NUMBER OF OUTPUT POINTS AND THEIR LATITUDES AND LONGITUDES.
    IF(IGDTNUMO.GE.0) THEN
-     ALLOCATE (CROT(MO))
-     ALLOCATE (SROT(MO))
-     ALLOCATE (XLON(MO))
-     ALLOCATE (XLAT(MO))
-     ALLOCATE (YLON(MO))
-     ALLOCATE (YLAT(MO))
-     ALLOCATE (AREA(MO))
      CALL GDSWZD(IGDTNUMO,IGDTMPLO,IGDTLENO, 0,MO,FILL,XPTS,YPTS, &
-                 RLON,RLAT,NO,0,CROT,SROT,0,XLON,XLAT,YLON,YLAT,AREA)
-     DEALLOCATE (CROT,SROT,XLON,XLAT,YLON,YLAT,AREA)
+                 RLON,RLAT,NO)
      IF(NO.EQ.0) IRET=3
    ENDIF
 ! - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 !  LOCATE INPUT POINTS
-   ALLOCATE (CROT(NO))
-   ALLOCATE (SROT(NO))
-   ALLOCATE (XLON(NO))
-   ALLOCATE (XLAT(NO))
-   ALLOCATE (YLON(NO))
-   ALLOCATE (YLAT(NO))
-   ALLOCATE (AREA(NO))
-   CALL GDSWZD(IGDTNUMI,IGDTMPLI,IGDTLENI,-1,NO,FILL,XPTS,YPTS,RLON,RLAT,NV, &
-               0,CROT,SROT,0,XLON,XLAT,YLON,YLAT,AREA)
-   DEALLOCATE (CROT,SROT,XLON,XLAT,YLON,YLAT,AREA)
+   CALL GDSWZD(IGDTNUMI,IGDTMPLI,IGDTLENI,-1,NO,FILL,XPTS,YPTS,RLON,RLAT,NV)
    IF(IRET.EQ.0.AND.NV.EQ.0) IRET=2
 ! - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 !  ALLOCATE AND SAVE GRID DATA

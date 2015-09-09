@@ -1762,9 +1762,7 @@ ac_config_files="$ac_config_files copygb2/sorc/Makefile"
 
 ac_config_files="$ac_config_files gausslat/sorc/Makefile"
 
-ac_config_files="$ac_config_files gdswiz_wzd/sorc/Makefile"
-
-ac_config_files="$ac_config_files ipxetas/sorc/Makefile"
+ac_config_files="$ac_config_files gdswzd/sorc/Makefile"
 
 ac_config_files="$ac_config_files ipolates/sorc/Makefile"
 
@@ -3115,8 +3113,7 @@ do
     "ipxwafs/sorc/Makefile") CONFIG_FILES="$CONFIG_FILES ipxwafs/sorc/Makefile" ;;
     "copygb2/sorc/Makefile") CONFIG_FILES="$CONFIG_FILES copygb2/sorc/Makefile" ;;
     "gausslat/sorc/Makefile") CONFIG_FILES="$CONFIG_FILES gausslat/sorc/Makefile" ;;
-    "gdswiz_wzd/sorc/Makefile") CONFIG_FILES="$CONFIG_FILES gdswiz_wzd/sorc/Makefile" ;;
-    "ipxetas/sorc/Makefile") CONFIG_FILES="$CONFIG_FILES ipxetas/sorc/Makefile" ;;
+    "gdswzd/sorc/Makefile") CONFIG_FILES="$CONFIG_FILES gdswzd/sorc/Makefile" ;;
     "ipolates/sorc/Makefile") CONFIG_FILES="$CONFIG_FILES ipolates/sorc/Makefile" ;;
     "ipolatev/sorc/Makefile") CONFIG_FILES="$CONFIG_FILES ipolatev/sorc/Makefile" ;;
 

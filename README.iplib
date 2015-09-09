@@ -107,16 +107,13 @@ in w3ncolib or by subprogram makgds in this library.  That is, the interpolation
 subprograms can readily interpolate from a GRIB field that is unpacked
 by subprogram w3fi63; the interpolation subprograms can also readily
 interpolate to an NCEP pre-defined grid that is expanded into KGDS form by 
-subprogram makgds (which in turn calls w3fi71).  There are currently nine grid
+subprogram makgds (which in turn calls w3fi71).  There are currently seven grid
 projections recognized in the library.  The projections are respectively
 equidistant cylindrical (KGDS(1)=000), Mercator cylindrical (KGDS(1)=001),
 Lambert conformal conical (KGDS(1)=003), Gaussian cylindrical (KGDS(1)=004), 
-polar stereographic azimuthal (KGDS(1)=005), semi-staggered "E" grid on
-rotated equidistant cyclindrical - one dimensional grid (KGDS(1)=201), filled 
-rotated equidistant cylindrical - one dimensional grid (KGDS(1)=202),
-semi-staggered "E" grid on rotated equidistant cyclindrical - two dimensional
-grid (KGDS(1)=203), and non-staggered grid on rotated equidistant
-cyclindrical - two dimensional grid (KGDS(1)=205).
+polar stereographic azimuthal (KGDS(1)=005), semi-staggered "E" grid 
+on rotated equidistant cyclindrical (KGDS(1)=203), and non-staggered
+grid on rotated equidistant cyclindrical grid (KGDS(1)=205).
 
 If the output data representation type is negative (KGDSO(1)<0), then the
 output data may be just a set of station points.  In this case, the user must pass
@@ -177,28 +174,23 @@ II. Entry point list
 
               Grid description section decoders
 
-   GDSWIZ     GRID DESCRIPTION SECTION WIZARD
-   GDSWIZ00   GDS WIZARD FOR EQUIDISTANT CYLINDRICAL
-   GDSWIZ01   GDS WIZARD FOR MERCATOR CYLINDRICAL
-   GDSWIZ03   GDS WIZARD FOR LAMBERT CONFORMAL CONICAL
-   GDSWIZ04   GDS WIZARD FOR GAUSSIAN CYLINDRICAL
+   GDSWZD     GRID DESCRIPTION SECTION WIZARD
+   GDSWZD00   GDS WIZARD FOR EQUIDISTANT CYCLINDRICAL
+   GDSWZD01   GDS WIZARD FOR MERCATOR CYCLINDRICAL
+   GDSWZD03   GDS WIZARD FOR LAMBERT CONFORMAL CONICAL
+   GDSWZD04   GDS WIZARD FOR GAUSSIAN CYCLINDRICAL
+   GDSWZD05   GDS WIZARD FOR POLAR STEREOGRAPHIC
+   GDSWZDCB   GDS WIZARD FOR ROTATED EQUIDISTANT CYCLINDRICAL
+              "E" STAGGER.
+   GDSWZDCD   GDS WIZARD FOR ROTATED EQUIDISTANT CYCLINDRICAL
+              NON "E" STAGGER.
    GAUSSLAT   COMPUTE GAUSSIAN LATITUDES
-   GDSWIZ05   GDS WIZARD FOR POLAR STEREOGRAPHIC AZIMUTHAL
-   GDSWIZC9   GDS WIZARD FOR "E" STAGGERED ROTATED EQUIDISTANT CYLINDRICAL
-              ONE-DIMENSIONAL GRID.
-   GDSWIZCA   GDS WIZARD FOR NON-STAGGERED ROTATED EQUIDISTANT CYLINDRICAL
-              ONE-DIMENSIONAL GRID.
-   GDSWIZCB   GDS WIZARD FOR "E" STAGGERED ROTATED EQUIDISTANT CYLINDRICAL
-              TWO-DIMENSIONAL GRID.
-   GDSWIZCD   GDS WIZARD FOR NON-STAGGERED ROTATED EQUIDISTANT CYLINDRICAL
-              TWO-DIMENSIONAL GRID.
    IJKGDS0/1  RETURN FIELD POSITION FOR A GIVEN GRID POINT
    MAKGDS     MAKE OR BREAK A GRID DESCRIPTION SECTION
 
               Transform subprograms for special irregular grids
 
-   IPXWAFS    EXPAND OR CONTRACT WAFS GRIDS
-   IPXETAS    EXPAND OR CONTRACT ETA GRIDS
+   IPXWAFS/2/3  EXPAND OR CONTRACT WAFS GRIDS
 
 III. How to inoke iplib: examples
 

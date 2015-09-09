@@ -1,8 +1,7 @@
-dset ^./grid222.bin
+dset ^./grid203.bin
 undef 9.999E+20
-options yrev
-xdef 512 linear 0.000000 1.0
-ydef 512 linear 0.000000 1.0
+xdef 669 linear 0.000000 1.0
+ydef 1165 linear 0.000000 1.0
 tdef 1 linear 00z01jan1980 1dy
 zdef 1 linear 1 1
 vars 11

@@ -1,25 +1,13 @@
  earth_radius.o : earth_radius.f90
  gausslat.o : gausslat.f90
- gdswiz00.o : gdswiz00.f90
- gdswiz01.o : gdswiz01.f90
- gdswiz03.o : gdswiz03.f90
- gdswiz04.o : gdswiz04.f90
- gdswiz05.o : gdswiz05.f90
- gdswizc9.o : gdswizc9.f90
- gdswizca.o : gdswizca.f90
- gdswizcb.o : gdswizcb.f90
- gdswizcd.o : gdswizcd.f90
- gdswiz.o : gdswiz.f90
- gdswzd00.o : gdswzd00.f90
- gdswzd01.o : gdswzd01.f90
- gdswzd03.o : gdswzd03.f90
- gdswzd04.o : gdswzd04.f90
- gdswzd05.o : gdswzd05.f90
- gdswzdc9.o : gdswzdc9.f90
- gdswzdca.o : gdswzdca.f90
- gdswzdcb.o : gdswzdcb.f90
- gdswzdcd.o : gdswzdcd.f90
- gdswzd.o : gdswzd.f90
+ gdswzd00_mod.o : gdswzd00_mod.f90
+ gdswzd01_mod.o : gdswzd01_mod.f90
+ gdswzd03_mod.o : gdswzd03_mod.f90
+ gdswzd04_mod.o : gdswzd04_mod.f90
+ gdswzd05_mod.o : gdswzd05_mod.f90
+ gdswzdcb_mod.o : gdswzdcb_mod.f90
+ gdswzdcd_mod.o : gdswzdcd_mod.f90
+ gdswzd_mod.o : gdswzd00_mod.o gdswzd01_mod.o gdswzd03_mod.o gdswzd04_mod.o gdswzd05_mod.o gdswzdcb_mod.o gdswzdcd_mod.o gdswzd_mod.f90
  ijkgds0.o : ijkgds0.f90
  ijkgds1.o : ijkgds1.f90
  ipolates.o : ipolates.f90

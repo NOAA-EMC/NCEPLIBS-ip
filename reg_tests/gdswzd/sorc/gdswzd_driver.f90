@@ -39,6 +39,8 @@
 ! grid${gridnum}.iopt${0 or m1}.bin
 !------------------------------------------------------------------
 
+ use gdswzd_mod
+
  implicit none
 
  character*4   :: grid
@@ -46,7 +48,7 @@
  character*100 :: outfile
 
  integer*4 :: i1
- integer   :: nret, lrot, lmap, iopt, npts, imdl, jmdl
+ integer   :: nret, iopt, npts, imdl, jmdl
  integer   :: i, j, n, iret, kgds(200), nscan, kscan, is1, nm
  integer   :: ii, jj, iii, jjj, badpts, i_offset_odd
 
@@ -248,13 +250,11 @@
  ylat = fill
  area = fill
 
- lrot = 1
- lmap = 1
  iopt = 0
  npts = imdl * jmdl
 
  call gdswzd(igdtnum, igdtmpl, igdtlen, iopt, npts, fill, xpts, ypts, rlon, rlat, &
-             nret, lrot, crot, srot, lmap, xlon, xlat, ylon, ylat, area)
+             nret, crot, srot, xlon, xlat, ylon, ylat, area)
 
  if (nret /= npts) then
    print*,'ERROR. WRONG NUMBER OF POINTS RETURNED ',nret,npts
@@ -289,7 +289,7 @@
  ypts=fill
 
  call gdswzd(igdtnum, igdtmpl, igdtlen, iopt, npts, fill, xpts, ypts, rlon, rlat, &
-             nret, lrot, crot, srot, lmap, xlon, xlat, ylon, ylat, area)
+             nret, crot, srot, xlon, xlat, ylon, ylat, area)
 
  if (nret /= npts) then
    print*,'ERROR. WRONG NUMBER OF POINTS RETURNED ',nret,npts

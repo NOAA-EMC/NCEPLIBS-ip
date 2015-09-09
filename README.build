@@ -140,21 +140,30 @@ directory tree will look as follows:
 
   ip/
    |
-   `--v2.0.1
+   `--v2.0.1/
          |
          `--libip_v2.0.1_4.a
+         |
+         `--incmod/
+               |
+               `--ip_v2.0.1_4/*.mod
 
 If you then create the double precsion (_8) and mixed precision (_d) libraries and
 invoke "make nco_install", the directory tree will look like:
 
   ip/
    |
-   `--v2.0.1
+   `--v2.0.1/
          |
          |--libip_v2.0.1_4.a
          |--libip_v2.0.1_d.a
          `--libip_v2.0.1_8.a
-
+         |
+         `--incmod/
+               |
+               `--ip_v2.0.1_4/*.mod
+               `--ip_v2.0.1_d/*.mod
+               `--ip_v2.0.1_8/*.mod
 
 The contents of the "v2.0.1" directory can then be moved into the official
 /nwprod/lib/ip location as needed.
@@ -166,6 +175,7 @@ would be modified something like:
   libroot="/usrx/local/nceplibs/ip/v2.0.1"
   LDFLAGS="-L${libroot} ${LDFLAGS}"
   LIBS="-lip_v2.0.1_4"
+  FCFLAGS="... -I${libroot}/incmod/ip_v2.0.1_4 ..."
 
 
 GNU Install
@@ -181,8 +191,10 @@ a directory called "ip_v2.0.1_4". That directory structure is shown below:
   ip_v2.0.1_4/
     |
     `--lib/
-         |
-         `--libip.a
+    |    |
+    |    `--libip.a
+    |
+    `--include/*.mod
 
 NOTE: The only version identifier in this type of install is the name of the
       installation directory itself.
@@ -193,20 +205,26 @@ create the following directory trees:
   ip_v2.0.1_4/
     |
     `--lib/
-         |
-         `--libip.a
+    |    |
+    |    `--libip.a
+    |
+    `--include/*.mod
 
   ip_v2.0.1_8/
     |
     `--lib/
-         |
-         `--libip.a
+    |    |
+    |    `--libip.a
+    |
+    `--include/*.mod
 
   ip_v2.0.1_d/
     |
     `--lib/
-         |
-         `--libip.a
+    |    |
+    |    `--libip.a
+    |
+    `--include/*.mod
 
 Let's assume the above install was moved into "/usrx/local/nceplibs", to use the
 single precison (_4) library in this structure in your own application, the usual environment
@@ -215,6 +233,7 @@ variables would be modified something like:
   libroot="/usrx/local/nceplibs"
   LDFLAGS="-L${libroot}/ip_v2.0.1_4/lib ${LDFLAGS}"
   LIBS="-lip"
+  FCFLAGS="... -I${libroot}/ip_v2.0.1_4/include ..."
 
 
 

@@ -90,7 +90,7 @@ for WHICHIP in ctl test; do  # the 'control' or 'test' IPLIB
     esac
 
     ./configure --prefix=${PWD} --enable-promote=${PRECISION} \
-      FCFLAGS="${FCFLAGS} -I${G2_INC}" \
+      FCFLAGS="${FCFLAGS} -I${G2_INC} -I${PWD}/lib/incmod_${WHICHIP}_${PRECISION}" \
       LIBS="${PWD}/lib/libip_${WHICHIP}_${PRECISION}.a ${G2_LIB} ${SP_LIB} \
             ${BACIO_LIB} ${W3NCO_LIB} ${JASPER_LIB} ${PNG_LIB} ${Z_LIB}"
     if [ $? -ne 0 ]; then
