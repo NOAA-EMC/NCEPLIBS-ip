@@ -14,6 +14,7 @@ AC_CONFIG_SRCDIR([gausslat/sorc/gausslat_driver.f90])
 
 # Define the configuration files
 AC_CONFIG_FILES([Makefile])
+AC_CONFIG_FILES([ipxetas/sorc/Makefile])
 AC_CONFIG_FILES([ipxwafs/sorc/Makefile])
 AC_CONFIG_FILES([copygb2/sorc/Makefile])
 AC_CONFIG_FILES([gausslat/sorc/Makefile])

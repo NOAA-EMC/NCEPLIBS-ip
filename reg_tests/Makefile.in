@@ -9,6 +9,7 @@ all clean install uninstall:
 	cd copygb2/sorc && $(MAKE) $@
 	cd gausslat/sorc && $(MAKE) $@
 	cd gdswzd/sorc && $(MAKE) $@
+	cd ipxetas/sorc && $(MAKE) $@
 	cd ipxwafs/sorc && $(MAKE) $@
 	cd ipolates/sorc && $(MAKE) $@
 	cd ipolatev/sorc && $(MAKE) $@
@@ -17,6 +18,7 @@ distclean:
 	cd copygb2/sorc && $(MAKE) $@
 	cd gausslat/sorc && $(MAKE) $@
 	cd gdswzd/sorc && $(MAKE) $@
+	cd ipxetas/sorc && $(MAKE) $@
 	cd ipxwafs/sorc && $(MAKE) $@
 	cd ipolates/sorc && $(MAKE) $@
 	cd ipolatev/sorc && $(MAKE) $@
