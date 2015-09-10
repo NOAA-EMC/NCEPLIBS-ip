@@ -1,4 +1,4 @@
-Regression test for gdswiz and gdswzd and all of their child routines.
+Regression test for gdswzd and all of its child routines.
 Calculate lat/lon and other map-related fields for several
 grids of various map projections using a Fortran program.
 
@@ -28,21 +28,25 @@ grid #       description
 003          one-degree global lat/lon (ncep grid 3)
 008          mercator (ncep grid 8)
 127          t254 gaussian (ncep grid 127)
-203          rotated lat/lon e-staggered (number refers to gds octet 6)
-             tests routines gdswizcb and gdswzdcb
-205          rotated lat/lon b-staggered (number refers to gds octet 6)
-             tests routines gdswizcd and gdswzdcd
+203h         rotated lat/lon e-staggered (number meaningless).
+             this is the old 12km eta grid - 'h' points
+203v         rotated lat/lon e-staggered (number meaningless).
+             this is the old 12km eta grid - 'v' points
+205h         rotated lat/lon b-staggered (number meaningless).
+             this is the 12km nam grid - 'h' points
+205v         rotated lat/lon b-staggered (number meaningless).
+             this is the 12km nam grid - 'v' points
 212          nh polar stereographic, spherical earth (number meaningless)
 213          sh polar stereographic, spherical earth (number meaningless)
 218          lambert conformal (ncep grid 218)
 222          nh polar stereographic, elliptical earth (number meaningless)
 
-The gdswiz and gdswzd routines compute the following fields:
+The gdswzd routines compute the following fields:
 
 - lat/lon from i/j OR i/j from lat lon
 - clockwise vector rotation sines/cosines
-- dx/dlon, dx/dlat, dy/dlon, dy/dlat  (gdswzd only)
-- grid box area (gdswzd only)
+- dx/dlon, dx/dlat, dy/dlon, dy/dlat
+- grid box area
 
 The routines are called twice for each grid to test both the
 i/j to lat/lon AND lat/lon to i/j transforms.  This is controled by setting 
@@ -51,26 +55,47 @@ within floating point differences.  If it is not reversable a warning
 message is printed to standard output and the regression test
 is considered failed.
 
-All fields computed from each call to gdswiz/wzd are output to a binary file.
+All fields computed from each call to gdswzd are output to a binary file.
 The files from the 'control' and 'test' ip libraries are compared 
 and if not bit identical, the test fails.  These binary files may be visualized in
 GRADS using the control files in the ./grads subdirectory.  
 
 List of iplib routines tested:
 
-gdswiz           
-gdswiz00        
-gdswiz01       
-gdswiz03      
-gdswiz04     
-gdswiz05    
-gdswizcb  
-gdswizcd 
-gdswzd   
-gdswzd00 
-gdswzd01 
-gdswzd03 
-gdswzd04 
-gdswzd05 
-gdswzdcb  
-gdswzdcd          
+earth_radius
+gdswzd
+gdswzd00
+gdswzd00_error
+gdswzd00_vect_rot
+gdswzd00_map_jacob
+gdswzd00_grid_area
+gdswzd01
+gdswzd01_error
+gdswzd01_vect_rot
+gdswzd01_map_jacob
+gdswzd01_grid_area
+gdswzd03
+gdswzd03_error
+gdswzd03_vect_rot
+gdswzd03_map_jacob
+gdswzd03_grid_area
+gdswzd04
+gdswzd04_error
+gdswzd04_vect_rot
+gdswzd04_map_jacob
+gdswzd04_grid_area
+gdswzd05
+gdswzd05_error
+gdswzd05_vect_rot
+gdswzd05_map_jacob
+gdswzd05_grid_area
+gdswzdcb
+gdswzdcb_error
+gdswzdcb_vect_rot
+gdswzdcb_map_jacob
+gdswzdcb_grid_area
+gdswzdcd
+gdswzdcd_error
+gdswzdcd_vect_rot
+gdswzdcd_map_jacob
+gdswzdcd_grid_area

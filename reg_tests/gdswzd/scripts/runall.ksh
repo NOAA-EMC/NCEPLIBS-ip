@@ -36,10 +36,14 @@
 # 003        one-degree global lat/lon (ncep grid 3)
 # 008        mercator (ncep grid 8)
 # 127        t254 gaussian (ncep grid 127)
-# 203        rotated lat/lon e-staggered (number refers to gds octet 6)
-#            tests routine gdswzdcb
-# 205        rotated lat/lon b-staggered (number refers to gds octet 6)
-#            tests routine gdswzdcd
+# 203h       rotated lat/lon e-staggered (number meaningless)
+#            this is the old 12km eta grid - 'h' points
+# 203v       rotated lat/lon e-staggered (number meaningless)
+#            this is the old 12km eta grid - 'v' points
+# 205h       rotated lat/lon b-staggered (number meaningless)
+#            this is the 12km nam grid - 'h' points
+# 205v       rotated lat/lon b-staggered (number meaningless)
+#            this is the 12km nam grid - 'v' points
 # 212        nh polar stereographic, spherical earth (number meaningless)
 # 213        sh polar stereographic, spherical earth (number meaningless)
 # 218        lambert conformal (ncep grid 218)
@@ -78,7 +82,7 @@ cp $EXEC_DIR/gdswzd_test_*.exe $WORK_TEST
 
 reg_test_failed=0
 
-for grids in "3" "8" "203" "127" "212" "213" "218" "205" "222"
+for grids in "3" "8" "127" "203h" "203v" "212" "222" "213" "205h" "205v" "218"
 do
   echo
   for bytesize in "4" "8" "d"  # test each library version
