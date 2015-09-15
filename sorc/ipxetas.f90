@@ -38,7 +38,39 @@
 !                    OF THE NCEP G2 LIBRARY GRIDMOD DATA STRUCTURE.
 !     IGDTMPLI     - INTEGER (IGDTLEN) GRID DEFINITION TEMPLATE ARRAY -
 !                    INPUT GRID. CORRESPONDS TO THE GFLD%IGDTMPL COMPONENT
-!                    OF THE NCEP G2 LIBRARY GRIDMOD DATA STRUCTURE.
+!                    OF THE NCEP G2 LIBRARY GRIDMOD DATA STRUCTURE
+!                    (SECTION 3 INFO):
+!                    (1):  SHAPE OF EARTH, OCTET 15
+!                    (2):  SCALE FACTOR OF SPHERICAL EARTH RADIUS,
+!                          OCTET 16
+!                    (3):  SCALED VALUE OF RADIUS OF SPHERICAL EARTH,
+!                          OCTETS 17-20
+!                    (4):  SCALE FACTOR OF MAJOR AXIS OF ELLIPTICAL EARTH,
+!                          OCTET 21
+!                    (5):  SCALED VALUE OF MAJOR AXIS OF ELLIPTICAL EARTH,
+!                          OCTETS 22-25
+!                    (6):  SCALE FACTOR OF MINOR AXIS OF ELLIPTICAL EARTH,
+!                          OCTET 26
+!                    (7):  SCALED VALUE OF MINOR AXIS OF ELLIPTICAL EARTH,
+!                          OCTETS 27-30
+!                    (8):  NUMBER OF POINTS ALONG A PARALLEL, OCTS 31-34
+!                    (9):  NUMBER OF POINTS ALONG A MERIDIAN, OCTS 35-38
+!                    (10): BASIC ANGLE OF INITIAL PRODUCTION DOMAIN,
+!                          OCTETS 39-42
+!                    (11): SUBDIVISIONS OF BASIC ANGLE, OCTETS 43-46
+!                    (12): LATITUDE OF FIRST GRID POINT, OCTETS 47-50
+!                    (13): LONGITUDE OF FIRST GRID POINT, OCTETS 51-54
+!                    (14): RESOLUTION AND COMPONENT FLAGS, OCTET 55
+!                    (15): LATITUDE OF LAST GRID POINT, OCTETS 56-59
+!                    (16): LONGITUDE OF LAST GRID POINT, OCTETS 60-63
+!                    (17): I-DIRECTION INCREMENT, OCTETS 64-67
+!                    (18): J-DIRECTION INCREMENT, OCTETS 68-71
+!                    (19): SCANNING MODE, OCTET 72
+!                    (20): LATITUDE OF SOUTHERN POLE OF PROJECTION,
+!                          OCTETS 73-76
+!                    (21): LONGITUDE OF SOUTHERN POLE OF PROJECTION,
+!                          OCTETS 77-80
+!                    (22): ANGLE OF ROTATION OF PROJECTION, OCTS 81-84
 !     NPTS_INPUT   - INTEGER NUMBER POINTS INPUT GRID
 !     BITMAP_INPUT - LOGICAL (NPTS_INPUT) INPUT GRID BITMAP
 !     DATA_INPUT   - REAL (NPTS_INPUT) INPUT GRID DATA
@@ -57,6 +89,7 @@
 !     IGDTMPLO      - INTEGER (IGDTLEN) GRID DEFINITION TEMPLATE ARRAY -
 !                     OUTPUT GRID. CORRESPONDS TO THE GFLD%IGDTMPL COMPONENT
 !                     OF THE NCEP G2 LIBRARY GRIDMOD DATA STRUCTURE.
+!                     ARRAY DEFINITIONS SAME AS "IGDTMPLI"
 !     BITMAP_OUTPUT - LOGICAL (NPTS_OUTUT) OUTPUT GRID BITMAP
 !     DATA_OUTPUT   - REAL (NPTS_OUTPUT) OUTPUT GRID DATA
 !     IRET          - INTEGER RETURN CODE
