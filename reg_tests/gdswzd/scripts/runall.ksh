@@ -82,7 +82,7 @@ cp $EXEC_DIR/gdswzd_test_*.exe $WORK_TEST
 
 reg_test_failed=0
 
-for grids in "3" "8" "127" "203h" "203v" "212" "222" "213" "205h" "205v" "218"
+for grids in "3" "8" "127" "203h" "203v" "205h" "205v" "212" "213" "218" "222"
 do
   echo
   for bytesize in "4" "8" "d"  # test each library version
