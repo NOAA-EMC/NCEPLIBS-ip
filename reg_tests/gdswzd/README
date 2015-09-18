@@ -60,42 +60,14 @@ The files from the 'control' and 'test' ip libraries are compared
 and if not bit identical, the test fails.  These binary files may be visualized in
 GRADS using the control files in the ./grads subdirectory.  
 
-List of iplib routines tested:
+List of iplib routines or modules tested:
 
 earth_radius
-gdswzd
-gdswzd00
-gdswzd00_error
-gdswzd00_vect_rot
-gdswzd00_map_jacob
-gdswzd00_grid_area
-gdswzd01
-gdswzd01_error
-gdswzd01_vect_rot
-gdswzd01_map_jacob
-gdswzd01_grid_area
-gdswzd03
-gdswzd03_error
-gdswzd03_vect_rot
-gdswzd03_map_jacob
-gdswzd03_grid_area
-gdswzd04
-gdswzd04_error
-gdswzd04_vect_rot
-gdswzd04_map_jacob
-gdswzd04_grid_area
-gdswzd05
-gdswzd05_error
-gdswzd05_vect_rot
-gdswzd05_map_jacob
-gdswzd05_grid_area
-gdswzdcb
-gdswzdcb_error
-gdswzdcb_vect_rot
-gdswzdcb_map_jacob
-gdswzdcb_grid_area
-gdswzdcd
-gdswzdcd_error
-gdswzdcd_vect_rot
-gdswzdcd_map_jacob
-gdswzdcd_grid_area
+gdswzd_mod
+gdswzd_equid_cylind_mod
+gdswzd_gaussian_mod
+gdswzd_lambert_conf_mod
+gdswzd_mercator_mod
+gdswzd_polar_stereo_mod
+gdswzd_rot_equid_cylind_mod
+gdswzd_rot_equid_cylind_egrid_mod

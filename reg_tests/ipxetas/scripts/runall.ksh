@@ -27,7 +27,8 @@
 #
 # Output files from the program are in grib 2 format.  If the files from
 # the 'test' and 'control' ip libraries are not bit identical the 
-# the test has "failed".  And the output grib 2 files are renamed as:
+# the test has "failed".  And the output grib 2 files are saved in the
+# working directory and named as:
 #
 #   output.${cases}.${bytesize}byte.failed.grb2
 #

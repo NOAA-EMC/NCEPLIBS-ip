@@ -69,27 +69,17 @@ grid${grid#}.opt${option#}.${bytesize}byte.bin, where:
 These binary files may be viewed in Grads with the ".ctl" files in
 the ./grads subdirectory.  There is one ".ctl" file for each grid number.
 
-List of iplib routines tested:
+List of iplib modules or routines tested:
 
-check_grids0
-check_grids1
-check_grids2
 earth_radius
-gdswzd
-gdswzd00
-gdswzd00_error
-gdswzd01
-gdswzd01_error
-gdswzd03
-gdswzd03_error
-gdswzd04
-gdswzd04_error
-gdswzd05
-gdswzd05_error
-gdswzdcb
-gdswzdcb_error
-gdswzdcd
-gdswzdcd_error
+gdswzd_mod
+gdswzd_equid_cylind_mod
+gdswzd_gaussian_mod
+gdswzd_lambert_conf_mod
+gdswzd_mercator_mod
+gdswzd_polar_stereo_mod
+gdswzd_rot_equid_cylind_mod
+gdswzd_rot_equid_cylind_egrid_mod
 ijkgds0
 ijkgds1
 ipolates

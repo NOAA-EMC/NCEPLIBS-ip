@@ -1,14 +1,14 @@
 Regression test for routine ipxetas.  A Fortran program 
 does the following:
 
-1) Convert land/sea mask on a rotated lat/lon "e"-staggered "h" point
-   grid to a rotated lat/lon unstaggerd "full" grid.
-2) Convert u-component wind on a rotated lat/lon "e"-staggered "v" point
-   grid to a rotated lat/lon unstaggerd "full" grid.
-3) Convert land/sea mask on a rotated lat/lon unstaggered "full" grid
+1) Convert land/sea mask on a rotated lat/lon unstaggered "full" grid
    to a rotated lat/lon "e"-staggered "h" point grid.
-4) Convert land/sea mask on a rotated lat/lon unstaggered "full" grid
+2) Convert land/sea mask on a rotated lat/lon unstaggered "full" grid
    to a rotated lat/lon "e"-staggered "v" point grid.
+3) Convert land/sea mask on a rotated lat/lon "e"-staggered "h" point
+   grid to a rotated lat/lon unstaggerd "full" grid.
+4) Convert u-component wind on a rotated lat/lon "e"-staggered "v" point
+   grid to a rotated lat/lon unstaggerd "full" grid.
 
 The program is compiled with all byte versions of the 'control'
 and 'test' iplibs by invoking the make_reg_tests.ksh script
@@ -36,13 +36,11 @@ in the ./scripts subdirectory.  The runall.ksh script
 is run by the Runall.${machine}.ksh driver script located
 in /reg_tests.
 
-List of iplib routines tested:
+List of iplib modules or routines tested:
 
-check_grids0
 earth_radius
-gdswzd
-gdswzdcb
-gdswzdcb_error
+gdswzd_mod
+gdswzd_rot_equid_cylind_egrid_mod
 ijkgds0
 ijkgds1
 ipolates

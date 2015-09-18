@@ -2,7 +2,7 @@
 HOW TO RUN THE REGRESSION TEST SUITE
 ---------------------------------------------------------------
 
-The regression test suite consists of eight Fortran programs
+The regression test suite consists of seven Fortran programs
 that invoke a subset of IPOLATES (or IPLIB) routines.  IPOLATES
 developers are required to run this test suite to ensure their
 branch changes perform as expected before they are merged to 
@@ -77,23 +77,40 @@ The following steps are required to setup and run the test suite:
     the intel compiler, you should not have to change these
     settings.
 
-(4) Ensure the build process can find the NCEP SP, W3NCO and
-    BACIO libraries.
+(4) Ensure the build process can find the NCEP SP, W3NCO,
+    BACIO, and G2 libraries.  The NCEP G2 library requires
+    third party libraries JASPER, PNG AND Z.
 
-    The regression suite requires these external libraries.  The
-    path/name of these libraries are stored in environment 
-    variables in the "make_reg_tests.ksh" script. These variables are:
+    The path/name of these libraries are stored in environment 
+    variables in the "make_reg_tests.ksh" script. These 
+    library variables are:
     
-    SP_LIB4    - 4 byte integer/4 byte float version
-    SP_LIB8    - 8 byte integer/8 byte float version
-    SP_LIBd    - 4 byte integer/8 byte float version
-    W3NCO_LIB4 - 4 byte integer/4 byte float version
-    W3NCO_LIB8 - 8 byte integer/8 byte float version
-    W3NCO_LIBd - 4 byte integer/8 byte float version
-    BACIO_LIB4 - 4 byte integer/4 byte float version
-    BACIO_LIB8 - 8 byte integer/8 byte float version
+    SP_LIB4    - SP 4 byte integer/4 byte float version
+    SP_LIB8    - SP 8 byte integer/8 byte float version
+    SP_LIBd    - SP 4 byte integer/8 byte float version
+    W3NCO_LIB4 - W3NCO 4 byte integer/4 byte float version
+    W3NCO_LIB8 - W3NCO 8 byte integer/8 byte float version
+    W3NCO_LIBd - W3NCO 4 byte integer/8 byte float version
+    BACIO_LIB4 - BACIO 4 byte integer/4 byte float version
+    BACIO_LIB8 - BACIO 8 byte integer/8 byte float version
+    G2_LIB4    - G2 4 byte integer/4 byte float version
+    G2_LIBd    - G2 4 byte integer/8 byte float version
+    G2_LIB8    - G2 8 byte integer/8 byte float version
+    JASPER_LIB - JASPER - only one verion
+    PNG_LIB    - PNG - only one version
+    Z_LIB      - Z - only one version
+
+    The G2 include directory (where its module files are 
+    located) variables are:
+
+    G2_INC4    - 4 byte integer/4 byte float version
+    G2_INCd    - 4 byte integer/8 byte float version
+    G2_INC8    - 8 byte integer/8 byte float version
 
     There is no mixed precision ("_d") version of BACIO.
+    There is no official "8" byte integer/float version
+    of G2.  A version exists on WCOSS under:
+    /global/noscrub/George.Gayno/g2_lib/
 
     On WCOSS and Zeus, these variables are set automatically by
     "make_reg_test.ksh" via modules.  There is no way to
@@ -218,70 +235,55 @@ that exercised every routine.
       6) neighbor-budget
     Because this tests calls the same routines as other regression
     tests, it is not currently called from the regression driver scripts.
-    However, it may be run stand-alone using the script in ./copygb2/scripts.
+    However, it may be run stand-alone using the scripts in ./copygb2/scripts.
 
 Within each regression directory, the ./sorc subdirectory will contain the
 source code and make-related files required for the regression test. A script
 to run the individual regression test is under the ./scripts subdirectory.
 The executables (after compilation) are stored under the ./exec subdirectory.
 Any input data is stored in the ./data subdirectory.  Grads control files
-to view any binary output data are stored in the ./grads subdirectory.  Some control
-files do not have map backgrounds specified.  They are only used to
-sanity check the data.  So when viewing, do a 'set mproj off'. 
+to view any binary output data are stored in the ./grads subdirectory.  Some 
+Grads control files do not have map backgrounds specified.  They are only 
+used to sanity check the data.  So when viewing, do a 'set mproj off'. 
 
 More detailed information about each test is described in a README file in that
 test's subdirectory.
 
-Below is a table of each routine (or module) in iplib and which regression test(s) invoke it.
+Below is a table of a routine or module in iplib and which regression test(s) invoke it.
 
 subroutine or
-module name             regression test
-===============         ===============
+module name                      regression test
+===============                  ===============
 
-check_grids0            ipolates,   ipxetas,  copygb2
-check_grids1            ipolates,   copygb2
-check_grids2            ipolates,   copygb2
-check_grids0v           ipolatev,   copygb2
-check_grids1v           ipolatev,   copygb2
-check_grids2v           ipolatev,   copygb2
-check_grids3v           ipolatev,   copygb2
-check_grids6v           ipolatev,   copygb2
-earth_radius            gdswzd, ipolates, ipolatev, ipxetas, copygb2
-gausslat                gausslat
-gdswzd                  gdswzd, ipolates, ipolatev, ipxetas, copygb2
-gdswzd00                gdswzd, ipolates, ipolatev, copygb2
-gdswzd00_error          gdswwzd, ipolates, ipolatev, copygb2
-gdswzd01                gdswzd, ipolates, ipolatev, copygb2
-gdswzd01_error          gdswzd, ipolates, ipolatev, copygb2
-gdswzd03                gdswzd, ipolates, ipolatev, copygb2
-gdswzd03_error          gdswzd, ipolates, ipolatev, copygb2
-gdswzd04                gdswzd, ipolates, ipolatev, copygb2
-gdswzd04_error          gdswzd, ipolates, ipolatev, copygb2
-gdswzd05                gdswzd, ipolates, ipolatev, copygb2
-gdswzd05_error          gdswzd, ipolates, ipolatev, copygb2
-gdswzdcb                gdswzd, ipolates, ipolatev, ipxetas
-gdswzdcb_error          gdswzd, ipolates, ipolatev, ipxetas
-gdswzdcd                gdswzd, ipolates, ipolatev
-gdswzdcd_error          gdswzd, ipolates, ipolatev
-ijkgds0                 ipolates,   ipolatev, ipxetas,  copygb2
-ijkgds1                 ipolates,   ipolatev, ipxetas,  copygb2
-ipolates                ipolates,   ipxetas,  copygb2
-ipolatev                ipolatev,   copygb2
-ipxwafs                 ipxwafs
-ipxwafs2                ipxwafs
-ipxwafs3                ipxwafs
-movect                  ipolatev,   copygb2
-polates0                ipolates,   ipxetas,  copygb2
-polates1                ipolates,   copygb2
-polates2                ipolates,   copygb2
-polates3                ipolates,   copygb2
-polates4                ipolates,   copygb2
-polates6                ipolates,   copygb2
-polatev0                ipolatev,   copygb2
-polatev1                ipolatev,   copygb2
-polatev2                ipolatev,   copygb2
-polatev3                ipolatev,   copygb2
-polatev4                ipolatev,   copygb2
-polatev6                ipolatev,   copygb2
-polfixs                 ipolates,   ipxetas,  copygb2
-polfixv                 ipolatev,   copygb2
+earth_radius                     gdswzd, ipolates, ipolatev, ipxetas, copygb2
+gausslat                         gausslat
+gdswzd_mod                       gdswzd, ipolates, ipolatev, ipxetas, copygb2
+gdswzd_equid_cylind_mod          gdswzd, ipolates, ipolatev, copygb2
+gdswzd_gaussian_mod              gdswzd, ipolates, ipolatev, copygb2
+gdswzd_lambert_conf_mod          gdswzd, ipolates, ipolatev, copygb2
+gdswzd_mercator_mod              gdswzd, ipolates, ipolatev, copygb2
+gdswzd_polar_stereo              gdswzd, ipolates, ipolatev, copygb2
+gdswzd_rot_equid_cylind_egrid    gdswzd, ipolates, ipolatev, ipxetas
+gdswzd_rot_equid_cylind_mod      gdswzd, ipolates, ipolatev
+ijkgds0                          ipolates,   ipolatev, ipxetas,  copygb2
+ijkgds1                          ipolates,   ipolatev, ipxetas,  copygb2
+ipolates                         ipolates,   ipxetas,  copygb2
+ipolatev                         ipolatev,   copygb2
+ipxwafs                          ipxwafs
+ipxwafs2                         ipxwafs
+ipxwafs3                         ipxwafs
+movect                           ipolatev,   copygb2
+polates0                         ipolates,   ipxetas,  copygb2
+polates1                         ipolates,   copygb2
+polates2                         ipolates,   copygb2
+polates3                         ipolates,   copygb2
+polates4                         ipolates,   copygb2
+polates6                         ipolates,   copygb2
+polatev0                         ipolatev,   copygb2
+polatev1                         ipolatev,   copygb2
+polatev2                         ipolatev,   copygb2
+polatev3                         ipolatev,   copygb2
+polatev4                         ipolatev,   copygb2
+polatev6                         ipolatev,   copygb2
+polfixs                          ipolates,   ipxetas,  copygb2
+polfixv                          ipolatev,   copygb2
