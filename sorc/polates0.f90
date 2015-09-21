@@ -303,7 +303,7 @@
      IBO(K)=IBI(K)
      IF(.NOT.ALL(LO(1:NO,K))) IBO(K)=1
    ENDDO
-   IF(IGDTNUMO.EQ.0) CALL POLFIXS(NO,MO,KM,RLAT,RLON,IBO,LO,GO)
+   IF(IGDTNUMO.EQ.0) CALL POLFIXS(NO,MO,KM,RLAT,IBO,LO,GO)
 ! - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
  ELSE
    IF(IRET.EQ.0) IRET=IRETX

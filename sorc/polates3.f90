@@ -377,6 +377,6 @@
      ENDIF
    ENDDO N_LOOP
  ENDDO KM_LOOP
- IF(IGDTNUMO.EQ.0) CALL POLFIXS(NO,MO,KM,RLAT,RLON,IBO,LO,GO)
+ IF(IGDTNUMO.EQ.0) CALL POLFIXS(NO,MO,KM,RLAT,IBO,LO,GO)
 ! - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
  END SUBROUTINE POLATES3

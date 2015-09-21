@@ -1,4 +1,4 @@
 export FC="gfortran"
-export FCFLAGS=" -O3 -I."
+export FCFLAGS=" -O3 -fno-range-check -I."
 export LDFLAGS=" "
 export LIBS=" "

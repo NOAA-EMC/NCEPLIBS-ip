@@ -1,6 +1,7 @@
 export FC="gfortran"
 export FCFLAGS=" \
  -I. \
+ -fno-range-check \
  -fbounds-check \
  -ffpe-trap=overflow,zero,invalid \
  -ggdb \
