@@ -1,9 +1,9 @@
 #!/bin/ksh --login
 #
 #-----------------------------------------------------------------------------
-# Script to run the copygb regression test on Zeus.
+# Script to run the copygb regression test on Theia.
 #
-# Invoke script by typing its name on the command line: "qsub run.zeus.ksh"
+# Invoke script by typing its name on the command line: "qsub run.theia.ksh"
 #-----------------------------------------------------------------------------
 #
 #PBS -l procs=1
@@ -16,15 +16,15 @@
 
 set -x
 
-export REG_DIR=$PBS_O_WORKDIR/../../
-
-export WORK_DIR=/scratch2/portfolios/NCEPDEV/stmp/$LOGNAME/regression
-mkdir -p $WORK_DIR
-
-. /contrib/module/3.2.9/Modules/3.2.9/init/ksh
+module purge
 module load intel
 
-export NWPROD=/scratch2/portfolios/NCEPDEV/global/save/glopara/svn/gfs/tags/REL-9.1.3/para/fix/fix_am
+export REG_DIR=$PBS_O_WORKDIR/../../
+
+export WORK_DIR=/scratch3/NCEPDEV/stmp1/$LOGNAME/regression
+mkdir -p $WORK_DIR
+
+export NWPROD=/scratch4/NCEPDEV/global/save/glopara/svn/gfs/tags/gfs.v13.0.2/para/fix/fix_am
 
 export OMP_NUM_THREADS=1
 

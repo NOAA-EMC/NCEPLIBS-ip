@@ -18,17 +18,20 @@ set -x
 #-----------------------------------------------------------------------------
 # These regression tests depend on the NCEP BACIO, SP, and W3NCO libraries.
 # The path/name of these libraries are set thru environment variables.
-# On Zeus and WCOSS, these are set via modules.  On other machines,
+# On Theia and WCOSS, these are set via modules.  On other machines,
 # they must be set manually.
 #-----------------------------------------------------------------------------
 
-if [ "$(hostname -d)" = "zeus.fairmont.rdhpcs.noaa.gov" ]; then # Zeus
-  . /contrib/module/3.2.9/Modules/3.2.9/init/ksh
-  module use -a /contrib/nceplibs/Modules/modulefiles
-  module load bacio
-  module load sp
-  module load w3nco
-elif [ "$(hostname -d)" = "ncep.noaa.gov" ]; then  #WCOSS
+if [[ "$(hostname -f)" == tfe?? ]]; then # Theia
+  BACIO_LIB4=/scratch3/NCEPDEV/nwprod/lib/bacio/v2.0.1/libbacio_v2.0.1_4.a
+  BACIO_LIB8=/scratch3/NCEPDEV/nwprod/lib/bacio/v2.0.1/libbacio_v2.0.1_8.a
+  SP_LIB4=/scratch3/NCEPDEV/nwprod/lib/libsp_v2.0.2_4.a
+  SP_LIB8=/scratch3/NCEPDEV/nwprod/lib/libsp_v2.0.2_8.a
+  SP_LIBd=/scratch3/NCEPDEV/nwprod/lib/libsp_v2.0.2_d.a
+  W3NCO_LIB4=/scratch3/NCEPDEV/nwprod/lib/libw3nco_v2.0.6_4.a
+  W3NCO_LIB8=/scratch3/NCEPDEV/nwprod/lib/libw3nco_v2.0.6_8.a
+  W3NCO_LIBd=/scratch3/NCEPDEV/nwprod/lib/libw3nco_v2.0.6_d.a
+elif [[ "$(hostname -d)" == "ncep.noaa.gov" ]]; then  #WCOSS
   . /usrx/local/Modules/default/init/ksh
   module load bacio
   module load sp

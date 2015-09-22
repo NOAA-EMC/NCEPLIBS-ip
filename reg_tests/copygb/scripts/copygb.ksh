@@ -8,12 +8,9 @@
 #
 # The ncep standard grid numbers are defined in the official
 # ncep grib documentation.  Not all standard grids are tested. 
-# For example, there is an error with how W3 routine w3fi71 
-# specifies the GDS for NCEP grid 174.  This causes copygb to
-# fail on Zeus. Also grids 90, 91 and 92 are very high-res, which
+# For example, grids 90, 91 and 92 are very high-res, which
 # will cause copygb to run very slow, especially for the spectral
-# interpolation.  Running the spectral test just for grid 90
-# took 44 minutes on Zeus.  
+# interpolation.
 #
 # The input greenness data is: $NWPROD/global_shdmax.0.144x0.144.grb
 # The input albedo data is: $NWPROD/global_snoalb.1x1.grb

@@ -95,7 +95,7 @@ The following steps are required to setup and run the test suite:
 
     There is no mixed precision ("_d") version of BACIO.
 
-    On WCOSS and Zeus, these variables are set automatically by
+    On WCOSS and Theia, these variables are set automatically by
     "make_reg_test.ksh" via modules.  There is no way to
     to override those settings except to manually edit 
     the "make_reg_tests.ksh" script.
@@ -122,15 +122,15 @@ The following steps are required to setup and run the test suite:
 
 (6) Kickoff the regression test suite.
 
-    There are driver scripts for WCOSS, Zeus and CCS located in
-    ./reg_tests.  The CCS script is no longer used.  
+    There are driver scripts for WCOSS and Theia located in
+    ./reg_tests. 
 
     To start the tests on WCOSS, simply type the script name -
     Runall.wcoss.ksh - on the command line.  A series of
     "daisy-chained" jobs steps will be submitted.  To check
     the job queue type "bjobs".
 
-    On Zeus, the "Runall.zeus.ksh" script is used.  Before running, 
+    On Theia, the "Runall.theia.ksh" script is used.  Before running, 
     set the project code that will be charged when running the test
     suite.  The project code is script variable $PROJECT_CODE. The
     default is the "rm" project.  You may change the code by manually
@@ -138,14 +138,14 @@ The following steps are required to setup and run the test suite:
     the command line.  To find out which projects you
     are authorized to use, type "account_params".  After
     setting the project code, start the tests by typing
-    "Runall.zeus.ksh" on the command line.  A series of
+    "Runall.theia.ksh" on the command line.  A series of
     "daisy-chained" jobs steps will be submitted.  To check
     the job queue, type: "showq -n -v -u USERNAME"
     
 (7) Check results.
 
     On WCOSS, the default run directory is /stmpp1/${LOGNAME}/regression
-    On Zeus, the default run directory is /scratch2/portfolios/NCEPDEV/stmp/$LOGNAME/regression
+    On Theia, the default run directory is /scratch3/NCEPDEV/stmp1/$LOGNAME/regression
     (The run directory is variable $WORK_DIR in the driver script).
 
     Log output from the test suite will be in "regression.log"  To monitor as
