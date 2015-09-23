@@ -1,4 +1,4 @@
-#!/bin/ksh
+#!/bin/ksh --login
 
 #-----------------------------------------------------------------------------
 # This script compiles all regression tests.
@@ -18,18 +18,20 @@ set -x
 #-----------------------------------------------------------------------------
 # These regression tests depend on the NCEP BACIO, SP, and W3NCO libraries.
 # The path/name of these libraries are set thru environment variables.
-# On Zeus and WCOSS, these are set via modules.  On other machines,
+# On Theia and WCOSS, these are set via modules.  On other machines,
 # they must be set manually.
 #-----------------------------------------------------------------------------
 
-if [ "$(hostname -d)" = "zeus.fairmont.rdhpcs.noaa.gov" ]; then # Zeus
-  . /contrib/module/3.2.9/Modules/3.2.9/init/ksh
-  module use -a /contrib/nceplibs/Modules/modulefiles
+if [[ "$(hostname -f)" == tfe?? ]]; then # Theia
+  module purge
+  module use -a /scratch3/NCEPDEV/nwprod/lib/modulefiles
+  module load intel
   module load bacio
   module load sp
   module load w3nco
-elif [ "$(hostname -d)" = "ncep.noaa.gov" ]; then  #WCOSS
-  . /usrx/local/Modules/default/init/ksh
+elif [[ "$(hostname -d)" == "ncep.noaa.gov" ]]; then  #WCOSS
+  module purge
+  module load ics
   module load bacio
   module load sp
   module load w3nco

@@ -1,7 +1,7 @@
 #!/bin/ksh --login
 
 #----------------------------------------------------------------------------
-# Run the entire suite of IPOLATES (or IPLIB) regression tests on Zeus.
+# Run the entire suite of IPOLATES (or IPLIB) regression tests on Theia.
 #
 # See the README file for information on setting up and compiling
 # the test suite.
@@ -10,7 +10,7 @@
 # be charged when running the test suite.  To find out which
 # projects you are authorized to use, type "account_params".
 #
-# To run, type:  "Runall.zeus.ksh". A series of "daisy-chained"
+# To run, type:  "Runall.theia.ksh". A series of "daisy-chained"
 # job steps will be submitted.  To check the queue, type:
 # "showq -n -v -u USERNAME"
 #
@@ -27,7 +27,7 @@ PROJECT_CODE=${PROJECT_CODE:-rm}
 export REG_DIR=$(pwd)
 
 # Working directory.
-export WORK_DIR=/scratch2/portfolios/NCEPDEV/stmp/$LOGNAME/regression
+export WORK_DIR=/scratch3/NCEPDEV/stmp1/$LOGNAME/regression
 rm -fr $WORK_DIR
 mkdir -p $WORK_DIR
 
@@ -35,7 +35,7 @@ mkdir -p $WORK_DIR
 LOG_FILE=${WORK_DIR}/regression.log
 SUM_FILE=${WORK_DIR}/summary.log
 
-. /contrib/module/3.2.9/Modules/3.2.9/init/ksh
+module purge
 module load intel
 
 export OMP_NUM_THREADS=1
@@ -60,7 +60,7 @@ IPOLATES_1=$(qsub -l procs=1 -l vmem=2000M -l walltime=0:30:00 -A $PROJECT_CODE 
 
 export OMP_NUM_THREADS=4
 
-IPOLATES_4=$(qsub -l nodes=1:ppn=12 -l walltime=0:30:00 -A $PROJECT_CODE -N iptest_ipolates4 -o $LOG_FILE -e $LOG_FILE \
+IPOLATES_4=$(qsub -l nodes=1:ppn=24 -l walltime=0:30:00 -A $PROJECT_CODE -N iptest_ipolates4 -o $LOG_FILE -e $LOG_FILE \
       -F "4" -W depend=afterok:$IPOLATES_1 \
       -v REG_DIR,WORK_DIR,OMP_NUM_THREADS $REG_DIR/ipolates/scripts/runall.ksh)
 
@@ -75,7 +75,7 @@ IPOLATEV_1=$(qsub -l procs=1 -l vmem=2000M -l walltime=0:45:00 -A $PROJECT_CODE 
 
 export OMP_NUM_THREADS=4
 
-IPOLATEV_4=$(qsub -l nodes=1:ppn=12 -l walltime=0:30:00 -A $PROJECT_CODE -N iptest_ipolatev4 -o $LOG_FILE -e $LOG_FILE \
+IPOLATEV_4=$(qsub -l nodes=1:ppn=24 -l walltime=0:30:00 -A $PROJECT_CODE -N iptest_ipolatev4 -o $LOG_FILE -e $LOG_FILE \
       -F "4" -W depend=afterok:$IPOLATEV_1 \
       -v REG_DIR,WORK_DIR,OMP_NUM_THREADS $REG_DIR/ipolatev/scripts/runall.ksh)
 

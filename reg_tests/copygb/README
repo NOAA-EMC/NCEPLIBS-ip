@@ -7,19 +7,16 @@ options: 0-bilinear, 1-bicubic, 2-neighbor, 3-budget, 4-spectral,
 
 The ncep standard grid numbers are defined in the official
 ncep grib 1 documentation. Not all standard grids are tested.
-For example, there is an error with how w3nco routine w3fi71
-specifies the GDS for NCEP grid 174.  This causes copygb to
-fail on Zeus. Also grids 90, 91 and 92 are very high-res, which
+For example, grids 90, 91 and 92 are very high-res, which
 will cause copygb to run very slow, especially for the spectral
-interpolation.  Running the spectral test just for grid 90
-took 44 minutes on Zeus.
+interpolation.  
  
 The input greenness data is: $NWPROD/global_shdmax.0.144x0.144.grb
 The input albedo data is: $NWPROD/global_snoalb.1x1.grb
 The lower res albedo data is only used for the spectral interpolation
-(which is computationally intensive).  On CCS/WCOSS, NWPROD=/nwprod/fix.
-On Zeus, NWPROD is the following gfs subversion tag:
-/NCEPDEV/global/save/glopara/svn/gfs/tags/REL-9.1.3/para/fix/fix_am
+(which is computationally intensive).  On WCOSS, NWPROD=/nwprod/fix.
+On Theia, NWPROD is the following gfs subversion tag:
+/scratch4/NCEPDEV/global/save/glopara/svn/gfs/tags/gfs.v13.0.2/para/fix/fix_am
 
 The copygb source code and make-related files are 
 located in the ./sorc subdirectory.
@@ -40,9 +37,8 @@ The executables (a total of six) are stored in the
 The regression test is run 'stand-alone' by invoking
 the proper driver script in the ./scripts subdirectory as follows:
 
-"llsubmit run_ccs.ksh" (ccs machine)
-"bsub < run_wcoss.ksh" (wcoss machine)
-"qsub run_zeus.ksh"    (zeus machine)
+"bsub < run.wcoss.ksh"  (wcoss machine)
+"qsub run.theia.ksh"    (theia machine)
 
 These driver scripts call the copygb.ksh script located in ./scripts.
 
