@@ -92,13 +92,13 @@
  integer, parameter :: igdtlen203h=22 ! 12km eta, h pts
  integer            :: igdtmpl203h(igdtlen203h)
  data igdtmpl203h/6, 255, missing, 255, missing, 255, missing, 669, 1165, &
-                  0, missing, -7450000, 215860000, 56, 44560100, 14744800, &
+                  0, missing, -7446260, 215860330, 56, 44560150, 14744790, &
                   179641, 77320, 68, -36000000, 254000000, 0 /
 
  integer, parameter :: igdtlen203v=22 ! 12km eta, v pts
  integer            :: igdtmpl203v(igdtlen203v)
  data igdtmpl203v/6, 255, missing, 255, missing, 255, missing, 669, 1165, &
-                  0, missing, -7450000, 215860000, 56, 44560100, 14744800, &
+                  0, missing, -7446260, 215860330, 56, 44560150, 14744790, &
                   179641, 77320, 72, -36000000, 254000000, 0 /
 
  integer, parameter :: igdtlen212=18 ! nh polar, spherical earth
