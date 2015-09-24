@@ -16,7 +16,7 @@ set -x
 . ./config-setup/ifort.setup
 
 #-----------------------------------------------------------------------------
-# These regression tests depend on the NCEP BACIO, SP, and W3NCO libraries.
+# These regression tests depend on the NCEP BACIO, SP, W3NCO and G2 libraries.
 # The path/name of these libraries are set thru environment variables.
 # On Theia and WCOSS, these are set via modules.  On other machines,
 # they must be set manually.
@@ -29,6 +29,12 @@ if [[ "$(hostname -f)" == tfe?? ]]; then # Theia
   module load bacio
   module load sp
   module load w3nco
+  module load jasper
+  module load z
+  module load png
+  module load g2
+  G2_LIB8=/scratch4/NCEPDEV/da/noscrub/George.Gayno/g2_v2.5.0/libg2_v2.5.0_8.a
+  G2_INC8=/scratch4/NCEPDEV/da/noscrub/George.Gayno/g2_v2.5.0/incmod/g2_v2.5.0_8
 elif [[ "$(hostname -d)" == "ncep.noaa.gov" ]]; then  #WCOSS
   module purge
   module load ics
@@ -36,6 +42,8 @@ elif [[ "$(hostname -d)" == "ncep.noaa.gov" ]]; then  #WCOSS
   module load sp
   module load w3nco
   module load g2
+  G2_LIB8=/global/noscrub/George.Gayno/g2_lib/v2.5.0/libg2_v2.5.0_8.a
+  G2_INC8=/global/noscrub/George.Gayno/g2_lib/v2.5.0/incmod/g2_v2.5.0_8
   module load jasper
   module load png
   module load z
@@ -54,13 +62,17 @@ G2_INC4=${G2_INC4:?}
 BACIO_LIB8=${BACIO_LIB8:?}  # Double precision libraries
 SP_LIB8=${SP_LIB8:?}
 W3NCO_LIB8=${W3NCO_LIB8:?}
-G2_LIB8=/global/noscrub/George.Gayno/g2_lib/v2.5.0/libg2_v2.5.0_8.a
-G2_INC8=/global/noscrub/George.Gayno/g2_lib/v2.5.0/incmod/g2_v2.5.0_8
+G2_LIB8=${G2_LIB8:?}
+G2_INC8=${G2_INC8:?}
 
 SP_LIBd=${SP_LIBd:?}        # Mixed precision libraries
 W3NCO_LIBd=${W3NCO_LIBd:?}
 G2_LIBd=${G2_LIBd:?}
 G2_INCd=${G2_INCd:?}
+
+JASPER_LIB=${JASPER_LIB:?}
+PNG_LIB=${PNG_LIB:?}
+Z_LIB=${Z_LIB:?}
 
 MAKE="gmake"
 

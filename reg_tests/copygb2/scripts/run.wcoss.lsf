@@ -11,7 +11,7 @@
 #BSUB -oo copygb2.log
 #BSUB -eo copygb2.log
 #BSUB -q dev_shared
-#BSUB -J copygb
+#BSUB -J copygb2
 #BSUB -R affinity[core]
 #BSUB -R rusage[mem=1000]
 #BSUB -P GFS-T2O

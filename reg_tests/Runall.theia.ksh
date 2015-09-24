@@ -43,24 +43,21 @@ export OMP_NUM_THREADS=1
 GAUSSLAT=$(qsub -l procs=1 -l vmem=500M -l walltime=0:01:00 -A $PROJECT_CODE -N iptest_gausslat -o $LOG_FILE -e $LOG_FILE \
       -v REG_DIR,WORK_DIR,OMP_NUM_THREADS $REG_DIR/gausslat/scripts/runall.ksh)
 
-IPXWAFS=$(qsub -l procs=1 -l vmem=500M -l walltime=0:02:00 -A $PROJECT_CODE -N iptest_ipxwafs -o $LOG_FILE -e $LOG_FILE \
-      -v REG_DIR,WORK_DIR,OMP_NUM_THREADS -W depend=afterok:$GAUSSLAT $REG_DIR/ipxwafs/scripts/runall.ksh)
-
-IPXWAFS2_3=$(qsub -l procs=1 -l vmem=500M -l walltime=0:02:00 -A $PROJECT_CODE -N iptest_ipxwafs2 -o $LOG_FILE -e $LOG_FILE \
-      -v REG_DIR,WORK_DIR,OMP_NUM_THREADS -W depend=afterok:$IPXWAFS $REG_DIR/ipxwafs2_3/scripts/runall.ksh)
-
-MAKGDS=$(qsub -l procs=1 -l vmem=500M -l walltime=0:02:00 -A $PROJECT_CODE -N iptest_makgds -o $LOG_FILE -e $LOG_FILE \
-      -v REG_DIR,WORK_DIR,OMP_NUM_THREADS -W depend=afterok:$IPXWAFS2_3 $REG_DIR/makgds/scripts/runall.ksh)
-
 GDSWZD=$(qsub -l procs=1 -l vmem=2000M -l walltime=0:10:00 -A $PROJECT_CODE -N iptest_gdswzd -o $LOG_FILE -e $LOG_FILE \
-      -v REG_DIR,WORK_DIR,OMP_NUM_THREADS -W depend=afterok:$MAKGDS $REG_DIR/gdswzd/scripts/runall.ksh)
+      -v REG_DIR,WORK_DIR,OMP_NUM_THREADS -W depend=afterok:$GAUSSLAT $REG_DIR/gdswzd/scripts/runall.ksh)
 
-IPOLATES_1=$(qsub -l procs=1 -l vmem=2000M -l walltime=0:30:00 -A $PROJECT_CODE -N iptest_ipolates1 -o $LOG_FILE -e $LOG_FILE \
-      -F "1" -v REG_DIR,WORK_DIR,OMP_NUM_THREADS -W depend=afterok:$GDSWZD $REG_DIR/ipolates/scripts/runall.ksh)
+IPXETAS=$(qsub -l procs=1 -l vmem=500M -l walltime=0:02:00 -A $PROJECT_CODE -N iptest_ipxetas -o $LOG_FILE -e $LOG_FILE \
+      -v REG_DIR,WORK_DIR,OMP_NUM_THREADS -W depend=afterok:$GDSWZD $REG_DIR/ipxetas/scripts/runall.ksh)
+
+IPXWAFS=$(qsub -l procs=1 -l vmem=500M -l walltime=0:02:00 -A $PROJECT_CODE -N iptest_ipxwafs -o $LOG_FILE -e $LOG_FILE \
+      -v REG_DIR,WORK_DIR,OMP_NUM_THREADS -W depend=afterok:$IPXETAS $REG_DIR/ipxwafs/scripts/runall.ksh)
+
+IPOLATES_1=$(qsub -l procs=1 -l vmem=2000M -l walltime=0:20:00 -A $PROJECT_CODE -N iptest_ipolates1 -o $LOG_FILE -e $LOG_FILE \
+      -F "1" -v REG_DIR,WORK_DIR,OMP_NUM_THREADS -W depend=afterok:$IPXWAFS $REG_DIR/ipolates/scripts/runall.ksh)
 
 export OMP_NUM_THREADS=4
 
-IPOLATES_4=$(qsub -l nodes=1:ppn=24 -l walltime=0:30:00 -A $PROJECT_CODE -N iptest_ipolates4 -o $LOG_FILE -e $LOG_FILE \
+IPOLATES_4=$(qsub -l nodes=1:ppn=24 -l walltime=0:15:00 -A $PROJECT_CODE -N iptest_ipolates4 -o $LOG_FILE -e $LOG_FILE \
       -F "4" -W depend=afterok:$IPOLATES_1 \
       -v REG_DIR,WORK_DIR,OMP_NUM_THREADS $REG_DIR/ipolates/scripts/runall.ksh)
 
@@ -69,13 +66,13 @@ export OMP_NUM_THREADS=1
 IPOLATES_CMP=$(qsub -l procs=1 -l vmem=2000M -l walltime=0:05:00 -A $PROJECT_CODE -N iptest_ipolates_cmp -o $LOG_FILE -e $LOG_FILE \
       -v WORK_DIR,OMP_NUM_THREADS -W depend=afterok:$IPOLATES_4 $REG_DIR/ipolates/scripts/compare.ksh)
 
-IPOLATEV_1=$(qsub -l procs=1 -l vmem=2000M -l walltime=0:45:00 -A $PROJECT_CODE -N iptest_ipolatev1 -o $LOG_FILE -e $LOG_FILE \
+IPOLATEV_1=$(qsub -l procs=1 -l vmem=2000M -l walltime=0:20:00 -A $PROJECT_CODE -N iptest_ipolatev1 -o $LOG_FILE -e $LOG_FILE \
       -F "1" -W depend=afterok:$IPOLATES_CMP \
       -v REG_DIR,WORK_DIR,OMP_NUM_THREADS $REG_DIR/ipolatev/scripts/runall.ksh)
 
 export OMP_NUM_THREADS=4
 
-IPOLATEV_4=$(qsub -l nodes=1:ppn=24 -l walltime=0:30:00 -A $PROJECT_CODE -N iptest_ipolatev4 -o $LOG_FILE -e $LOG_FILE \
+IPOLATEV_4=$(qsub -l nodes=1:ppn=24 -l walltime=0:15:00 -A $PROJECT_CODE -N iptest_ipolatev4 -o $LOG_FILE -e $LOG_FILE \
       -F "4" -W depend=afterok:$IPOLATEV_1 \
       -v REG_DIR,WORK_DIR,OMP_NUM_THREADS $REG_DIR/ipolatev/scripts/runall.ksh)
 

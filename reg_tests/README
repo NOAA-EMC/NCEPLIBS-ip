@@ -100,17 +100,19 @@ The following steps are required to setup and run the test suite:
     PNG_LIB    - PNG - only one version
     Z_LIB      - Z - only one version
 
-    The G2 include directory (where its module files are 
-    located) variables are:
+    The G2 library contains module files.  The path to these
+    files are stored in these environment variables: 
 
     G2_INC4    - 4 byte integer/4 byte float version
     G2_INCd    - 4 byte integer/8 byte float version
     G2_INC8    - 8 byte integer/8 byte float version
 
     There is no mixed precision ("_d") version of BACIO.
+
     There is no official "8" byte integer/float version
     of G2.  A version exists on WCOSS under:
-    /global/noscrub/George.Gayno/g2_lib/
+    /global/noscrub/George.Gayno/g2_lib.  On Theia, a copy
+    is here: /scratch4/NCEPDEV/da/noscrub/George.Gayno/g2_v2.5.0
 
     On WCOSS and Theia, these variables are set automatically by
     "make_reg_test.ksh" via modules.  There is no way to
@@ -195,6 +197,7 @@ that exercised every routine.
       4) spectral
       5) bicubic
       6) neighbor-budget
+    This test is run twice, with 1 and 4 threads.
 4)  ipolatev - A fortran program that interpolates a global
     lat/lon grid of vector u/v wind to several grids of various
     projections using the ipolatev suite of routines.  All
@@ -205,6 +208,7 @@ that exercised every routine.
       4) spectral
       5) bicubic
       6) neighbor-budget
+    This test is run twice, with 1 and 4 threads.
 5)  ipxetas - A fortran program that call routine ipxetas
     to transform between data on a staggered and unstaggered
     eta grid (rotated lat/lon with arakawa "e" staggering):

@@ -30,10 +30,11 @@ The three byte versions of the library are:
 The executables (a total of six) are stored in the 
 ./exec subdirectory.
 
-The regression test is run 'stand-alone' on WCOSS by invoking
-the driver script in the ./scripts subdirectory as follows:
+The regression test is run 'stand-alone' by invoking
+the proper driver script in the ./scripts subdirectory as follows:
 
-"cat run_wcoss.lsf | bsub" 
+"cat run_wcoss.lsf | bsub"  (wcoss machine)
+"qsub run.theia.ksh"        (theia machine)
 
 This driver script calls the copygb2.ksh child script located in ./scripts.
 
