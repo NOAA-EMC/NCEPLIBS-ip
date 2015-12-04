@@ -35,21 +35,21 @@ module load craype-sandybridge
 module list
 
 # single precision version
-./configure --prefix=${PWD} --enable-promote=4 FC="ftn"
+./configure --prefix=${PWD} --enable-promote=4 FC="ftn" FCFLAGS="${FCFLAGS} -craype-verbose"
 make clean
 make
 make nco_install
 make distclean
 
 # mixed precision version
-./configure --prefix=${PWD} --enable-promote=d FC="ftn" FCFLAGS="${R8FLAG} ${FCFLAGS}"
+./configure --prefix=${PWD} --enable-promote=d FC="ftn" FCFLAGS="${R8FLAG} ${FCFLAGS} -craype-verbose"
 make clean
 make
 make nco_install
 make distclean
 
 # double precision version
-./configure --prefix=${PWD} --enable-promote=8 FC="ftn" FCFLAGS="${I8FLAG} ${R8FLAG} ${FCFLAGS}"
+./configure --prefix=${PWD} --enable-promote=8 FC="ftn" FCFLAGS="${I8FLAG} ${R8FLAG} ${FCFLAGS} -craype-verbose"
 make clean
 make
 make nco_install
