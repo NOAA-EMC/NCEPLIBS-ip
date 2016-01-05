@@ -1,43 +1,36 @@
-#!/bin/ksh --login
+#!/bin/sh --login
 
 #-----------------------------------------------------------------------------
-# This script compiles all regression tests.
-# 
-# PLEASE READ THE "README" FILE IN THIS DIRECTORY FOR DETAILS ON HOW
-# TO RUN THIS SCRIPT.
+# This script compiles all regression tests on the WCOSS-Cray machine only!
 #-----------------------------------------------------------------------------
 
 set -x
 
 #-----------------------------------------------------------------------------
-# Read in compiler, compiler flags and link flags.
+# Read in compiler, compiler flags and link flags.  Only works for the
+# intel compiler currently.
 #-----------------------------------------------------------------------------
 
 . ./config-setup/ifort.setup
 
 #-----------------------------------------------------------------------------
 # These regression tests depend on the NCEP BACIO, SP, and W3NCO libraries.
-# The path/name of these libraries are set thru environment variables.
-# On Theia and WCOSS, these are set via modules.  On other machines,
-# they must be set manually.
+# The path/name of these libraries are set thru modules.
 #-----------------------------------------------------------------------------
 
-if [[ "$(hostname -f)" == tfe?? ]]; then # Theia
+if [[ "$(hostname)" == slogin? || "$(hostname)" == llogin? ]]; then # WCOSS Cray
   module purge
-  module use -a /scratch3/NCEPDEV/nwprod/lib/modulefiles
-  module load intel
-  module load bacio
-  module load sp
-  module load w3nco
-elif [[ "$(hostname -d)" == "ncep.noaa.gov" ]]; then  # WCOSS Phase 1/2.
-  module purge
-  module load ics
-  module load bacio
-  module load sp
-  module load w3nco
+  module load modules/3.2.6.7
+  module use /gpfs/hps/nco/ops/nwprod/lib/modulefiles
+  module load PrgEnv-intel
+  module load craype-sandybridge
+  module load bacio-intel-sandybridge/2.0.1
+  module load w3nco-intel-sandybridge/2.0.6
+  module load sp-intel-sandybridge/2.0.2
 else
   set +x
-  echo "$0: Unrecognized machine. Abort." >&2
+  echo
+  echo "$0: Script runs on WCOSS-Cray only. Abort." >&2
   exit 5
 fi 
 
@@ -69,17 +62,20 @@ for WHICHIP in ctl test; do  # the 'control' or 'test' IPLIB
     case $PRECISION in
       4) SP_LIB=$SP_LIB4
          BACIO_LIB=$BACIO_LIB4
-         W3NCO_LIB=$W3NCO_LIB4 ;;
+         W3NCO_LIB=$W3NCO_LIB4
+         FCFLAGS_ALL=${FCFLAGS} ;;
       8) SP_LIB=$SP_LIB8
          BACIO_LIB=$BACIO_LIB8
-         W3NCO_LIB=$W3NCO_LIB8 ;;
+         W3NCO_LIB=$W3NCO_LIB8
+         FCFLAGS_ALL="${FCFLAGS} -r8 -i8" ;;
       d) SP_LIB=$SP_LIBd
          BACIO_LIB=$BACIO_LIB4
-         W3NCO_LIB=$W3NCO_LIBd ;;
+         W3NCO_LIB=$W3NCO_LIBd
+         FCFLAGS_ALL="${FCFLAGS} -r8" ;;
     esac
 
     ./configure --prefix=${PWD} --enable-promote=${PRECISION} \
-      FCFLAGS="${FCFLAGS} -I${PWD}/lib/incmod_${WHICHIP}_${PRECISION}" \
+      FC="ftn" FCFLAGS="${FCFLAGS_ALL} -I${PWD}/lib/incmod_${WHICHIP}_${PRECISION}" \
       LIBS="${PWD}/lib/libip_${WHICHIP}_${PRECISION}.a ${SP_LIB} ${BACIO_LIB} ${W3NCO_LIB}"
     if [ $? -ne 0 ]; then
       set +x
