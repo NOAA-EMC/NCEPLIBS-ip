@@ -1,4 +1,4 @@
 export FC="crayftn"
-export FCFLAGS="-O2 -homp -I."
+export FCFLAGS="-O2 -O nopattern -homp -I."
 export LDFLAGS=" "
 export LIBS=" "
