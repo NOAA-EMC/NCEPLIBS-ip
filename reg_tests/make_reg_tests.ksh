@@ -1,16 +1,19 @@
 #!/bin/ksh --login
 
 #-----------------------------------------------------------------------------
-# This script compiles all regression tests.
+# This script compiles all regression tests using the Intel Fortran 
+# compiler.  Do not use on the NCEP WCOSS-Cray machine.  Instead, 
+# use the "make_reg_tests_wcoss-cray.sh" script.
 # 
 # PLEASE READ THE "README" FILE IN THIS DIRECTORY FOR DETAILS ON HOW
 # TO RUN THIS SCRIPT.
 #-----------------------------------------------------------------------------
 
-set -x
+#set -x
 
 #-----------------------------------------------------------------------------
-# Read in compiler, compiler flags and link flags.
+# Read in compiler, compiler flags and link flags.  Only builds using
+# the Intel compiler.
 #-----------------------------------------------------------------------------
 
 . ./config-setup/ifort.setup
@@ -35,10 +38,13 @@ elif [[ "$(hostname -d)" == "ncep.noaa.gov" ]]; then  # WCOSS Phase 1/2.
   module load bacio
   module load sp
   module load w3nco
-else
-  set +x
-  echo "$0: Unrecognized machine. Abort." >&2
+elif [[ "$(hostname)" == slogin? || "$(hostname)" == llogin? ]]; then # WCOSS Cray
+  echo
+  echo "$0: Error. Script does not work on WCOSS-Cray. Abort." >&2
   exit 5
+else
+  echo
+  echo "$0: Warning. Unrecognized machine." >&2
 fi 
 
 #-----------------------------------------------------------------------------
@@ -78,11 +84,17 @@ for WHICHIP in ctl test; do  # the 'control' or 'test' IPLIB
          W3NCO_LIB=$W3NCO_LIBd ;;
     esac
 
+    echo; echo
+    echo "----------------------------------------------------------------------------------"
+    echo "$0: Build ${PRECISION}-byte ${WHICHIP} regression test suite."
+    echo "----------------------------------------------------------------------------------"
+    echo; echo
+
     ./configure --prefix=${PWD} --enable-promote=${PRECISION} \
       FCFLAGS="${FCFLAGS} -I${PWD}/lib/incmod_${WHICHIP}_${PRECISION}" \
       LIBS="${PWD}/lib/libip_${WHICHIP}_${PRECISION}.a ${SP_LIB} ${BACIO_LIB} ${W3NCO_LIB}"
     if [ $? -ne 0 ]; then
-      set +x
+      echo
       echo "$0: Error configuring for ${PRECISION}-byte ${WHICHIP} version build." >&2
       exit 2
     fi
@@ -90,14 +102,14 @@ for WHICHIP in ctl test; do  # the 'control' or 'test' IPLIB
     $MAKE clean
     $MAKE
     if [ $? -ne 0 ]; then
-      set +x
+      echo
       echo "$0: Error building for ${PRECISION}-byte ${WHICHIP} version build." >&2
       exit 3
     fi
 
     $MAKE install suffix="_${WHICHIP}_${PRECISION}"
     if [ $? -ne 0 ]; then
-      set +x
+      echo
       echo "$0: Error installing for ${PRECISION}-byte ${WHICHIP} version build." >&2
       exit 4
     fi
@@ -106,3 +118,8 @@ for WHICHIP in ctl test; do  # the 'control' or 'test' IPLIB
 
   done  # library precision
 done  # 'ctl' or 'test' IPLIB
+
+echo; echo
+echo "-------------------------------------------------------"
+echo "$0: Done."
+echo "-------------------------------------------------------"
