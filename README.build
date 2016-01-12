@@ -24,8 +24,8 @@ A. The easy (I hope) way...
 ===========================
 
 To build the single (_4), double (_8), and mixed (_d) precision ip
-libraries, you can use the "make_ip_lib.sh" script specifying the
-build configuration. Type
+libraries, you can use the "make_ip_lib.sh" script ("make_ip_lib_wcoss-cray.sh" 
+on the WCOSS-Cray systems) specifying the build configuration. Type:
 
   $ make_ip_lib.sh -h
 
@@ -36,15 +36,23 @@ The available build configurations to use are:
   gfortran-debug.setup  ifort-debug.setup  pgf95-debug.setup  xlf2003-debug.setup
   gfortran.setup        ifort.setup        pgf95.setup        xlf2003.setup
 
+  crayftn.setup
+  crayftn-debug.setup
+
+The build configurations contain the compiler name and compiler flags.  
+Those with "debug" contain flags useful for debugging.
+
 So, on WCOSS/tide/gyre you would type:
 
   $ make_ip_lib.sh ifort.setup
 
-
-On zeus you could do the same, or if you wanted to the PGI compiler,
+On theia you could do the same, or if you wanted to the PGI compiler,
 
   $ make_ip_lib.sh pgf95.setup
 
+On WCOSS-Cray/surge/luna if you wanted to use the Cray compiler,
+
+  $ make_ip_lib_wcoss-cray.sh crayftn.setup
 
 This script iterates over the single (_4), double (_8), and mixed (_d) precision
 build configurations setting the appropriate default real and integer precision
@@ -58,9 +66,9 @@ Some additional points:
 - See section B.4 below for detailed information about the installation
   directory structure.
 
-You can tailor the build process using this "make_ip_lib.sh" script by
-modifying the relevant build configuration setup file in the "config-setup/"
-subdirectory.
+You can tailor the build process using the "make_ip_lib.sh" and 
+"make_ip_lib_wcoss-cray.sh" scripts by modifying the relevant build
+configuration setup file in the "config-setup/" subdirectory.
 
 Or, if you are going to be testing library builds multiple times, you can
 create your own configuration setup file.
@@ -115,7 +123,8 @@ To start the library build for a particular configuration, simply type
 
 A suite of regression tests is located in the ./reg_tests directory.
 See the README file in that directory for details on how to build
-and run it.
+and run it.  Library developers are expected to run these tests before any
+changes are moved to the IPLIB trunk.
 
 
 
@@ -176,6 +185,58 @@ would be modified something like:
   LDFLAGS="-L${libroot} ${LDFLAGS}"
   LIBS="-lip_v2.0.1_4"
   FCFLAGS="... -I${libroot}/incmod/ip_v2.0.1_4 ..."
+
+
+NCO Install as on WCOSS-Cray/Surge/Luna
+.......................................
+
+To install the library conforming to the NCO vertical structure and naming
+conventions on WCOSS-Cray/Surge/Luna, type:
+
+  $ make nco_cray_install
+
+If you create the double precsion (_8) and mixed precision (_d) libraries and
+invoke "make nco_cray_install", the directory tree will look like:
+
+  ip/
+   |
+   `--v2.0.1/${COMPILER}/
+                   |
+                   |--libip_v2.0.1_4.a
+                   |--libip_v2.0.1_d.a
+                   `--libip_v2.0.1_8.a
+                   |
+                   `--incmod/
+                         |
+                         `--ip_v2.0.1_4/*.mod
+                         `--ip_v2.0.1_d/*.mod
+                         `--ip_v2.0.1_8/*.mod
+
+Here $COMPILER is the name of the Fortran compiler used.  For example, if the
+Intel compiler is used, then $COMPILER will be "ifort".  This may be changed 
+at the configure step by "--enable-wcoss_cray_dir=${your_name}" as:
+
+  $ ./configure --prefix=${PWD} \
+                --enable-promote=4|8|d \
+                --enable-wcoss_cray_dir=intel \
+                FC="ifort" \
+                FCFLAGS="-O2 -g -traceback -fixed"
+
+which would result in the following directory tree:
+
+  ip/
+   |
+   `--v2.0.1/intel/
+                |
+                |--libip_v2.0.1_4.a
+                |--libip_v2.0.1_d.a
+                `--libip_v2.0.1_8.a
+                |
+                `--incmod/
+                      |
+                      `--ip_v2.0.1_4/*.mod
+                      `--ip_v2.0.1_d/*.mod
+                      `--ip_v2.0.1_8/*.mod
 
 
 GNU Install
@@ -253,6 +314,24 @@ something like...
   $ ./configure --prefix=${PWD} ...other command line arguments...
 
 then the "nco_uninstall" target will delete the "${PWD}/ip/v2.0.1" directory.
+
+
+Uninstalling the library after an NCO WCOSS-Cray/Surge/Luna install
+...................................................................
+
+To uninstall the library you can type:
+
+  $ make nco_cray_uninstall
+
+which will delete the created installation directory.
+
+Ex: For a library version of v2.0.1, if your configure script invocation was
+something like...
+
+  $ ./configure --prefix=${PWD} \
+    --enable-wcoss_cray_dir=intel  ...other command line arguments...
+
+then the "nco_cray_uninstall" target will delete the "${PWD}/ip/v2.0.1/intel" directory.
 
 
 Uninstalling the library (after a GNU install)
