@@ -111,18 +111,21 @@ case $FC in
     module load craype-sandybridge
     R8FLAG="-r8"
     I8FLAG="-i8"
+    COMP_NAME="intel"
     ;;
   gfortran)
     module load PrgEnv-gnu
     module load craype-haswell
     R8FLAG="-fdefault-real-8"
     I8FLAG="-fdefault-integer-8"
+    COMP_NAME="gnu"
     ;;
   crayftn)
     module load PrgEnv-cray
     module load craype-haswell
     R8FLAG="-s real64"
     I8FLAG="-s integer64"
+    COMP_NAME="cray"
     ;;
   *)
     echo "${SCRIPT_NAME}: ERROR - Unrecognized compiler ${FC}" >&2
@@ -150,7 +153,8 @@ for PRECISION in 4 8 d; do  # single ("4"), double ("8") or mixed ("d") precison
   echo "==============================================================="
   echo
 
-  ./configure --prefix=${PWD} --enable-promote=${PRECISION} FC="ftn" FCFLAGS="${FCFLAGS_ALL} -craype-verbose"
+  ./configure --prefix=${PWD} --enable-promote=${PRECISION} --enable-wcoss_cray_dir=${COMP_NAME} \
+    FC="ftn" FCFLAGS="${FCFLAGS_ALL} -craype-verbose"
   if [ $? -ne 0 ]; then
     echo "${SCRIPT_NAME}: ERROR configuring for precision ${PRECISION} version build" >&2
     exit ${FAILURE}
@@ -177,9 +181,9 @@ for PRECISION in 4 8 d; do  # single ("4"), double ("8") or mixed ("d") precison
     echo "==============================================================="
     echo
     case $PRECISION in
-      4) ${MAKE} nco_uninstall 
+      4) ${MAKE} nco_cray_uninstall 
     esac
-    ${MAKE} nco_install
+    ${MAKE} nco_cray_install
     if [ $? -ne 0 ]; then
       echo "${SCRIPT_NAME}: ERROR in NCO-style installation of precision ${PRECISION} version" >&2
       exit ${FAILURE}

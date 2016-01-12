@@ -7,6 +7,7 @@ package = @PACKAGE_NAME@
 version = @PACKAGE_VERSION@
 tarname   = @PACKAGE_TARNAME@
 precision = @PRECISION@
+wcoss_cray_dir = @WCOSS_CRAY_DIR@
 distdir   = $(tarname)_$(version)_$(precision)
 
 # Prefix-specific substitution variables
@@ -15,6 +16,7 @@ prefix      = @prefix@
 # Mixed package and prefix substitution variables
 installdir     = $(prefix)/$(distdir)
 nco_installdir = $(prefix)/$(tarname)/$(version)
+nco_cray_installdir = $(prefix)/$(tarname)/$(version)/$(wcoss_cray_dir)
 
 # Compiler substitution variables
 FC       = @FC@
@@ -65,6 +67,14 @@ nco_install:
 	$(INSTALL_DATA) *.mod $(DESTDIR)$(nco_installdir)/incmod/$(distdir)
 	$(INSTALL_DATA) ../config.log $(DESTDIR)$(nco_installdir)/config.log.$(distdir)
         
+# ...NCO-style installation on wcoss-cray
+nco_cray_install:
+	$(INSTALL) -d $(DESTDIR)$(nco_cray_installdir)
+	$(INSTALL_DATA) $(LIBRARY) $(DESTDIR)$(nco_cray_installdir)/lib$(distdir).a
+	$(INSTALL) -d $(DESTDIR)$(nco_cray_installdir)/incmod/$(distdir)
+	$(INSTALL_DATA) *.mod $(DESTDIR)$(nco_cray_installdir)/incmod/$(distdir)
+	$(INSTALL_DATA) ../config.log $(DESTDIR)$(nco_cray_installdir)/config.log.$(distdir)
+
 # ...Universal uninstallation
 uninstall:
 	-rm -fr $(DESTDIR)$(installdir) >/dev/null 2>&1
@@ -72,6 +82,10 @@ uninstall:
 # ...NCO-style uninstallation
 nco_uninstall:
 	-rm -fr $(DESTDIR)$(nco_installdir) >/dev/null 2>&1
+
+# ...NCO-style uninstallation on wcoss-cray
+nco_cray_uninstall:
+	-rm -fr $(DESTDIR)$(nco_cray_installdir) >/dev/null 2>&1
 
 # ...Reconfig targets
 Makefile: Makefile.in ../config.status
