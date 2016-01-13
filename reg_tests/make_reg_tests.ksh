@@ -2,7 +2,9 @@
 
 #-----------------------------------------------------------------------------
 # This script compiles all regression tests using the Intel Fortran 
-# compiler.  Do not use on the NCEP WCOSS-Cray machine.  Instead, 
+# compiler.  
+#
+# DO NOT USE THIS SCRIPT ON THE NCEP WCOSS-Cray machine.  Instead, 
 # use the "make_reg_tests_wcoss-cray.sh" script.
 # 
 # PLEASE READ THE "README" FILE IN THIS DIRECTORY FOR DETAILS ON HOW

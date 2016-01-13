@@ -2,6 +2,7 @@
 
 #-----------------------------------------------------------------------------
 # This script compiles all regression tests on the WCOSS-Cray machine only!
+# DO NOT USE THIS SCRIPT ON OTHER MACHINES.
 #
 # To compile with the Intel compiler, uncomment the following line below:
 #   . ./config-setup/ifort.setup

@@ -69,20 +69,26 @@ The following steps are required to setup and run the test suite:
     "ln -s /branch/ip/vX.Y.Z/incmod/ip_vX.Y.Z_8 ./incmod_test_8"
     "ln -s /branch/ip/vX.Y.Z/incmod/ip_vX.Y.Z_d ./incmod_test_d"
 
-(3) Check the ./reg_tests/config-setup/ifort.setup file in your branch.
+(3) Check the ./reg_tests/config-setup/*.setup files in your branch.
 
-    This file contains the compiler, compiler flags and link flags.
-    Currently, the regression suite has only been tested with the
-    intel "ifort" compiler.  Unless your machine does not have 
-    the intel compiler, you should not have to change these
-    settings.
+    These files contain the compiler, compiler flags and link flags 
+    used to compile the regression test suite.  There is one file
+    for the Intel Fortran compiler (ifort.setup) and one for the
+    Cray compiler (crayftn.setup).  The regression suite has
+    been run with both compilers on WCOSS-Cray.  On WCOSS-
+    Phase 1/2 and Theia, only the Intel compiler has been used.
+    You should not need to change the settings in these files.
+    To use a different compiler, you will need to create
+    your own "setup" file and point to it in the build script
+    (see section 5).
 
 (4) Ensure the build process can find the NCEP SP, W3NCO and
     BACIO libraries.
 
-    The regression suite requires these external libraries.  The
-    path/name of these libraries are stored in environment 
-    variables in the "make_reg_tests.ksh" script. These variables are:
+    The build process is run by the "make_reg_tests.ksh"
+    script (use the "make_reg_tests_wcoss-cray.sh" script
+    on WCOSS-Cray).  The path/name of these libraries
+    are stored in the following build script environment variables:
     
     SP_LIB4    - 4 byte integer/4 byte float version
     SP_LIB8    - 8 byte integer/8 byte float version
@@ -95,13 +101,12 @@ The following steps are required to setup and run the test suite:
 
     There is no mixed precision ("_d") version of BACIO.
 
-    On WCOSS and Theia, these variables are set automatically by
-    "make_reg_test.ksh" via modules.  There is no way to
-    to override those settings except to manually edit 
-    the "make_reg_tests.ksh" script.
+    On WCOSS-Phase1/2, WCOSS-Cray, and Theia, these environment
+    variables are set via modules in the build script.
 
-    On other machines, the user must locate these libraries
-    and manually set the environment variables on the command
+    These settings may be overidden or set (if running
+    on a machine other than WCOSS or Theia) by manually
+    setting the environment variables on the command line
     line before running "make_reg_tests.ksh".  
 
     Example (if using tcsh):
@@ -112,7 +117,17 @@ The following steps are required to setup and run the test suite:
 
 (5) Build the regression tests suite.
 
-    From ./reg_tests type "make_reg_tests.ksh"
+    The suite is built with the "./reg_tests/make_reg_tests.ksh" script.
+    (On WCOSS-Cray, use "make_reg_tests_wcoss-cray.sh".)
+
+    By default, the Intel Fortran compiler is used.  The compiler,
+    compiler flags and link flags are stored in ./config-setup/ifort.setup,
+    which is sourced by the build script.  To use the "crayftn.setup" file
+    or your own setup file, you will need to manually edit the
+    build script.
+
+    To build, type "make_reg_tests.ksh" (use "make_reg_tests_wcoss-cray.sh
+                                         on WCOSS-Cray).
 
     Log output from the 'ctl' and 'test' builds will be in the
     config*log files.  There will be six executables for
@@ -122,13 +137,17 @@ The following steps are required to setup and run the test suite:
 
 (6) Kickoff the regression test suite.
 
-    There are driver scripts for WCOSS and Theia located in
+    There are driver run scripts for WCOSS and Theia located in
     ./reg_tests. 
 
-    To start the tests on WCOSS, simply type the script name -
+    To start the tests on WCOSS-Phase 1/2, simply type the script name -
     Runall.wcoss.ksh - on the command line.  A series of
     "daisy-chained" jobs steps will be submitted.  To check
     the job queue type "bjobs".
+
+    On WCOSS-Cray, start the tests by invoking the "Runall.wcoss-cray.ksh" 
+    script on the command line.   A series of  "daisy-chained" jobs steps
+    will be submitted.  To check the job queue type "bjobs".
 
     On Theia, the "Runall.theia.ksh" script is used.  Before running, 
     set the project code that will be charged when running the test
@@ -144,7 +163,8 @@ The following steps are required to setup and run the test suite:
     
 (7) Check results.
 
-    On WCOSS, the default run directory is /stmpp1/${LOGNAME}/regression
+    On WCOSS-Phase1/2, the default run directory is /stmpp1/${LOGNAME}/regression
+    On WCOSS-Cray, the default run directory is /gpfs/hps/stmp/${LOGNAME}/regression
     On Theia, the default run directory is /scratch3/NCEPDEV/stmp1/$LOGNAME/regression
     (The run directory is variable $WORK_DIR in the driver script).
 
