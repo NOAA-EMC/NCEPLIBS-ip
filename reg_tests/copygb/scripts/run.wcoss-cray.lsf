@@ -9,7 +9,7 @@
 
 #BSUB -oo copygb.log
 #BSUB -eo copygb.log
-#BSUB -q dev_serv
+#BSUB -q dev_shared
 #BSUB -J copygb
 #BSUB -R rusage[mem=2500]
 #BSUB -P GFS-T2O
