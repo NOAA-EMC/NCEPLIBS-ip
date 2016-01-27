@@ -55,11 +55,8 @@ case $FC in
     module load PrgEnv-cray
     module load craype-haswell
     module load sp-cray-haswell
-    module use /gpfs/hps/nco/ops/nwtest/lib/modulefiles
     module load bacio-cray-haswell
-    W3NCO_LIB4="/gpfs/hps/emc/global/noscrub/George.Gayno/cray_bug/w3nco/cray/libw3nco_4.a"
-    W3NCO_LIBd="/gpfs/hps/emc/global/noscrub/George.Gayno/cray_bug/w3nco/cray/libw3nco_d.a"
-    W3NCO_LIB8="/gpfs/hps/emc/global/noscrub/George.Gayno/cray_bug/w3nco/cray/libw3nco_8.a"
+    module load w3nco-cray-haswell
     R8FLAG="-s real64"
     I8FLAG="-s integer64"
     ;;
