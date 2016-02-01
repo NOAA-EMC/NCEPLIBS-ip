@@ -36,18 +36,18 @@ fi
 #-----------------------------------------------------------------------------
 
 # uncomment to use Intel compiler
-#. ./config-setup/ifort.setup
+. ./config-setup/ifort.setup
 
 # uncomment to use Cray compiler
-. ./config-setup/crayftn.setup
+#. ./config-setup/crayftn.setup
 
 case $FC in
   ifort)
     module load PrgEnv-intel
-    module load craype-sandybridge
-    module load bacio-intel-sandybridge
-    module load w3nco-intel-sandybridge
-    module load sp-intel-sandybridge
+    module load craype-haswell
+    module load bacio-intel
+    module load w3nco-intel
+    module load sp-intel
     R8FLAG="-r8"
     I8FLAG="-i8"
     ;;

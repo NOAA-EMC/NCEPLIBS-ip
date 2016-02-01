@@ -108,7 +108,8 @@ module load modules/3.2.6.7
 case $FC in
   ifort)
     module load PrgEnv-intel
-    module load craype-sandybridge
+    module load craype-sandybridge     # Optimize for both sandybridge
+    FCFLAGS="${FCFLAGS} -axCore-AVX2"  # and for haswell.
     R8FLAG="-r8"
     I8FLAG="-i8"
     COMP_NAME="intel"
