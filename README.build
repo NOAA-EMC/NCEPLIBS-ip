@@ -39,10 +39,10 @@ The available build configurations to use are:
   crayftn.setup
   crayftn-debug.setup
 
-The build configurations contain the compiler name and compiler flags.  
-Those with "debug" contain flags useful for debugging.
+The build configurations define the compiler name and compiler flags.  
+Those named with "debug" contain flags useful for debugging.
 
-So, on WCOSS/tide/gyre you would type:
+So, on WCOSS Phase 1/2, to compile with intel, you would type:
 
   $ make_ip_lib.sh ifort.setup
 
@@ -83,7 +83,7 @@ B. The more flexible way
 
 If you need more flexibility in the library build you can specify the necessary 
 information directly to the configure script that generates the makefiles. For
-example, on WCOSS/tide/gyre:
+example:
 
   $ ./configure --prefix=${PWD} \
                 --enable-promote=4|8|d \
@@ -140,7 +140,7 @@ NCO Install
 ...........
 
 To install the library conforming to the NCO vertical structure and naming
-conventions, type:
+conventions on WCOSS Phase 2, type:
 
   $ make nco_install
 
@@ -153,9 +153,9 @@ directory tree will look as follows:
          |
          `--libip_v2.0.1_4.a
          |
-         `--incmod/
+         `--include/
                |
-               `--ip_v2.0.1_4/*.mod
+               `--ip_v2.0.1_4/
 
 If you then create the double precsion (_8) and mixed precision (_d) libraries and
 invoke "make nco_install", the directory tree will look like:
@@ -168,11 +168,11 @@ invoke "make nco_install", the directory tree will look like:
          |--libip_v2.0.1_d.a
          `--libip_v2.0.1_8.a
          |
-         `--incmod/
+         `--include/
                |
-               `--ip_v2.0.1_4/*.mod
-               `--ip_v2.0.1_d/*.mod
-               `--ip_v2.0.1_8/*.mod
+               `--ip_v2.0.1_4/
+               `--ip_v2.0.1_d/
+               `--ip_v2.0.1_8/
 
 The contents of the "v2.0.1" directory can then be moved into the official
 /nwprod/lib/ip location as needed.
@@ -184,7 +184,7 @@ would be modified something like:
   libroot="/usrx/local/nceplibs/ip/v2.0.1"
   LDFLAGS="-L${libroot} ${LDFLAGS}"
   LIBS="-lip_v2.0.1_4"
-  FCFLAGS="... -I${libroot}/incmod/ip_v2.0.1_4 ..."
+  FCFLAGS="... -I${libroot}/include/ip_v2.0.1_4 ..."
 
 
 NCO Install as on WCOSS-Cray/Surge/Luna
@@ -206,11 +206,11 @@ invoke "make nco_cray_install", the directory tree will look like:
                    |--libip_v2.0.1_d.a
                    `--libip_v2.0.1_8.a
                    |
-                   `--incmod/
+                   `--include/
                          |
-                         `--ip_v2.0.1_4/*.mod
-                         `--ip_v2.0.1_d/*.mod
-                         `--ip_v2.0.1_8/*.mod
+                         `--ip_v2.0.1_4/
+                         `--ip_v2.0.1_d/
+                         `--ip_v2.0.1_8/
 
 Here $COMPILER is the name of the Fortran compiler used.  For example, if the
 Intel compiler is used, then $COMPILER will be "ifort".  This may be changed 
@@ -220,7 +220,7 @@ at the configure step by "--enable-wcoss_cray_dir=${your_name}" as:
                 --enable-promote=4|8|d \
                 --enable-wcoss_cray_dir=intel \
                 FC="ifort" \
-                FCFLAGS="-O2 -g -traceback -fixed"
+                ... other arguments ...
 
 which would result in the following directory tree:
 
@@ -232,12 +232,20 @@ which would result in the following directory tree:
                 |--libip_v2.0.1_d.a
                 `--libip_v2.0.1_8.a
                 |
-                `--incmod/
+                `--include/
                       |
-                      `--ip_v2.0.1_4/*.mod
-                      `--ip_v2.0.1_d/*.mod
-                      `--ip_v2.0.1_8/*.mod
+                      `--ip_v2.0.1_4/
+                      `--ip_v2.0.1_d/
+                      `--ip_v2.0.1_8/
 
+Let's assume the above install was moved into "/usrx/local/nceplibs", to use the
+single precision library in this structure in your own application, the usual
+environment variables would be modified something like:
+
+  libroot="/usrx/local/nceplibs/ip/v2.0.1/intel"
+  FCFLAGS="-I${libroot}/include/ip_v2.0.1_4 ${FCFLAGS}"
+  LDFLAGS="-L${libroot} ${LDFLAGS}"
+  LIBS="-lip_v2.0.1_4"
 
 GNU Install
 ...........
@@ -255,7 +263,7 @@ a directory called "ip_v2.0.1_4". That directory structure is shown below:
     |    |
     |    `--libip.a
     |
-    `--include/*.mod
+    `--include/
 
 NOTE: The only version identifier in this type of install is the name of the
       installation directory itself.
@@ -269,7 +277,7 @@ create the following directory trees:
     |    |
     |    `--libip.a
     |
-    `--include/*.mod
+    `--include/
 
   ip_v2.0.1_8/
     |
@@ -277,7 +285,7 @@ create the following directory trees:
     |    |
     |    `--libip.a
     |
-    `--include/*.mod
+    `--include/
 
   ip_v2.0.1_d/
     |
@@ -285,7 +293,7 @@ create the following directory trees:
     |    |
     |    `--libip.a
     |
-    `--include/*.mod
+    `--include/
 
 Let's assume the above install was moved into "/usrx/local/nceplibs", to use the
 single precison (_4) library in this structure in your own application, the usual environment

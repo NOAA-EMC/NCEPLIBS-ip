@@ -95,7 +95,7 @@ Makefile: Makefile.in ../config.status
 	cd .. && ./config.status --recheck
 
 # Specify targets that do not generate filesystem objects
-.PHONY: all clean distclean check install nco_install uninstall nco_uninstall
+.PHONY: all clean distclean check install nco_install nco_cray_install uninstall nco_uninstall nco_cray_uninstall
 
 # Dependency include file
 include make.dependencies
