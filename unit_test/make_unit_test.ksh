@@ -63,7 +63,7 @@ cd util
 
 . ./config-setup/ifort.setup
 
-./configure --prefix=${root} FCFLAGS="${FCFLAGS}" \
+./configure --prefix=${root} FC="${FC}" FCFLAGS="${FCFLAGS}" \
   LIBS="${SP_LIBd} ${BACIO_LIB4} ${W3NCO_LIBd}"
 if [ $? -ne 0 ]; then
   set +x
@@ -109,7 +109,7 @@ for PRECISION in 4 8 d; do  # single ("4"), double ("8") or mixed ("d") precison
   esac
 
   ./configure --prefix=${root} --enable-promote=${PRECISION} \
-    FCFLAGS="${FCFLAGS} -I../lib/incmod_${PRECISION}" \
+    FC="${FC}" FCFLAGS="${FCFLAGS} -I../lib/incmod_${PRECISION}" \
     LIBS="../lib/libip_${PRECISION}.a ${SP_LIB} ${BACIO_LIB} ${W3NCO_LIB}"
   if [ $? -ne 0 ]; then
     set +x
