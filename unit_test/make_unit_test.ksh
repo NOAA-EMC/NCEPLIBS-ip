@@ -8,7 +8,39 @@
 # TO RUN THIS SCRIPT.
 #-----------------------------------------------------------------------------
 
-set -x
+usage()
+{
+ echo; echo "Usage: $0 setup-file" >&2
+ echo; echo "Currently available setup files are:"
+ echo
+ for file in `ls ../config-setup/`; do
+   echo "`basename ${file}`" >&2
+ done
+}
+
+#set -x
+
+#-----------------------------------------------------------------------------
+# Script requires one argument - the name of the build setup file.
+#-----------------------------------------------------------------------------
+
+if [ $# -lt 1 ]; then
+  echo; echo "$0: ERROR - Missing build setup file argument" >&2
+  usage
+  exit 19
+fi
+
+#-----------------------------------------------------------------------------
+# Source the build setup
+#-----------------------------------------------------------------------------
+
+SETUP_FILE="../config-setup/$1"
+if [ ! -f ${SETUP_FILE} ]; then
+  echo; echo "$0: ERROR - Cannot find specified setup file ${SETUP_FILE}" >&2
+  usage
+  exit 9
+fi
+. ${SETUP_FILE}
 
 #-----------------------------------------------------------------------------
 # The unit tests depend on the NCEP BACIO, SP, and W3NCO libraries.
@@ -24,12 +56,16 @@ if [[ "$(hostname -f)" == tfe?? ]]; then # Theia
   module load bacio
   module load sp
   module load w3nco
-elif [[ "$(hostname -d)" == "ncep.noaa.gov" ]]; then  #WCOSS
-  module purge
-  module load ics
-  module load bacio
-  module load sp
-  module load w3nco
+elif [[ "$(hostname -f)" == g????.ncep.noaa.gov || \
+        "$(hostname -f)" == t????.ncep.noaa.gov ]]; then  #WCOSS
+  case $FC in
+    ifort)
+      module purge
+      module load ics
+      module load bacio
+      module load sp
+      module load w3nco ;;
+  esac
 fi 
 
 #-----------------------------------------------------------------------------
@@ -61,10 +97,8 @@ root=${PWD}
 
 cd util
 
-. ./config-setup/ifort.setup
-
 ./configure --prefix=${root} FC="${FC}" FCFLAGS="${FCFLAGS}" \
-  LIBS="${SP_LIBd} ${BACIO_LIB4} ${W3NCO_LIBd}"
+  LIBS="${SP_LIB4} ${BACIO_LIB4} ${W3NCO_LIB4}"
 if [ $? -ne 0 ]; then
   set +x
   echo "$0: Error configuring for diffgb build." >&2
@@ -91,8 +125,6 @@ fi
 #-----------------------------------------------------------------------------
 
 cd ../sorc
-
-. ./config-setup/ifort.setup
 
 for PRECISION in 4 8 d; do  # single ("4"), double ("8") or mixed ("d") precison IPLIB
 

@@ -1,3 +1,0 @@
-export FC="ifort"
-export FCFLAGS="-O0 -openmp -g"
-export LDFLAGS="-openmp"
