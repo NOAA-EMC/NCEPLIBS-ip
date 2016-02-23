@@ -53,18 +53,14 @@ if [[ "$(hostname -f)" == tfe?? ]]; then # Theia
   module purge
   module use -a /scratch3/NCEPDEV/nwprod/lib/modulefiles
   module load intel
-  module load bacio
   module load sp
-  module load w3nco
 elif [[ "$(hostname -f)" == g????.ncep.noaa.gov || \
         "$(hostname -f)" == t????.ncep.noaa.gov ]]; then  #WCOSS
   case $FC in
     ifort)
       module purge
       module load ics
-      module load bacio
-      module load sp
-      module load w3nco ;;
+      module load sp ;;
   esac
 fi 
 
@@ -72,16 +68,11 @@ fi
 # Stop scripts if library environment variables are undefined.
 #-----------------------------------------------------------------------------
 
-BACIO_LIB4=${BACIO_LIB4:?}  # Single precision libraries
 SP_LIB4=${SP_LIB4:?}
-W3NCO_LIB4=${W3NCO_LIB4:?}
 
-BACIO_LIB8=${BACIO_LIB8:?}  # Double precision libraries
 SP_LIB8=${SP_LIB8:?}
-W3NCO_LIB8=${W3NCO_LIB8:?}
 
 SP_LIBd=${SP_LIBd:?}        # Mixed precision libraries
-W3NCO_LIBd=${W3NCO_LIBd:?}
 
 #-----------------------------------------------------------------------------
 # Set some parameters.
@@ -92,57 +83,20 @@ MAKE="gmake"
 root=${PWD}
 
 #-----------------------------------------------------------------------------
-# Make the "diffgb" component.
-#-----------------------------------------------------------------------------
-
-cd util
-
-./configure --prefix=${root} FC="${FC}" FCFLAGS="${FCFLAGS}" \
-  LIBS="${SP_LIB4} ${BACIO_LIB4} ${W3NCO_LIB4}"
-if [ $? -ne 0 ]; then
-  set +x
-  echo "$0: Error configuring for diffgb build." >&2
-  exit 12
-fi
-
-$MAKE clean
-$MAKE
-if [ $? -ne 0 ]; then
-  set +x
-  echo "$0: Error building diffgb program." >&2
-  exit 13
-fi
-
-$MAKE install
-if [ $? -ne 0 ]; then
-  set +x
-  echo "$0: Error installing diffgb program." >&2
-  exit 14
-fi
-
-#-----------------------------------------------------------------------------
 # Make copygb executables for all three precision versions of IPLIB.
 #-----------------------------------------------------------------------------
-
-cd ../sorc
 
 for PRECISION in 4 8 d; do  # single ("4"), double ("8") or mixed ("d") precison IPLIB
 
   case $PRECISION in
-    4) SP_LIB=$SP_LIB4
-       BACIO_LIB=$BACIO_LIB4
-       W3NCO_LIB=$W3NCO_LIB4 ;;
-    8) SP_LIB=$SP_LIB8
-       BACIO_LIB=$BACIO_LIB8
-       W3NCO_LIB=$W3NCO_LIB8 ;;
-    d) SP_LIB=$SP_LIBd
-       BACIO_LIB=$BACIO_LIB4
-       W3NCO_LIB=$W3NCO_LIBd ;;
+    4) SP_LIB=$SP_LIB4 ;;
+    8) SP_LIB=$SP_LIB8 ;;
+    d) SP_LIB=$SP_LIBd ;;
   esac
 
   ./configure --prefix=${root} --enable-promote=${PRECISION} \
-    FC="${FC}" FCFLAGS="${FCFLAGS} -I../lib/incmod_${PRECISION}" \
-    LIBS="../lib/libip_${PRECISION}.a ${SP_LIB} ${BACIO_LIB} ${W3NCO_LIB}"
+    FC="${FC}" FCFLAGS="${FCFLAGS} -I${root}/lib/incmod_${PRECISION}" \
+    LIBS="${root}/lib/libip_${PRECISION}.a ${SP_LIB} ${BACIO_LIB} ${W3NCO_LIB}"
   if [ $? -ne 0 ]; then
     set +x
     echo "$0: Error configuring for ${PRECISION}-byte copygb build." >&2
@@ -150,7 +104,7 @@ for PRECISION in 4 8 d; do  # single ("4"), double ("8") or mixed ("d") precison
   fi
 
   $MAKE clean
-  $MAKE
+  $MAKE all
   if [ $? -ne 0 ]; then
     set +x
     echo "$0: Error building ${PRECISION}-byte copygb." >&2
