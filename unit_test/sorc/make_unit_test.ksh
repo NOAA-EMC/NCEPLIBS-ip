@@ -13,7 +13,7 @@ usage()
  echo; echo "Usage: $0 setup-file" >&2
  echo; echo "Currently available setup files are:"
  echo
- for file in `ls ../config-setup/`; do
+ for file in `ls ../../config-setup/`; do
    echo "`basename ${file}`" >&2
  done
 }
@@ -34,7 +34,7 @@ fi
 # Source the build setup
 #-----------------------------------------------------------------------------
 
-SETUP_FILE="../config-setup/$1"
+SETUP_FILE="../../config-setup/$1"
 if [ ! -f ${SETUP_FILE} ]; then
   echo; echo "$0: ERROR - Cannot find specified setup file ${SETUP_FILE}" >&2
   usage
@@ -69,9 +69,7 @@ fi
 #-----------------------------------------------------------------------------
 
 SP_LIB4=${SP_LIB4:?}
-
 SP_LIB8=${SP_LIB8:?}
-
 SP_LIBd=${SP_LIBd:?}        # Mixed precision libraries
 
 #-----------------------------------------------------------------------------
@@ -80,7 +78,7 @@ SP_LIBd=${SP_LIBd:?}        # Mixed precision libraries
 
 MAKE="gmake"
 
-root=${PWD}
+root="$PWD/.."
 
 #-----------------------------------------------------------------------------
 # Make copygb executables for all three precision versions of IPLIB.
