@@ -14,7 +14,7 @@
 
  call interp
 
- print*,"- NORMAL TERMINATION"
+!print*,"- NORMAL TERMINATION"
 
  stop
  end program driver

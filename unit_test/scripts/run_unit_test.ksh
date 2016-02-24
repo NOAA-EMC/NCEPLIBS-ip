@@ -3,104 +3,136 @@
 #---------------------------------------------------------------------------------
 # Driver script to run the IPOLATES unit test.
 #
-# This script calls the "copygb" program to interpolate global datasets
+# This script calls two programs to interpolate global datasets
 # of scalar and vector data to several grids of various map projections
-# using all ipolates interpolation options.  The output files (grib 1)
-# are then compared to their corresponding "baseline" files using the
-# "diffgb" utility.
+# using all ipolates interpolation options.  The interpolated data is
+# then compared to "baseline" data, with a summary of differences 
+# sent to standard output.
 #
 # To run this script, type "./run.ksh"
 #
-# Three versions of copygb (located in ../src and ../exec) are tested:
-#    - copygb_4 (uses single precision version of ipolates)
-#    - copygb_8 (uses double precision version of ipolates)
-#    - copygb_4 (uses mixed precision version of ipolates)
+# The program which tests the scalar interpolation is located in
+# ../sorc/scalar.  After compilation, there are three executables
+# in ../exec, one for each precision version of ipolates:
+#    - scalar_4.exe (uses single precision version of ipolates)
+#    - scalar_8.exe (uses double precision version of ipolates)
+#    - scalar_d.exe (uses mixed precision version of ipolates)
 #
-# The input data is located in the ../input_data directory.  There are two
-# files (grib 1 format) so as to test the scalar and vector interpolation:
-#    - ./scalar/global_snoalb.grb      - global snow albedo 
-#    - ./vector/global_500mb_winds.grb - global u/v wind 
+# The program which tests the vector interpolation is located in
+# ../sorc/vector.  As with the scalar program, after compilation
+# there are three executables in ../exec:
+#    - vector_4.exe (uses single precision version of ipolates)
+#    - vector_8.exe (uses double precision version of ipolates)
+#    - vector_d.exe (uses mixed precision version of ipolates)
+#
+# The input data is located in the ../input_data directory.  There are 
+# two files (binary, little endian format), one with scalar data and one
+# with vector data:
+#    - ./scalar/global_snoalb.bin   - global snow albedo 
+#    - ./vector/global_uv_wind.bin  - global 500mb u/v wind 
 #
 # The input data are interpolated to the following grids with the following
 # ipolates interpolation options:
-#    - NCEP grid 2 (global 2.5-deg lat/lon) using bilinear (IP option "0")
-#    - NCEP grid 8 (mercator) using bicubic (IP option "1")
-#    - NCEP grid 94 (rotated lat/lon "B") using neighbor (IP option "2")
-#    - NCEP grid 98 (gaussian lat/lon) using budget (IP option "3")
-#    - NCEP grid 100 (polar stereographic) using spectral (IP option "4")
-#    - NCEP grid 192 (rotated lat/lon "E") using neighbor-budget (IP option "6")
-#    - NCEP grid 211 (lambert conformal) using bilinear (IP option "0")
+#    - grid 3 (global one-deg lat/lon) using bilinear (IP option "0")
+#    - grid 8 (mercator) using bicubic (IP option "1")
+#    - grid 127 (gaussian lat/lon) using neighbor (IP option "2")
+#    - grid 203 (rotated lat/lon "E") using budget (IP option "3")
+#    - grid 205 (rotated lat/lon "B") using spectral (IP option "4")
+#    - grid 212 (polar stereographic) using neighbor-budget (IP option "6")
+#    - grid 218 (lambert conformal) using bilinear (IP option "0")
 #
 # The "baseline" data are located in subdirectories under ./baseline_data.
-# The files are identified with the ncep grid number in the file name.
-# The copygb program gives identical results for the double and mixed
-# precision versions of ipolates.  These data are grib 1 format.  The 
+# The files are identified with the grid number in the file name.
+# Ipolates gives identical results for the double and mixed
+# precision.  These data are binary little endian format.  The 
 # subdirectories are:
-#    - ./scalar/4_byte: single precision albedo (scalar)
-#    - ./scalar/8_byte: double and mixed precision albedo (scalar)
-#    - ./vector/4_byte: single precision u/v wind (vector)
-#    - ./vector/8_byte: double and mixed precision u/v wind (vector)
+#    - ./scalar/4_byte_bin: single precision albedo (scalar)
+#    - ./scalar/8_byte_bin: double and mixed precision albedo (scalar)
+#    - ./vector/4_byte_bin: single precision u/v wind (vector)
+#    - ./vector/8_byte_bin: double and mixed precision u/v wind (vector)
 #
 # The output from this script is piped to the screen.
 #---------------------------------------------------------------------------------
 
 #set -x
 
-DIFFGB="../exec/diffgb.exe"
+cd ../work
 
-rm -f ../work/*.grb
+ln -fs ../input_data/scalar/global_snoalb.bin   ./fort.9
 
-for data_type in "scalar" "vector"  # scalar or vector test?
+for precision in "4" "d" "8"  # test all three precision versions of ipolates
 do
-  case $data_type in  # the input data file
-    "scalar")
-      INPUT_FILE="../input_data/$data_type/global_snoalb.grb"  ;;
-    "vector")
-      INPUT_FILE="../input_data/$data_type/global_500mb_winds.grb"  ;;
-  esac
-  for precision in "4" "d" "8"  # test all three precision versions of ipolates
+  echo
+  echo "***************************************************************"
+  echo "*** TEST $precision BYTE VERSION OF IPOLATES LIBRARY FOR SCALAR DATA ***"
+  echo "***************************************************************"
+
+  EXEC="../exec/scalar_${precision}.exe"
+
+  for grid in 3 8 127 203 205 212 218
   do
-    echo
-    echo "***************************************************************"
-    echo "*** TEST $precision BYTE VERSION OF IPOLATES LIBRARY FOR $data_type DATA ***"
-    echo "***************************************************************"
-    echo
-    case $precision in  # the output files from copygb will be compared 
-                        # to the baseline files in this directory.
-      "4")
-        BASELINE_DIR="../baseline_data/$data_type/4_byte"  ;;
+    case $grid in   # the ipolates interpolation option (defined above)
+      "3")
+        option="0" ;;
+      "8")
+        option="1" ;;
+      "127")
+        option="2" ;;
+      "203")
+        option="3" ;;
+      "205")
+        option="4" ;;
+      "212")
+        option="6" ;;
       *)
-        BASELINE_DIR="../baseline_data/$data_type/8_byte"  ;;
+        option="0" ;;
     esac
-    COPYGB="../exec/copygb_$precision"
-    for grid in 2 8 94 98 100 192 211  # the ncep grid number (defined above)
-    do
-      case $grid in   # the ipolates interpolation option (defined above)
-        "2") 
-          option="0" ;;
-        "8")
-          option="1" ;;
-        "94")
-          option="2" ;;
-        "98")
-          option="3" ;;
-        "100")
-          option="4 0 -1" ;;
-        "192")
-          option="6" ;;
-        *)
-          option="0" ;;
-        esac
-        echo
-        echo "********************************************"
-        echo "*** TEST NCEP GRID NUMBER $grid ***"
-        echo "********************************************"
-        echo
-        $COPYGB -g$grid -i"${option}" -x $INPUT_FILE ../work/grid_${grid}.grb
-        $DIFFGB -x ../work/grid_${grid}.grb $BASELINE_DIR/grid_${grid}.grb
-        rm -f ../work/grid_${grid}.grb
-    done
+
+    echo
+    $EXEC $grid $option
+
   done
 done
+
+rm -f ./fort.9
+
+ln -fs ../input_data/vector/global_uv_wind.bin   ./fort.9
+
+for precision in "4" "d" "8"  # test all three precision versions of ipolates
+do
+  echo
+  echo "***************************************************************"
+  echo "*** TEST $precision BYTE VERSION OF IPOLATES LIBRARY FOR VECTOR DATA ***"
+  echo "***************************************************************"
+
+  EXEC="../exec/vector_${precision}.exe"
+
+  for grid in 3 8 127 203 205 212 218
+  do
+
+    case $grid in   # the ipolates interpolation option (defined above)
+      "3")
+        option="0" ;;
+      "8")
+        option="1" ;;
+      "127")
+        option="2" ;;
+      "203")
+        option="3" ;;
+      "205")
+        option="4" ;;
+      "212")
+        option="6" ;;
+      *)
+        option="0" ;;
+    esac
+
+    echo
+    $EXEC $grid $option
+
+  done
+done
+
+rm -f ./fort.9
 
 exit 0

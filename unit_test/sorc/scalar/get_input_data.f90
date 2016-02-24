@@ -31,7 +31,7 @@
  real(kind=4)       :: dummy(i_input,j_input)
 
  input_file="./fort.9"
- print*,"- OPEN AND READ FILE ", trim(input_file)
+!print*,"- OPEN AND READ FILE ", trim(input_file)
  open(iunit, file=input_file, access='direct', recl=i_input*j_input*4,  &
       iostat=iret)
 
