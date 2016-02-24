@@ -1,8 +1,7 @@
 #!/bin/ksh --login
 
 #-----------------------------------------------------------------------------
-# This script compiles the iplib unit test.  The test uses the
-# NCEP "copygb" and "diffgb" programs.
+# This script compiles the iplib unit test programs.
 # 
 # PLEASE READ THE "README" FILE IN THIS DIRECTORY FOR DETAILS ON HOW
 # TO RUN THIS SCRIPT.
@@ -50,10 +49,13 @@ fi
 #-----------------------------------------------------------------------------
 
 if [[ "$(hostname -f)" == tfe?? ]]; then # Theia
-  module purge
-  module use -a /scratch3/NCEPDEV/nwprod/lib/modulefiles
-  module load intel
-  module load sp
+  case $FC in
+    ifort)
+      module purge
+      module use -a /scratch3/NCEPDEV/nwprod/lib/modulefiles
+      module load intel
+      module load sp ;;
+  esac
 elif [[ "$(hostname -f)" == g????.ncep.noaa.gov || \
         "$(hostname -f)" == t????.ncep.noaa.gov ]]; then  #WCOSS
   case $FC in
