@@ -52,7 +52,7 @@
  real, allocatable         :: output_rlat(:,:), output_rlon(:,:)
  real, allocatable         :: output_data(:,:)
  real(kind=4), allocatable :: baseline_data(:,:)
- real                      :: maxdiff
+ real                      :: avgdiff, maxdiff
  real(kind=4)              :: output_data4
 
  integer :: grd3(200)    ! global one-degree lat/lon
@@ -207,16 +207,19 @@
  read (12, err=38, rec=1) baseline_data
  close (12)
 
+ avgdiff=0.0
  maxdiff=0.0
  num_pts_diff=0
+
  do j = 1, j_output
  do i = 1, i_output
    output_data4 = real(output_data(i,j),4)
-   if (output_data4 /= baseline_data(i,j)) then
+   if ( abs(output_data4 - baseline_data(i,j)) > 0.0001) then
+     avgdiff = avgdiff + abs(output_data4-baseline_data(i,j))
+     num_pts_diff = num_pts_diff + 1
      if (abs(output_data4-baseline_data(i,j)) > abs(maxdiff))then
        maxdiff = output_data4-baseline_data(i,j)
      endif
-     num_pts_diff = num_pts_diff + 1
    endif
  enddo
  enddo
@@ -225,6 +228,10 @@
  print*,'- NUMBER OF PTS DIFFERENT: ',num_pts_diff
  print*,'- PERCENT OF TOTAL: ',(float(num_pts_diff)/float(i_output*j_output))*100.
  print*,'- MAX DIFFERENCE: ', maxdiff
+ if (num_pts_diff > 0) then
+   avgdiff = avgdiff / float(num_pts_diff)
+ endif
+ print*,'- AVG DIFFERENCE: ', avgdiff
 
  deallocate (output_rlat, output_rlon, output_data, output_bitmap)
 

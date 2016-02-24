@@ -9,7 +9,9 @@
 # then compared to "baseline" data, with a summary of differences 
 # sent to standard output.
 #
-# To run this script, type "./run.ksh"
+# To run this script interactively, type "./run_unit_test.ksh".
+# On WCOSS, this script may be submitted to the compute nodes
+# using "./run.wcoss.lsf".
 #
 # The program which tests the scalar interpolation is located in
 # ../sorc/scalar.  After compilation, there are three executables

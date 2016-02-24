@@ -52,6 +52,7 @@
  real, allocatable         :: output_rlat(:,:), output_rlon(:,:)
  real, allocatable         :: output_crot(:,:), output_srot(:,:)
  real, allocatable         :: output_u_data(:,:), output_v_data(:,:)
+ real                      :: avg_u_diff, avg_v_diff
  real                      :: max_u_diff, max_v_diff
  real(kind=4)              :: output_data4
  real(kind=4), allocatable :: baseline_u_data(:,:)
@@ -232,26 +233,30 @@
  read (12, err=38, rec=2) baseline_v_data
  close (12)
 
+ avg_u_diff=0.0
  max_u_diff=0.0
  num_upts_diff=0
+ avg_v_diff=0.0
  max_v_diff=0.0
  num_vpts_diff=0
 
  do j = 1, j_output
  do i = 1, i_output
    output_data4 = real(output_u_data(i,j),4)
-   if (output_data4 /= baseline_u_data(i,j)) then
+   if (abs(output_data4 - baseline_u_data(i,j)) > 0.0001) then
+     avg_u_diff = avg_u_diff + abs(output_data4-baseline_u_data(i,j))
+     num_upts_diff = num_upts_diff + 1
      if (abs(output_data4-baseline_u_data(i,j)) > abs(max_u_diff))then
        max_u_diff = output_data4-baseline_u_data(i,j)
      endif
-     num_upts_diff = num_upts_diff + 1
    endif
    output_data4 = real(output_v_data(i,j),4)
-   if (output_data4 /= baseline_v_data(i,j)) then
+   if (abs(output_data4 - baseline_v_data(i,j)) > 0.0001) then
+     avg_v_diff = avg_v_diff + abs(output_data4-baseline_v_data(i,j))
+     num_vpts_diff = num_vpts_diff + 1
      if (abs(output_data4-baseline_v_data(i,j)) > abs(max_v_diff))then
        max_v_diff = output_data4-baseline_v_data(i,j)
      endif
-     num_vpts_diff = num_vpts_diff + 1
    endif
  enddo
  enddo
@@ -260,11 +265,19 @@
  print*,'- NUMBER OF PTS DIFFERENT: ',num_upts_diff
  print*,'- PERCENT OF TOTAL: ',(float(num_upts_diff)/float(i_output*j_output))*100.
  print*,'- MAX DIFFERENCE: ', max_u_diff
+ if (num_upts_diff > 0) then
+   avg_u_diff = avg_u_diff / float(num_upts_diff)
+ endif
+ print*,'- AVG DIFFERENCE: ', avg_u_diff
 
  print*,'- MAX/MIN OF V-WIND DATA: ', maxval(output_v_data),minval(output_v_data)
  print*,'- NUMBER OF PTS DIFFERENT: ',num_vpts_diff
  print*,'- PERCENT OF TOTAL: ',(float(num_vpts_diff)/float(i_output*j_output))*100.
  print*,'- MAX DIFFERENCE: ', max_v_diff
+ if (num_vpts_diff > 0) then
+   avg_v_diff = avg_v_diff / float(num_vpts_diff)
+ endif
+ print*,'- AVG DIFFERENCE: ', avg_v_diff
 
  deallocate (baseline_u_data, baseline_v_data)
  deallocate (output_rlat, output_rlon, output_u_data, output_bitmap)
