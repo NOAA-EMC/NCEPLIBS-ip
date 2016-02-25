@@ -11,7 +11,7 @@
 #
 # To run this script interactively, type "./run_unit_test.ksh".
 # On WCOSS, this script may be submitted to the compute nodes
-# using "./run.wcoss.lsf".
+# using "./run_wcoss.lsf".  On Theia, use "./run_theia.ksh"
 #
 # The program which tests the scalar interpolation is located in
 # ../sorc/scalar.  After compilation, there are three executables
