@@ -1,4 +1,5 @@
-Instructions for building and installing ip on Unix
+Instructions for building and installing the
+ipolates library (iplib) ip on Unix.
 ***************************************************
 
 $Revision$
@@ -41,7 +42,7 @@ So, on WCOSS/tide/gyre you would type:
   $ make_ip_lib.sh ifort.setup
 
 
-On zeus you could do the same, or if you wanted to the PGI compiler,
+On Theia you could do the same, or if you wanted to the PGI compiler,
 
   $ make_ip_lib.sh pgf95.setup
 
@@ -114,8 +115,17 @@ To start the library build for a particular configuration, simply type
 ----------------------
 
 A suite of regression tests is located in the ./reg_tests directory.
+These tests compare results from two different versions of iplib
+(typically the branch and trunk versions) to ensure developer
+modifications do not inadvertantly break existing functionality.
 See the README file in that directory for details on how to build
 and run it.
+
+A unit test is located on the ./unit_test directory.  It compares
+results from iplib against a baseline set of data.  This test is
+useful when porting iplib to a new platform to ensure it is
+working correctly.  See the README in that directory for details
+on how to build and run it.
 
 
 

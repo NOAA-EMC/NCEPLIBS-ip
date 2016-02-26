@@ -15,13 +15,13 @@ DIRECTORY LAYOUT:
 
 ./sorc/scalar -
          Contains a Fortran program to call routine ipolates
-         to interpolated a global field of albedo data to
-         several grids using all interpolation options.
+         to interpolate a global field of albedo data to
+         several grids and using all interpolation options.
 
 ./sorc/vector -
          Contains a Fortran program to call routine ipolatev
-         to interpolated a global field of u/v wind data to
-         several grids using all interpolation options.
+         to interpolate a global field of u/v wind data to
+         several grids and using all interpolation options.
 
 ./exec - Contains the unit test executables.  There is one executable
          for the single ("4"), double ("8") and mixed ("d") precision
@@ -36,8 +36,8 @@ DIRECTORY LAYOUT:
 
 ./work - The working directory for program execution.
 
-./lib  - The location of the ip libraries and module files as expected
-         by the unit test programs.
+./lib  - The location of the IPOLATES libraries and module files as
+         expected by the unit test programs.
 
 ./scripts - Contains scripts to run this unit test.
 
@@ -67,7 +67,7 @@ HOW THE TEST WORKS:
 
 There are two separate programs to test the scalar and vector interpolation.
 The scalar program calls routine ipolates to interpolate a global field
-of snow albedo to several grids of various map projections
+of snow albedo to several grids of various map projections and
 using all IPOLATES interpolation options.  Likewise, the vector program
 calls routine ipolatev to interpolate a global field of 500mb u/w wind.
 The specific tests are:
@@ -122,7 +122,7 @@ So if that is how IPOLATES was built in step (1), there is
 nothing more to do.  
 
 However, if you want to build with another version of the library,
-you will need adjust these links.  Example: Suppose you want to
+you will need to adjust these links.  Example: Suppose you want to
 test with the OPS version of IPOLATES on WCOSS.  You would set the
 links as follows:
 
@@ -138,29 +138,26 @@ links as follows:
 by running the "make_unit_test.ksh" script.  
 
 The IPOLATES library is dependant on the NCEP SP 
-(spectral) library.  Intel compiled versions of SPLIB
+(spectral) library (SPLIB).  Intel compiled versions of SPLIB
 exist on Theia and WCOSS.  When running "make_unit_test.ksh"
-on these machines, the SP libraries are automatically
-located by loading modules and stored in these 
+on these machines, these SP libraries are automatically
+located by module loads and stored in these 
 environment variables:
 
  SP_LIB4 (single precision)
- SP_LIB8 (mixed precision)
- SP_LIBd (double precistion)
+ SP_LIBd (mixed precision)
+ SP_LIB8 (double precistion)
 
-If you are testing on a machine other than WCOSS or Theia, you 
-will need to locate these libraries and set these environment
-varibles by editing "make_unit_test.ksh" or by exporting
+If you are testing on a machine other than WCOSS or Theia, 
+or you have compiled IPOLATES with a compiler other than Intel,
+you will need to locate (or build) SPLIB and set these environment
+varibles by editing "make_unit_test.ksh", or by exporting
 these variables on the command line before invoking it.
 Example (when using bash):
 
  export SP_LIB4=$directory/libsp_4.a
 
-Also, if you have compiled IPOLATES with a compiler other
-than Intel, you will need to locate or build a similiarly compiled
-SPLIB and set their enviroment variables accordingly.
-
-Once SP libraries have been located, run "make_unit_test.ksh" 
+Once the SP libraries have been located, run "make_unit_test.ksh" 
 from the command line.  The script takes one argument: the
 "config-setup" file that was used to compile IPOLATES.  
 So, if you built IPOLATES with the Intel optimized option, 
