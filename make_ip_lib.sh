@@ -10,7 +10,7 @@
 # is specified via files in the config-setup/ subdirectory that are sourced
 # within this script.
 #
-# The installation directory is ${PWD}
+# The installation directory is ${PWD}.
 #
 ###############################################################################
 
