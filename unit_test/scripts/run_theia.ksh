@@ -1,7 +1,11 @@
 #!/bin/ksh --login
 
 #------------------------------------------------------------
-# To run, type 'qsub $script'
+# Script to run the unit test on Theia compute nodes.
+#
+# To run, type: 'qsub run_theia.ksh'
+#
+# Output is put in "unit_test.log"
 #------------------------------------------------------------
 
 #PBS -l procs=1

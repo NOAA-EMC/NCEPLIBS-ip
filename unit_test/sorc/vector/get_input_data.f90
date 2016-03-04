@@ -3,7 +3,7 @@
 !------------------------------------------------------------------------
 ! Read the data that will be interpolated.  Data is a global one-degree
 ! grid of 500 mb u and v-component winds.  There is no bitmap.
-! The data file is flat binary.
+! The data file is flat binary (little endian).
 !------------------------------------------------------------------------
 
  integer, public                :: input_kgds(200)
@@ -44,24 +44,26 @@
  end if
 
  allocate(dummy(i_input,j_input))
- allocate(input_u_data(i_input,j_input))
 
  read(iunit, rec=1, iostat=iret) dummy
- input_u_data=dummy
 
  if (iret /= 0) then
    print*,"- BAD READ OF INPUT U-WIND DATA. IRET IS ", iret
    stop 4
  endif
 
- allocate(input_v_data(i_input,j_input))
+ allocate(input_u_data(i_input,j_input))
+ input_u_data=dummy
+
  read(iunit, rec=2, iostat=iret) dummy
- input_v_data=dummy
 
  if (iret /= 0) then
    print*,"- BAD READ OF INPUT V-WIND DATA. IRET IS ", iret
    stop 4
  end if
+
+ allocate(input_v_data(i_input,j_input))
+ input_v_data=dummy
 
  close (iunit)
 

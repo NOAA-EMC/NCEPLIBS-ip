@@ -3,6 +3,7 @@ Unit test for the NCEP IPOLATES library (IPLIB).
 $Id$
 
 ABSTRACT:
+---------
 
 This test invokes IPOLATES to interpolate scalar and
 vector data to several grids of various map projections
@@ -10,68 +11,15 @@ using all IPOLATES interpolation options.  The output
 is compared to baseline data and a summary of differences is
 sent to standard output.
 
-DIRECTORY LAYOUT:
-
-./sorc - Contains the files and scripts needed to build the
-         unit test programs.  And the programs themselves.
-
-./sorc/scalar -
-         Contains a Fortran program to call routine ipolates
-         to interpolate a global field of albedo data to
-         several grids and using all interpolation options.
-
-./sorc/vector -
-         Contains a Fortran program to call routine ipolatev
-         to interpolate a global field of u/v wind data to
-         several grids and using all interpolation options.
-
-./exec - Contains the unit test executables.  There is one executable
-         for the single ("4"), double ("8") and mixed ("d") precision
-         versions of the IPOLATES library:
-
-         scalar_4.exe
-         scalar_8.exe
-         scalar_d.exe
-         vector_4.exe
-         vector_8.exe
-         vector_d.exe
-
-./work - The working directory for program execution.
-
-./lib  - The location of the IPOLATES libraries and module files as
-         expected by the unit test programs.
-
-./scripts - Contains scripts to run this unit test.
-
-./input_data - Contains the input scalar and vector data.  The 
-               data are in binary little endian format:
-
-               ./scalar/global_snoalb.bin    (global snow albedo)
-               ./vector/global_uv_wind.bin   (global 500mb u/v wind)
-
-./baseline_data - Contains the baseline set of scalar and vector data 
-                  interpolated to each NCEP grid. Binary, little endian
-                  format.  Output from each call to routine ipolates and
-                  ipolatev is compared to its baseline counterpart.  There
-                  are sub-directories for the scalar and vector data.
-                  And under these sub-directories, there are sub-directories
-                  for the single (4_byte_bin) and mixed/double (8_byte_bin)
-                  versions of the IPOLATES library.  The file names
-                  contain the grid number and IPOLATES interpolation
-                  option (defined below); i.e.:
-
-                  grid${gridnum}.opt${ip_option}.bin_4/8
-
-                  Grads control files for each file are located in the
-                  ./grads subdirectory.
 
 HOW THE TEST WORKS:
+-------------------
 
 There are two separate programs to test the scalar and vector interpolation.
-The scalar program calls routine ipolates to interpolate a global field
+The scalar program calls routine 'ipolates' to interpolate a global field
 of snow albedo to several grids of various map projections and
 using all IPOLATES interpolation options.  Likewise, the vector program
-calls routine ipolatev to interpolate a global field of 500mb u/w wind.
+calls routine 'ipolatev' to interpolate a global field of 500mb u/w wind.
 The specific tests are:
 
   - grid 3 (global one-deg lat/lon) using bilinear (IP option "0")
@@ -91,7 +39,66 @@ data was created using the Intel Fortran compiler.  Differences from
 the baseline data are computed and sent to standard output. For this
 unit test to pass the differences should be "small".
 
+
+DIRECTORY LAYOUT:
+-----------------
+
+./sorc - Contains the files and scripts needed to build the
+         unit test programs.  And the programs themselves.
+
+./sorc/scalar -
+         Contains a Fortran program to call routine 'ipolates'
+         to interpolate a global field of albedo data to
+         several grids and using all interpolation options.
+
+./sorc/vector -
+         Contains a Fortran program to call routine 'ipolatev'
+         to interpolate a global field of u/v wind data to
+         several grids and using all interpolation options.
+
+./exec - Contains the unit test executables.  There is one executable
+         for the single ("4"), double ("8") and mixed ("d") precision
+         versions of the IPOLATES library:
+
+         scalar_4.exe  scalar_8.exe  scalar_d.exe
+         vector_4.exe  vector_8.exe  vector_d.exe
+
+./work - The working directory for program execution.
+
+./lib  - The location of the IPOLATES libraries and module files as
+         expected by the unit test programs.
+
+./scripts - Contains scripts to run this unit test.
+
+./input_data - Contains the input scalar and vector data.  The 
+               data are in binary little endian format:
+
+               ./scalar/global_snoalb.bin    (global snow albedo)
+               ./vector/global_uv_wind.bin   (global 500mb u/v wind)
+
+./baseline_data - Contains the baseline set of scalar and vector data 
+                  interpolated to each target grid. Binary, little endian
+                  format.  Output from each call to routine ipolates and
+                  ipolatev is compared to its baseline counterpart.  There
+                  are sub-directories for the scalar and vector data.
+                  And under these sub-directories, there are sub-directories
+                  for the single (4_byte_bin) and mixed/double (8_byte_bin)
+                  versions of the IPOLATES library.  The file names
+                  contain the grid number and IPOLATES interpolation
+                  option (defined below); i.e.:
+
+                  grid${gridnum}.opt${ip_option}.bin_4/8
+
+                  Grads control files to view each file are located in the
+                  ./grads subdirectory.  These files do not account
+                  for map projection.  Rather, they display the data
+                  as a 2-D field with no interpolation.  So when
+                  viewing, do a "set mproj off" during your grads session.
+                  
+
+
 HOW TO RUN THE TEST:
+--------------------
 
 1) Build the IPOLATES library.  Go to $root and read the
 README.build file for details.  By default, the libraries and
@@ -121,7 +128,7 @@ option from step (1).  I.e:
  libip_8.a -> $root/ip/vX.Y.Z/libip_vX.Y.Z_8.a
 
 So if that is how IPOLATES was built in step (1), there is
-nothing more to do.  
+nothing more to do. 
 
 However, if you want to build with another version of the library,
 you will need to adjust these links.  Example: Suppose you want to
@@ -180,6 +187,10 @@ invoke these driver scripts as follows:
  cat run_wcoss.lsf | bsub   (WCOSS Phase 1/2)
  qsub run_theia.ksh         (Theia)
 
+In this case, output is sent to "unit_test.log".
+
+
 QUESTIONS:
+----------
 
 Contact: george.gayno@noaa.gov

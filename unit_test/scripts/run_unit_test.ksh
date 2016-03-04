@@ -12,7 +12,7 @@
 # sent to standard output.
 #
 # To run this script interactively, type "./run_unit_test.ksh".
-# On WCOSS, this script may be submitted to the compute nodes
+# On WCOSS Phase 1/2, this script may be submitted to the compute nodes
 # using "./run_wcoss.lsf".  On Theia, use "./run_theia.ksh"
 #
 # The program which tests the scalar interpolation is located in
@@ -48,8 +48,8 @@
 # The "baseline" data are located in subdirectories under ./baseline_data.
 # The files are identified with the grid number in the file name.
 # Ipolates gives identical results for the double and mixed
-# precision.  These data are binary little endian format.  The 
-# subdirectories are:
+# precision.  These data are in binary little endian format.
+# The subdirectories are:
 #    - ./scalar/4_byte_bin: single precision albedo (scalar)
 #    - ./scalar/8_byte_bin: double and mixed precision albedo (scalar)
 #    - ./vector/4_byte_bin: single precision u/v wind (vector)

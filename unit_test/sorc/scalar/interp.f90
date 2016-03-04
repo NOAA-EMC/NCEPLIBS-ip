@@ -233,13 +233,13 @@
  endif
  print*,'- AVG DIFFERENCE: ', avgdiff
 
- deallocate (output_rlat, output_rlon, output_data, output_bitmap)
+ deallocate (output_rlat, output_rlon, output_data, output_bitmap, baseline_data)
 
  return
 
  38 continue
 
- print*,'-ERROR WRITING BINARY FILE.'
+ print*,'-ERROR READING BASELINE DATA FILE FILE.'
  stop 77
 
  end subroutine interp
