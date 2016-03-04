@@ -1,5 +1,5 @@
 ## Put version control id tag in output configure script
-AC_REVISION($Id: configure.ac 25875 2013-02-19 15:45:31Z george.gayno@noaa.gov $)
+AC_REVISION($Id$)
 
 ## Initialise autoconf
 AC_INIT([ip_unit_test], [2.0.4], [ncep.list.emc.nceplibs.support@noaa.gov])
