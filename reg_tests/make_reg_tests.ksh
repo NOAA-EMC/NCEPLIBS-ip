@@ -7,6 +7,8 @@
 # DO NOT USE THIS SCRIPT ON THE NCEP WCOSS-Cray machine.  Instead, 
 # use the "make_reg_tests_wcoss-cray.sh" script.
 # 
+# $Id$
+
 # PLEASE READ THE "README" FILE IN THIS DIRECTORY FOR DETAILS ON HOW
 # TO RUN THIS SCRIPT.
 #-----------------------------------------------------------------------------

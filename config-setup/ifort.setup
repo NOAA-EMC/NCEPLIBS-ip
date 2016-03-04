@@ -1,4 +1,4 @@
 export FC="ifort"
-export FCFLAGS="-O3 -fp-model strict -ip -openmp -I."
+export FCFLAGS="-O3 -fp-model strict -ip -openmp -I. -convert little_endian -assume byterecl"
 export LDFLAGS=" "
 export LIBS=" "

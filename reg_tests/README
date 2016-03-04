@@ -2,6 +2,8 @@
 HOW TO RUN THE REGRESSION TEST SUITE
 ---------------------------------------------------------------
 
+$Id$
+
 The regression test suite consists of eight Fortran programs
 that invoke a subset of IPOLATES (or IPLIB) routines.  IPOLATES
 developers are required to run this test suite to ensure their
