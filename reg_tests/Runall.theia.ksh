@@ -3,6 +3,8 @@
 #----------------------------------------------------------------------------
 # Run the entire suite of IPOLATES (or IPLIB) regression tests on Theia.
 #
+# $Id$
+#
 # See the README file for information on setting up and compiling
 # the test suite.
 #

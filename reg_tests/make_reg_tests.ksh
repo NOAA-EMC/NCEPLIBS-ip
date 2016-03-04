@@ -3,6 +3,8 @@
 #-----------------------------------------------------------------------------
 # This script compiles all regression tests.
 # 
+# $Id$
+
 # PLEASE READ THE "README" FILE IN THIS DIRECTORY FOR DETAILS ON HOW
 # TO RUN THIS SCRIPT.
 #-----------------------------------------------------------------------------

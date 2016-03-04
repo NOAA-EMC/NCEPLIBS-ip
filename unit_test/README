@@ -1,5 +1,7 @@
 Unit test for the NCEP IPOLATES library (IPLIB).
 
+$Id$
+
 ABSTRACT:
 
 This test invokes IPOLATES to interpolate scalar and

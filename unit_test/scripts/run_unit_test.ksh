@@ -3,6 +3,8 @@
 #---------------------------------------------------------------------------------
 # Driver script to run the IPOLATES unit test.
 #
+# $Id$
+#
 # This script calls two programs to interpolate global datasets
 # of scalar and vector data to several grids of various map projections
 # using all ipolates interpolation options.  The interpolated data is
