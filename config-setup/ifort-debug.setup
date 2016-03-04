@@ -4,6 +4,8 @@ export FCFLAGS="-check all \
  -fpe0 \
  -ftrapuv \
  -g \
+ -convert little_endian \
+ -assume byterecl \
  -I. \
  -openmp "
 export LDFLAGS=" "
