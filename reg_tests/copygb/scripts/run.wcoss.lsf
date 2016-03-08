@@ -1,7 +1,8 @@
 #!/bin/ksh
  
 #-----------------------------------------------------
-# Script to run the copygb regression test on WCOSS.
+# Script to run the copygb regression test on WCOSS-
+# Phase 1.
 #
 # Invoke this script as follows:
 # "cat run.wcoss.lsf | bsub"

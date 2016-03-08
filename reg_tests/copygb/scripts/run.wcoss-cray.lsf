@@ -19,6 +19,8 @@ set -x
 
 module list
 
+export OMP_NUM_THREADS=1
+
 if [[ -d /gpfs/gp1/nco/ops/nwprod/fix ]]; then
   export NWPROD="/gpfs/gp1/nco/ops/nwprod/fix"
 elif [[ -d /gpfs/tp1/nco/ops/nwprod/fix ]]; then
