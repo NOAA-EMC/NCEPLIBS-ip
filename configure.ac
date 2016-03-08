@@ -72,4 +72,9 @@ case $FC in
   *) AC_MSG_WARN([Precision promotion flags for $FC unknown and not set]);;
 esac
 
+AC_ARG_ENABLE([wcoss_cray_dir],
+  [AS_HELP_STRING([--enable-wcoss_cray_dir],[Specify wcoss-cray install sub-directory. @<:@default: $FC@:>@])],
+  [wcoss_cray_dir=${enableval}],[wcoss_cray_dir=$FC])
+AC_SUBST(WCOSS_CRAY_DIR,[${wcoss_cray_dir}])
+
 AC_OUTPUT

@@ -1,0 +1,4 @@
+export FC="crayftn"
+export FCFLAGS="-G0 -eIn -K trap=divz:ovf:unf -R b -homp -I."
+export LDFLAGS=" "
+export LIBS=" "

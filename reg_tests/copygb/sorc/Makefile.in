@@ -38,7 +38,7 @@ clean:
 uninstall:
 	-rm -f $(DESTDIR)$(installdir)/copygb*
 
-distclean: clean uninstall
+distclean:
 	-rm Makefile
 
 install:
