@@ -1,5 +1,5 @@
 Instructions for building and installing the
-ipolates library (iplib) ip on Unix.
+ipolates library (iplib) on Unix.
 ***************************************************
 
 $Id$
@@ -101,11 +101,14 @@ you would use:
 
   --enable-promote=d
 
-Not specifying this switch is equivalent to "--enable-promote=4".
+Not specifying this switch is equivalent to "--enable-promote=4".  Note: this 
+switch is not active on WCOSS-Cray.  To compile with the desired precision, the
+proper compiler flags must be included in FCFLAGS=" ".
 
 The definition of the "FC" enviroment variable is not strictly necessary as it defaults
 to "ifort" on linux systems if available (followed by "gfortran" and "pgf95" if not), and
-to "xlf2003" on AIX systems.
+to "xlf2003" on AIX systems.  Note: on WCOSS-Cray, do not call the compiler
+directly.  Rather use the "ftn" wrapper as follows: FC="ftn".
 
 
 
@@ -206,8 +209,8 @@ conventions on WCOSS-Cray/Surge/Luna, type:
 
   $ make nco_cray_install
 
-If you create the double precsion (_8) and mixed precision (_d) libraries and
-invoke "make nco_cray_install", the directory tree will look like:
+If you create all precision versions of the library and invoke
+"make nco_cray_install", the directory tree will look like:
 
   ip/
    |

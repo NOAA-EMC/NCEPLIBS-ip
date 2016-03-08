@@ -103,6 +103,7 @@ HOW TO RUN THE TEST:
 1) Build the IPOLATES library.  Go to $root and read the
 README.build file for details.  
 
+
 2) Ensure the ./lib directory contains (or links to) the IPOLATES libraries and
 its module files.  The ./lib directory already contains links that point to the
 libraries and module files as they would exist when using the "nco" install
@@ -110,13 +111,13 @@ option from step (1).  I.e:
 
  module file directories:
    incmod_4 -> $root/ip/vX.Y.Z/incmod/ip_vX.Y.Z_4  (single precision)
-   incmod_d -> $root/ip/vX.Y.Z/incmod/ip_vX.Y.Z_d (mixed precision)
-   incmod_8 -> $root/ip/vX.Y.Z/incmod/ip_vX.Y.Z_8 (double precistion)
+   incmod_d -> $root/ip/vX.Y.Z/incmod/ip_vX.Y.Z_d  (mixed precision)
+   incmod_8 -> $root/ip/vX.Y.Z/incmod/ip_vX.Y.Z_8  (double precistion)
 
  libraries:
-   libip_4.a -> $root/ip/vX.Y.Z/libip_vX.Y.Z_4.a (single precision)
-   libip_d.a -> $root/ip/vX.Y.Z/libip_vX.Y.Z_d.a(mixed precision)
-   libip_8.a -> $root/ip/vX.Y.Z/libip_vX.Y.Z_8.a (double precistion)
+   libip_4.a -> $root/ip/vX.Y.Z/libip_vX.Y.Z_4.a   (single precision)
+   libip_d.a -> $root/ip/vX.Y.Z/libip_vX.Y.Z_d.a   (mixed precision)
+   libip_8.a -> $root/ip/vX.Y.Z/libip_vX.Y.Z_8.a   (double precistion)
 
 So if that is how IPOLATES was built in step (1), there is
 nothing more to do. 
@@ -127,13 +128,14 @@ you will need to adjust these links.  Example: Suppose you want to
 test with the OPS version of IPOLATES on WCOSS Phase 2.  You would set the
 links as follows:
 
- incmod_4 -> /nwprod2/lib/ip/vX.Y.Z/incmod/ip_vX.Y.Z_4
- incmod_d -> /nwprod2/lib/ip/vX.Y.Z/incmod/ip_vX.Y.Z_d
- incmod_8 -> /nwprod2/lib/ip/vX.Y.Z/incmod/ip_vX.Y.Z_8
+  incmod_4 -> /nwprod2/lib/ip/vX.Y.Z/incmod/ip_vX.Y.Z_4
+  incmod_d -> /nwprod2/lib/ip/vX.Y.Z/incmod/ip_vX.Y.Z_d
+  incmod_8 -> /nwprod2/lib/ip/vX.Y.Z/incmod/ip_vX.Y.Z_8
  
- libip_4.a -> /nwprod2/lib/ip/vX.Y.Z/libip_vX.Y.Z_4.a
- libip_d.a -> /nwprod2/lib/ip/vX.Y.Z/libip_vX.Y.Z_d.a
- libip_8.a -> /nwprod2/lib/ip/vX.Y.Z/libip_vX.Y.Z_8.a
+  libip_4.a -> /nwprod2/lib/ip/vX.Y.Z/libip_vX.Y.Z_4.a
+  libip_d.a -> /nwprod2/lib/ip/vX.Y.Z/libip_vX.Y.Z_d.a
+  libip_8.a -> /nwprod2/lib/ip/vX.Y.Z/libip_vX.Y.Z_8.a
+
 
 3) Build the "scalar" and "vector" unit test programs 
 by running the "make_unit_test.ksh" build script.  (Use the 
@@ -142,9 +144,8 @@ by running the "make_unit_test.ksh" build script.  (Use the
 The IPOLATES library is dependant on the NCEP SP 
 (spectral) library (SPLIB).  Intel compiled versions of SPLIB
 exist on Theia and WCOSS Phase 1/2.  When running "make_unit_test.ksh"
-on these machines, these SP libraries are automatically
-located by module loads and stored in these 
-environment variables:
+on these machines, these SP libraries are automatically located
+by module loads and stored in these environment variables:
 
  SP_LIB4 (single precision)
  SP_LIBd (mixed precision)
@@ -161,7 +162,7 @@ varibles by editing the build script, or by exporting these
 variables on the command line before invoking it.
 Example (when using bash):
 
- export SP_LIB4=$directory/libsp_4.a
+ $ export SP_LIB4=$directory/libsp_4.a
 
 Once the SP libraries have been located, run "make_unit_test.ksh" 
 (or make_unit_test_wcoss-cray.ksh) from the command line.  The script 
@@ -169,15 +170,16 @@ takes one argument: the "config-setup" file that was used to compile
 IPOLATES. So, if you built IPOLATES with the Intel-optimized option, 
 you would invoke as follows:
 
- $ ./make_unit_test.ksh ifort.setup
+ $ make_unit_test.ksh ifort.setup
 
 On WCOSS-Cray, you would do the following:
 
- $ ./make_unit_test_wcoss-cray.ksh ifort.setup
+ $ make_unit_test_wcoss-cray.ksh ifort.setup
+
 
 4) Run the unit test.  Go to ./scripts.  To run interactively, type:
 
- $ ./run_unit_test.ksh
+ $ run_unit_test.ksh
 
 You may want to pipe the output to a log fle.  Check output for any 
 "large" differences between the computed and baseline data.
