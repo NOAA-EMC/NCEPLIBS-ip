@@ -110,9 +110,9 @@ libraries and module files as they would exist when using the "nco" install
 option from step (1).  I.e:
 
  module file directories:
-   incmod_4 -> $root/ip/vX.Y.Z/incmod/ip_vX.Y.Z_4  (single precision)
-   incmod_d -> $root/ip/vX.Y.Z/incmod/ip_vX.Y.Z_d  (mixed precision)
-   incmod_8 -> $root/ip/vX.Y.Z/incmod/ip_vX.Y.Z_8  (double precistion)
+   incmod_4 -> $root/ip/vX.Y.Z/include/ip_vX.Y.Z_4  (single precision)
+   incmod_d -> $root/ip/vX.Y.Z/include/ip_vX.Y.Z_d  (mixed precision)
+   incmod_8 -> $root/ip/vX.Y.Z/include/ip_vX.Y.Z_8  (double precistion)
 
  libraries:
    libip_4.a -> $root/ip/vX.Y.Z/libip_vX.Y.Z_4.a   (single precision)
@@ -128,9 +128,9 @@ you will need to adjust these links.  Example: Suppose you want to
 test with the OPS version of IPOLATES on WCOSS Phase 2.  You would set the
 links as follows:
 
-  incmod_4 -> /nwprod2/lib/ip/vX.Y.Z/incmod/ip_vX.Y.Z_4
-  incmod_d -> /nwprod2/lib/ip/vX.Y.Z/incmod/ip_vX.Y.Z_d
-  incmod_8 -> /nwprod2/lib/ip/vX.Y.Z/incmod/ip_vX.Y.Z_8
+  incmod_4 -> /nwprod2/lib/ip/vX.Y.Z/include/ip_vX.Y.Z_4
+  incmod_d -> /nwprod2/lib/ip/vX.Y.Z/include/ip_vX.Y.Z_d
+  incmod_8 -> /nwprod2/lib/ip/vX.Y.Z/include/ip_vX.Y.Z_8
  
   libip_4.a -> /nwprod2/lib/ip/vX.Y.Z/libip_vX.Y.Z_4.a
   libip_d.a -> /nwprod2/lib/ip/vX.Y.Z/libip_vX.Y.Z_d.a

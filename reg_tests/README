@@ -64,12 +64,12 @@ The following steps are required to setup and run the test suite:
     "ln -s /branch/ip/vX.Y.Z/libip_vX.Y.Z_8.a ./libip_test_8.a"
     "ln -s /branch/ip/vX.Y.Z/libip_vX.Y.Z_d.a ./libip_test_d.a"
 
-    "ln -s /trunk/ip/vX.Y.Z/incmod/ip_vX.Y.Z_4  ./incmod_ctl_4"
-    "ln -s /trunk/ip/vX.Y.Z/incmod/ip_vX.Y.Z_8  ./incmod_ctl_8"
-    "ln -s /trunk/ip/vX.Y.Z/incmod/ip_vX.Y.Z_d  ./incmod_ctl_d"
-    "ln -s /branch/ip/vX.Y.Z/incmod/ip_vX.Y.Z_4 ./incmod_test_4"
-    "ln -s /branch/ip/vX.Y.Z/incmod/ip_vX.Y.Z_8 ./incmod_test_8"
-    "ln -s /branch/ip/vX.Y.Z/incmod/ip_vX.Y.Z_d ./incmod_test_d"
+    "ln -s /trunk/ip/vX.Y.Z/include/ip_vX.Y.Z_4  ./incmod_ctl_4"
+    "ln -s /trunk/ip/vX.Y.Z/include/ip_vX.Y.Z_8  ./incmod_ctl_8"
+    "ln -s /trunk/ip/vX.Y.Z/include/ip_vX.Y.Z_d  ./incmod_ctl_d"
+    "ln -s /branch/ip/vX.Y.Z/include/ip_vX.Y.Z_4 ./incmod_test_4"
+    "ln -s /branch/ip/vX.Y.Z/include/ip_vX.Y.Z_8 ./incmod_test_8"
+    "ln -s /branch/ip/vX.Y.Z/include/ip_vX.Y.Z_d ./incmod_test_d"
 
 (3) Check the ./reg_tests/config-setup/*.setup files in your branch.
 
