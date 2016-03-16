@@ -37,6 +37,6 @@ Implementation Instructions on WCOSS-Cray
  - checkout subversion tag: https://svnemc.ncep.noaa.gov/projects/nceplibs/ip/tags/version_3.0.0
  - type "make_ip_lib_wcoss-cray.sh ifort.setup" to build library with the Intel compiler.
  - the librares and include modules will be placed under ./ip/v3.0.0/intel
- - type "make_ip_lib_wcoss-cray.sh crayftn.setup" to build library with the Intel compiler.
+ - type "make_ip_lib_wcoss-cray.sh crayftn.setup" to build library with the Cray compiler.
  - the librares and include modules will be placed under ./ip/v3.0.0/cray
  - see README.build for more details.
