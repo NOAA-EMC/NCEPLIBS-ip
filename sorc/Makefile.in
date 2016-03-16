@@ -63,16 +63,16 @@ install:
 nco_install:
 	$(INSTALL) -d $(DESTDIR)$(nco_installdir)
 	$(INSTALL_DATA) $(LIBRARY) $(DESTDIR)$(nco_installdir)/lib$(distdir).a
-	$(INSTALL) -d $(DESTDIR)$(nco_installdir)/incmod/$(distdir)
-	$(INSTALL_DATA) *.mod $(DESTDIR)$(nco_installdir)/incmod/$(distdir)
+	$(INSTALL) -d $(DESTDIR)$(nco_installdir)/include/$(distdir)
+	$(INSTALL_DATA) *.mod $(DESTDIR)$(nco_installdir)/include/$(distdir)
 	$(INSTALL_DATA) ../config.log $(DESTDIR)$(nco_installdir)/config.log.$(distdir)
         
 # ...NCO-style installation on wcoss-cray
 nco_cray_install:
 	$(INSTALL) -d $(DESTDIR)$(nco_cray_installdir)
 	$(INSTALL_DATA) $(LIBRARY) $(DESTDIR)$(nco_cray_installdir)/lib$(distdir).a
-	$(INSTALL) -d $(DESTDIR)$(nco_cray_installdir)/incmod/$(distdir)
-	$(INSTALL_DATA) *.mod $(DESTDIR)$(nco_cray_installdir)/incmod/$(distdir)
+	$(INSTALL) -d $(DESTDIR)$(nco_cray_installdir)/include/$(distdir)
+	$(INSTALL_DATA) *.mod $(DESTDIR)$(nco_cray_installdir)/include/$(distdir)
 	$(INSTALL_DATA) ../config.log $(DESTDIR)$(nco_cray_installdir)/config.log.$(distdir)
 
 # ...Universal uninstallation
