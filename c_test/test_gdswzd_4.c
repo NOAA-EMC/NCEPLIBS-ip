@@ -1,11 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-void c_gdswzd(int *kgds, int *iopt, int *npts, float *fill,
-         float *xpts, float *ypts, float *rlon, float *rlat,
-         int *nret,
-         float *crot, float *srot, float *xlon, float *xlat, 
-         float *ylon, float *ylat, float *area);
+#include "iplib.h"
 
 int main()
 {
@@ -58,7 +54,7 @@ int main()
 
   nret=0;
 
-  c_gdswzd(kgds, &iopt, &npts, &fill,
+  gdswzd(kgds, iopt, npts, fill,
          xpts, ypts, rlon, rlat,
          &nret,
          crot, srot, xlon, xlat, ylon, ylat, area);
