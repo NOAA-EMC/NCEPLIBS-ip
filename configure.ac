@@ -44,29 +44,45 @@ esac
 AC_MSG_NOTICE([Building precision ${precision} version.])
 AC_SUBST(PRECISION,[${precision}])
 
+AC_SUBST(FPPFLAGS)
 
 # Set platform/compiler specific flags
 case $FC in
-  ifort|pgf95)
+  ifort)
     case ${precision} in
-      4) ;;
-      8) FCFLAGS="-r8 -i8 $FCFLAGS";;
-      d) FCFLAGS="-r8 $FCFLAGS";;
+      4) FPPFLAGS="-fpp -DLSIZE=4 -save-temps $FPPFLAGS";;
+      8) FCFLAGS="-r8 -i8 $FCFLAGS"
+         FPPFLAGS="-fpp -DLSIZE=8 -save-temps $FPPFLAGS";;
+      d) FCFLAGS="-r8 $FCFLAGS"
+         FPPFLAGS="-fpp -DLSIZE=d -save-temps $FPPFLAGS";;
+    esac
+    ;;
+  pgf95)
+    case ${precision} in
+      4) FPPFLAGS="-DLSIZE=4 $FPPFLAGS";;
+      8) FCFLAGS="-r8 -i8 $FCFLAGS"
+         FPPFLAGS="-DLSIZE=8 $FPPFLAGS";;
+      d) FCFLAGS="-r8 $FCFLAGS"
+         FPPFLAGS="-DLSIZE=d $FPPFLAGS";;
     esac
     ;;
   gfortran)
     case ${precision} in
-      4) ;;
-      8) FCFLAGS="-fdefault-real-8 -fdefault-integer-8 $FCFLAGS";;
-      d) FCFLAGS="-fdefault-real-8 $FCFLAGS";;
+      4) FPPFLAGS="-cpp -DLSIZE=4 $FPPFLAGS";;
+      8) FCFLAGS="-fdefault-real-8 -fdefault-integer-8 $FCFLAGS"
+         FPPFLAGS="-cpp -DLSIZE=8 $FPPFLAGS";;
+      d) FCFLAGS="-fdefault-real-8 $FCFLAGS"
+         FPPFLAGS="-cpp -DLSIZE=d $FPPFLAGS";;
     esac
     ;;
   xlf*)
     ARFLAGS="-X64 $ARFLAGS"
     case ${precision} in
-      4) ;;
-      8) FCFLAGS="-qrealsize=8 -qintsize=8 $FCFLAGS";;
-      d) FCFLAGS="-qrealsize=8 $FCFLAGS";;
+      4) FPPFLAGS="-WF,-DLSIZE=4 $FPPFLAGS";;
+      8) FCFLAGS="-qrealsize=8 -qintsize=8 $FCFLAGS"
+         FPPFLAGS="-WF,-DLSIZE=8 $FPPFLAGS";;
+      d) FCFLAGS="-qrealsize=8 $FCFLAGS"
+         FPPFLAGS="-WF,-DLSIZE=d $FPPFLAGS";;
     esac
     ;;
   *) AC_MSG_WARN([Precision promotion flags for $FC unknown and not set]);;

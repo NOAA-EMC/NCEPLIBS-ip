@@ -21,6 +21,7 @@ nco_cray_installdir = $(prefix)/$(tarname)/$(version)/$(wcoss_cray_dir)
 # Compiler substitution variables
 FC       = @FC@
 FCFLAGS  = @FCFLAGS@ -c
+FPPFLAGS  = @FPPFLAGS@
 AR       = @AR@
 ARFLAGS  = @ARFLAGS@
 RANLIB   = @RANLIB@
@@ -43,7 +44,7 @@ $(LIBRARY): $(OBJ_FILES)
 library: $(LIBRARY)
 
 clean:
-	-rm -f *.o *.mod *.a
+	-rm -f *.i90 *.o *.mod *.a
 
 distclean:
 	-rm Makefile
