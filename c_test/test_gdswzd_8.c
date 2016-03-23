@@ -1,22 +1,22 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-void c_gdswzd(int *kgds, int *iopt, int *npts, float *fill,
-         float *xpts, float *ypts, float *rlon, float *rlat,
-         int *nret,
-         float *crot, float *srot, float *xlon, float *xlat, 
-         float *ylon, float *ylat, float *area);
+void c_gdswzd(long *kgds, long *iopt, long *npts, double *fill,
+         double *xpts, double *ypts, double *rlon, double *rlat,
+         long *nret,
+         double *crot, double *srot, double *xlon, double *xlat, 
+         double *ylon, double *ylat, double *area);
 
 int main()
 {
-  int kgds[200];
-  int iopt, npts, nret;
-  float fill;
-  float *xpts, *ypts, *rlon, *rlat;
-  float *crot, *srot, *xlon, *xlat, *ylon, *ylat, *area;
+  long kgds[200];
+  long iopt, npts, nret;
+  double fill;
+  double *xpts, *ypts, *rlon, *rlat;
+  double *crot, *srot, *xlon, *xlat, *ylon, *ylat, *area;
 
-  int im = 251;
-  int jm = 201;
+  long im = 251;
+  long jm = 201;
 
   kgds[0]  = 205;
   kgds[1]  = im;
@@ -36,17 +36,17 @@ int main()
   npts = kgds[1] * kgds[2];
   fill = -9999.0;
 
-  xpts = (float *) malloc(npts * sizeof(float));
-  ypts = (float *) malloc(npts * sizeof(float));
-  rlon = (float *) malloc(npts * sizeof(float));
-  rlat = (float *) malloc(npts * sizeof(float));
-  crot = (float *) malloc(npts * sizeof(float));
-  srot = (float *) malloc(npts * sizeof(float));
-  xlon = (float *) malloc(npts * sizeof(float));
-  xlat = (float *) malloc(npts * sizeof(float));
-  ylon = (float *) malloc(npts * sizeof(float));
-  ylat = (float *) malloc(npts * sizeof(float));
-  area = (float *) malloc(npts * sizeof(float));
+  xpts = (double *) malloc(npts * sizeof(double));
+  ypts = (double *) malloc(npts * sizeof(double));
+  rlon = (double *) malloc(npts * sizeof(double));
+  rlat = (double *) malloc(npts * sizeof(double));
+  crot = (double *) malloc(npts * sizeof(double));
+  srot = (double *) malloc(npts * sizeof(double));
+  xlon = (double *) malloc(npts * sizeof(double));
+  xlat = (double *) malloc(npts * sizeof(double));
+  ylon = (double *) malloc(npts * sizeof(double));
+  ylat = (double *) malloc(npts * sizeof(double));
+  area = (double *) malloc(npts * sizeof(double));
 
 
   for (int j=0; j<jm; j++) {
@@ -55,8 +55,6 @@ int main()
      ypts[j*im+i] = j+1;
   }
   }
-
-  printf(" got here \n");
 
   nret=0;
 
