@@ -7,7 +7,16 @@ if [[ "$(hostname -f)" == g????.ncep.noaa.gov || \
   module purge
   module load ics
   module load sp
+elif [[ "$(hostname)" == slogin? || "$(hostname)" == llogin? ]]; then # WCOSS Cray ]]
+  . /opt/modules/3.2.6.7/init/ksh
+  module purge
+  module load PrgEnv-intel
+  module load craype-sandybridge
+  module load sp-intel/2.0.2
+  CCOMP="cc"
 fi
+
+CCOMP=${CCOMP:-icc}
 
 SP_LIB4=${SP_LIB4:?}
 SP_LIB8=${SP_LIB8:?}
@@ -23,8 +32,8 @@ do
     8) SP_LIB=$SP_LIB8 ;;
     d) SP_LIB=$SP_LIBd ;;
   esac
-  icc -c -std=c99 -I../lib/incmod_${precision} test_gdswzd_${precision}.c
-  icc test_gdswzd_${precision}.o ../lib/libip_${precision}.a ${SP_LIB} -lifcore -o test_gdswzd_${precision}.exe
+  $CCOMP -c -std=c99 -I../lib/incmod_${precision} test_gdswzd_${precision}.c
+  $CCOMP test_gdswzd_${precision}.o ../lib/libip_${precision}.a ${SP_LIB} -lifcore -o test_gdswzd_${precision}.exe
   mv test_gdswzd_${precision}.exe ../exec
   rm -f *.o
 done

@@ -44,7 +44,7 @@ $(LIBRARY): $(OBJ_FILES)
 library: $(LIBRARY)
 
 clean:
-	-rm -f *.i90 *.o *.mod *.a
+	-rm -f *.i90 *.i *.o *.mod *.a
 
 distclean:
 	-rm Makefile
