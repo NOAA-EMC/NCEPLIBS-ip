@@ -3,6 +3,17 @@
 
 #include "iplib.h"
 
+/**************************************************************
+  Unit test to ensure the 'c' wrapper routine for gdswzd 
+  is working.
+
+  Call gdswzd for a rotated lat/lon grid with "B" stagger
+  and print out the corner point lat/lons and the number
+  of valid grid points returned.
+
+  Tests the single precision version of gdswzd.
+**************************************************************/
+
 int main()
 {
   int kgds[200];
@@ -44,7 +55,6 @@ int main()
   ylat = (float *) malloc(npts * sizeof(float));
   area = (float *) malloc(npts * sizeof(float));
 
-
   for (int j=0; j<jm; j++) {
   for (int i=0; i<im; i++) {
      xpts[j*im+i] = i+1;
@@ -59,14 +69,21 @@ int main()
          &nret,
          crot, srot, xlon, xlat, ylon, ylat, area);
 
-  printf(" nret = %d \n", nret);
-  printf(" rlon[0], rlat[0] = %f %f \n", rlon[0]-360, rlat[0]);
-  printf(" rlon[npts], rlat[npts] = %f %f \n", rlon[nret-1], rlat[nret-1]);
+  printf(" Points returned from gdswzd = %d \n", nret);
+  printf(" Expected points returned    = 50451 \n\n");
 
+  printf(" First corner point lat/lon = %f %f \n", rlat[0], rlon[0]-360);
+  printf(" Expected lat/lon           = -7.446 -144.139 \n\n");
+
+  printf(" Last corner point lat/lon  = %f %f \n", rlat[nret-1], rlon[nret-1]);
+  printf(" Expected lat/lon           = 44.56 14.744 \n");
+
+/*
   for (int n=0; n<nret; n++) {
     printf(" n = %d crot, srot %f %f \n", n, crot[n], srot[n]);
      printf(" n = %d rlon[n], rlat[n] = %f %f \n", n, rlon[n], rlat[n]);
   }
+*/
 
   free(xpts);
   free(ypts);
