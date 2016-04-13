@@ -2,21 +2,39 @@
 
 set -x
 
+compiler=${compiler:-intel}
+
 if [[ "$(hostname -f)" == g????.ncep.noaa.gov || \
       "$(hostname -f)" == t????.ncep.noaa.gov ]]; then  #WCOSS Phase 1/2
-  module purge
-  module load ics
-  module load sp
+  case $compiler in
+    intel)
+      module purge
+      module load ics
+      module load sp ;;
+  esac
 elif [[ "$(hostname)" == slogin? || "$(hostname)" == llogin? ]]; then # WCOSS Cray ]]
   . /opt/modules/3.2.6.7/init/ksh
-  module purge
-  module load PrgEnv-intel
-  module load craype-sandybridge
-  module load sp-intel/2.0.2
-  CCOMP="cc"
+  case $compiler in
+    intel) module purge
+           module load PrgEnv-intel
+           module load craype-sandybridge
+           module load sp-intel/2.0.2 
+           CCOMP="cc"
+           CFLAGS="-std=c99" 
+           LIBS="-lifcore" ;; 
+    cray)  module purge
+           module load PrgEnv-cray
+           module load craype-haswell
+           module load sp-cray-haswell/2.0.2 
+           CCOMP="cc"
+           CFLAGS=" " 
+           LIBS=" " ;;
+  esac
 fi
 
 CCOMP=${CCOMP:-icc}
+CFLAGS=${CFLAGS:-"-std=c99"}
+LIBS=${LIBS:-"-lifcore"}
 
 SP_LIB4=${SP_LIB4:?}
 SP_LIB8=${SP_LIB8:?}
@@ -32,8 +50,8 @@ do
     8) SP_LIB=$SP_LIB8 ;;
     d) SP_LIB=$SP_LIBd ;;
   esac
-  $CCOMP -c -std=c99 -I../lib/incmod_${precision} test_gdswzd_${precision}.c
-  $CCOMP test_gdswzd_${precision}.o ../lib/libip_${precision}.a ${SP_LIB} -lifcore -o test_gdswzd_${precision}.exe
+  $CCOMP $CFLAGS -c -I../lib/incmod_${precision} test_gdswzd_${precision}.c
+  $CCOMP test_gdswzd_${precision}.o ../lib/libip_${precision}.a ${SP_LIB} ${LIBS} -o test_gdswzd_${precision}.exe
   mv test_gdswzd_${precision}.exe ../exec
   rm -f *.o
 done
