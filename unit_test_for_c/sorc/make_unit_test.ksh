@@ -30,6 +30,14 @@ elif [[ "$(hostname)" == slogin? || "$(hostname)" == llogin? ]]; then # WCOSS Cr
            CFLAGS=" " 
            LIBS=" " ;;
   esac
+elif [[ "$(hostname -f)" == tfe?? ]]; then # Theia
+  case $compiler in
+    intel)
+      module purge
+      module use -a /scratch3/NCEPDEV/nwprod/lib/modulefiles
+      module load intel
+      module load sp ;;
+  esac
 fi
 
 CCOMP=${CCOMP:-icc}
