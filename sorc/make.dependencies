@@ -1,4 +1,4 @@
- c_gdswzd.o : gdswzd_mod.o c_gdswzd.F90 
+ gdswzd_c.o : gdswzd_mod.o gdswzd_c.F90 
  gausslat.o : gausslat.f90
  gdswzd00_mod.o : gdswzd00_mod.f90
  gdswzd01_mod.o : gdswzd01_mod.f90

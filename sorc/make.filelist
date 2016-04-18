@@ -1,5 +1,5 @@
 # The list of files that need preprocessing
-FPP_FILES = c_gdswzd.F90
+FPP_FILES = gdswzd_c.F90
 
 # The list of regular source files
 FSRC_FILES = \
