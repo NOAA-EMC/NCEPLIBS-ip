@@ -37,6 +37,14 @@ elif [[ "$(hostname -f)" == tfe?? ]]; then # Theia
       module use -a /scratch3/NCEPDEV/nwprod/lib/modulefiles
       module load intel
       module load sp ;;
+    gnu)
+      module purge
+      CCOMP="gcc"
+      CFLAGS="-std=c99"
+      LIBS="-lgfortran" 
+      SP_LIB4="/scratch4/NCEPDEV/da/noscrub/George.Gayno/sp_v2.0.2/gfortran/libsp_v2.0.2_4.a"
+      SP_LIB8="/scratch4/NCEPDEV/da/noscrub/George.Gayno/sp_v2.0.2/gfortran/libsp_v2.0.2_8.a"
+      SP_LIBd="/scratch4/NCEPDEV/da/noscrub/George.Gayno/sp_v2.0.2/gfortran/libsp_v2.0.2_d.a" ;;
   esac
 fi
 
