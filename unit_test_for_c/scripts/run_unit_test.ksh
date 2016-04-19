@@ -18,6 +18,8 @@
 # There are separate versions for the single ("4"), mixed ("d"), and
 # double ("8") versions of iplib.  After compilation, the executables
 # are in ../exec.
+#
+# For more details, please see the ../README file.
 #---------------------------------------------------------------------------------
 
 #set -x

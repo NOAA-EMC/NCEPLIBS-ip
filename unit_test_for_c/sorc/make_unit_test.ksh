@@ -1,6 +1,21 @@
 #!/bin/ksh --login
 
-set -x
+#-----------------------------------------------------------------------
+# Script to build the 'c' unit test.
+#
+# After compilation, the executables reside in ../exec.  There is
+# one executable for each precision version of iplib.
+#
+# For details on how to use, please see the ../README.build file.
+#-----------------------------------------------------------------------
+
+#set -x
+
+#-----------------------------------------------------------------------
+# This section loads the required compiler modules for WCOSS and
+# Theia and sets the compiler and compiler flags.  It also locates
+# the required SP libraries.
+#-----------------------------------------------------------------------
 
 compiler=${compiler:-intel}
 
@@ -60,15 +75,21 @@ CCOMP=${CCOMP:-icc}
 CFLAGS=${CFLAGS:-"-std=c99"}
 LIBS=${LIBS:-"-lifcore"}
 
-SP_LIB4=${SP_LIB4:?}
-SP_LIB8=${SP_LIB8:?}
-SP_LIBd=${SP_LIBd:?}        # Mixed precision libraries
+SP_LIB4=${SP_LIB4:?}        # Single precsion sp library
+SP_LIB8=${SP_LIB8:?}        # Double precision sp library
+SP_LIBd=${SP_LIBd:?}        # Mixed precision sp library
 
 rm -f *.exe *.o
 rm -f ../exec/*.exe
 
+#-----------------------------------------------------------------------
+# Build the executables and place them in ../exec.
+#-----------------------------------------------------------------------
+
 for precision in "4" "d" "8"
 do
+  echo
+  echo "Building precision ${precision} version" >&2
   case $precision in
     4) SP_LIB=$SP_LIB4 ;;
     8) SP_LIB=$SP_LIB8 ;;
@@ -76,6 +97,13 @@ do
   esac
   $CCOMP $CFLAGS -c -I../lib/incmod_${precision} test_gdswzd_${precision}.c
   $CCOMP test_gdswzd_${precision}.o ../lib/libip_${precision}.a ${SP_LIB} ${LIBS} -o test_gdswzd_${precision}.exe
+  if [ $? -ne 0 ]; then
+    echo 
+    echo "** ERROR building precision ${precision} version. EXIT." >&2
+    exit
+  fi
   mv test_gdswzd_${precision}.exe ../exec
   rm -f *.o
 done
+
+echo; echo DONE
