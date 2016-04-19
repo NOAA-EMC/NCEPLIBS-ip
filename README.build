@@ -90,7 +90,7 @@ example:
   $ ./configure --prefix=${PWD} \
                 --enable-promote=4|8|d \
                 FC="ifort" \
-                FCFLAGS="-O2 -g -traceback -fixed"
+                FCFLAGS="-O2 -g"
 
 The --prefix switch sets the installation directory and defaults to /usr/local so
 make sure you set it to a directory in which you have write access.
@@ -101,15 +101,26 @@ you would use:
 
   --enable-promote=d
 
-Not specifying this switch is equivalent to "--enable-promote=4".  Note: this 
-switch is not active on WCOSS-Cray.  To compile with the desired precision, the
-proper compiler flags must be included in FCFLAGS=" ".
+Not specifying this switch is equivalent to "--enable-promote=4". 
 
 The definition of the "FC" enviroment variable is not strictly necessary as it defaults
 to "ifort" on linux systems if available (followed by "gfortran" and "pgf95" if not), and
-to "xlf2003" on AIX systems.  Note: on WCOSS-Cray, do not call the compiler
-directly.  Rather use the "ftn" wrapper as follows: FC="ftn".
+to "xlf2003" on AIX systems.  
 
+
+1a. Configuration on WCOSS-Cray
+-------------------------------
+
+Some notes concerning the Cray.  First, do not call the compiler directly.  Rather,
+use the "ftn" wrapper.  Also, the "--enable-promote" switch does not set the
+compiler promote flags nor the FPPFLAGS as on other machines.  So to build 
+with Intel (after loading the PrgEnv-intel module) for double precision, you would do:
+
+  $ ./configure --prefix=${PWD} \
+                --enable-promote=8 \
+                FC="ftn" \
+                FCFLAGS="-O2 -g -i8 -r8"  \
+                FPPFLAGS="-fpp -save-temps -DLSIZE=8"
 
 
 
@@ -140,6 +151,12 @@ useful when porting iplib to a new platform to ensure it is
 working correctly.  See the README in that directory for details
 on how to build and run it.
 
+A unit test specifically to test the gdswzd 'c' language wrapper
+is in the ./unit_test_for_c directory.  This 'c' program calls
+gdswzd for a rotated lat/lon 'B' grid and prints out the
+corner point lat/lons and their expected values to standard
+output.  See the README in that directory for details on 
+how to build and run it.
 
 
 
@@ -226,14 +243,14 @@ If you create all precision versions of the library and invoke
                          `--ip_v2.0.1_d/
                          `--ip_v2.0.1_8/
 
-Here $COMPILER is the name of the Fortran compiler used.  For example, if the
-Intel compiler is used, then $COMPILER will be "ifort".  This may be changed 
-at the configure step by "--enable-wcoss_cray_dir=${your_name}" as:
+Here $COMPILER is the name of the Fortran compiler used.  For example, if at
+the configure step you did "FC=ftn", then $COMPILER will be "ftn".  This
+may be changed at the configure step by "--enable-wcoss_cray_dir=${your_name}" as:
 
   $ ./configure --prefix=${PWD} \
                 --enable-promote=4|8|d \
                 --enable-wcoss_cray_dir=intel \
-                FC="ifort" \
+                FC="ftn" \
                 ... other arguments ...
 
 which would result in the following directory tree:

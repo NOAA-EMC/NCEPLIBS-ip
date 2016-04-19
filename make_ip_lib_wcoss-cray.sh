@@ -112,6 +112,10 @@ case $FC in
     FCFLAGS="${FCFLAGS} -axCore-AVX2"  # and for haswell.
     R8FLAG="-r8"
     I8FLAG="-i8"
+    FPPFLAGS="-fpp -save-temps"
+    FPPFLAG4="-DLSIZE=4"
+    FPPFLAGD="-DLSIZE=d"
+    FPPFLAG8="-DLSIZE=8"
     COMP_NAME="intel"
     ;;
   gfortran)
@@ -119,6 +123,10 @@ case $FC in
     module load craype-haswell
     R8FLAG="-fdefault-real-8"
     I8FLAG="-fdefault-integer-8"
+    FPPFLAGS="-cpp"
+    FPPFLAG4="-DLSIZE=4"
+    FPPFLAGD="-DLSIZE=d"
+    FPPFLAG8="-DLSIZE=8"
     COMP_NAME="gnu"
     ;;
   crayftn)
@@ -126,6 +134,10 @@ case $FC in
     module load craype-haswell
     R8FLAG="-s real64"
     I8FLAG="-s integer64"
+    FPPFLAGS="-eZ"
+    FPPFLAG4="-DLSIZE=4"
+    FPPFLAGD="-DLSIZE=d"
+    FPPFLAG8="-DLSIZE=8"
     COMP_NAME="cray"
     ;;
   *)
@@ -141,9 +153,12 @@ module list
 for PRECISION in 4 8 d; do  # single ("4"), double ("8") or mixed ("d") precison IPLIB
 
   case $PRECISION in
-    4) FCFLAGS_ALL=${FCFLAGS} ;;
-    8) FCFLAGS_ALL="${FCFLAGS} ${R8FLAG} ${I8FLAG}" ;;
-    d) FCFLAGS_ALL="${FCFLAGS} ${R8FLAG}" ;;
+    4) FCFLAGS_ALL=${FCFLAGS} 
+       FPPFLAGS_ALL="${FPPFLAGS} ${FPPFLAG4}";;
+    8) FCFLAGS_ALL="${FCFLAGS} ${R8FLAG} ${I8FLAG}"
+       FPPFLAGS_ALL="${FPPFLAGS} ${FPPFLAG8}";;
+    d) FCFLAGS_ALL="${FCFLAGS} ${R8FLAG}"
+       FPPFLAGS_ALL="${FPPFLAGS} ${FPPFLAGD}";;
   esac
 
   echo; echo; echo; echo
@@ -155,7 +170,7 @@ for PRECISION in 4 8 d; do  # single ("4"), double ("8") or mixed ("d") precison
   echo
 
   ./configure --prefix=${PWD} --enable-promote=${PRECISION} --enable-wcoss_cray_dir=${COMP_NAME} \
-    FC="ftn" FCFLAGS="${FCFLAGS_ALL} -craype-verbose"
+    FC="ftn" FCFLAGS="${FCFLAGS_ALL} -craype-verbose" FPPFLAGS="${FPPFLAGS_ALL}"
   if [ $? -ne 0 ]; then
     echo "${SCRIPT_NAME}: ERROR configuring for precision ${PRECISION} version build" >&2
     exit ${FAILURE}

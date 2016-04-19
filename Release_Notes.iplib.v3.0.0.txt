@@ -17,7 +17,7 @@ Change History
           ipmerge2, ipsector, ipspaste, polateg0, polateg1, polatge4.
         - Library build using Gnu autotools.
         - Mods required for WCOSS-Cray.
-        - New unit test.
+        - Two new unit tests.
         - The gdswiz and gdswzd routines were combined using
           optional arguments and made into modules.
 
