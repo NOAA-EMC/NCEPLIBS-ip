@@ -30,43 +30,43 @@ LOG_FILE=${WORK_DIR}/regression.log
 SUM_FILE=${WORK_DIR}/summary.log
 
 bsub -e $LOG_FILE -o $LOG_FILE -q "dev_shared" -P "GFS-T2O" \
-     -J "gausslat" -R "rusage[mem=100]" -W 0:01 $REG_DIR/gausslat/scripts/runall.ksh 
+     -J "gausslat" -R "rusage[mem=100]" -W 0:01 -cwd $(pwd) $REG_DIR/gausslat/scripts/runall.ksh 
 
 bsub -e $LOG_FILE -o $LOG_FILE -q "dev_shared" -P "GFS-T2O" \
-     -J "gdswzd" -R "rusage[mem=300]" -W 0:05 -w 'ended(gausslat)' $REG_DIR/gdswzd/scripts/runall.ksh 
+     -J "gdswzd" -R "rusage[mem=300]" -W 0:05 -w 'ended(gausslat)' -cwd $(pwd) $REG_DIR/gdswzd/scripts/runall.ksh 
 
 bsub -e $LOG_FILE -o $LOG_FILE -q "dev_shared" -P "GFS-T2O" \
-     -J "ipxwafs" -R "rusage[mem=100]" -W 0:05 -w 'ended(gdswzd)' $REG_DIR/ipxwafs/scripts/runall.ksh 
+     -J "ipxwafs" -R "rusage[mem=100]" -W 0:05 -w 'ended(gdswzd)' -cwd $(pwd) $REG_DIR/ipxwafs/scripts/runall.ksh 
 
 bsub -e $LOG_FILE -o $LOG_FILE -q "dev_shared" -P "GFS-T2O" \
-     -J "ipxwafs23" -R "rusage[mem=100]" -W 0:05 -w 'ended(ipxwafs)' $REG_DIR/ipxwafs2_3/scripts/runall.ksh 
+     -J "ipxwafs23" -R "rusage[mem=100]" -W 0:05 -w 'ended(ipxwafs)' -cwd $(pwd) $REG_DIR/ipxwafs2_3/scripts/runall.ksh 
 
 bsub -e $LOG_FILE -o $LOG_FILE -q "dev_shared" -P "GFS-T2O" \
-     -J "makgds" -R "rusage[mem=100]" -W 0:02 -w 'ended(ipxwafs23)' $REG_DIR/makgds/scripts/runall.ksh 
+     -J "makgds" -R "rusage[mem=100]" -W 0:02 -w 'ended(ipxwafs23)' -cwd $(pwd) $REG_DIR/makgds/scripts/runall.ksh 
 
 bsub -e $LOG_FILE -o $LOG_FILE -q "dev" -P "GFS-T2O" -J "ipolates1" \
-     -M 500 -extsched 'CRAYLINUX[]' -W 0:30 -w 'ended(makgds)' \
+     -M 500 -extsched 'CRAYLINUX[]' -W 0:30 -w 'ended(makgds)' -cwd $(pwd) \
       "export NODES=1; export OMP_NUM_THREADS=1; $REG_DIR/ipolates/scripts/runall.ksh 1"
 
 bsub -e $LOG_FILE -o $LOG_FILE -q "dev" -P "GFS-T2O" -J "ipolates4" \
-     -M 500 -extsched 'CRAYLINUX[]' -W 0:30 -w 'ended(ipolates1)' \
+     -M 500 -extsched 'CRAYLINUX[]' -W 0:30 -w 'ended(ipolates1)' -cwd $(pwd) \
       "export NODES=1; export OMP_NUM_THREADS=4; $REG_DIR/ipolates/scripts/runall.ksh 4"
 
 bsub -e $LOG_FILE -o $LOG_FILE -q "dev_shared" -P "GFS-T2O" \
-     -J "compares" -R "rusage[mem=100]" -W 0:10 -w 'ended(ipolates4)' $REG_DIR/ipolates/scripts/compare.ksh
+     -J "compares" -R "rusage[mem=100]" -W 0:10 -w 'ended(ipolates4)' -cwd $(pwd) $REG_DIR/ipolates/scripts/compare.ksh
 
 bsub -e $LOG_FILE -o $LOG_FILE -q "dev" -P "GFS-T2O" -J "ipolatev1" \
-     -M 500 -extsched 'CRAYLINUX[]' -W 1:00 -w 'ended(compares)' \
+     -M 500 -extsched 'CRAYLINUX[]' -W 1:00 -w 'ended(compares)' -cwd $(pwd) \
       "export NODES=1; export OMP_NUM_THREADS=1; $REG_DIR/ipolatev/scripts/runall.ksh 1"
 
 bsub -e $LOG_FILE -o $LOG_FILE -q "dev" -P "GFS-T2O" -J "ipolatev4" \
-     -M 500 -extsched 'CRAYLINUX[]' -W 1:00 -w 'ended(ipolatev1)' \
+     -M 500 -extsched 'CRAYLINUX[]' -W 1:00 -w 'ended(ipolatev1)' -cwd $(pwd) \
       "export NODES=1; export OMP_NUM_THREADS=4; $REG_DIR/ipolatev/scripts/runall.ksh 4"
 
 bsub -e $LOG_FILE -o $LOG_FILE -q "dev_shared" -P "GFS-T2O" \
-     -J "comparev" -R "rusage[mem=100]" -W 0:10 -w 'ended(ipolatev4)' $REG_DIR/ipolatev/scripts/compare.ksh
+     -J "comparev" -R "rusage[mem=100]" -W 0:10 -w 'ended(ipolatev4)' -cwd $(pwd) $REG_DIR/ipolatev/scripts/compare.ksh
 
 bsub -o $LOG_FILE -q "dev_shared" -P "GFS-T2O" -J "summary" \
-     -R "rusage[mem=100]" -W 0:01 -w 'ended(comparev)' "grep '<<<' $LOG_FILE >> $SUM_FILE"
+     -R "rusage[mem=100]" -W 0:01 -w 'ended(comparev)' -cwd $(pwd) "grep '<<<' $LOG_FILE >> $SUM_FILE"
 
 exit 0
