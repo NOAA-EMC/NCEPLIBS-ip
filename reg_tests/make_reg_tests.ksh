@@ -7,8 +7,6 @@
 # DO NOT USE THIS SCRIPT ON THE NCEP WCOSS-Cray machine.  Instead, 
 # use the "make_reg_tests_wcoss-cray.sh" script.
 # 
-# $Id$
-
 # PLEASE READ THE "README" FILE IN THIS DIRECTORY FOR DETAILS ON HOW
 # TO RUN THIS SCRIPT.
 #-----------------------------------------------------------------------------
@@ -32,16 +30,25 @@
 if [[ "$(hostname -f)" == tfe?? ]]; then # Theia
   module purge
   module use -a /scratch3/NCEPDEV/nwprod/lib/modulefiles
-  module load intel
+  module load intel/15.6.233
   module load bacio
   module load sp
   module load w3nco
-elif [[ "$(hostname -d)" == "ncep.noaa.gov" ]]; then  # WCOSS Phase 1/2.
+elif [[ "$(hostname -f)" == g????.ncep.noaa.gov || \
+        "$(hostname -f)" == t????.ncep.noaa.gov ]]; then  #WCOSS Phase 1/2
   module purge
-  module load ics
+  module load ics/15.0.6
   module load bacio
   module load sp
   module load w3nco
+elif [[ "$(hostname -f)" == v????.ncep.noaa.gov || \
+        "$(hostname -f)" == m????.ncep.noaa.gov ]]; then  #WCOSS Phase 3 - Dell
+  module purge
+  module load EnvVars/1.0.2
+  module load ips/18.0.1.163
+  module load sp/2.0.2
+  module load bacio/2.0.2
+  module load w3nco/2.0.6
 elif [[ "$(hostname)" == slogin? || "$(hostname)" == llogin? ]]; then # WCOSS Cray
   echo
   echo "$0: Error. Script does not work on WCOSS-Cray. Abort." >&2

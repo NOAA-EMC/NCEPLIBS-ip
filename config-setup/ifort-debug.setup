@@ -7,6 +7,6 @@ export FCFLAGS="-check all \
  -convert little_endian \
  -assume byterecl \
  -I. \
- -openmp "
+ -qopenmp "
 export LDFLAGS=" "
 export LIBS=" "

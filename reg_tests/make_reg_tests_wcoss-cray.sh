@@ -4,8 +4,6 @@
 # This script compiles all regression tests on the WCOSS-Cray machine only!
 # DO NOT USE THIS SCRIPT ON OTHER MACHINES.
 #
-# $Id$
-#
 # To compile with the Intel compiler, uncomment the following line below:
 #   . ./config-setup/ifort.setup
 #
@@ -47,18 +45,18 @@ case $FC in
   ifort)
     module load PrgEnv-intel
     module load craype-haswell
-    module load bacio-intel
-    module load w3nco-intel
-    module load sp-intel
+    module load bacio-intel/2.0.2
+    module load w3nco-intel/2.0.6
+    module load sp-intel/2.0.2
     R8FLAG="-r8"
     I8FLAG="-i8"
     ;;
   crayftn)
     module load PrgEnv-cray
     module load craype-haswell
-    module load sp-cray-haswell
-    module load bacio-cray-haswell
-    module load w3nco-cray-haswell
+    module load sp-cray-haswell/2.0.2
+    module load bacio-cray-haswell/2.0.2
+    module load w3nco-cray-haswell/2.0.6
     R8FLAG="-s real64"
     I8FLAG="-s integer64"
     ;;

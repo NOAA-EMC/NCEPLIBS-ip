@@ -9,7 +9,7 @@
 #------------------------------------------------------------
 
 #PBS -l procs=1
-#PBS -l vmem=500M
+#PBS -l vmem=1000M
 #PBS -l walltime=0:15:00
 #PBS -A glbss
 #PBS -N ip_unit_test

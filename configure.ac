@@ -1,9 +1,5 @@
-# Put version control id tag in output configure script
-AC_REVISION($Id$)
-
-
 # Initialise autoconf
-AC_INIT([nceplibs ip], [v3.0.0], [ncep.list.emc.nceplibs.support@noaa.gov], [ip])
+AC_INIT([nceplibs ip], [v3.0.1], [ncep.list.emc.nceplibs.support@noaa.gov], [ip])
 
 
 # Output info for user
@@ -11,11 +7,11 @@ AC_MSG_NOTICE([AC_PACKAGE_NAME AC_PACKAGE_VERSION])
 
 
 # Check for existence of unique file before proceeding
-AC_CONFIG_SRCDIR([sorc/ipolates.f90])
+AC_CONFIG_SRCDIR([src/ipolates.f90])
 
 
 # Define the configuration files
-AC_CONFIG_FILES([Makefile sorc/Makefile])
+AC_CONFIG_FILES([Makefile src/Makefile])
 
 
 # Check for programs

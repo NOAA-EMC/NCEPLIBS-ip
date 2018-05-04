@@ -1,8 +1,6 @@
 #!/bin/sh
 ###############################################################################
 #
-# $Id$
-#
 # Script to iterate the configuration script over the set of precision
 # versions of the library on the WCOSS-Cray.
 #

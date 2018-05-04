@@ -2,8 +2,6 @@ Instructions for building and installing the
 ipolates library (iplib) on Unix.
 ***************************************************
 
-$Id$
-
 nceplibs support email: ncep.list.emc.nceplibs.support@noaa.gov
 
 
@@ -44,7 +42,7 @@ The available build configurations to use are:
 The build configurations define the compiler name and compiler flags.  
 Those named with "debug" contain flags useful for debugging.
 
-So, on WCOSS Phase 1/2, to compile with intel, you would type:
+So, on WCOSS Phase 1/2/3, to compile with intel, you would type:
 
   $ make_ip_lib.sh ifort.setup
 

@@ -1,7 +1,5 @@
 Unit test for the NCEP IPOLATES library (IPLIB).
 
-$Id$
-
 ABSTRACT:
 ---------
 
@@ -189,6 +187,7 @@ invoke these driver scripts as follows:
 
  $ run_wcoss.ksh       (WCOSS Phase 1/2)
  $ run_wcoss-cray.ksh  (WCOSS-Cray)
+ $ run_wcoss-dell.ksh  (WCOSS-Phase 3/Dell)
  $ qsub run_theia.ksh  (Theia)
 
 In this case, output is sent to "unit_test.log".

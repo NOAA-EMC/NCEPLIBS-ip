@@ -1,8 +1,6 @@
 Unit test for the NCEP IPOLATES library (IPLIB) gdswzd
 'c' language wrapper.
 
-$Id$
-
 
 HOW THE TEST WORKS:
 -------------------
@@ -79,12 +77,12 @@ loads the proper compiler modules and locates the required
 NCEP SP libraries.  By default, the program is built with the
 Intel compiler.
 
-So to build with the Intel compiler on WCOSS Phase 1/2, WCOSS-Cray
+So to build with the Intel compiler on WCOSS Phase 1/2/3, WCOSS-Cray
 and Theia, you would do:
 
  $ make_unit_test.ksh
 
-To build with the Gnu compiler on Phase 1/2 or Theia, you would do:
+To build with the Gnu compiler on Phase 1/2/3 or Theia, you would do:
 
  $ export compiler=gnu  (if your environment is bash)
  $ make_unit_test.ksh
@@ -120,8 +118,9 @@ To run "run_unit_test.ksh" on the WCOSS or Theia compute nodes,
 invoke these driver scripts as follows:
 
  $ run_wcoss.ksh       (WCOSS Phase 1/2)
+ $ run_wcoss-dell.ksh  (WCOSS Phase 3 - Dell)
  $ run_wcoss-cray.ksh  (WCOSS-Cray)
- $ qsub run_theia.ksh      (Theia)
+ $ qsub run_theia.ksh  (Theia)
 
 In this case, output is sent to "unit_test.log".
 
