@@ -1,7 +1,7 @@
 #!/bin/sh
 ###############################################################################
 #
-# $Id$
+# $Id: make_ip_lib_wcoss-cray.sh 74394 2016-04-19 19:15:36Z george.gayno@noaa.gov $
 #
 # Script to iterate the configuration script over the set of precision
 # versions of the library on the WCOSS-Cray.
