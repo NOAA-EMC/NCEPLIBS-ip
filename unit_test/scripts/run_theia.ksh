@@ -11,7 +11,7 @@
 #PBS -l procs=1
 #PBS -l vmem=1000M
 #PBS -l walltime=0:15:00
-#PBS -A glbss
+#PBS -A fv3-cpu
 #PBS -N ip_unit_test
 #PBS -o unit_test.log
 #PBS -e unit_test.log

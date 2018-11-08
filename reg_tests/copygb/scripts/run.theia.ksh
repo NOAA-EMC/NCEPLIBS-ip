@@ -9,7 +9,7 @@
 #PBS -l procs=1
 #PBS -l vmem=2500M
 #PBS -l walltime=2:30:00
-#PBS -A glbss
+#PBS -A fv3-cpu
 #PBS -N iptest_copygb
 #PBS -o ./regression.log
 #PBS -e ./regression.log

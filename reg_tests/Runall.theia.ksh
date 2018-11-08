@@ -21,7 +21,7 @@
 #----------------------------------------------------------------------------
 
 # The project that will be charged when running these jobs.
-PROJECT_CODE=${PROJECT_CODE:-rm}
+PROJECT_CODE=${PROJECT_CODE:-"fv3-cpu"}
 
 # Location of the regression test directory.
 export REG_DIR=$(pwd)
