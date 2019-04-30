@@ -1,4 +1,0 @@
-export FC="xlf2003_r"
-export FCFLAGS="-C -g -qflttrap=overflow:zero:underflow:enable -qinitauto=7FF7FFF -qsmp=noauto -qnosave -I."
-export LDFLAGS=" "
-export LIBS=" "

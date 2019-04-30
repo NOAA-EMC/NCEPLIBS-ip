@@ -1,4 +1,0 @@
-export FC="gfortran"
-export FCFLAGS=" -O3 -fopenmp -I. -fconvert=little-endian"
-export LDFLAGS=" "
-export LIBS=" "

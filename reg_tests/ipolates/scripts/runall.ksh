@@ -2,18 +2,9 @@
 
 #------------------------------------------------------------------------
 # Run part 1 of the ipolates regression test to exercise the ipolates suite
-# of routines.  These routines are exercised by a Fortran program.
+# of routines.
 #
-# The program is compiled with all three byte versions
-# of the 'control' and 'test' ip library.  The executables are located
-# in the ./exec subdirectory (there are six).
-#
-# The three byte versions of the library are:
-#  > 4 byte integer/4 byte float  ($bytesize=4)
-#  > 8 byte integer/8 byte float  ($bytesize=8)
-#  > 8 byte float/4 byte integer  ($bytesize=d)
-#
-# The program interpolates a global grid of substrate temperature to several 
+# Interpolate a global grid of substrate temperature to several 
 # grids of various map projections.  The grids are:
 #
 #    3 - one-degree global lat/lon (ncep grid 3)
@@ -24,10 +15,7 @@
 #  212 - nh polar stereographic, spherical earth (number meaningless)
 #  218 - lambert conformal (ncep grid 218)
 #
-# The input data is: ../data/global_tg3clim.1x1.grb
-# It is in grib 1 format.
-#
-# Use all possible ipolates interpolation options:
+#  Use all possible ipolates interpolation options:
 #
 #    0 - bilinear
 #    1 - bicubic
@@ -36,24 +24,26 @@
 #    4 - spectral
 #    6 - budget-neighbor
 #
-# This script is run by the Runall.${machine}.ksh driver
-# script located in /reg_tests.
-#
 # The ipolates suite of routines contain threads.  Therefore, this 
 # script is run twice, with 1 and 4 threads.  The number of 
 # threads is passed in as an argument.  This is only used to
 # name the work directory, and does not cause the regression test to
-# run with that number of threads. The number of threads is set
-# from the /reg_tests/Runall.${machine}.ksh driver script.  
+# run with that number of threads. The number of threads is determined
+# from the driver script.  You can run this script stand-alone. 
+# However, the default on ccs and zeus is to run with the maximum
+# number of threads on a node.  
 #
-# The interpolated temperature data is output to direct access
-# binary files under WORK_DIR.  These files may be viewed in Grads
+# The control and test executables interpolate the data for 
+# a single grid and interpolation option.  Hence, they are invoked
+# numerous times for all combinations of grids/interp options.
+#
+# The interpolated temperature data is output in a direct access
+# binary file under WORK_DIR.  These files may be viewed in Grads
 # using the control files in the ./grads subdirectory.  The file
-# naming convention is:
-#   grid${grid_num}.opt${interp_opt_num}.${bytesize}byte.bin
+# naming convention is "grid${grid_num}.opt${interp_opt_num}.bin"
 #
 # Binary files of the interpolated data from the control and test
-# iplibs are checked for bit-identicalness.  If not identical, the test
+# are check for bit-identicalness.  If not identical, the test
 # is considered failed and the script will save the file in a
 # working sub-directory with a "failed" extension.
 #
@@ -74,7 +64,7 @@ else
   exit 99
 fi
 
-WORK_DIR=${WORK_DIR:-/stmpp1/$LOGNAME/regression}
+WORK_DIR=${WORK_DIR:-/stmp/$LOGNAME/regression}
 
 REG_DIR=${REG_DIR:-../..}
 
@@ -87,11 +77,11 @@ rm -fr $WORK
 mkdir -p $WORK
 WORK_CTL=${WORK}/ctl
 mkdir -p $WORK_CTL
-cp $EXEC_DIR/ipolates_ctl_*.exe  $WORK_CTL
+cp $EXEC_DIR/ctl/*.exe $WORK_CTL
 cp $INPUT_DATA  $WORK_CTL/fort.9
 WORK_TEST=${WORK}/test
 mkdir -p $WORK_TEST
-cp $EXEC_DIR/ipolates_test_*.exe $WORK_TEST
+cp $EXEC_DIR/test/*.exe $WORK_TEST
 cp $INPUT_DATA  $WORK_TEST/fort.9
 
 ulimit -s 2048000

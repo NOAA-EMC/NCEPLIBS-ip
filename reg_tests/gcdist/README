@@ -1,0 +1,17 @@
+Test iplib routines gcdist and movect, which calculate the
+distance of great circle routes and their corresponding
+rotation parameters.
+
+The fortran source code is located in the ./src subdirectory.
+
+The program is compiled by invoking the makeall.ksh script
+located in the ./scripts subdirectory.  See the script
+comments for more information.
+
+The regression test may be run 'stand-alone' by invoking
+the runall.ksh script in the ./scripts subdirectory.
+
+List of routines tested:
+
+gcdist
+movect

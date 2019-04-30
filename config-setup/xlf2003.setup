@@ -1,4 +1,0 @@
-export FC="xlf2003_r"
-export FCFLAGS="-O3 -qsmp=noauto -qnosave -I."
-export LDFLAGS=" "
-export LIBS=" "
