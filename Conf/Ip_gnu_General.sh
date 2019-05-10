@@ -5,7 +5,7 @@
 
  ANCHORDIR=..
  export COMP=gnu
- export IP_VER=v3.0.1
+ export IP_VER=v2.0.0
  export IP_SRC=
  export IP_INC4=$ANCHORDIR/include/ip_${IP_VER}_4
  export IP_INC8=$ANCHORDIR/include/ip_${IP_VER}_8
@@ -23,10 +23,12 @@
  export MPIFC=mpigfortran
 
  export DEBUG="-g -O0"
- export CFLAGS="-O3 -DUNDERSCORE -DLINUX -fPIC"
+ export CFLAGS="-O3 -fPIC"
  export FFLAGS="-O3 -fconvert=little-endian -fPIC"
+ export FREEFORM="-ffree-form"
+ export FPPCPP="-cpp"
  export CPPFLAGS="-P -traditional-cpp"
- export MPICFLAGS="-O3 -DUNDERSCORE -DLINUX -fPIC"
+ export MPICFLAGS="-O3 -fPIC"
  export MPIFFLAGS="-O3 -fPIC"
  export MODPATH="-J"
  export I4R4=""
@@ -34,7 +36,7 @@
  export I8R8="-fdefault-integer-8 -fdefault-real-8"
 
  export CPPDEFS=""
- export CFLAGSDEFS=""
+ export CFLAGSDEFS="-DUNDERSCORE -DLINUX"
  export FFLAGSDEFS=""
 
  export USECC=""

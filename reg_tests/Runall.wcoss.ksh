@@ -1,74 +1,74 @@
-#!/bin/ksh 
+#!/bin/ksh --login
 
 #------------------------------------------------------------------------
-# Run the entire suite of ipolates (or iplib) regression tests on 
-# the NCEP WCOSS Phase 1/2 machine.
+# Run the entire series of iplib regression tests on the wcoss machine.
 #
-# See the README file for information on setting up and compiling
-# the test suite.
+# To run, type: "Runall.wcoss.ksh"
 #
-# To run, type: "Runall.wcoss.ksh".  A series of "daisy-chained"
-# job steps will be submitted.  To check the queue, type "bjobs".
-#
-# The run output is stored in $WORK_DIR.  Log output from the test suite 
-# will be in "regression.log"  To monitor as the suite is running,
-# do: grep ">>>" regression.log.  Once the suite is complete, a summary
-# is placed in "summary.log" 
+# The log output, "regression.log" is stored in $WORK_DIR.
+# A summary of the results will be placed in "summary.log" in $WORK_DIR.
 #------------------------------------------------------------------------
 
 set -x
 
-. /usrx/local/Modules/default/init/ksh
-module load ics/15.0.6
-module load lsf/9.1 
+. /usrx/local/Modules/3.2.9/init/ksh
+module load ics/12.1
+module load lsf/8.0 
 
 export REG_DIR=$(pwd)
 
-export WORK_DIR="/stmpp1/${LOGNAME}/regression"
+export WORK_DIR="/u/George.Gayno/stmp/regression"
 rm -fr $WORK_DIR
 mkdir -p $WORK_DIR
 
 LOG_FILE=${WORK_DIR}/regression.log
 SUM_FILE=${WORK_DIR}/summary.log
 
-bsub -e $LOG_FILE -o $LOG_FILE -q "dev_shared" -P "GFS-T2O" \
-     -J "gausslat" -R affinity[core] -R "rusage[mem=100]" -W 0:01 -cwd $(pwd) $REG_DIR/gausslat/scripts/runall.ksh 
+bsub -e $LOG_FILE -o $LOG_FILE -q "hpc_ibm" \
+     -J "gausslat" -W 0:01 $REG_DIR/gausslat/scripts/runall.ksh 
 
-bsub -e $LOG_FILE -o $LOG_FILE -q "dev_shared" -P "GFS-T2O" \
-     -J "gdswzd" -R affinity[core] -R "rusage[mem=300]" -W 0:05 -w 'ended(gausslat)' -cwd $(pwd) $REG_DIR/gdswzd/scripts/runall.ksh 
+bsub -e $LOG_FILE -o $LOG_FILE -q "hpc_ibm" \
+     -J "gcdist" -W 0:01 -w 'ended(gausslat)' $REG_DIR/gcdist/scripts/runall.ksh 
 
-bsub -e $LOG_FILE -o $LOG_FILE -q "dev_shared" -P "GFS-T2O" \
-     -J "ipxwafs" -R affinity[core] -R "rusage[mem=100]" -W 0:05 -w 'ended(gdswzd)' -cwd $(pwd) $REG_DIR/ipxwafs/scripts/runall.ksh 
+bsub -e $LOG_FILE -o $LOG_FILE -q "hpc_ibm" \
+     -J "gdswiz" -W 0:05 -w 'ended(gcdist)' $REG_DIR/gdswiz_wzd/scripts/runall.ksh 
 
-bsub -e $LOG_FILE -o $LOG_FILE -q "dev_shared" -P "GFS-T2O" \
-     -J "ipxwafs23" -R affinity[core] -R "rusage[mem=100]" -W 0:05 -w 'ended(ipxwafs)' -cwd $(pwd) $REG_DIR/ipxwafs2_3/scripts/runall.ksh 
+bsub -e $LOG_FILE -o $LOG_FILE -q "hpc_ibm" \
+     -J "ipmerge2" -W 0:02 -w 'ended(gdswiz)' $REG_DIR/ipmerge2/scripts/runall.ksh 
 
-bsub -e $LOG_FILE -o $LOG_FILE -q "dev_shared" -P "GFS-T2O" \
-     -J "makgds" -R affinity[core] -R "rusage[mem=100]" -W 0:02 -w 'ended(ipxwafs23)' -cwd $(pwd) $REG_DIR/makgds/scripts/runall.ksh 
+bsub -e $LOG_FILE -o $LOG_FILE -q "hpc_ibm" \
+     -J "ipsector" -W 0:02 -w 'ended(ipmerge2)' $REG_DIR/ipsector/scripts/runall.ksh 
 
-bsub -e $LOG_FILE -o $LOG_FILE -q "dev_shared" -P "GFS-T2O" -a openmp -n 1 \
-     -J "ipolates1" -R affinity[core] -R "rusage[mem=500]" -R span[ptile=1] \
-     -W 0:30 -w 'ended(makgds)' -cwd $(pwd) $REG_DIR/ipolates/scripts/runall.ksh 1
+bsub -e $LOG_FILE -o $LOG_FILE -q "hpc_ibm" \
+     -J "ipxetas" -W 0:02 -w 'ended(ipsector)' $REG_DIR/ipxetas/scripts/runall.ksh 
 
-bsub -e $LOG_FILE -o $LOG_FILE -q "dev_shared" -P "GFS-T2O" -a openmp -n 4 \
-     -J "ipolates4" -R affinity[core] -R "rusage[mem=300]" -R span[ptile=4] \
-     -W 0:30 -w 'ended(ipolates1)' -cwd $(pwd) $REG_DIR/ipolates/scripts/runall.ksh 4
+bsub -e $LOG_FILE -o $LOG_FILE -q "hpc_ibm" \
+     -J "ipxwafs" -W 0:05 -w 'ended(ipxetas)' $REG_DIR/ipxwafs/scripts/runall.ksh 
 
-bsub -e $LOG_FILE -o $LOG_FILE -q "dev_shared" -P "GFS-T2O" \
-     -J "compares" -R affinity[core] -R "rusage[mem=100]" -W 0:10 -w 'ended(ipolates4)' -cwd $(pwd) $REG_DIR/ipolates/scripts/compare.ksh
+bsub -e $LOG_FILE -o $LOG_FILE -q "hpc_ibm" \
+     -J "ipxwafs23" -W 0:05 -w 'ended(ipxwafs)' $REG_DIR/ipxwafs2_3/scripts/runall.ksh 
 
-bsub -e $LOG_FILE -o $LOG_FILE -q "dev_shared" -P "GFS-T2O" -a openmp -n 1 \
-     -J "ipolatev1" -R affinity[core] -R "rusage[mem=500]" -R span[ptile=1] \
-     -W 1:00 -w 'ended(compares)' -cwd $(pwd) $REG_DIR/ipolatev/scripts/runall.ksh 1
+bsub -e $LOG_FILE -o $LOG_FILE -q "hpc_ibm" \
+     -J "makgds" -W 0:02 -w 'ended(ipxwafs23)' $REG_DIR/makgds/scripts/runall.ksh 
 
-bsub -e $LOG_FILE -o $LOG_FILE -q "dev_shared" -P "GFS-T2O" -a openmp -n 4 \
-     -J "ipolatev4" -R affinity[core] -R "rusage[mem=300]" -R span[ptile=4] \
-     -W 1:00 -w 'ended(ipolatev1)' -cwd $(pwd) $REG_DIR/ipolatev/scripts/runall.ksh 4
+bsub -e $LOG_FILE -o $LOG_FILE -q "hpc_ibm" -a openmp -n 1 \
+     -J "ipolates1" -W 0:30 -w 'ended(makgds)' $REG_DIR/ipolates/scripts/runall.ksh 1
 
-bsub -e $LOG_FILE -o $LOG_FILE -q "dev_shared" -P "GFS-T2O" \
-     -J "comparev" -R affinity[core] -R "rusage[mem=100]" -W 0:10 -w 'ended(ipolatev4)' -cwd $(pwd) $REG_DIR/ipolatev/scripts/compare.ksh
+bsub -e $LOG_FILE -o $LOG_FILE -q "hpc_ibm" -a openmp -n 4 \
+     -J "ipolates4" -W 0:30 -w 'ended(ipolates1)' $REG_DIR/ipolates/scripts/runall.ksh 4
 
-bsub -o $LOG_FILE -q "dev_shared" -P "GFS-T2O" -J "summary" \
-     -R affinity[core] -R "rusage[mem=100]" -W 0:01 -w 'ended(comparev)' -cwd $(pwd) "grep '<<<' $LOG_FILE >> $SUM_FILE"
+bsub -e $LOG_FILE -o $LOG_FILE -q "hpc_ibm"  \
+     -J "compares" -W 0:10 -w 'ended(ipolates4)' $REG_DIR/ipolates/scripts/compare.ksh
+
+bsub -e $LOG_FILE -o $LOG_FILE -q "hpc_ibm" -a openmp -n 1 \
+     -J "ipolatev1" -W 1:00 -w 'ended(compares)' $REG_DIR/ipolatev/scripts/runall.ksh 1
+
+bsub -e $LOG_FILE -o $LOG_FILE -q "hpc_ibm" -a openmp -n 4 \
+     -J "ipolatev4" -W 1:00 -w 'ended(ipolatev1)' $REG_DIR/ipolatev/scripts/runall.ksh 4
+
+bsub -e $LOG_FILE -o $LOG_FILE -q "hpc_ibm"  \
+     -J "comparev" -W 0:10 -w 'ended(ipolatev4)' $REG_DIR/ipolatev/scripts/compare.ksh
+
+bsub -o $LOG_FILE -q "hpc_ibm" -J "summary" -W 0:01 -w 'ended(comparev)' "grep '<<<' $LOG_FILE >> $SUM_FILE"
 
 exit 0
