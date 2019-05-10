@@ -1,0 +1,6 @@
+*.o
+*.mod
+*.exe
+config*.log
+config.status
+Makefile
