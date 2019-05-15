@@ -3,32 +3,16 @@
 #-------------------------------------------------------------------
 # Regression test for iplib routine makgds.
 #
-# The routine is invoked by a simple Fortran program.
-# The program is compiled with all three byte versions
-# of the 'control' and 'test' ip library.
-#
-# The three byte versions of the library are:
-#  > 4 byte integer/4 byte float  ($bytesize=4)
-#  > 8 byte integer/8 byte float  ($bytesize=8)
-#  > 8 byte float/4 byte integer  ($bytesize=d)
-#
 # Routine is tested as follows:
 #  1) create gds and kgds arrays for ncep grid 3.  arrays hold grid
 #     description information used by w3 grib library.
 #  2) make kgds array for grid 3 from gds array
 #  3) make gds array for grid 3 from kgds array
 #
-# Output from the program is placed in an log file.  If the
-# output from the 'control' and 'test' iplibs is not
-# identical, the regression test is considered failed and
-# the log file is saved in the working directory with the
-# following name:
-#
-#   ctl.${bytesize}byte.log.failed
-#   test.${bytesize}byte.log.failed
-#
-# This script is run by the /reg_tests/Runall.${machine}.ksh
-# driver script.  It may also be run stand-alone.
+# Output from the control and test executables is placed in a
+# ascii log file.  If the log files are not bit identical, the
+# test fails. If a test fails, the log file is saved in 
+# WORK_DIR with a ".failed" extension.
 #-------------------------------------------------------------------
 
 #set -x
@@ -37,7 +21,7 @@ echo
 echo BEGIN MAKGDS REGRESSION TEST
 echo
  
-WORK_DIR=${WORK_DIR:-/stmpp1/$LOGNAME/regression}
+WORK_DIR=${WORK_DIR:-/stmp/$LOGNAME/regression}
 
 REG_DIR=${REG_DIR:-../..}
 
@@ -48,10 +32,10 @@ rm -fr $WORK
 mkdir -p $WORK
 WORK_CTL=${WORK}/ctl
 mkdir -p $WORK_CTL
-cp $EXEC_DIR/makgds_ctl_*.exe  $WORK_CTL
+cp $EXEC_DIR/ctl/*exe $WORK_CTL
 WORK_TEST=${WORK}/test
 mkdir -p $WORK_TEST
-cp $EXEC_DIR/makgds_test_*.exe $WORK_TEST
+cp $EXEC_DIR/test/*exe $WORK_TEST
 
 reg_test_failed=0
 

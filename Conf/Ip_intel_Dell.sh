@@ -1,7 +1,11 @@
 # *** for WCOSS Dell (intel) ***
+ module purge
  module load EnvVars/1.0.2
  module load ips/18.0.1.163
+
  module load ip/3.0.1
+ new_ver=2.0.0
+ reset_version ip $new_ver
 
  export CC=icc
  export FC=ifort
