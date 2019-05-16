@@ -1,10 +1,7 @@
 # *** for WCOSS Cray (intel) ***
  module purge
  module load intel/18.1.163
- 
- module load ip-intel/3.0.0
- new_ver=3.0.1
- reset_version ip $new_ver
+ module load ip-intel/2.0.0
 
  export CC=icc
  export FC=ifort
