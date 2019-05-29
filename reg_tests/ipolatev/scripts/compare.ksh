@@ -4,7 +4,6 @@
 # Part 2 of the ipolatev regression test.
 #
 # Ensure single and multiple thread files are bit identical.
-# If not, the regression test fails.
 #--------------------------------------------------------------------
 
 #set -x
@@ -13,7 +12,7 @@ echo
 echo "ENSURE SINGLE AND MULTIPLE THREAD IPOLATEV FILES ARE BIT IDENTICAL"
 echo
 
-WORK_DIR=${WORK_DIR:-/stmpp1/$LOGNAME/regression}
+WORK_DIR=${WORK_DIR:-/stmp/$LOGNAME/regression}
 
 WORK1=$WORK_DIR/ipolatev.1threads/test
 WORK2=$WORK_DIR/ipolatev.4threads/test
