@@ -1,8 +1,6 @@
 Documentation of the general interpolation library iplib       January, 2014
 --------------------------------------------------------------------------------
 
-$Id: README.iplib 74394 2016-04-19 19:15:36Z george.gayno@noaa.gov $
-
 I. Introduction
 
 The NCEP general interpolation library (iplib) contains Fortran 90 subprograms
