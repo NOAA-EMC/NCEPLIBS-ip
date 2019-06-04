@@ -1,14 +1,14 @@
 #!/bin/bash
 
  (( $# == 0 )) && {
-   echo "*** Usage: $0 wcoss|dell|cray|theia|intel_general|gnu_general [debug|build] [[local]install[only]]"
+   echo "*** Usage: $0 wcoss|dell|cray|theia|intel_general|gnu_general [debug|build] [[local]install[only]]" >&2
    exit 1
  }
 
  sys=${1,,}
  [[ $sys == wcoss || $sys == dell || $sys == cray ||\
     $sys == theia || $sys == intel_general || $sys == gnu_general ]] || {
-   echo "*** Usage: $0 wcoss|dell|cray|theia|intel_general|gnu_general [debug|build] [[local]install[only]]"
+   echo "*** Usage: $0 wcoss|dell|cray|theia|intel_general|gnu_general [debug|build] [[local]install[only]]" >&2
    exit 1
  }
  debg=false
@@ -45,8 +45,12 @@
  else
    source ./Conf/Ip_intel_${sys^}.sh
  fi
+ $CC --version &> /dev/null || {
+   echo "??? IP: compilers not set." >&2
+   exit 1
+ }
  [[ -z $IP_VER || -z $IP_LIB4 ]] && {
-   echo "??? IP: module/environment not set."
+   echo "??? IP: module/environment not set." >&2
    exit 1
  }
 
@@ -74,10 +78,8 @@ set -x
    FFLAGS4="$I4R4 $FFLAGS ${MODPATH}$ipInc4"
    collect_info ip 4 OneLine4 LibInfo4
    ipInfo4=ip_info_and_log4.txt
-   $debg && make debug CPPDEFS="-DLSIZE=4" FFLAGS="$FFLAGS4" LIB=$ipLib4 \
-                                                             &> $ipInfo4 \
-         || make build CPPDEFS="-DLSIZE=4" FFLAGS="$FFLAGS4" LIB=$ipLib4 \
-                                                             &> $ipInfo4
+   $debg && make debug FFLAGS="$FFLAGS4" LIB=$ipLib4 &> $ipInfo4 \
+         || make build FFLAGS="$FFLAGS4" LIB=$ipLib4 &> $ipInfo4
    make message MSGSRC="$(gen_cfunction $ipInfo4 OneLine4 LibInfo4)" LIB=$ipLib4
 
  echo
@@ -88,10 +90,8 @@ set -x
    FFLAGS8="$I8R8 $FFLAGS ${MODPATH}$ipInc8"
    collect_info ip 8 OneLine8 LibInfo8
    ipInfo8=ip_info_and_log8.txt
-   $debg && make debug CPPDEFS="-DLSIZE=8" FFLAGS="$FFLAGS8" LIB=$ipLib8 \
-                                                             &> $ipInfo8 \
-         || make build CPPDEFS="-DLSIZE=8" FFLAGS="$FFLAGS8" LIB=$ipLib8 \
-                                                             &> $ipInfo8
+   $debg && make debug FFLAGS="$FFLAGS8" LIB=$ipLib8 &> $ipInfo8 \
+         || make build FFLAGS="$FFLAGS8" LIB=$ipLib8 &> $ipInfo8
    make message MSGSRC="$(gen_cfunction $ipInfo8 OneLine8 LibInfo8)" LIB=$ipLib8
 
  echo
@@ -102,10 +102,8 @@ set -x
    FFLAGSd="$I4R8 $FFLAGS ${MODPATH}$ipIncd"
    collect_info ip d OneLined LibInfod
    ipInfod=ip_info_and_logd.txt
-   $debg && make debug CPPDEFS="-DLSIZE=D" FFLAGS="$FFLAGSd" LIB=$ipLibd \
-                                                             &> $ipInfod \
-         || make build CPPDEFS="-DLSIZE=D" FFLAGS="$FFLAGSd" LIB=$ipLibd \
-                                                             &> $ipInfod
+   $debg && make debug FFLAGS="$FFLAGSd" LIB=$ipLibd &> $ipInfod \
+         || make build FFLAGS="$FFLAGSd" LIB=$ipLibd &> $ipInfod
    make message MSGSRC="$(gen_cfunction $ipInfod OneLined LibInfod)" LIB=$ipLibd
  }
 
@@ -118,6 +116,7 @@ set -x
               LIB_DIR8=..
               LIB_DIRd=..
               INCP_DIR=../include
+              [ -d $INCP_DIR ] || { mkdir -p $INCP_DIR; }
               INCP_DIR4=$INCP_DIR
               INCP_DIR8=$INCP_DIR
               INCP_DIRd=$INCP_DIR

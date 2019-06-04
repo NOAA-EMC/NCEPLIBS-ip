@@ -1,11 +1,24 @@
 # *** manually set environments (for gnu compiler) of ip ***
 
-# !!! module environment (*THEIA*) !!!
- module load gcc/6.2.0
+ : ${USERMODE:=false}  # user mode (USERMODE) is closed by default
+                       # set env var USERMODE to "true" to active it
+ ${USERMODE} && {
+    echo "Environment set by user"
+# On theia/cray, user can load environment
+#   module load gcc/6.2.0
+# Or set environment on specific platform
+    gcc_version=6.2.0
+    gcc_topdir=/apps/gcc/$gcc_version
+    export PATH=$gcc_topdir/bin:$PATH
+    export LIBRARY_PATH=$gcc_topdir/lib64:$LIBRARY_PATH
+    export LD_LIBRARY_PATH=$gcc_topdir/lib64:$LD_LIBRARY_PATH
+    export INCLUDE=$gcc_topdir/include:$INCLUDE
+    export MANPATH=$gcc_topdir/share/man:$MANPATH
+ }
 
  ANCHORDIR=..
  export COMP=gnu
- export IP_VER=v3.0.1
+ export IP_VER=v2.0.0
  export IP_SRC=
  export IP_INC4=$ANCHORDIR/include/ip_${IP_VER}_4
  export IP_INC8=$ANCHORDIR/include/ip_${IP_VER}_8
