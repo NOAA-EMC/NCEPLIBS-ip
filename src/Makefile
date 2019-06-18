@@ -1,10 +1,7 @@
 SHELL=/bin/sh
 # sources, headers, objects, library and etc.
-SRCS_m  = $(filter-out gdswzd_mod.f90, $(wildcard gdswzd*_mod.f90)) \
-          gdswzd_mod.f90
-SRCS_f  = $(SRCS_m) $(filter-out $(SRCS_m), $(wildcard *.f90))
-SRCS    = $(SRCS_f) gdswzd_c.F90
-OBJS    = $(patsubst %.f90, %.o, $(SRCS_f)) gdswzd_c.o
+SRCS    = $(wildcard *.f)
+OBJS    = $(patsubst %.f, %.o, $(SRCS))
 
 all: build
 
@@ -25,20 +22,10 @@ dbg_build: $(LIB)
 %.o: %.f
 	$(OMPFC) -c $(FFLAGS) $(FFLAGSDEFS) $<
 
-%.o: %.f90
-	$(OMPFC) -c $(FREEFORM) $(FFLAGS) $(FFLAGSDEFS) $<
-
-%.f90: %.F90
-	$(CPP) $(CPPFLAGS) $(CPPDEFS) $< $@
-
 message: $(MSGSRC)
-	$(CC) -c $(firstword $(MSGSRC))
-	$(FC) -c $(lastword $(MSGSRC))
-	$(AR) $(ARFLAGS) $(LIB) $(patsubst %.c, %.o, $(firstword $(MSGSRC)))
-	$(AR) $(ARFLAGS) $(LIB) $(patsubst %.f, %.o, $(lastword $(MSGSRC)))
-	$(RM) $(patsubst %.c, %.o, $(firstword $(MSGSRC)))
-	$(RM) $(patsubst %.f, %.o, $(lastword $(MSGSRC)))
-	$(RM) $(MSGSRC)
+	$(CC) -c $(MSGSRC)
+	$(AR) $(ARFLAGS) $(LIB) $(patsubst %.c, %.o, $(MSGSRC))
+	$(RM) $(MSGSRC) $(patsubst %.c, %.o, $(MSGSRC))
 
 install:
 	[[ -z "$(LIB)" || -z "$(LIB_DIR)" ]] || mv $(LIB) $(LIB_DIR)

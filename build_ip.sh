@@ -1,37 +1,6 @@
 #!/bin/bash
 
- (( $# == 0 )) && {
-   echo "*** Usage: $0 wcoss|dell|cray|theia|intel_general|gnu_general [debug|build] [[local]install[only]]" >&2
-   exit 1
- }
-
- sys=${1,,}
- [[ $sys == wcoss || $sys == dell || $sys == cray ||\
-    $sys == theia || $sys == intel_general || $sys == gnu_general ]] || {
-   echo "*** Usage: $0 wcoss|dell|cray|theia|intel_general|gnu_general [debug|build] [[local]install[only]]" >&2
-   exit 1
- }
- debg=false
- inst=false
- skip=false
- local=false
- (( $# > 1 )) && {
-   [[ ${2,,} == build ]] && debg=false
-   [[ ${2,,} == debug ]] && debg=true
-   [[ ${2,,} == install ]] && inst=true
-   [[ ${2,,} == localinstall ]] && { local=true; inst=true; }
-   [[ ${2,,} == installonly ]] && { inst=true; skip=true; }
-   [[ ${2,,} == localinstallonly ]] && { local=true; inst=true; skip=true; }
- }
- (( $# > 2 )) && {
-   [[ ${3,,} == build ]] && debg=false
-   [[ ${3,,} == debug ]] && debg=true
-   [[ ${3,,} == install ]] && inst=true
-   [[ ${3,,} == localinstall ]] && { local=true; inst=true; }
-   [[ ${3,,} == installonly ]] && { inst=true; skip=true; }
-   [[ ${3,,} == localinstallonly ]] && { local=true; inst=true; skip=true; }
- }
-
+ source ./Conf/Analyse_args.sh
  source ./Conf/Collect_info.sh
  source ./Conf/Gen_cfunction.sh
  source ./Conf/Reset_version.sh
@@ -78,10 +47,8 @@ set -x
    FFLAGS4="$I4R4 $FFLAGS ${MODPATH}$ipInc4"
    collect_info ip 4 OneLine4 LibInfo4
    ipInfo4=ip_info_and_log4.txt
-   $debg && make debug CPPDEFS="-DLSIZE=4" FFLAGS="$FFLAGS4" LIB=$ipLib4 \
-                                                             &> $ipInfo4 \
-         || make build CPPDEFS="-DLSIZE=4" FFLAGS="$FFLAGS4" LIB=$ipLib4 \
-                                                             &> $ipInfo4
+   $debg && make debug FFLAGS="$FFLAGS4" LIB=$ipLib4 &> $ipInfo4 \
+         || make build FFLAGS="$FFLAGS4" LIB=$ipLib4 &> $ipInfo4
    make message MSGSRC="$(gen_cfunction $ipInfo4 OneLine4 LibInfo4)" LIB=$ipLib4
 
  echo
@@ -92,10 +59,8 @@ set -x
    FFLAGS8="$I8R8 $FFLAGS ${MODPATH}$ipInc8"
    collect_info ip 8 OneLine8 LibInfo8
    ipInfo8=ip_info_and_log8.txt
-   $debg && make debug CPPDEFS="-DLSIZE=8" FFLAGS="$FFLAGS8" LIB=$ipLib8 \
-                                                             &> $ipInfo8 \
-         || make build CPPDEFS="-DLSIZE=8" FFLAGS="$FFLAGS8" LIB=$ipLib8 \
-                                                             &> $ipInfo8
+   $debg && make debug FFLAGS="$FFLAGS8" LIB=$ipLib8 &> $ipInfo8 \
+         || make build FFLAGS="$FFLAGS8" LIB=$ipLib8 &> $ipInfo8
    make message MSGSRC="$(gen_cfunction $ipInfo8 OneLine8 LibInfo8)" LIB=$ipLib8
 
  echo
@@ -106,10 +71,8 @@ set -x
    FFLAGSd="$I4R8 $FFLAGS ${MODPATH}$ipIncd"
    collect_info ip d OneLined LibInfod
    ipInfod=ip_info_and_logd.txt
-   $debg && make debug CPPDEFS="-DLSIZE=D" FFLAGS="$FFLAGSd" LIB=$ipLibd \
-                                                             &> $ipInfod \
-         || make build CPPDEFS="-DLSIZE=D" FFLAGS="$FFLAGSd" LIB=$ipLibd \
-                                                             &> $ipInfod
+   $debg && make debug FFLAGS="$FFLAGSd" LIB=$ipLibd &> $ipInfod \
+         || make build FFLAGS="$FFLAGSd" LIB=$ipLibd &> $ipInfod
    make message MSGSRC="$(gen_cfunction $ipInfod OneLined LibInfod)" LIB=$ipLibd
  }
 
@@ -118,34 +81,47 @@ set -x
 #     Install libraries and source files
 #
    $local && {
-              LIB_DIR4=..
-              LIB_DIR8=..
-              LIB_DIRd=..
-              INCP_DIR=../include
-              [ -d $INCP_DIR ] || { mkdir -p $INCP_DIR; }
-              INCP_DIR4=$INCP_DIR
-              INCP_DIR8=$INCP_DIR
-              INCP_DIRd=$INCP_DIR
-              SRC_DIR=
-             } || {
-              LIB_DIR4=$(dirname $IP_LIB4)
-              LIB_DIR8=$(dirname $IP_LIB8)
-              LIB_DIRd=$(dirname $IP_LIBd)
-              INCP_DIR4=$(dirname $IP_INC4)
-              INCP_DIR8=$(dirname $IP_INC8)
-              INCP_DIRd=$(dirname $IP_INCd)
-              SRC_DIR=$IP_SRC
-              [ -d $LIB_DIR4 ] || mkdir -p $LIB_DIR4
-              [ -d $LIB_DIR8 ] || mkdir -p $LIB_DIR8
-              [ -d $LIB_DIRd ] || mkdir -p $LIB_DIRd
-              [ -d $IP_INC4 ] && { rm -rf $IP_INC4; } \
-                              || { mkdir -p $INCP_DIR4; }
-              [ -d $IP_INC8 ] && { rm -rf $IP_INC8; } \
-                              || { mkdir -p $INCP_DIR8; }
-              [ -d $IP_INCd ] && { rm -rf $IP_INCd; } \
-                              || { mkdir -p $INCP_DIRd; }
-              [ -z $SRC_DIR ] || { [ -d $SRC_DIR ] || mkdir -p $SRC_DIR; }
-             }
+     instloc=..
+     LIB_DIR4=$instloc
+     LIB_DIR8=$instloc
+     LIB_DIRd=$instloc
+     INCP_DIR=$instloc/include
+     [ -d $INCP_DIR ] || { mkdir -p $INCP_DIR; }
+     INCP_DIR4=$INCP_DIR
+     INCP_DIR8=$INCP_DIR
+     INCP_DIRd=$INCP_DIR
+     SRC_DIR=
+   } || {
+     [[ $instloc == --- ]] && {
+       LIB_DIR4=$(dirname $IP_LIB4)
+       LIB_DIR8=$(dirname $IP_LIB8)
+       LIB_DIRd=$(dirname $IP_LIBd)
+       INCP_DIR4=$(dirname $IP_INC4)
+       INCP_DIR8=$(dirname $IP_INC8)
+       INCP_DIRd=$(dirname $IP_INCd)
+       SRC_DIR=$IP_SRC
+     } || {
+       LIB_DIR4=$instloc
+       LIB_DIR8=$instloc
+       LIB_DIRd=$instloc
+       INCP_DIR=$instloc/include
+       INCP_DIR4=$INCP_DIR
+       INCP_DIR8=$INCP_DIR
+       INCP_DIRd=$INCP_DIR
+       SRC_DIR=$instloc/src
+       [[ $instloc == .. ]] && SRC_DIR=
+     }
+     [ -d $LIB_DIR4 ] || mkdir -p $LIB_DIR4
+     [ -d $LIB_DIR8 ] || mkdir -p $LIB_DIR8
+     [ -d $LIB_DIRd ] || mkdir -p $LIB_DIRd
+     [ -d $IP_INC4 ] && { rm -rf $IP_INC4; } \
+                     || { mkdir -p $INCP_DIR4; }
+     [ -d $IP_INC8 ] && { rm -rf $IP_INC8; } \
+                     || { mkdir -p $INCP_DIR8; }
+     [ -d $IP_INCd ] && { rm -rf $IP_INCd; } \
+                     || { mkdir -p $INCP_DIRd; }
+     [ -z $SRC_DIR ] || { [ -d $SRC_DIR ] || mkdir -p $SRC_DIR; }
+   }
 
    make clean LIB=
    make install LIB=$ipLib4 MOD=$ipInc4 \
