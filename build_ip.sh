@@ -1,5 +1,8 @@
 #!/bin/bash
 
+ : ${THISDIR:=$(dirname $(readlink -f -n ${BASH_SOURCE[0]}))}
+ CDIR=$PWD; cd $THISDIR
+
  source ./Conf/Analyse_args.sh
  source ./Conf/Collect_info.sh
  source ./Conf/Gen_cfunction.sh
@@ -47,10 +50,8 @@ set -x
    FFLAGS4="$I4R4 $FFLAGS ${MODPATH}$ipInc4"
    collect_info ip 4 OneLine4 LibInfo4
    ipInfo4=ip_info_and_log4.txt
-   $debg && make debug CPPDEFS="-DLSIZE=4" FFLAGS="$FFLAGS4" LIB=$ipLib4 \
-                                                             &> $ipInfo4 \
-         || make build CPPDEFS="-DLSIZE=4" FFLAGS="$FFLAGS4" LIB=$ipLib4 \
-                                                             &> $ipInfo4
+   $debg && make debug FFLAGS="$FFLAGS4" LIB=$ipLib4 &> $ipInfo4 \
+         || make build FFLAGS="$FFLAGS4" LIB=$ipLib4 &> $ipInfo4
    make message MSGSRC="$(gen_cfunction $ipInfo4 OneLine4 LibInfo4)" LIB=$ipLib4
 
  echo
@@ -61,10 +62,8 @@ set -x
    FFLAGS8="$I8R8 $FFLAGS ${MODPATH}$ipInc8"
    collect_info ip 8 OneLine8 LibInfo8
    ipInfo8=ip_info_and_log8.txt
-   $debg && make debug CPPDEFS="-DLSIZE=8" FFLAGS="$FFLAGS8" LIB=$ipLib8 \
-                                                             &> $ipInfo8 \
-         || make build CPPDEFS="-DLSIZE=8" FFLAGS="$FFLAGS8" LIB=$ipLib8 \
-                                                             &> $ipInfo8
+   $debg && make debug FFLAGS="$FFLAGS8" LIB=$ipLib8 &> $ipInfo8 \
+         || make build FFLAGS="$FFLAGS8" LIB=$ipLib8 &> $ipInfo8
    make message MSGSRC="$(gen_cfunction $ipInfo8 OneLine8 LibInfo8)" LIB=$ipLib8
 
  echo
@@ -75,10 +74,8 @@ set -x
    FFLAGSd="$I4R8 $FFLAGS ${MODPATH}$ipIncd"
    collect_info ip d OneLined LibInfod
    ipInfod=ip_info_and_logd.txt
-   $debg && make debug CPPDEFS="-DLSIZE=D" FFLAGS="$FFLAGSd" LIB=$ipLibd \
-                                                             &> $ipInfod \
-         || make build CPPDEFS="-DLSIZE=D" FFLAGS="$FFLAGSd" LIB=$ipLibd \
-                                                             &> $ipInfod
+   $debg && make debug FFLAGS="$FFLAGSd" LIB=$ipLibd &> $ipInfod \
+         || make build FFLAGS="$FFLAGSd" LIB=$ipLibd &> $ipInfod
    make message MSGSRC="$(gen_cfunction $ipInfod OneLined LibInfod)" LIB=$ipLibd
  }
 
