@@ -2,8 +2,6 @@
 HOW TO RUN THE REGRESSION TEST SUITE
 ---------------------------------------------------------------
 
-$Id$
-
 The regression test suite consists of eight Fortran programs
 that invoke a subset of IPOLATES (or IPLIB) routines.  IPOLATES
 developers are required to run this test suite to ensure their
@@ -78,7 +76,7 @@ The following steps are required to setup and run the test suite:
     for the Intel Fortran compiler (ifort.setup) and one for the
     Cray compiler (crayftn.setup).  The regression suite has
     been run with both compilers on WCOSS-Cray.  On WCOSS-
-    Phase 1/2 and Theia, only the Intel compiler has been used.
+    Phase 1/2/3 and Theia, only the Intel compiler has been used.
     You should not need to change the settings in these files.
     To use a different compiler, you will need to create
     your own "setup" file and point to it in the build script
@@ -103,7 +101,7 @@ The following steps are required to setup and run the test suite:
 
     There is no mixed precision ("_d") version of BACIO.
 
-    On WCOSS-Phase1/2, WCOSS-Cray, and Theia, these environment
+    On WCOSS-Phase 1/2/3, WCOSS-Cray, and Theia, these environment
     variables are set via modules in the build script.
 
     These settings may be overidden or set (if running
@@ -147,6 +145,10 @@ The following steps are required to setup and run the test suite:
     "daisy-chained" jobs steps will be submitted.  To check
     the job queue type "bjobs".
 
+    On WCOSS-Phase 3 - Dell, start the tests by invoking the "Runall.wcoss-dell.sh" 
+    script on the command line.   A series of  "daisy-chained" jobs steps
+    will be submitted.  To check the job queue type "bjobs".
+
     On WCOSS-Cray, start the tests by invoking the "Runall.wcoss-cray.ksh" 
     script on the command line.   A series of  "daisy-chained" jobs steps
     will be submitted.  To check the job queue type "bjobs".
@@ -166,6 +168,7 @@ The following steps are required to setup and run the test suite:
 (7) Check results.
 
     On WCOSS-Phase1/2, the default run directory is /stmpp1/${LOGNAME}/regression
+    On WCOSS-Phase 3, the default run directory is /gpfs/dell1/stmp/${LOGNAME}/regression
     On WCOSS-Cray, the default run directory is /gpfs/hps/stmp/${LOGNAME}/regression
     On Theia, the default run directory is /scratch3/NCEPDEV/stmp1/$LOGNAME/regression
     (The run directory is variable $WORK_DIR in the driver script).
