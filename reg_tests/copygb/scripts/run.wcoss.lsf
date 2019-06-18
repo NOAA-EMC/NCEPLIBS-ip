@@ -2,7 +2,7 @@
  
 #-----------------------------------------------------
 # Script to run the copygb regression test on WCOSS-
-# Phase 1.
+# Phase 1/2.
 #
 # Invoke this script as follows:
 # "cat run.wcoss.lsf | bsub"
@@ -20,7 +20,7 @@
 set -x
 
 . /usrx/local/Modules/3.2.9/init/ksh
-module load ics/12.1
+module load ics/15.0.6
 module load lsf/9.1
 
 export REG_DIR="../.."
