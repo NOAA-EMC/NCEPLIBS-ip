@@ -1,0 +1,27 @@
+#!/bin/ksh
+ 
+#-------------------------------------------------------
+# Script to run the unit test on WCOSS-Cray
+# compute nodes.
+#
+# Invoke this script as follows:
+# "cat run.wcoss-cray.lsf | bsub"
+#
+# Output is put in "unit_test.log"
+#-------------------------------------------------------
+
+#BSUB -oo unit_test.log
+#BSUB -eo unit_test.log
+#BSUB -q dev_shared
+#BSUB -J ip_unit_test
+#BSUB -R rusage[mem=500]
+#BSUB -P GFS-T2O
+#BSUB -W 0:15
+
+set -x
+
+export OMP_NUM_THREADS=1
+
+run_unit_test.ksh
+
+exit 0

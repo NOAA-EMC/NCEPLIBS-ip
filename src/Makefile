@@ -1,7 +1,10 @@
 SHELL=/bin/sh
 # sources, headers, objects, library and etc.
-SRCS    = $(wildcard *.f)
-OBJS    = $(patsubst %.f, %.o, $(SRCS))
+SRCS_m  = $(filter-out gdswzd_mod.f90, $(wildcard gdswzd*_mod.f90)) \
+          gdswzd_mod.f90
+SRCS_f  = $(SRCS_m) $(filter-out $(SRCS_m), $(wildcard *.f90))
+SRCS    = $(SRCS_f) gdswzd_c.F90
+OBJS    = $(patsubst %.f90, %.o, $(SRCS_f)) gdswzd_c.o
 
 all: build
 
@@ -21,6 +24,12 @@ dbg_build: $(LIB)
 
 %.o: %.f
 	$(OMPFC) -c $(FFLAGS) $(FFLAGSDEFS) $<
+
+%.o: %.f90
+	$(OMPFC) -c $(FREEFORM) $(FFLAGS) $(FFLAGSDEFS) $<
+
+%.f90: %.F90
+	$(CPP) $(CPPFLAGS) $(CPPDEFS) $< $@
 
 message: $(MSGSRC)
 	$(CC) -c $(MSGSRC)
