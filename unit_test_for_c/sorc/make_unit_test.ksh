@@ -35,6 +35,15 @@ if [[ "$(hostname -f)" == g????.ncep.noaa.gov || \
       SP_LIB8="/global/noscrub/George.Gayno/sp_v2.0.2/gfortran/libsp_v2.0.2_8.a"
       SP_LIBd="/global/noscrub/George.Gayno/sp_v2.0.2/gfortran/libsp_v2.0.2_d.a" ;;
   esac
+elif [[ "$(hostname -f)" == v????.ncep.noaa.gov || \
+      "$(hostname -f)" == m????.ncep.noaa.gov ]]; then  #WCOSS Phase 3 Dell
+  case $compiler in
+    intel)
+      module purge
+      module load EnvVars/1.0.2
+      module load ips/18.0.1.163
+      module load sp/2.0.2 ;;
+  esac
 elif [[ "$(hostname)" == slogin? || "$(hostname)" == llogin? ]]; then # WCOSS Cray ]]
   . /opt/modules/3.2.6.7/init/ksh
   case $compiler in
@@ -78,6 +87,10 @@ LIBS=${LIBS:-"-lifcore"}
 SP_LIB4=${SP_LIB4:?}        # Single precsion sp library
 SP_LIB8=${SP_LIB8:?}        # Double precision sp library
 SP_LIBd=${SP_LIBd:?}        # Mixed precision sp library
+
+if [[ ! -d ../exec ]]; then
+  mkdir ../exec
+fi
 
 rm -f *.exe *.o
 rm -f ../exec/*.exe

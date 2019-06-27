@@ -14,7 +14,7 @@
 
  ANCHORDIR=..
  export COMP=ips
- export IP_VER=v3.0.0
+ export IP_VER=v3.0.1
  export IP_SRC=
  export IP_INC4=$ANCHORDIR/include/ip_${IP_VER}_4
  export IP_INC8=$ANCHORDIR/include/ip_${IP_VER}_8

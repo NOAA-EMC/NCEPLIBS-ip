@@ -2,7 +2,10 @@
  module purge
  module load PrgEnv-intel
  module load craype-sandybridge
+ 
  module load ip-intel/3.0.0
+ new_ver=v3.0.1
+ reset_version ip $new_ver
 
  export CC=cc
  export FC=ftn

@@ -43,7 +43,7 @@
  character*100 :: outfile
 
  integer*4 :: i1
- integer   :: nret, lrot, lmap, iopt, npts, imdl, jmdl
+ integer   :: nret, iopt, npts, imdl, jmdl
  integer   :: i, j, n, iret, kgds(200), nscan, kscan, is1, nm
  integer   :: ii, jj, iii, jjj, badpts
 
@@ -166,8 +166,6 @@
  ylat = fill
  area = fill
 
- lrot = 1
- lmap = 1
  iopt = 0
  npts = imdl * jmdl
 

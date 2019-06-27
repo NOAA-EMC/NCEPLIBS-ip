@@ -3,8 +3,6 @@
 #-----------------------------------------------------------------------------
 # This script compiles the iplib unit test programs on the WCOSS-Cray
 # system ONLY.  On all other machines, use "make_unit_test.ksh".
-# 
-# $Id$
 #
 # PLEASE READ THE "README" FILE IN THIS DIRECTORY FOR DETAILS ON HOW
 # TO RUN THIS SCRIPT.

@@ -3,16 +3,15 @@
 #---------------------------------------------------------------------------------
 # Driver script to run the IPOLATES (iplib) 'C' wrapper unit test.
 #
-# $Id$
-#
 # This script calls a 'C' program which calls iplib routine 'gdswzd' to
 # compute the grid specs for a rotated lat/lon 'B'-grid.  The output is 
 # sent to standard output.
 #
 # To run this script interactively, type "run_unit_test.sh".
 # On WCOSS Phase 1/2, this script may be submitted to the compute nodes
-# using "./run_wcoss.lsf".  On Theia, use "./run_theia.ksh"
-# On WCOSS-Cray, use "./run_wcoss-cray.lsf".
+# using "./run_wcoss.ksh".  On Theia, use "./run_theia.ksh"
+# On WCOSS-Cray, use "./run_wcoss-cray.ksh".  On WCOSS Phase 3 - Dell,
+# use "./run_wcoss-dell.sh".
 #
 # The source code for the 'C' program is located in ../sorc.
 # There are separate versions for the single ("4"), mixed ("d"), and

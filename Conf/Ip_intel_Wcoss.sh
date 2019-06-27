@@ -1,7 +1,10 @@
 # *** for WCOSS IBM phase1/phase2 (intel) ***
  module purge
  module load ics/17.0.3
+
  module load ip/v3.0.0
+ new_ver=v3.0.1
+ reset_version ip $new_ver
 
  export CC=icc
  export FC=ifort

@@ -2,8 +2,6 @@
 
 #-----------------------------------------------------------------------------
 # This script compiles the iplib unit test programs.
-# 
-# $Id$
 #
 # PLEASE READ THE "README" FILE IN THIS DIRECTORY FOR DETAILS ON HOW
 # TO RUN THIS SCRIPT.
@@ -58,7 +56,7 @@ if [[ "$(hostname -f)" == tfe?? ]]; then # Theia
     ifort)
       module purge
       module use -a /scratch3/NCEPDEV/nwprod/lib/modulefiles
-      module load intel
+      module load intel/15.6.233
       module load sp ;;
   esac
 elif [[ "$(hostname -f)" == g????.ncep.noaa.gov || \
@@ -66,8 +64,17 @@ elif [[ "$(hostname -f)" == g????.ncep.noaa.gov || \
   case $FC in
     ifort)
       module purge
-      module load ics
+      module load ics/15.0.6
       module load sp ;;
+  esac
+elif [[ "$(hostname -f)" == v????.ncep.noaa.gov || \
+        "$(hostname -f)" == m????.ncep.noaa.gov ]]; then  #WCOSS Dell
+  case $FC in
+    ifort)
+      module purge
+      module load EnvVars/1.0.2
+      module load ips/18.0.1.163
+      module load sp/2.0.2 ;;
   esac
 elif [[ "$(hostname -f)" == slogin? || \
         "$(hostname -f)" == llogin? ]]; then  #WCOSS-Cray.
