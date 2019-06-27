@@ -4,7 +4,7 @@
  module load ips/18.0.1.163
 
  module load ip/3.0.1
- new_ver=v2.0.0
+ new_ver=v3.0.0
  reset_version ip $new_ver
 
  export CC=icc

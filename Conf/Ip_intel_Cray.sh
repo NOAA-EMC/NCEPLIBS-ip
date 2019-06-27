@@ -2,7 +2,7 @@
  module purge
  module load PrgEnv-intel
  module load craype-sandybridge
- module load ip-intel/2.0.0
+ module load ip-intel/3.0.0
 
  export CC=cc
  export FC=ftn
