@@ -18,7 +18,7 @@
 
  ANCHORDIR=..
  export COMP=gnu
- export IP_VER=v3.0.1
+ export IP_VER=v2.0.0
  export IP_SRC=
  export IP_INC4=$ANCHORDIR/include/ip_${IP_VER}_4
  export IP_INC8=$ANCHORDIR/include/ip_${IP_VER}_8
@@ -35,14 +35,14 @@
  export MPICC=mpigcc
  export MPIFC=mpigfortran
 
- export DEBUG="-g -O0"
- export CFLAGS="-O3 -fPIC"
- export FFLAGS="-O3 -fconvert=little-endian -fPIC"
+ export DEBUG="-g -fbacktrace -O0"
+ export CFLAGS="-g -O3 -fPIC"
+ export FFLAGS="-g -fbacktrace -O3 -fconvert=little-endian -fPIC"
  export FREEFORM="-ffree-form"
  export FPPCPP="-cpp"
  export CPPFLAGS="-P -traditional-cpp"
- export MPICFLAGS="-O3 -fPIC"
- export MPIFFLAGS="-O3 -fPIC"
+ export MPICFLAGS="-g -O3 -fPIC"
+ export MPIFFLAGS="-g -fbacktrace -O3 -fconvert=little-endian -fPIC"
  export MODPATH="-J"
  export I4R4=""
  export I4R8="-fdefault-real-8"
