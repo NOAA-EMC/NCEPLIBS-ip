@@ -11,9 +11,11 @@
  if [[ ${sys} == "intel_general" ]]; then
    sys6=${sys:6}
    source ./Conf/Ip_${sys:0:5}_${sys6^}.sh
+   rinst=false
  elif [[ ${sys} == "gnu_general" ]]; then
    sys4=${sys:4}
    source ./Conf/Ip_${sys:0:3}_${sys4^}.sh
+   rinst=false
  else
    source ./Conf/Ip_intel_${sys^}.sh
  fi
@@ -21,9 +23,18 @@
    echo "??? IP: compilers not set." >&2
    exit 1
  }
- [[ -z $IP_VER || -z $IP_LIB4 ]] && {
-   echo "??? IP: module/environment not set." >&2
-   exit 1
+ [[ -z ${IP_VER+x} || -z ${IP_LIB4+x} ]] && {
+   [[ -z ${libver+x} || -z ${libver} ]] && {
+     echo "??? IP: \"libver\" not set." >&2
+     exit
+   }
+   IP_INC4=${libver}_4
+   IP_INC8=${libver}_8
+   IP_INCd=${libver}_d
+   IP_LIB4=lib${libver}_4.a
+   IP_LIB8=lib${libver}_8.a
+   IP_LIBd=lib${libver}_d.a
+   IP_VER=v${libver##*_v}
  }
 
 set -x
@@ -38,7 +49,6 @@ set -x
  cd src
 #################
 
- $skip || {
 #-------------------------------------------------------------------
 # Start building libraries
 #
@@ -83,7 +93,6 @@ set -x
          || make build CPPDEFS="-DLSIZE=D" FFLAGS="$FFLAGSd" LIB=$ipLibd \
                                                              &> $ipInfod
    make message MSGSRC="$(gen_cfunction $ipInfod OneLined LibInfod)" LIB=$ipLibd
- }
 
  $inst && {
 #
@@ -91,44 +100,56 @@ set -x
 #
    $local && {
      instloc=..
-     LIB_DIR4=$instloc
-     LIB_DIR8=$instloc
-     LIB_DIRd=$instloc
+     LIB_DIR=$instloc/lib
      INCP_DIR=$instloc/include
+     [ -d $LIB_DIR ] || { mkdir -p $LIB_DIR; }
      [ -d $INCP_DIR ] || { mkdir -p $INCP_DIR; }
+     LIB_DIR4=$LIB_DIR
+     LIB_DIR8=$LIB_DIR
+     LIB_DIRd=$LIB_DIR
      INCP_DIR4=$INCP_DIR
      INCP_DIR8=$INCP_DIR
      INCP_DIRd=$INCP_DIR
      SRC_DIR=
    } || {
-     [[ $instloc == --- ]] && {
-       LIB_DIR4=$(dirname $IP_LIB4)
-       LIB_DIR8=$(dirname $IP_LIB8)
-       LIB_DIRd=$(dirname $IP_LIBd)
+     $rinst && {
+       LIB_DIR4=$(dirname ${IP_LIB4})
+       LIB_DIR8=$(dirname ${IP_LIB8})
+       LIB_DIRd=$(dirname ${IP_LIBd})
        INCP_DIR4=$(dirname $IP_INC4)
        INCP_DIR8=$(dirname $IP_INC8)
        INCP_DIRd=$(dirname $IP_INCd)
+       [ -d $IP_INC4 ] && { rm -rf $IP_INC4; } \
+                       || { mkdir -p $INCP_DIR4; }
+       [ -d $IP_INC8 ] && { rm -rf $IP_INC8; } \
+                       || { mkdir -p $INCP_DIR8; }
+       [ -d $IP_INCd ] && { rm -rf $IP_INCd; } \
+                       || { mkdir -p $INCP_DIRd; }
        SRC_DIR=$IP_SRC
      } || {
-       LIB_DIR4=$instloc
-       LIB_DIR8=$instloc
-       LIB_DIRd=$instloc
+       LIB_DIR=$instloc/lib
+       LIB_DIR4=$LIB_DIR
+       LIB_DIR8=$LIB_DIR
+       LIB_DIRd=$LIB_DIR
        INCP_DIR=$instloc/include
        INCP_DIR4=$INCP_DIR
        INCP_DIR8=$INCP_DIR
        INCP_DIRd=$INCP_DIR
+       IP_INC4=$INCP_DIR4/$IP_INC4
+       IP_INC8=$INCP_DIR8/$IP_INC8
+       IP_INCd=$INCP_DIRd/$IP_INCd
+       [ -d $IP_INC4 ] && { rm -rf $IP_INC4; } \
+                       || { mkdir -p $INCP_DIR4; }
+       [ -d $IP_INC8 ] && { rm -rf $IP_INC8; } \
+                       || { mkdir -p $INCP_DIR8; }
+       [ -d $IP_INCd ] && { rm -rf $IP_INCd; } \
+                       || { mkdir -p $INCP_DIRd; }
        SRC_DIR=$instloc/src
        [[ $instloc == .. ]] && SRC_DIR=
      }
      [ -d $LIB_DIR4 ] || mkdir -p $LIB_DIR4
      [ -d $LIB_DIR8 ] || mkdir -p $LIB_DIR8
      [ -d $LIB_DIRd ] || mkdir -p $LIB_DIRd
-     [ -d $IP_INC4 ] && { rm -rf $IP_INC4; } \
-                     || { mkdir -p $INCP_DIR4; }
-     [ -d $IP_INC8 ] && { rm -rf $IP_INC8; } \
-                     || { mkdir -p $INCP_DIR8; }
-     [ -d $IP_INCd ] && { rm -rf $IP_INCd; } \
-                     || { mkdir -p $INCP_DIRd; }
      [ -z $SRC_DIR ] || { [ -d $SRC_DIR ] || mkdir -p $SRC_DIR; }
    }
 
