@@ -144,7 +144,7 @@ set -x
                        || { mkdir -p $INCP_DIR8; }
        [ -d $IP_INCd ] && { rm -rf $IP_INCd; } \
                        || { mkdir -p $INCP_DIRd; }
-       SRC_DIR=$instloc/src
+       SRC_DIR=$instloc/src/${libver}
        [[ $instloc == .. ]] && SRC_DIR=
      }
      [ -d $LIB_DIR4 ] || mkdir -p $LIB_DIR4
