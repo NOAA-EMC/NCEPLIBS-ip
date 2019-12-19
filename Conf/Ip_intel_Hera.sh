@@ -1,4 +1,8 @@
-# *** for Theia (intel) ***
+# *** for Hera (intel) ***
+ $rinst && {
+   grep -E "(^|:|/)ip/" <<< "$LOADEDMODULES" &> /dev/null \
+    || module load ip/3.0.2
+ }
 
  export CC=icc
  export FC=ifort

@@ -1,8 +1,0 @@
-Makefile
-config.status
-config*.log
-*.exe
-*.o
-*.mod
-copygb/exec/*
-ipxwafs/exec/copygb*

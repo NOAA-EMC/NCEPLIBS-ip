@@ -1,3 +1,0 @@
-export FC="ifort"
-export FCFLAGS="-qopenmp -check all -traceback -fpe0 -ftrapuv -assume byterecl -g"
-export LDFLAGS="-qopenmp"
