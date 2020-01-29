@@ -28,7 +28,7 @@ if( (BUILD_RELEASE) OR (BUILD_PRODUCTION) )
   if(IntelComp)
     set(shared_fortran_flags "-auto" "-qopenmp" "-convert" "big_endian" "-assume" "byterecl"
       "-fp-model" "strict" "-fpp")
-    set(fortran_4_flags "-i4" "-r4")
+    set(fortran_4_flags "-i4")
     set(fortran_d_flags "-i4" "-r8")
     set(fortran_8_flags "-i8" "-r8")
   elseif(GNUComp)
