@@ -57,6 +57,7 @@ foreach(kind ${kinds})
   target_compile_definitions(${lib_name} PRIVATE "LSIZE=${kind_definition}")
 
   set(flags ${shared_fortran_flags} ${fortran_${kind}_flags})
+
   target_compile_options(${lib_name} PRIVATE ${flags})
   
   set(module_dir "${CMAKE_CURRENT_BINARY_DIR}/include_${kind}")
