@@ -3,6 +3,8 @@ project(ip VERSION 3.0.0)
 set(${PROJECT_NAME}_VERSION ${PROJECT_VERSION} CACHE INTERNAL "${PROJECT_NAME} version number")
 enable_language (Fortran)
 
+option(OPENMP "use OpenMP threading" OFF)
+
 if (NOT CMAKE_BUILD_TYPE)
   set (CMAKE_BUILD_TYPE RELEASE CACHE STRING
     "Choose the type of build, options are: PRODUCTION Debug Release."
@@ -24,15 +26,19 @@ endif()
 STRING(COMPARE EQUAL ${CMAKE_BUILD_TYPE} "PRODUCTION" BUILD_PRODUCTION)
 STRING(COMPARE EQUAL ${CMAKE_BUILD_TYPE} "DEBUG" BUILD_DEBUG)
 
+if(OPENMP)
+  find_package(OpenMP)
+endif()
+
 if( (BUILD_RELEASE) OR (BUILD_PRODUCTION) )
   if(IntelComp)
-    set(shared_fortran_flags "-auto" "-qopenmp" "-convert" "big_endian" "-assume" "byterecl"
-      "-fp-model" "strict" "-fpp")
+    set(shared_fortran_flags "-auto" "-convert" "big_endian" "-assume" "byterecl"
+      "-fp-model" "strict" "-fpp" "${OpenMP_Fortran_FLAGS}")
     set(fortran_4_flags "-i4")
     set(fortran_d_flags "-i4" "-r8")
     set(fortran_8_flags "-i8" "-r8")
   elseif(GNUComp)
-    set(shared_fortran_flags "-fconvert=big-endian" "-cpp")
+    set(shared_fortran_flags "-fconvert=big-endian" "-cpp" "${OpenMP_Fortran_FLAGS}")
     set(fortran_4_flags)
     set(fortran_d_flags "-fdefault-real-8")
     set(fortran_8_flags "-fdefault-integer-8" "-fdefault-real-8")
