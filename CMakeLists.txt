@@ -1,8 +1,10 @@
 cmake_minimum_required(VERSION 3.15)
 
+file(STRINGS "VERSION" pVersion)
+
 project(
   ip
-  VERSION 3.0.0
+  VERSION ${pVersion}
   LANGUAGES Fortran)
 
 if(NOT CMAKE_BUILD_TYPE MATCHES "^(Debug|Release|RelWithDebInfo|MinSizeRel)$")
@@ -21,14 +23,13 @@ endif()
 
 if(CMAKE_Fortran_COMPILER_ID MATCHES "^(Intel)$")
   set(CMAKE_Fortran_FLAGS
-      "-auto -qopenmp -convert big_endian -assume byterecl -fp-model strict -fpp"
+      "-g -auto -qopenmp -convert big_endian -assume byterecl -fp-model strict -fpp"
   )
-  set(CMAKE_Fortran_FLAGS_DEBUG "-g")
   set(fortran_d_flags "-i4 -r8")
   set(fortran_8_flags "-i8 -r8")
 elseif(CMAKE_Fortran_COMPILER_ID MATCHES "^(GNU|Clang|AppleClang)$")
-  set(CMAKE_Fortran_FLAGS "-fconvert=big-endian -cpp")
-  set(CMAKE_Fortran_FLAGS_DEBUG "-g")
+  set(CMAKE_Fortran_FLAGS "-g -fconvert=big-endian -cpp")
+  set(CMAKE_Fortran_FLAGS_DEBUG "-ggdb -Wall")
   set(fortran_d_flags "-fdefault-real-8")
   set(fortran_8_flags "-fdefault-integer-8 -fdefault-real-8")
 endif()
