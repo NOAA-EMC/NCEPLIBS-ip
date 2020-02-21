@@ -7,6 +7,8 @@ project(
   VERSION ${pVersion}
   LANGUAGES Fortran)
 
+option(OPENMP "use OpenMP threading" OFF)
+
 if(NOT CMAKE_BUILD_TYPE MATCHES "^(Debug|Release|RelWithDebInfo|MinSizeRel)$")
   message(STATUS "Setting build type to 'Release' as none was specified.")
   set(CMAKE_BUILD_TYPE
@@ -23,7 +25,7 @@ endif()
 
 if(CMAKE_Fortran_COMPILER_ID MATCHES "^(Intel)$")
   set(CMAKE_Fortran_FLAGS
-      "-g -auto -qopenmp -convert big_endian -assume byterecl -fp-model strict -fpp"
+      "-g -auto -convert big_endian -assume byterecl -fp-model strict -fpp"
   )
   set(fortran_d_flags "-i4 -r8")
   set(fortran_8_flags "-i8 -r8")
@@ -32,6 +34,10 @@ elseif(CMAKE_Fortran_COMPILER_ID MATCHES "^(GNU|Clang|AppleClang)$")
   set(CMAKE_Fortran_FLAGS_DEBUG "-ggdb -Wall")
   set(fortran_d_flags "-fdefault-real-8")
   set(fortran_8_flags "-fdefault-integer-8 -fdefault-real-8")
+endif()
+
+if(OPENMP)
+  find_package(OpenMP REQUIRED)
 endif()
 
 add_subdirectory(src)
@@ -49,6 +55,8 @@ foreach(kind ${kinds})
   target_compile_definitions(${lib_name} PRIVATE "LSIZE=${kind_definition}")
   set_target_properties(${lib_name} PROPERTIES COMPILE_FLAGS
                                                "${fortran_${kind}_flags}")
+  set_target_properties(${lib_name} PROPERTIES COMPILE_FLAGS
+                                               "${OpenMP_Fortran_FLAGS}")
   set_target_properties(${lib_name} PROPERTIES OUTPUT_NAME
                                                ${versioned_lib_name})
   set_target_properties(${lib_name} PROPERTIES Fortran_MODULE_DIRECTORY
