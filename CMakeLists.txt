@@ -61,6 +61,8 @@ foreach(kind ${kinds})
                                                ${versioned_lib_name})
   set_target_properties(${lib_name} PROPERTIES Fortran_MODULE_DIRECTORY
                                                "${module_dir}")
+  set_target_properties(${lib_name} PROPERTIES INTERFACE_LINK_LIBRARIES
+                                               ${lib_name})
   target_include_directories(
     ${lib_name}
     PUBLIC $<BUILD_INTERFACE:${module_dir}>
