@@ -5,7 +5,6 @@ set(fortran_src
     ${CMAKE_CURRENT_SOURCE_DIR}/gdswzd03_mod.f90
     ${CMAKE_CURRENT_SOURCE_DIR}/gdswzd04_mod.f90
     ${CMAKE_CURRENT_SOURCE_DIR}/gdswzd05_mod.f90
-    ${CMAKE_CURRENT_SOURCE_DIR}/gdswzd_c.F90
     ${CMAKE_CURRENT_SOURCE_DIR}/gdswzd_mod.f90
     ${CMAKE_CURRENT_SOURCE_DIR}/gdswzdcb_mod.f90
     ${CMAKE_CURRENT_SOURCE_DIR}/gdswzdcd_mod.f90
