@@ -37,7 +37,7 @@ elseif(CMAKE_Fortran_COMPILER_ID MATCHES "^(GNU|Clang|AppleClang)$")
 endif()
 
 if(OPENMP)
-  find_package(OpenMP REQUIRED)
+  find_package(OpenMP REQUIRED COMPONENTS Fortran)
 endif()
 
 add_subdirectory(src)
@@ -51,12 +51,15 @@ foreach(kind ${kinds})
   # Compiled with preprocessor definition LSIZE=D, not d
   string(TOUPPER ${kind} kind_definition)
 
+  set(BUILD_FLAGS "${fortran_${kind}_flags}")
+  if(OpenMP_Fortran_FOUND)
+    set(BUILD_FLAGS "${BUILD_FLAGS} ${OpenMP_Fortran_FLAGS}")
+  endif()
+
   add_library(${lib_name} STATIC ${fortran_src})
   target_compile_definitions(${lib_name} PRIVATE "LSIZE=${kind_definition}")
   set_target_properties(${lib_name} PROPERTIES COMPILE_FLAGS
-                                               "${fortran_${kind}_flags}")
-  set_target_properties(${lib_name} PROPERTIES COMPILE_FLAGS
-                                               "${OpenMP_Fortran_FLAGS}")
+                                               "${BUILD_FLAGS}")
   set_target_properties(${lib_name} PROPERTIES OUTPUT_NAME
                                                ${versioned_lib_name})
   set_target_properties(${lib_name} PROPERTIES Fortran_MODULE_DIRECTORY
