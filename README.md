@@ -4,9 +4,11 @@ The NCEP general interpolation library (iplib) contains Fortran 90 subprograms
 to be used for interpolating between nearly all (rectilinear) grids used at NCEP.
 For more detailed documentation see [README.iplib](README.iplib).
 
+Code Manager : George Gayno
+
 ### Prerequisites
 
-Compilers: GNU | Intel | Clang | AppleClang | PGI
+Compilers: GNU | Intel | Clang | AppleClang 
 
 
 ### Installing
@@ -21,7 +23,7 @@ make install
 
 
 ### Version
-3.0.0
+3.1.0
 
 
 ### Authors
