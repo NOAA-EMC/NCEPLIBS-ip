@@ -1,85 +1,84 @@
 cmake_minimum_required(VERSION 3.15)
-project(ip VERSION 3.0.0)
-set(${PROJECT_NAME}_VERSION ${PROJECT_VERSION} CACHE INTERNAL "${PROJECT_NAME} version number")
-enable_language (Fortran)
+
+file(STRINGS "VERSION" pVersion)
+
+project(
+  ip
+  VERSION ${pVersion}
+  LANGUAGES Fortran)
 
 option(OPENMP "use OpenMP threading" OFF)
 
-if (NOT CMAKE_BUILD_TYPE)
-  set (CMAKE_BUILD_TYPE RELEASE CACHE STRING
-    "Choose the type of build, options are: PRODUCTION Debug Release."
-    FORCE)
+if(NOT CMAKE_BUILD_TYPE MATCHES "^(Debug|Release|RelWithDebInfo|MinSizeRel)$")
+  message(STATUS "Setting build type to 'Release' as none was specified.")
+  set(CMAKE_BUILD_TYPE
+      "Release"
+      CACHE STRING "Choose the type of build." FORCE)
+  set_property(CACHE CMAKE_BUILD_TYPE PROPERTY STRINGS "Debug" "Release"
+                                               "MinSizeRel" "RelWithDebInfo")
 endif()
 
-if(CMAKE_CXX_COMPILER_ID STREQUAL "Intel")
-  set(IntelComp true )
-elseif(CMAKE_CXX_COMPILER_ID MATCHES "GNU*" OR CMAKE_CXX_COMPILER_ID MATCHES "Clang*")
-  set(GNUComp true )
-elseif(CMAKE_CXX_COMPILER_ID MATCHES "pgc*")
-  set(PGIComp true )
+if(NOT CMAKE_Fortran_COMPILER_ID MATCHES "^(Intel|GNU|Clang|AppleClang)$")
+  message(
+    WARNING "Compiler not officially supported: ${CMAKE_Fortran_COMPILER_ID}")
 endif()
 
-STRING(COMPARE EQUAL ${CMAKE_BUILD_TYPE} "RelWithDebInfo" BUILD_RELEASE)
-if(NOT BUILD_RELEASE )
-  STRING(COMPARE EQUAL ${CMAKE_BUILD_TYPE} "RELEASE" BUILD_RELEASE)
+if(CMAKE_Fortran_COMPILER_ID MATCHES "^(Intel)$")
+  set(CMAKE_Fortran_FLAGS
+      "-g -auto -convert big_endian -assume byterecl -fp-model strict -fpp"
+  )
+  set(fortran_d_flags "-i4 -r8")
+  set(fortran_8_flags "-i8 -r8")
+elseif(CMAKE_Fortran_COMPILER_ID MATCHES "^(GNU|Clang|AppleClang)$")
+  set(CMAKE_Fortran_FLAGS "-g -fconvert=big-endian -cpp")
+  set(CMAKE_Fortran_FLAGS_DEBUG "-ggdb -Wall")
+  set(fortran_d_flags "-fdefault-real-8")
+  set(fortran_8_flags "-fdefault-integer-8 -fdefault-real-8")
 endif()
-STRING(COMPARE EQUAL ${CMAKE_BUILD_TYPE} "PRODUCTION" BUILD_PRODUCTION)
-STRING(COMPARE EQUAL ${CMAKE_BUILD_TYPE} "DEBUG" BUILD_DEBUG)
 
 if(OPENMP)
-  find_package(OpenMP)
+  find_package(OpenMP REQUIRED COMPONENTS Fortran)
 endif()
 
-if( (BUILD_RELEASE) OR (BUILD_PRODUCTION) )
-  if(IntelComp)
-    set(shared_fortran_flags "-auto" "-convert" "big_endian" "-assume" "byterecl"
-      "-fp-model" "strict" "-fpp" "${OpenMP_Fortran_FLAGS}")
-    set(fortran_4_flags "-i4")
-    set(fortran_d_flags "-i4" "-r8")
-    set(fortran_8_flags "-i8" "-r8")
-  elseif(GNUComp)
-    set(shared_fortran_flags "-fconvert=big-endian" "-cpp" "${OpenMP_Fortran_FLAGS}")
-    set(fortran_4_flags)
-    set(fortran_d_flags "-fdefault-real-8")
-    set(fortran_8_flags "-fdefault-integer-8" "-fdefault-real-8")
-  else()
-    message("unknown compiler!")
-    exit()
-  endif()
-endif()
-
-file(GLOB fortran_src ${CMAKE_CURRENT_SOURCE_DIR}/src/*.f90 ${CMAKE_CURRENT_SOURCE_DIR}/src/*.F)
+add_subdirectory(src)
 
 set(kinds "4" "8" "d")
 foreach(kind ${kinds})
   set(lib_name ${PROJECT_NAME}_${kind})
   set(versioned_lib_name ${PROJECT_NAME}_v${PROJECT_VERSION}_${kind})
-  add_library(${lib_name} STATIC ${fortran_src})
-
-  set_target_properties(${lib_name} PROPERTIES OUTPUT_NAME "${versioned_lib_name}")
+  set(module_dir "${CMAKE_CURRENT_BINARY_DIR}/include_${kind}")
 
   # Compiled with preprocessor definition LSIZE=D, not d
   string(TOUPPER ${kind} kind_definition)
+
+  set(BUILD_FLAGS "${fortran_${kind}_flags}")
+  if(OpenMP_Fortran_FOUND)
+    set(BUILD_FLAGS "${BUILD_FLAGS} ${OpenMP_Fortran_FLAGS}")
+  endif()
+
+  add_library(${lib_name} STATIC ${fortran_src})
   target_compile_definitions(${lib_name} PRIVATE "LSIZE=${kind_definition}")
+  set_target_properties(${lib_name} PROPERTIES COMPILE_FLAGS
+                                               "${BUILD_FLAGS}")
+  set_target_properties(${lib_name} PROPERTIES OUTPUT_NAME
+                                               ${versioned_lib_name})
+  set_target_properties(${lib_name} PROPERTIES Fortran_MODULE_DIRECTORY
+                                               "${module_dir}")
+  set_target_properties(${lib_name} PROPERTIES INTERFACE_LINK_LIBRARIES
+                                               ${lib_name})
+  target_include_directories(
+    ${lib_name}
+    PUBLIC $<BUILD_INTERFACE:${module_dir}>
+           $<INSTALL_INTERFACE:${CMAKE_INSTALL_PREFIX}/include_${kind}>)
 
-  set(flags ${shared_fortran_flags} ${fortran_${kind}_flags})
-
-  target_compile_options(${lib_name} PRIVATE ${flags})
-  
-  set(module_dir "${CMAKE_CURRENT_BINARY_DIR}/include_${kind}")
-  set_target_properties(${lib_name} PROPERTIES Fortran_MODULE_DIRECTORY "${module_dir}")
-
-  target_include_directories(${lib_name} PUBLIC
-    $<BUILD_INTERFACE:${module_dir}>
-    $<INSTALL_INTERFACE:${CMAKE_INSTALL_PREFIX}/include_${kind}>)
-
-  install(TARGETS ${lib_name}
+  install(
+    TARGETS ${lib_name}
     EXPORT ${PROJECT_NAME}-config
     RUNTIME DESTINATION bin
     LIBRARY DESTINATION lib
-    ARCHIVE DESTINATION lib) 
+    ARCHIVE DESTINATION lib)
   install(DIRECTORY ${module_dir} DESTINATION ${CMAKE_INSTALL_PREFIX})
 endforeach()
 
-install(EXPORT ${PROJECT_NAME}-config DESTINATION ${CMAKE_INSTALL_PREFIX})
-
+install(EXPORT ${PROJECT_NAME}-config
+        DESTINATION ${CMAKE_INSTALL_PREFIX}/lib/cmake/${PROJECT_NAME})
