@@ -27,6 +27,7 @@ foreach(kind ${kinds})
   endif()
 
   add_library(${lib_name} STATIC ${fortran_src})
+  add_library(${PROJECT_NAME}::${lib_name} ALIAS ${lib_name})
   
   target_compile_definitions(${lib_name} PRIVATE "LSIZE=${kind_definition}")
   set_target_properties(${lib_name} PROPERTIES COMPILE_FLAGS "${BUILD_FLAGS}")
@@ -56,14 +57,12 @@ export(EXPORT ${PROJECT_NAME}Exports
   NAMESPACE ${PROJECT_NAME}::
   FILE ${PROJECT_NAME}-targets.cmake)
 
-# bacio-config.cmake
 configure_package_config_file(
   ${CMAKE_SOURCE_DIR}/cmake/PackageConfig.cmake.in ${CMAKE_BINARY_DIR}/${PROJECT_NAME}-config.cmake
   INSTALL_DESTINATION ${CONFIG_INSTALL_DESTINATION})
 install(FILES ${CMAKE_BINARY_DIR}/${PROJECT_NAME}-config.cmake
   DESTINATION ${CONFIG_INSTALL_DESTINATION})
 
-# bacio-config-version.cmake
 write_basic_package_version_file(
   ${CMAKE_BINARY_DIR}/${PROJECT_NAME}-config-version.cmake
   VERSION ${PROJECT_VERSION}
@@ -71,7 +70,6 @@ write_basic_package_version_file(
 install(FILES ${CMAKE_BINARY_DIR}/${PROJECT_NAME}-config-version.cmake
   DESTINATION ${CONFIG_INSTALL_DESTINATION})
 
-# bacio-targets.cmake and bacio-targets-<build-type>.cmake
 install(EXPORT ${PROJECT_NAME}Exports
   NAMESPACE ${PROJECT_NAME}::
   FILE ${PROJECT_NAME}-targets.cmake
