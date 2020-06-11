@@ -3,10 +3,10 @@
    exit 1
  fi
  sys=${1,,}
- [[ $sys == dell || $sys == cray || $sys == wcoss || \
+ [[ $sys == dell || $sys == cray || $sys == wcoss ||  $sys == orion || \
     $sys == theia || $sys == hera || $sys == gaea || $sys == jet || \
     $sys == intel_general || $sys == gnu_general ]] || {
-   echo "*** Usage: $0 dell|cray|wcoss|theia|hera|gaea|jet|intel_general|gnu_general libver=<lib_ver> [debug] [compileonly] [prefix=<installpath>]" >&2
+   echo "*** Usage: $0 dell|cray|wcoss|theia|hera|orion|gaea|jet|intel_general|gnu_general libver=<lib_ver> [debug] [compileonly] [prefix=<installpath>]" >&2
    exit 1
  }
 
