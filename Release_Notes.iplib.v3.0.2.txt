@@ -7,7 +7,7 @@ Release Notes
 -------------
 
 Library: iplib (ipolates)
-Version: 3.0.1
+Version: 3.0.2
 Purpose: Performs interpolation between nearly all NCEP grids.
 Developed by: NCEP/EMC
 Contact info:  NCEP.List.EMC.nceplibs.Developers@noaa.gov or
@@ -28,27 +28,20 @@ Change History
  v3.0.1 - Port to WCOSS Dell.  Update Intel Fortran compiler
           option '-openmp' to '-qopenmp'.  Rename source 
           code directory from 'sorc' to 'src'.
+ v3.0.2 - Add intel "-fPIC" compiler flag, required for
+          GFS v16.  Replace autotools-based build system with
+          new EMC-based system.
 
 
-Implementation Instructions on WCOSS-Phase 1/2/3
+Implementation Instructions on WCOSS
 ------------------------------------------------
  - Checkout from git repository: 
-    $ git clone --recursive gerrit:NCEPLIBS-ip
+    $ git clone git@github.com:NOAA-EMC/NCEPLIBS-ip.git
     $ cd NCEPLIBS-ip
-    $ git checkout tags/version_3.0.1
- - Type "make_ip_lib.sh ifort.setup" to build library with the Intel compiler.
- - The librares and include modules will be placed under ./ip/v3.0.1.
- - See README.build for more details.
-
-
-Implementation Instructions on WCOSS-Cray
------------------------------------------
- - Checkout from git repository: 
-    $ git clone --recursive gerrit:NCEPLIBS-ip
-    $ cd NCEPLIBS-ip
-    $ git checkout tags/version_3.0.1
- - Type "make_ip_lib_wcoss-cray.sh ifort.setup" to build library with the Intel compiler.
- - The librares and include modules will be placed under ./ip/v3.0.1/intel
- - Type "make_ip_lib_wcoss-cray.sh crayftn.setup" to build library with the Cray compiler.
- - The librares and include modules will be placed under ./ip/v3.0.1/cray
- - See README.build for more details.
+    $ git checkout tags/v3.0.2
+ - On Dell, invoke the build script as follows:
+    $ ./build_ip.sh dell libver="ip_v3.0.2"
+ - On Cray, invoke the build script as follows:
+    $ ./build_ip.sh cray libver="ip_v3.0.2"
+ - The libraries will be placed in ./lib
+ - The include files will be placed in ./include
