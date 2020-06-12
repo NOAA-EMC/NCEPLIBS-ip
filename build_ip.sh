@@ -102,8 +102,10 @@ set -x
      instloc=..
      LIB_DIR=$instloc/lib
      INCP_DIR=$instloc/include
-     [ -d $LIB_DIR ] || { mkdir -p $LIB_DIR; }
-     [ -d $INCP_DIR ] || { mkdir -p $INCP_DIR; }
+     rm -fr $LIB_DIR
+     mkdir -p $LIB_DIR
+     rm -fr $INCP_DIR
+     mkdir -p $INCP_DIR
      LIB_DIR4=$LIB_DIR
      LIB_DIR8=$LIB_DIR
      LIB_DIRd=$LIB_DIR
