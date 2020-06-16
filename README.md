@@ -21,17 +21,16 @@ make install
 
 # Testing
 
-Testing requires
+Testing requires[pFUnit](https://github.com/Goddard-Fortran-Ecosystem/pFUnit).
 
-[pFUnit](https://github.com/Goddard-Fortran-Ecosystem/pFUnit).
-
-
+```
 cmake .. -DENABLE_TESTS=ON -DCMAKE_PREFIX_PATH="/path/to/pfunit;/path/to/NCEPLIBS"
 make -j2
 make test
+```
 
 ### Version
-3.0.0
+3.1.0
 
 
 ### Authors
