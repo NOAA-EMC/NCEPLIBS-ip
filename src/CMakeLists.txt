@@ -22,12 +22,13 @@ foreach(kind ${kinds})
   string(TOUPPER ${kind} kind_definition)
 
   set(BUILD_FLAGS "${fortran_${kind}_flags}")
-  if(OpenMP_Fortran_FOUND)
-    target_link_libraries(${lib_name} OpenMP::OpenMP_Fortran)
-  endif()
 
   add_library(${lib_name} STATIC ${fortran_src})
   add_library(${PROJECT_NAME}::${lib_name} ALIAS ${lib_name})
+
+  if(OpenMP_Fortran_FOUND)
+    target_link_libraries(${lib_name} OpenMP::OpenMP_Fortran)
+  endif()
   
   target_compile_definitions(${lib_name} PRIVATE "LSIZE=${kind_definition}")
   set_target_properties(${lib_name} PROPERTIES COMPILE_FLAGS "${BUILD_FLAGS}")
