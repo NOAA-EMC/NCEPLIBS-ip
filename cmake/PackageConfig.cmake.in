@@ -7,7 +7,8 @@
 # Include targets file.  This will create IMPORTED target @PROJECT_NAME@
 include("${CMAKE_CURRENT_LIST_DIR}/@PROJECT_NAME@-targets.cmake")
 
-if(@OpenMP_Fortran_FOUND@)
+# ON/OFF implies ip was compiled with/without OPENMP
+if(@OPENMP@)
   find_dependency(OpenMP)
 endif()
 
