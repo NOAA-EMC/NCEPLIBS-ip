@@ -1,4 +1,9 @@
+
 Unit test for the NCEP IPOLATES library (IPLIB).
+
+Please refer to README.md in the main directory for how to run tests using PFUnit.
+
+This file is kept temporarily for historical purposes until all unit tests are converted to use pfunit.
 
 ABSTRACT:
 ---------
