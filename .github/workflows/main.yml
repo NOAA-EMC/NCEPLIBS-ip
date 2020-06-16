@@ -40,15 +40,7 @@ jobs:
         path: sp
         ref: develop
 
-    - name: cache-sp
-      id: cache-sp
-      uses: actions/cache@v2
-      with:
-        path: ~/sp
-        key: sp-${{ runner.os }}-${{ hashFiles('sp/VERSION') }}
-
     - name: build-sp
-      if: steps.cache-sp.outputs.cache-hit != 'true'
       run: |
         cd sp
         mkdir build

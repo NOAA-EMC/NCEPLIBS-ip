@@ -23,7 +23,7 @@ foreach(kind ${kinds})
 
   set(BUILD_FLAGS "${fortran_${kind}_flags}")
   if(OpenMP_Fortran_FOUND)
-    set(BUILD_FLAGS "${BUILD_FLAGS} ${OpenMP_Fortran_FLAGS}")
+    target_link_libraries(${lib_name} OpenMP::OpenMP_Fortran)
   endif()
 
   add_library(${lib_name} STATIC ${fortran_src})
