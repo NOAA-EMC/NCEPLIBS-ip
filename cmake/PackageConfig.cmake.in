@@ -17,4 +17,4 @@ get_target_property(@PROJECT_NAME@_BUILD_TYPES @PROJECT_NAME@::@PROJECT_NAME@_4 
 check_required_components("@PROJECT_NAME@")
 
 get_target_property(location @PROJECT_NAME@::@PROJECT_NAME@_4 LOCATION)
-message(STATUS "Found @PROJECT_NAME@: ${location} (found version @PROJECT_VERSION@)")
+message(STATUS "Found @PROJECT_NAME@: ${location} (found version \"@PROJECT_VERSION@\")")
