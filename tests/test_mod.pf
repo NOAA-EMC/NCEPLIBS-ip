@@ -1,0 +1,307 @@
+module test_mod
+  use funit
+  use iso_fortran_env, only: real32, real64
+  implicit none
+
+
+  integer, public                :: input_kgds(200)
+
+  integer, parameter, public     :: i_input = 360
+  integer, parameter, public     :: j_input = 180
+
+  logical*1, public :: input_bitmap(i_input,j_input)
+
+  real, public      :: input_data(i_input,j_input)
+
+  data input_kgds /0,  360,  180, -89500, -180000, 128,  &
+       89500, 179000, 1000, 1000,  64,  0,   &
+       6*-1, 0, 255, 180*-1/
+
+contains
+
+  @test
+  subroutine test_scalar()
+
+    integer, parameter :: N = 1
+    integer, parameter :: grids(N) = [3]!, 8, 127, 203, 205, 212, 218]
+    integer, parameter :: interp_opts(N) = [0]! 1, 2, 3, 4, 6, 0]
+
+    integer :: i, j, k
+    real(real32), allocatable :: baseline_data(:,:), output_data(:,:), output_data4
+    real(real64) :: avg_diff, maxDiff, diff
+    integer :: num_pts_diff
+
+
+    call read_input_data("data/input_data/scalar/global_snoalb.bin")
+
+    do k = 1, N
+       call interp(interp_opt = interp_opts(k), grid = grids(k), &
+            baseline_data = baseline_data, output_data = output_data)
+
+       avg_diff = 0d0
+       maxdiff=0.0
+       num_pts_diff=0
+
+       do j = 1, size(output_data, 2)
+          do i = 1, size(output_data, 1)
+             output_data4 = real(output_data(i,j),4)
+             if (abs(output_data4 - baseline_data(i,j)) > 0.0001) then
+                avg_diff = avg_diff + abs(output_data4 - baseline_data(i,j))
+                num_pts_diff = num_pts_diff + 1
+                if (abs(output_data4-baseline_data(i,j)) > abs(maxdiff))then
+                   maxdiff = abs(output_data4 - baseline_data(i,j))
+                endif
+             endif
+          enddo
+       enddo
+
+       
+       avg_diff = avg_diff / size(output_data)
+       ! I just picked a number. This really isn't a unit test, but a regression test
+       @assertLessThan(avg_diff, 1d0, "Avg Diff greater than 1")
+
+       ! print*,'- MAX/MIN OF DATA: ', maxval(output_data),minval(output_data)
+       ! print*,'- NUMBER OF PTS DIFFERENT: ',num_pts_diff
+       ! print*,'- PERCENT OF TOTAL: ',(float(num_pts_diff)/float(size(output_data))) * 100.0
+       ! print*,'- MAX DIFFERENCE: ', maxdiff
+       ! if (num_pts_diff > 0) then
+       !    avgdiff = avgdiff / float(num_pts_diff)
+       ! endif
+       ! print*,'- AVG DIFFERENCE: ', avgdiff
+    end do
+
+
+  end subroutine test_scalar
+
+
+  subroutine interp(interp_opt, grid, baseline_data, output_data)
+
+    !-------------------------------------------------------------------------
+    ! Call the scalar polates routines to interpolate the input data
+    ! using all available interpolation methods (neighbor, bilinear, etc.)
+    ! several output grids of various map projections are tested.
+    !
+    ! The routine reads in two arguments from stnd input.  The first is
+    ! the grid to which you want to interpolate the data.
+    ! The valid choices are:
+    !
+    !    3 -  one-degree global lat/lon (ncep grid 3)
+    !    8 -  mercator (ncep grid 8)
+    !  127 -  t254 gaussian (ncep grid 127)
+    !  203 -  rotated lat/lon e-staggered (number refers to gds octet 6)
+    !  205 -  rotated lat/lon b-staggered (number refers to gds octet 6)
+    !  212 -  nh polar stereographic, spherical earth (number meaningless)
+    !  218 -  lambert conformal (ncep grid 218)
+    !
+    ! The second argument is the interpolation option.  The valid choices:
+    !
+    !  0 - bilinear
+    !  1 - bicubic
+    !  2 - neighbor
+    !  3 - budget
+    !  4 - spectral
+    !  6 - budget-neighbor
+    !
+    ! The interpolated data is compared against a baseline binary
+    ! file.  Any differences are written to standard output.
+    !-------------------------------------------------------------------------
+
+    implicit none
+
+    integer, intent(in)       :: interp_opt
+    integer, intent(in)       :: grid
+    character*100             :: output_file
+
+    integer(kind=4)           :: i1
+    integer                   :: ip, ipopt(20), output_kgds(200)
+    integer                   :: km, ibi, mi, iret, i, j
+    integer                   :: i_output, j_output, mo, no, ibo
+    integer                   :: num_pts_diff
+
+    logical*1, allocatable    :: output_bitmap(:,:)
+
+    real, allocatable         :: output_rlat(:,:), output_rlon(:,:)
+    real, allocatable, intent(out) :: output_data(:,:)
+    real(kind=4), allocatable, intent(out) :: baseline_data(:,:)
+    real                      :: avgdiff, maxdiff
+    real(kind=4)              :: output_data4
+
+    integer :: grd3(200)    ! global one-degree lat/lon
+    integer :: grd8(200)    ! mercator
+    integer :: grd127(200)  ! gaussian (t254)
+    integer :: grd203(200)  ! nam 12km e-grid
+    integer :: grd205(200)  ! nam 12km b-grid
+    integer :: grd212(200)  ! afwa nh polar, spherical earth
+    integer :: grd218(200)  ! lambert conformal (ncep grid 218)
+
+    character(len=3) :: grid_name
+    character :: opt_name
+    character(len=512) :: file_name
+
+    grd3 = 0d0
+    grd8 = 0d0    
+    grd127 = 0d0
+    grd203 = 0d0    
+    grd205 = 0d0
+    grd212 = 0d0
+    grd218 = 0d0
+
+    ! array(2:3) is the output resolution
+    grd3(1:20) = [0, 360, 181, 90000, 0, 128, -90000, -1000, 1000, 1000, 0, 0, 0, 0, 0, 0, 0, 0, 0, 255]            
+    grd8(1:20) = [1, 116, 44, -48670, 3104, 128, 61050, 0, 22500, 0, 64, 318830, 318830, 0, 0, 0, 0, 0, 0, 255]
+    grd127(1:20) = [4, 768, 384, 89642, 0, 128, -89642, -469, 469, 192, 0, 0, 255, 0, 0, 0, 0, 0, 0, 255]
+    grd203(1:20) = [203, 669, 1165, -7450, -144140, 136, 54000, -106000, 90, 77, 64, 0, 0, 0, 0, 0, 0, 0, 0, 255]
+    grd205(1:20) = [205, 954, 835, -7491, -144134, 136, 54000, -106000, 126, 90, 64, 44540, 14800, 0, 0, 0, 0, 0, 0, 255]
+    grd212(1:20) = [5, 512, 512, -20826,145000,8,-80000, 47625, 47625, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 255]
+    grd218(1:20) = [3, 614, 428, 12190, -133459, 8, -95000, 12191, 12191, 0, 64, 25000, 25000, 0, 0, 0, 0, 0, 0, 255]
+
+    select case (grid)
+    case (3)
+       output_kgds = grd3
+       i_output = output_kgds(2)
+       j_output = output_kgds(3)
+    case (8)
+       output_kgds = grd8
+       i_output = output_kgds(2)
+       j_output = output_kgds(3)
+    case (127)
+       output_kgds = grd127
+       i_output = output_kgds(2)
+       j_output = output_kgds(3)
+    case (203)
+       output_kgds = grd203
+       i_output = output_kgds(2)
+       j_output = output_kgds(3)
+    case (205)
+       output_kgds = grd205
+       i_output = output_kgds(2)
+       j_output = output_kgds(3)
+    case (212)
+       output_kgds = grd212
+       i_output = output_kgds(2)
+       j_output = output_kgds(3)
+    case (218)
+       output_kgds = grd218
+       i_output = output_kgds(2)
+       j_output = output_kgds(3)
+    case default
+       stop 55
+    end select
+
+    select case (interp_opt)
+       ! bi-linear
+    case (0)           
+       ip = 0
+       ipopt = 0  
+       ibi   = 0  ! no bitmap
+       ! bi-cubic
+    case (1)          
+       ip = 1
+       ipopt = 0  
+       ibi   = 0  ! no bitmap
+       ! neighbor
+    case (2)       
+       ip = 2
+       ipopt = 0  
+       ibi   = 0  ! no bitmap
+       ! budget
+    case (3)       
+       ip = 3
+       ipopt = -1  
+       ibi   = 0  ! no bitmap
+       ! spectral 
+    case (4)         
+       ip = 4
+       ipopt(1) = 0  ! triangular
+       ipopt(2) = -1 ! code chooses wave number
+       ipopt(3:20)=0
+       ibi   = 0     ! can't use bitmap with spectral
+       ! neighbor-budget
+    case (6)            
+       ip = 6
+       ipopt = -1  
+       ibi   = 0  ! no bitmap
+    case default
+       print*,"ERROR: ENTER VALID INTERP OPTION."
+       stop 56
+    end select
+
+    km = 1  ! number of fields to interpolate
+    mi = i_input * j_input ! dimension of input grids
+
+    mo = i_output * j_output 
+
+    allocate (output_rlat(i_output,j_output))
+    allocate (output_rlon(i_output,j_output))
+    allocate (output_data(i_output,j_output))
+    allocate (output_bitmap(i_output,j_output))
+
+    call ipolates(ip, ipopt, input_kgds, output_kgds, mi, mo,&
+         km, ibi, input_bitmap, input_data, &
+         no, output_rlat, output_rlon, ibo, output_bitmap, output_data, iret)
+
+    if (iret /= 0) then
+       print*,'- BAD STATUS FROM IPOLATES: ', iret
+       stop 6
+    end if
+
+    if (no /= mo) then
+       print*,'- ERROR: WRONG # OF POINTS RETURNED FROM IPOLATES'
+       stop 7
+    end if
+
+    do j = 1, j_output
+       do i = 1, i_output
+          if (.not. output_bitmap(i,j)) then
+             output_data(i,j) = -9.
+          endif
+       enddo
+    enddo
+
+    allocate(baseline_data(i_output,j_output))
+
+    write(file_name, '(A,I0,A,I0,A)') "data/baseline_data/scalar/4_byte_bin/grid", grid, &
+         ".opt", interp_opt, ".bin_4"
+
+    open (12, file = file_name, access="direct", recl=mo*4)
+    read (12, rec=1) baseline_data
+    close (12)
+
+  end subroutine interp
+
+  subroutine read_input_data(input_file)
+
+    implicit none
+
+    character(*)      :: input_file
+
+    integer            :: iret
+    integer, parameter :: iunit=9
+
+    real(kind=4)       :: dummy(i_input,j_input)
+
+    open(iunit, file=input_file, access='direct', recl=i_input*j_input*4,  &
+         iostat=iret)
+
+    if (iret /= 0) then
+       print*,'- BAD OPEN OF FILE, IRET IS ', iret
+       stop 2
+    end if
+
+    read(iunit, rec=1, iostat=iret) dummy
+    input_data=dummy
+
+    if (iret /= 0) then
+       print*,"- BAD READ OF DATA. IRET IS ", iret
+       stop 4
+    end if
+
+    close (iunit)
+
+    input_bitmap=.true.
+
+    return
+
+  end subroutine read_input_data
+
+end module test_mod
