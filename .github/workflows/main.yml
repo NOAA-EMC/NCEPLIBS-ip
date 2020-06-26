@@ -1,0 +1,69 @@
+name: Build and Test
+on: [push, pull_request]
+
+jobs:
+  build:
+    runs-on: ubuntu-20.04
+    env:
+      FC: gfortran-9
+      CC: gcc-9
+
+    steps:
+
+    - name: checkout-pfunit
+      uses: actions/checkout@v2
+      with:
+        repository: Goddard-Fortran-Ecosystem/pFUnit
+        path: pfunit
+
+    - name: cache-pfunit
+      id: cache-pfunit
+      uses: actions/cache@v2
+      with:
+        path: ~/pfunit
+        key: pfunit-${{ runner.os }}-${{ hashFiles('pfunit/VERSION') }}
+
+    - name: build-pfunit
+      if: steps.cache-pfunit.outputs.cache-hit != 'true'
+      run: |
+        cd pfunit
+        mkdir build
+        cd build
+        cmake .. -DSKIP_MPI=YES -DSKIP_ESMF=YES -DSKIP_FHAMCREST=YES -DCMAKE_INSTALL_PREFIX=~/pfunit
+        make -j2
+        make install
+
+    - name: checkout-sp
+      uses: actions/checkout@v2
+      with:
+        repository: NOAA-EMC/NCEPLIBS-sp
+        path: sp
+        ref: develop
+
+    - name: build-sp
+      run: |
+        cd sp
+        mkdir build
+        cd build
+        cmake .. -DCMAKE_INSTALL_PREFIX=~/sp
+        make -j2
+        make install
+
+    - name: checkout
+      uses: actions/checkout@v2
+      with: 
+        path: ip
+        submodules: true
+
+    - name: build
+      run: |
+        cd ip
+        mkdir build 
+        cd build
+        cmake .. -DENABLE_TESTS=ON -DCMAKE_PREFIX_PATH="~/pfunit;~/"
+        make -j2
+    
+    - name: test
+      run: |
+        cd $GITHUB_WORKSPACE/ip/build
+        make test
