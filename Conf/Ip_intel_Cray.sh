@@ -10,7 +10,7 @@
 
  export DEBUG="-g -traceback -O0"
  export CFLAGS="-g -traceback -O3 -axCORE-AVX2 -fPIC"
- export FFLAGS="-g -traceback -O3 -axCORE-AVX2 -fp-model strict -ip -convert little_endian -assume byterecl -fPIC"
+ export FFLAGS="-g -traceback -O3 -axCORE-AVX2 -fp-model strict -ip -convert little_endian -assume byterecl -qopenmp -fPIC"
  export FPPCPP="-cpp"
  export FREEFORM="-free"
  export CPPFLAGS="-P -traditional-cpp"
@@ -28,3 +28,5 @@
  export USECC=""
  export USEFC="YES"
  export DEPS=""
+
+ export VERSION_FLAG="--version"

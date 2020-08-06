@@ -16,13 +16,17 @@
    sys4=${sys:4}
    source ./Conf/Ip_${sys:0:3}_${sys4^}.sh
    rinst=false
+ elif [[ ${sys} == "cray_comp" ]]; then
+   source ./Conf/Ip_cray_Cray.sh
  else
    source ./Conf/Ip_intel_${sys^}.sh
  fi
- $CC --version &> /dev/null || {
+
+ $CC ${VERSION_FLAG} &> /dev/null || {
    echo "??? IP: compilers not set." >&2
    exit 1
  }
+
  [[ -z ${IP_VER+x} || -z ${IP_LIB4+x} ]] && {
    [[ -z ${libver+x} || -z ${libver} ]] && {
      echo "??? IP: \"libver\" not set." >&2

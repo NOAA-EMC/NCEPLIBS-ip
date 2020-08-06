@@ -29,24 +29,24 @@
   mpicflg=MPI"$cflg"
   mpifflg=MPI"$fflg"
 
-  $USEMPI && mpiver=$(mpirun --version | grep Version | sed 's/://' | \
+  $USEMPI && mpiver=$(mpirun ${VERSION_FLAG} | grep Version | sed 's/://' | \
                       tr -s " " | sed 's/^.* Version //; s/ Build.*$//')
 
   COMPILED="compiled by"
-  $CC --version | grep " (ICC) " &> /dev/null   &&
-  $FC --version | grep " (IFORT) " &> /dev/null && {
-     ccstr=$($CC --version | grep " (ICC) ")
-     cfstr=$($FC --version | grep " (IFORT) ")
+  $CC ${VERSION_FLAG} | grep " (ICC) " &> /dev/null   &&
+  $FC ${VERSION_FLAG} | grep " (IFORT) " &> /dev/null && {
+     ccstr=$($CC ${VERSION_FLAG} | grep " (ICC) ")
+     cfstr=$($FC ${VERSION_FLAG} | grep " (IFORT) ")
      COMPILER="${ccstr/(ICC)*/(ICC)}, $cfstr"
   } || {
-     $CC --version | grep " (.*GCC.*) " &> /dev/null &&
-     $FC --version | grep " (.*GCC.*) " &> /dev/null && {
-        ccstr=$($CC --version | grep " (.*GCC.*) ")
-        cfstr=$($FC --version | grep " (.*GCC.*) ")
+     $CC ${VERSION_FLAG} | grep " (.*GCC.*) " &> /dev/null &&
+     $FC ${VERSION_FLAG} | grep " (.*GCC.*) " &> /dev/null && {
+        ccstr=$($CC ${VERSION_FLAG} | grep " (.*GCC.*) ")
+        cfstr=$($FC ${VERSION_FLAG} | grep " (.*GCC.*) ")
         COMPILER="${ccstr/ (*GCC*)*/}, $cfstr"
      } || {
-        ccstr=$($CC --version | grep -E 'ICC|GCC')
-        cfstr=$($FC --version | grep -E 'IFORT|GCC')
+        ccstr=$($CC ${VERSION_FLAG} | grep -E 'ICC|GCC')
+        cfstr=$($FC ${VERSION_FLAG} | grep -E 'IFORT|GCC')
         COMPILER="$ccstr, $cfstr"
      }
   }
@@ -76,22 +76,22 @@
   [[ -n "$USECC" && ${USECC,,} != no ]] && {
     $USEMPI && {
       info=$info$'\n'"C COMPILER NAME: $MPICC"
-      info=$info$'\n'"C COMPILER VERSION: $($MPICC --version | head -1)"
+      info=$info$'\n'"C COMPILER VERSION: $($MPICC ${VERSION_FLAG} | head -1)"
       info=$info$'\n'"MPICFLAGS: "${!mpicflg}
     } || {
       info=$info$'\n'"C COMPILER NAME: $CC"
-      info=$info$'\n'"C COMPILER VERSION: $($CC --version | head -1)"
+      info=$info$'\n'"C COMPILER VERSION: $($CC ${VERSION_FLAG} | head -1)"
       info=$info$'\n'"CFLAGS: "${!cflg}
     }
   }
   [[ -n "$USEFC" && ${USEFC,,} != no ]] && {
     $USEMPI && {
       info=$info$'\n'"FORTRAN COMPILER NAME: $MPIFC"
-      info=$info$'\n'"FORTRAN COMPILER VERSION: $($MPIFC --version | head -1)"
+      info=$info$'\n'"FORTRAN COMPILER VERSION: $($MPIFC ${VERSION_FLAG} | head -1)"
       info=$info$'\n'"MPIFFLAGS: "${!mpifflg}
     } || {
       info=$info$'\n'"FORTRAN COMPILER NAME: $FC"
-      info=$info$'\n'"FORTRAN COMPILER VERSION: $($FC --version | head -1)"
+      info=$info$'\n'"FORTRAN COMPILER VERSION: $($FC ${VERSION_FLAG} | head -1)"
       info=$info$'\n'"FFLAGS: "${!fflg}
     }
   }

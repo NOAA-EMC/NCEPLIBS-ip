@@ -36,13 +36,22 @@ Change History
 Implementation Instructions on WCOSS
 ------------------------------------------------
  - Checkout from git repository: 
-    $ git clone git@github.com:NOAA-EMC/NCEPLIBS-ip.git
+    $ git clone https://github.com/NOAA-EMC/NCEPLIBS-ip.git
     $ cd NCEPLIBS-ip
     $ git checkout tags/ip_v3.0.2
- - Load the Intel compiler module.
- - On Dell, invoke the build script as follows:
-    $ ./build_ip.sh dell libver="ip_v3.0.2"
- - On Cray, invoke the build script as follows:
-    $ ./build_ip.sh cray libver="ip_v3.0.2"
- - The libraries will be placed in ./lib
- - The include files will be placed in ./include
+ - After building, the libraries will be placed in ./lib
+   and the include files will be placed in ./include
+ - On Dell:
+    - Load the Intel compiler module.
+    - Invoke the build script as follows:
+      $ ./build_ip.sh dell libver="ip_v3.0.2"
+    - Move libraries and include files to final location.
+ - On Cray:
+    - Load the Intel compiler module.
+    - Invoke the build script as follows:
+      $ ./build_ip.sh cray libver="ip_v3.0.2"
+    - Move libraries and include files to final location.
+    - Load the Cray compiler module.
+    - Invoke the build script as follows:
+      $ ./build_ip.sh cray_comp libver="ip_v3.0.2"
+    - Move libraries and include files to final location.
