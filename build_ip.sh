@@ -69,6 +69,7 @@ set -x
          || make build CPPDEFS="-DLSIZE=4" FFLAGS="$FFLAGS4" LIB=$ipLib4 \
                                                              &> $ipInfo4
    make message MSGSRC="$(gen_cfunction $ipInfo4 OneLine4 LibInfo4)" LIB=$ipLib4
+   cp iplib_4.h ./$ipInc4/iplib.h
 
  echo
  echo "   ... build (i8/r8) ip library ..."
@@ -83,6 +84,7 @@ set -x
          || make build CPPDEFS="-DLSIZE=8" FFLAGS="$FFLAGS8" LIB=$ipLib8 \
                                                              &> $ipInfo8
    make message MSGSRC="$(gen_cfunction $ipInfo8 OneLine8 LibInfo8)" LIB=$ipLib8
+   cp iplib_8.h ./$ipInc8/iplib.h
 
  echo
  echo "   ... build (i4/r8) ip library ..."
@@ -97,6 +99,7 @@ set -x
          || make build CPPDEFS="-DLSIZE=D" FFLAGS="$FFLAGSd" LIB=$ipLibd \
                                                              &> $ipInfod
    make message MSGSRC="$(gen_cfunction $ipInfod OneLined LibInfod)" LIB=$ipLibd
+   cp iplib_d.h ./$ipIncd/iplib.h
 
  $inst && {
 #
