@@ -13,7 +13,6 @@ elseif(CMAKE_Fortran_COMPILER_ID MATCHES "^(GNU)$")
   set(fortran_8_flags "-fdefault-integer-8 -fdefault-real-8")
 endif()
 
-
 set(kinds "4" "8" "d")
 foreach(kind ${kinds})
   set(lib_name ${PROJECT_NAME}_${kind})
