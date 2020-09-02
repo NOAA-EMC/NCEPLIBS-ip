@@ -33,7 +33,7 @@ foreach(kind ${kinds})
   target_compile_definitions(${lib_name} PRIVATE "LSIZE=${kind_definition}")
   set_target_properties(${lib_name} PROPERTIES COMPILE_FLAGS "${BUILD_FLAGS}")
   set_target_properties(${lib_name} PROPERTIES Fortran_MODULE_DIRECTORY "${module_dir}")
-  set_target_properties(${lib_name} PROPERTIES INTERFACE_LINK_LIBRARIES ${lib_name})
+
   target_include_directories(${lib_name}
     PUBLIC $<BUILD_INTERFACE:${module_dir}>
     $<INSTALL_INTERFACE:include_${kind}>)
