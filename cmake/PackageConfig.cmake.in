@@ -9,7 +9,7 @@ include("${CMAKE_CURRENT_LIST_DIR}/@PROJECT_NAME@-targets.cmake")
 
 # ON/OFF implies ip was compiled with/without OPENMP
 if(@OPENMP@)
-  find_dependency(OpenMP)
+  find_dependency(OpenMP COMPONENTS Fortran)
 endif()
 
 get_target_property(@PROJECT_NAME@_BUILD_TYPES @PROJECT_NAME@::@PROJECT_NAME@_4 IMPORTED_CONFIGURATIONS)
