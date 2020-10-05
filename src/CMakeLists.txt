@@ -1,4 +1,16 @@
-include("list_of_files.cmake")
+# This is the CMake file for the src directory of NCEPLIBS-ip.
+#
+# Mark Potts, Kyle Gerheiser
+
+# These are the source files.
+set(fortran_src gausslat.f90 gdswzd00_mod.f90 gdswzd01_mod.f90
+    gdswzd03_mod.f90 gdswzd04_mod.f90 gdswzd05_mod.f90 gdswzd_mod.f90
+    gdswzdcb_mod.f90 gdswzdcd_mod.f90 ijkgds0.f90 ijkgds1.f90
+    ipolates.f90 ipolatev.f90 ipxwafs.f90 ipxwafs2.f90 ipxwafs3.f90
+    makgds.f90 movect.f90 polates0.f90 polates1.f90 polates2.f90
+    polates3.f90 polates4.f90 polates6.f90 polatev0.f90 polatev1.f90
+    polatev2.f90 polatev3.f90 polatev4.f90 polatev6.f90 polfixs.f90
+    polfixv.f90)
 
 if(CMAKE_Fortran_COMPILER_ID MATCHES "^(Intel)$")
   set(CMAKE_Fortran_FLAGS
@@ -13,6 +25,7 @@ elseif(CMAKE_Fortran_COMPILER_ID MATCHES "^(GNU)$")
   set(fortran_8_flags "-fdefault-integer-8 -fdefault-real-8")
 endif()
 
+# We build 3 versions of the library and include files.
 set(kinds "4" "8" "d")
 foreach(kind ${kinds})
   set(lib_name ${PROJECT_NAME}_${kind})
