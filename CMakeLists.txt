@@ -1,8 +1,9 @@
 # This is the main CMake file for NCEPLIBS-ip.
-
+#
 # Mark Potts, Kyle Gerheiser
 cmake_minimum_required(VERSION 3.15)
 
+# Get the version from the VERSION file.
 file(STRINGS "VERSION" pVersion)
 
 project(
@@ -41,3 +42,10 @@ if (ENABLE_TESTS)
   enable_testing()
   add_subdirectory(tests)
 endif()
+
+# Determine whether or not to generate documentation.
+option(ENABLE_DOCS "Enable generation of doxygen-based documentation." OFF)
+if(ENABLE_DOCS)
+  find_package(Doxygen REQUIRED)
+endif()
+add_subdirectory(docs)  
