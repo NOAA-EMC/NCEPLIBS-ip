@@ -1,7 +1,7 @@
-Documentation of the general interpolation library iplib       January, 2014
---------------------------------------------------------------------------------
+# Documentation of the general interpolation library iplib
+January, 2014
 
-I. Introduction
+## Introduction
 
 The NCEP general interpolation library (iplib) contains Fortran 90 subprograms
 to be used for interpolating between nearly all grids used at NCEP.
@@ -144,7 +144,7 @@ to create additional map projection "wizards" for iplib.
 
 Questions may be directed to: NCEP.List.EMC.nceplibs.Developers@noaa.gov
 
-II. Entry point list
+## Entry point list
 
    Name       Function
    ----       ------------------------------------------------------------------
@@ -193,7 +193,7 @@ II. Entry point list
 
    IPXWAFS/2/3  EXPAND OR CONTRACT WAFS GRIDS
 
-III. How to inoke iplib: examples
+## How to inoke iplib: examples
 
 Example 1. Interpolate from an arbitrary input grid (probably 1x1)
            to NCEP grid 27 (65x65 northern polar stereographic).
@@ -202,6 +202,7 @@ Example 1. Interpolate from an arbitrary input grid (probably 1x1)
            with the budget method.  Encode the soil moisture bitmap in GRIB.
            Subprograms GETGB and PUTGB from w3ncolib are referenced.
 
+<pre>
 c example of using ipolate package.
 c see documentation of ipolates and ipolatev
 c for further possible options.
@@ -316,10 +317,12 @@ c interpolate 200 mb winds to 65x65 bicubically
       if(iret.ne.0) call exit(iret)
       stop
       end
+</pre>
 
 Example 2. Interpolate winds from an arbitrary input grid (probably 1x1)
            to 4 station points while truncating spectrally to R30.
 
+<pre>
 c read and unpack the 500 mb winds, truncate to R30,
 c and interpolate to 4 corners of a box
       integer ipopt(20)
@@ -356,10 +359,12 @@ c and interpolate to 4 corners of a box
      &              kp,rlat,rlon,crot,srot,ibo,lgo,uo,vo,iret)
       print '(2(2x,2f8.2))',(uo(k),vo(k),k=1,kp)
       end
+</pre>
 
 Example 3. Interpolate winds from an arbitrary input grid (probably 1x1)
            bilinearly to 3 station points.
 
+<pre>
 c read and unpack 4 levels of heights and winds
 c and interpolate to 3 sonde sites.
       integer ipopt(20)
@@ -419,10 +424,11 @@ c winds
       print '((i8,3(2x,3f8.2)))',
      & (lev(k),(ho(j,k),uo(j,k),vo(j,k),j=1,jo),k=1,km)
       end
+</pre>
 
 Example 4. Interpolate 850 mb height and winds from the staggered meso-eta
            to a regional 0.25 degree grid.
-
+<pre>
       integer ipopt(20)
       integer jpds(25),jgds(22),kpdsi(25),kgdsi(22),kpdso(25),kgdso(22)
       integer kgdsi2(22)
@@ -492,3 +498,4 @@ Example 4. Interpolate 850 mb height and winds from the staggered meso-eta
       call putgb(51,ko,kpdso,kgdso,lo,vo,iret)
       if(iret.ne.0) call exit(iret)
       end
+</pre>
