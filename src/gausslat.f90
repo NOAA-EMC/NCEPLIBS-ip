@@ -1,4 +1,4 @@
-!!> @file
+!> @file
 !! COMPUTE GAUSSIAN LATITUDES
 !! @author IREDELL @date 92-04-16
 !
