@@ -11,9 +11,6 @@ project(
   VERSION ${pVersion}
   LANGUAGES Fortran)
 
-# Set the version for the documentation.
-set(PACKAGE_VERSION ${pVersion})
-
 option(OPENMP "use OpenMP threading" OFF)
 option(ENABLE_TESTS "Build pfunit tests?" OFF)
 
