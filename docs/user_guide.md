@@ -1,7 +1,8 @@
-# Documentation of the general interpolation library iplib
-January, 2014
+@mainpage
 
-## Introduction
+## Documentation of the general interpolation library iplib
+
+January, 2014
 
 The NCEP general interpolation library (iplib) contains Fortran 90 subprograms
 to be used for interpolating between nearly all grids used at NCEP.
@@ -146,61 +147,66 @@ Questions may be directed to: NCEP.List.EMC.nceplibs.Developers@noaa.gov
 
 ## Entry point list
 
-   Name       Function
-   ----       ------------------------------------------------------------------
+Scalar field interpolation subprograms
 
-              Scalar field interpolation subprograms
+   Name       |Function
+   ----       |------------------------------------------------------------------
+   IPOLATES   |IREDELL'S POLATE FOR SCALAR FIELDS
+   POLATES0   |INTERPOLATE SCALAR FIELDS (BILINEAR)
+   POLATES1   |INTERPOLATE SCALAR FIELDS (BICUBIC)
+   POLATES2   |INTERPOLATE SCALAR FIELDS (NEIGHBOR)
+   POLATES3   |INTERPOLATE SCALAR FIELDS (BUDGET)
+   POLATES4   |INTERPOLATE SCALAR FIELDS (SPECTRAL)
+   POLATES6   |INTERPOLATE SCALAR FIELDS (NEIGHBOR-BUDGET)
+   POLFIXS    |MAKE MULTIPLE POLE SCALAR VALUES CONSISTENT
 
-   IPOLATES   IREDELL'S POLATE FOR SCALAR FIELDS
-   POLATES0   INTERPOLATE SCALAR FIELDS (BILINEAR)
-   POLATES1   INTERPOLATE SCALAR FIELDS (BICUBIC)
-   POLATES2   INTERPOLATE SCALAR FIELDS (NEIGHBOR)
-   POLATES3   INTERPOLATE SCALAR FIELDS (BUDGET)
-   POLATES4   INTERPOLATE SCALAR FIELDS (SPECTRAL)
-   POLATES6   INTERPOLATE SCALAR FIELDS (NEIGHBOR-BUDGET)
-   POLFIXS    MAKE MULTIPLE POLE SCALAR VALUES CONSISTENT
+Vector field interpolation subprograms
 
-              Vector field interpolation subprograms
+   Name       |Function
+   ----       |------------------------------------------------------------------
+   IPOLATEV   |IREDELL'S POLATE FOR VECTOR FIELDS
+   POLATEV0   |INTERPOLATE VECTOR FIELDS (BILINEAR)
+   POLATEV1   |INTERPOLATE VECTOR FIELDS (BICUBIC)
+   POLATEV2   |INTERPOLATE VECTOR FIELDS (NEIGHBOR)
+   POLATEV3   |INTERPOLATE VECTOR FIELDS (BUDGET)
+   POLATEV4   |INTERPOLATE VECTOR FIELDS (SPECTRAL)
+   POLATEV6   |INTERPOLATE VECTOR FIELDS (NEIGHBOR-BUDGET)
+   MOVECT     |MOVE A VECTOR ALONG A GREAT CIRCLE
+   POLFIXV    |MAKE MULTIPLE POLE VECTOR VALUES CONSISTENT
 
-   IPOLATEV   IREDELL'S POLATE FOR VECTOR FIELDS
-   POLATEV0   INTERPOLATE VECTOR FIELDS (BILINEAR)
-   POLATEV1   INTERPOLATE VECTOR FIELDS (BICUBIC)
-   POLATEV2   INTERPOLATE VECTOR FIELDS (NEIGHBOR)
-   POLATEV3   INTERPOLATE VECTOR FIELDS (BUDGET)
-   POLATEV4   INTERPOLATE VECTOR FIELDS (SPECTRAL)
-   POLATEV6   INTERPOLATE VECTOR FIELDS (NEIGHBOR-BUDGET)
-   MOVECT     MOVE A VECTOR ALONG A GREAT CIRCLE
-   POLFIXV    MAKE MULTIPLE POLE VECTOR VALUES CONSISTENT
+Grid description section decoders
 
-              Grid description section decoders
+   Name       |Function
+   ----       |------------------------------------------------------------------
+   GDSWZD     |GRID DESCRIPTION SECTION WIZARD
+   GDSWZD_C   |'C' WRAPPER FOR CALLING GDSWZD
+   GDSWZD00   |GDS WIZARD FOR EQUIDISTANT CYCLINDRICAL
+   GDSWZD01   |GDS WIZARD FOR MERCATOR CYCLINDRICAL
+   GDSWZD03   |GDS WIZARD FOR LAMBERT CONFORMAL CONICAL
+   GDSWZD04   |GDS WIZARD FOR GAUSSIAN CYCLINDRICAL
+   GDSWZD05   |GDS WIZARD FOR POLAR STEREOGRAPHIC
+   GDSWZDCB   |GDS WIZARD FOR ROTATED EQUIDISTANT CYCLINDRICAL "E" STAGGER.
+   GDSWZDCD   |GDS WIZARD FOR ROTATED EQUIDISTANT CYCLINDRICAL NON "E" STAGGER.
+   GAUSSLAT   |COMPUTE GAUSSIAN LATITUDES
+   IJKGDS0/1  |RETURN FIELD POSITION FOR A GIVEN GRID POINT
+   MAKGDS     |MAKE OR BREAK A GRID DESCRIPTION SECTION
 
-   GDSWZD     GRID DESCRIPTION SECTION WIZARD
-   GDSWZD_C   'C' WRAPPER FOR CALLING GDSWZD
-   GDSWZD00   GDS WIZARD FOR EQUIDISTANT CYCLINDRICAL
-   GDSWZD01   GDS WIZARD FOR MERCATOR CYCLINDRICAL
-   GDSWZD03   GDS WIZARD FOR LAMBERT CONFORMAL CONICAL
-   GDSWZD04   GDS WIZARD FOR GAUSSIAN CYCLINDRICAL
-   GDSWZD05   GDS WIZARD FOR POLAR STEREOGRAPHIC
-   GDSWZDCB   GDS WIZARD FOR ROTATED EQUIDISTANT CYCLINDRICAL
-              "E" STAGGER.
-   GDSWZDCD   GDS WIZARD FOR ROTATED EQUIDISTANT CYCLINDRICAL
-              NON "E" STAGGER.
-   GAUSSLAT   COMPUTE GAUSSIAN LATITUDES
-   IJKGDS0/1  RETURN FIELD POSITION FOR A GIVEN GRID POINT
-   MAKGDS     MAKE OR BREAK A GRID DESCRIPTION SECTION
+Transform subprograms for special irregular grids
 
-              Transform subprograms for special irregular grids
-
-   IPXWAFS/2/3  EXPAND OR CONTRACT WAFS GRIDS
+   Name        |Function
+   ----        |------------------------------------------------------------------
+   IPXWAFS/2/3 |  EXPAND OR CONTRACT WAFS GRIDS
 
 ## How to inoke iplib: examples
 
-Example 1. Interpolate from an arbitrary input grid (probably 1x1)
-           to NCEP grid 27 (65x65 northern polar stereographic).
-           Interpolate heights bilinearly and winds bicubically.
-           Interpolate soil moisture and precipitation using bitmaps
-           with the budget method.  Encode the soil moisture bitmap in GRIB.
-           Subprograms GETGB and PUTGB from w3ncolib are referenced.
+### Example 1
+
+Interpolate from an arbitrary input grid (probably 1x1) to NCEP grid
+27 (65x65 northern polar stereographic).  Interpolate heights
+bilinearly and winds bicubically.  Interpolate soil moisture and
+precipitation using bitmaps with the budget method.  Encode the soil
+moisture bitmap in GRIB.  Subprograms GETGB and PUTGB from w3ncolib
+are referenced.
 
 <pre>
 c example of using ipolate package.
@@ -319,8 +325,10 @@ c interpolate 200 mb winds to 65x65 bicubically
       end
 </pre>
 
-Example 2. Interpolate winds from an arbitrary input grid (probably 1x1)
-           to 4 station points while truncating spectrally to R30.
+### Example 2
+
+Interpolate winds from an arbitrary input grid (probably 1x1) to 4
+station points while truncating spectrally to R30.
 
 <pre>
 c read and unpack the 500 mb winds, truncate to R30,
@@ -361,8 +369,10 @@ c and interpolate to 4 corners of a box
       end
 </pre>
 
-Example 3. Interpolate winds from an arbitrary input grid (probably 1x1)
-           bilinearly to 3 station points.
+### Example 3
+
+Interpolate winds from an arbitrary input grid (probably 1x1)
+bilinearly to 3 station points.
 
 <pre>
 c read and unpack 4 levels of heights and winds
