@@ -35,6 +35,9 @@ if(OPENMP)
   find_package(OpenMP REQUIRED COMPONENTS Fortran)
 endif()
 
+# The NCEPLIBS-sp library is required.
+find_package(sp REQUIRED)
+
 add_subdirectory(src)
 
 if (ENABLE_TESTS)
