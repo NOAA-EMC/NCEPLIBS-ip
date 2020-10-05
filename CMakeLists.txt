@@ -12,7 +12,7 @@ project(
   LANGUAGES Fortran)
 
 # Set the version for the documentation.
-SET(PACKAGE_VERSION ${pVersion})
+set(PACKAGE_VERSION ${pVersion})
 
 option(OPENMP "use OpenMP threading" OFF)
 option(ENABLE_TESTS "Build pfunit tests?" OFF)
@@ -44,8 +44,8 @@ if (ENABLE_TESTS)
 endif()
 
 # Determine whether or not to generate documentation.
-OPTION(ENABLE_DOCS "Enable generation of doxygen-based documentation." OFF)
-IF(ENABLE_DOCS)
-  FIND_PACKAGE(Doxygen REQUIRED)
-ENDIF()
-ADD_SUBDIRECTORY(docs)  
+option(ENABLE_DOCS "Enable generation of doxygen-based documentation." OFF)
+if(ENABLE_DOCS)
+  find_package(Doxygen REQUIRED)
+endif()
+add_subdirectory(docs)  
