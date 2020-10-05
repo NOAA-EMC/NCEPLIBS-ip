@@ -1,3 +1,6 @@
+# This is the main CMake file for NCEPLIBS-ip.
+
+# Mark Potts, Kyle Gerheiser
 cmake_minimum_required(VERSION 3.15)
 
 file(STRINGS "VERSION" pVersion)
@@ -27,6 +30,9 @@ endif()
 if(OPENMP)
   find_package(OpenMP REQUIRED COMPONENTS Fortran)
 endif()
+
+# The NCEPLIBS-sp library is required.
+find_package(sp REQUIRED)
 
 add_subdirectory(src)
 
