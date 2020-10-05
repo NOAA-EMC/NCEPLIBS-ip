@@ -1,4 +1,4 @@
-! > @file
+!> @file
 !! IREDELL'S POLATE FOR VECTOR FIELDS
 !! @author IREDELL @date 96-04-10
 !

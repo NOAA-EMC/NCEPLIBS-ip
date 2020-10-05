@@ -1,4 +1,4 @@
-! > @file
+!> @file
 !! IREDELL'S POLATE FOR SCALAR FIELDS
 !! @author IREDELL @date 96-04-10
 !
@@ -67,10 +67,10 @@
 !! @param[out] NO       - INTEGER NUMBER OF OUTPUT POINTS (ONLY IF KGDSO(1)<0)
 !! @param[out] RLAT     - REAL (NO) OUTPUT LATITUDES IN DEGREES (IF KGDSO(1)<0)
 !! @param[out] RLON     - REAL (NO) OUTPUT LONGITUDES IN DEGREES (IF KGDSO(1)<0)
-!! @param IBO[out]      - INTEGER (KM) OUTPUT BITMAP FLAGS
-!! @param LO[out]       - LOGICAL*1 (MO,KM) OUTPUT BITMAPS (ALWAYS OUTPUT)
-!! @param GO[out]       - REAL (MO,KM) OUTPUT FIELDS INTERPOLATED
-!! @param IRET[out]     - INTEGER RETURN CODE
+!! @param[out] IBO      - INTEGER (KM) OUTPUT BITMAP FLAGS
+!! @param[out] LO       - LOGICAL*1 (MO,KM) OUTPUT BITMAPS (ALWAYS OUTPUT)
+!! @param[out] GO       - REAL (MO,KM) OUTPUT FIELDS INTERPOLATED
+!! @param[out] IRET     - INTEGER RETURN CODE
 !!                0    SUCCESSFUL INTERPOLATION
 !!                1    UNRECOGNIZED INTERPOLATION METHOD
 !!                2    UNRECOGNIZED INPUT GRID OR NO GRID OVERLAP
