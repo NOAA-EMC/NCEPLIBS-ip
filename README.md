@@ -6,7 +6,7 @@ For more detailed documentation see https://noaa-emc.github.io/NCEPLIBS-ip/.
 
 ### Authors
 
-* **[NCEP/EMC](NCEP.List.EMC.nceplibs.Developers@noaa.gov)**
+* NCEP/EMC Developers
 
 Code Manager: George Gayno
 
