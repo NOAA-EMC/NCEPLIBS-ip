@@ -2,15 +2,17 @@
 
 The NCEP general interpolation library (iplib) contains Fortran 90 subprograms
 to be used for interpolating between nearly all (rectilinear) grids used at NCEP.
-For more detailed documentation see [README.iplib](README.iplib).
+For more detailed documentation see https://noaa-emc.github.io/NCEPLIBS-ip/.
 
 ### Authors
 
 * **[NCEP/EMC](NCEP.List.EMC.nceplibs.Developers@noaa.gov)**
 
+Code Manager: George Gayno
+
 ### Prerequisites
 
-This package requires the (NCEPLIBS-sp)[https://github.com/NOAA-EMC/NCEPLIBS-sp] library.
+This package requires the [NCEPLIBS-sp](https://github.com/NOAA-EMC/NCEPLIBS-sp) library.
 
 ### Installing
 
