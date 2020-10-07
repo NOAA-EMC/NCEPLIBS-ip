@@ -1,7 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-#include "iplib.h"
+/* #include "iplib.h" */
 
 /**************************************************************
   Unit test to ensure the 'c' wrapper routine for gdswzd 

@@ -1,5 +1,0 @@
-# Suffix rules
-.SUFFIXES:
-.SUFFIXES: .f90 .o
-.f90.o:
-	$(FC) $(EXTRA_FCFLAGS) $(FCFLAGS) -c $<

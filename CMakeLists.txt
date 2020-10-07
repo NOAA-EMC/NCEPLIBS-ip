@@ -1,18 +1,18 @@
 # This is the main CMake file for NCEPLIBS-ip.
 #
-# Mark Potts, Kyle Gerheiser
+# Mark Potts, Kyle Gerheiser, Ed Hartnett
 cmake_minimum_required(VERSION 3.15)
 
 # Get the version from the VERSION file.
 file(STRINGS "VERSION" pVersion)
 
-project(
-  ip
-  VERSION ${pVersion}
-  LANGUAGES Fortran)
+# Set project name and version.
+project(ip VERSION ${pVersion} LANGUAGES Fortran C)
 
+# Handle user options.
 option(OPENMP "use OpenMP threading" OFF)
 option(ENABLE_TESTS "Build pfunit tests?" OFF)
+option(ENABLE_DOCS "Enable generation of doxygen-based documentation." OFF)
 
 if(NOT CMAKE_BUILD_TYPE MATCHES "^(Debug|Release|RelWithDebInfo|MinSizeRel)$")
   message(STATUS "Setting build type to 'Release' as none was specified.")
@@ -43,8 +43,7 @@ if (ENABLE_TESTS)
   add_subdirectory(tests)
 endif()
 
-# Determine whether or not to generate documentation.
-option(ENABLE_DOCS "Enable generation of doxygen-based documentation." OFF)
+# Do we want documentation?
 if(ENABLE_DOCS)
   find_package(Doxygen REQUIRED)
 endif()
