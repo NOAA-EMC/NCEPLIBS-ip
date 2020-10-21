@@ -1,3 +1,0 @@
- interp.o : get_input_data.o interp.f90
- driver.o : get_input_data.o interp.o driver.f90
- get_input_data.o : get_input_data.f90
