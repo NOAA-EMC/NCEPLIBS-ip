@@ -10,7 +10,7 @@ set(fortran_src gausslat.f90 gdswzd00_mod.f90 gdswzd01_mod.f90
     makgds.f90 movect.f90 polates0.f90 polates1.f90 polates2.f90
     polates3.f90 polates4.f90 polates6.f90 polatev0.f90 polatev1.f90
     polatev2.f90 polatev3.f90 polatev4.f90 polatev6.f90 polfixs.f90
-    polfixv.f90)
+    polfixv.f90 gdswzd_c.F90)
 
 if(CMAKE_Fortran_COMPILER_ID MATCHES "^(Intel)$")
   set(CMAKE_Fortran_FLAGS
@@ -30,6 +30,7 @@ set(kinds "4" "8" "d")
 foreach(kind ${kinds})
   set(lib_name ${PROJECT_NAME}_${kind})
   set(module_dir "${CMAKE_CURRENT_BINARY_DIR}/include_${kind}")
+  configure_file(iplib_${kind}.h ${module_dir}/iplib.h COPYONLY)
 
   # Compiled with preprocessor definition LSIZE=D, not d
   string(TOUPPER ${kind} kind_definition)
@@ -40,8 +41,10 @@ foreach(kind ${kinds})
   add_library(${PROJECT_NAME}::${lib_name} ALIAS ${lib_name})
 
   if(OpenMP_Fortran_FOUND)
-    target_link_libraries(${lib_name} OpenMP::OpenMP_Fortran)
+    target_link_libraries(${lib_name} PRIVATE OpenMP::OpenMP_Fortran)
   endif()
+
+  target_link_libraries(${lib_name} PRIVATE sp::sp_${kind})
   
   target_compile_definitions(${lib_name} PRIVATE "LSIZE=${kind_definition}")
   set_target_properties(${lib_name} PROPERTIES COMPILE_FLAGS "${BUILD_FLAGS}")
