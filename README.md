@@ -19,24 +19,15 @@ Code Manager: George Gayno
 
 This package requires the [NCEPLIBS-sp](https://github.com/NOAA-EMC/NCEPLIBS-sp) library.
 
-### Installing
+### Building
 
 ```
 mkdir build
 cd build
-cmake -DCMAKE_INSTALL_PREFIX=/path/to/install /path/to/NCEPLIBS-ip
-make -j2
-make install
-```
-
-### Testing
-
-Testing requires [pFUnit](https://github.com/Goddard-Fortran-Ecosystem/pFUnit).
-
-```
-cmake -DENABLE_TESTS=ON -DCMAKE_PREFIX_PATH="/path/to/pfunit;/path/to/NCEPLIBS" /path/to/NCEPLIBS-ip
+cmake .. -DCMAKE_INSTALL_PREFIX=/path/to/install 
 make -j2
 make test
+make install
 ```
 
 ## Disclaimer
