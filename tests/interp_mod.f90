@@ -343,10 +343,6 @@ contains
     integer :: grd218(200)  ! lambert conformal (ncep grid 218) 
     data grd218 /3, 614, 428, 12190, -133459, 8, -95000,  &
          12191, 12191, 0, 64, 25000, 25000, 0, 0, 0, 0, 0, 0, 255, 180*0/
-    i1=1
-    call getarg(i1, grid)
-    i1=2
-    call getarg(i1, interp_opt)
 
     select case (trim(grid))
     case ('3')
