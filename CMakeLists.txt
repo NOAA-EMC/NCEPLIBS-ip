@@ -10,6 +10,9 @@ project(
   ip
   VERSION ${pVersion}
   LANGUAGES C Fortran)
+  
+  
+include(GNUInstallDirs)
 
 option(OPENMP "use OpenMP threading" OFF)
 
