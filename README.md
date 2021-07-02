@@ -1,17 +1,28 @@
 ![Status](https://github.com/NOAA-EMC/NCEPLIBS-sp/workflows/Build%20and%20Test/badge.svg)
 
-# Interpolation Library
+# Interpolation Library 2
 
-The NCEP general interpolation library (iplib) contains Fortran 90 subprograms
-to be used for interpolating between nearly all (rectilinear) grids used at NCEP.
-For more detailed documentation see https://noaa-emc.github.io/NCEPLIBS-ip/.
+The NCEP general interpolation library 2 (ip2lib) contains Fortran 90
+subprograms to be used for interpolating between nearly all grids used
+at NCEP. The library is particularly efficient when interpolating many
+fields at one time. The library has been extensively tested with AIX
+and Intel Fortran compilers.
 
 This is part of the [NCEPLIBS](https://github.com/NOAA-EMC/NCEPLIBS)
 project.
 
+There are currently six interpolation methods available in the
+library:
+- bilinear
+- bicubic
+- neighbor
+- budget
+- spectral
+- neighbor-budget
+
 ### Authors
 
-NCEP/EMC Developers
+* NCEP/EMC Developers
 
 Code Manager: George Gayno
 
@@ -19,15 +30,24 @@ Code Manager: George Gayno
 
 This package requires the [NCEPLIBS-sp](https://github.com/NOAA-EMC/NCEPLIBS-sp) library.
 
-### Building
+### Installing
 
 ```
 mkdir build
 cd build
-cmake .. -DCMAKE_INSTALL_PREFIX=/path/to/install 
+cmake -DCMAKE_INSTALL_PREFIX=/path/to/install /path/to/NCEPLIBS-ip2
+make -j2
+make install
+```
+
+### Testing
+
+Testing requires [pFUnit](https://github.com/Goddard-Fortran-Ecosystem/pFUnit).
+
+```
+cmake -DENABLE_TESTS=ON -DCMAKE_PREFIX_PATH="/path/to/pfunit;/path/to/NCEPLIBS" /path/to/NCEPLIBS-ip
 make -j2
 make test
-make install
 ```
 
 ## Disclaimer

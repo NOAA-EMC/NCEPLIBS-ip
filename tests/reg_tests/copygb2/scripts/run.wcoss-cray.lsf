@@ -1,0 +1,34 @@
+#!/bin/sh
+ 
+#----------------------------------------------------------
+# Script to run the copygb2 regression test on WCOSS-Cray.
+#
+# Invoke this script as follows:
+# "cat run.wcoss.cray.lsf | bsub"
+#----------------------------------------------------------
+
+#BSUB -oo copygb2.log
+#BSUB -eo copygb2.log
+#BSUB -q debug
+#BSUB -J copygb2
+#BSUB -P GFS-T2O
+#BSUB -M 500
+#BSUB -extsched 'CRAYLINUX[]'
+#BSUB -W 0:15
+
+set -x
+
+export NODES=1
+export OMP_NUM_THREADS=4
+
+export APRUN="aprun -j 1 -n 1 -d ${OMP_NUM_THREADS} "
+
+module list
+
+export REG_DIR=${LS_SUBCWD}/../..
+
+export WORK_DIR="/gpfs/hps/ptmp/$LOGNAME/regression"
+
+$REG_DIR/copygb2/scripts/copygb2.ksh
+
+exit 0
