@@ -21,13 +21,6 @@ module budget_interp_mod
      module procedure interpolate_budget_vector
   end interface interpolate_budget
 
-   ! Save coeffecients between calls and only compute if grids have changed
-  INTEGER,          SAVE          :: MIX=-1
-  REAL,         ALLOCATABLE, SAVE :: CROI(:),SROI(:)
-  REAL,         ALLOCATABLE, SAVE :: XPTI(:),YPTI(:),RLOI(:),RLAI(:)
-
-  class(ip_grid), allocatable :: prev_grid_in
-
 contains
 
   !> THIS SUBPROGRAM PERFORMS BUDGET INTERPOLATION
@@ -112,6 +105,7 @@ contains
     REAL                          :: XXX(1), YYY(1)
     class(ip_grid), allocatable :: grid_out2
     class(ip_grid_descriptor), allocatable :: grid_desc_out2
+    
     ! - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
     !  COMPUTE NUMBER OF OUTPUT POINTS AND THEIR LATITUDES AND LONGITUDES.
     !  DO SUBSECTION OF GRID IF KGDSO(1) IS SUBTRACTED FROM 255.
@@ -582,6 +576,13 @@ contains
 
     class(ip_grid_descriptor), allocatable :: desc_out_subgrid
     class(ip_grid), allocatable :: grid_out2
+    
+    ! Save coeffecients between calls and only compute if grids have changed
+    INTEGER,          SAVE          :: MIX=-1
+    REAL,         ALLOCATABLE, SAVE :: CROI(:),SROI(:)
+    REAL,         ALLOCATABLE, SAVE :: XPTI(:),YPTI(:),RLOI(:),RLAI(:)
+
+    class(ip_grid), allocatable, save :: prev_grid_in
 
     IRET=0
 

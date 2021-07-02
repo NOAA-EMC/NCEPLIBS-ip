@@ -19,14 +19,6 @@ module bicubic_interp_mod
      module procedure interpolate_bicubic_vector
   end interface interpolate_bicubic
 
-  ! Save coeffecients between calls and only compute if grids have changed
-  REAL,           ALLOCATABLE,SAVE  :: RLATX(:),RLONX(:),CROTX(:),SROTX(:)
-  REAL,           ALLOCATABLE,SAVE  :: WXY(:,:,:),CXY(:,:,:),SXY(:,:,:)
-  INTEGER,                    SAVE  :: NOX=-1,IRETX=-1
-  INTEGER,        ALLOCATABLE,SAVE  :: NXY(:,:,:),NC(:)
-
-  class(ip_grid), allocatable :: prev_grid_in, prev_grid_out
-
 contains
 
   !> THIS SUBPROGRAM PERFORMS BICUBIC INTERPOLATION
@@ -102,6 +94,14 @@ contains
     REAL                                  :: WX(4),WY(4)
     REAL                                  :: XPTS(MO),YPTS(MO)
     logical :: to_station_points
+
+    ! Save coeffecients between calls and only compute if grids have changed
+    REAL,           ALLOCATABLE,SAVE  :: RLATX(:),RLONX(:)
+    REAL,           ALLOCATABLE,SAVE  :: WXY(:,:,:)
+    INTEGER,                    SAVE  :: NOX=-1,IRETX=-1
+    INTEGER,        ALLOCATABLE,SAVE  :: NXY(:,:,:),NC(:)
+    class(ip_grid), allocatable,save :: prev_grid_in, prev_grid_out
+
     ! - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
     !  SET PARAMETERS
     IRET=0
@@ -348,6 +348,13 @@ contains
     REAL                              :: CROI(MI),SROI(MI)
 
     logical :: to_station_points
+    
+    ! Save coeffecients between calls and only compute if grids have changed
+    REAL,           ALLOCATABLE, SAVE  :: RLATX(:),RLONX(:),CROTX(:),SROTX(:)
+    REAL,           ALLOCATABLE, SAVE  :: WXY(:,:,:),CXY(:,:,:),SXY(:,:,:)
+    INTEGER,                     SAVE  :: NOX=-1,IRETX=-1
+    INTEGER,        ALLOCATABLE, SAVE  :: NXY(:,:,:),NC(:)
+    class(ip_grid), allocatable, save :: prev_grid_in, prev_grid_out
     ! - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
     !  SET PARAMETERS
     IRET=0

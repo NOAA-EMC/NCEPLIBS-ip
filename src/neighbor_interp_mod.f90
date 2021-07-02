@@ -11,14 +11,6 @@ module neighbor_interp_mod
      module procedure interpolate_neighbor_scalar
      module procedure interpolate_neighbor_vector
   end interface interpolate_neighbor
-  
-  INTEGER,                     SAVE :: NOX=-1,IRETX=-1
-  INTEGER,        ALLOCATABLE, SAVE :: NXY(:)
-
-  REAL,           ALLOCATABLE, SAVE :: RLATX(:),RLONX(:),XPTSX(:),YPTSX(:)
-  REAL,           ALLOCATABLE, SAVE :: CROTX(:),SROTX(:),CXY(:),SXY(:)
-
-  class(ip_grid), allocatable :: prev_grid_in, prev_grid_out
 
 contains
 
@@ -176,6 +168,11 @@ contains
     !
     REAL                                 :: XPTS(MO),YPTS(MO)
     logical :: to_station_points
+
+    INTEGER,                     SAVE :: NOX=-1,IRETX=-1
+    INTEGER,        ALLOCATABLE, SAVE :: NXY(:)
+    REAL,           ALLOCATABLE, SAVE :: RLATX(:),RLONX(:),XPTSX(:),YPTSX(:)
+    class(ip_grid), allocatable, save :: prev_grid_in, prev_grid_out
     ! - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
     !  SET PARAMETERS
     IRET=0
@@ -499,6 +496,13 @@ contains
     REAL                              :: XPTI(MI),YPTI(MI),RLOI(MI),RLAI(MI)
 
     logical :: to_station_points
+
+    INTEGER,                     SAVE :: NOX=-1,IRETX=-1
+    INTEGER,        ALLOCATABLE, SAVE :: NXY(:)
+
+    REAL,           ALLOCATABLE, SAVE :: RLATX(:),RLONX(:),XPTSX(:),YPTSX(:)
+    REAL,           ALLOCATABLE, SAVE :: CROTX(:),SROTX(:),CXY(:),SXY(:)
+    class(ip_grid), allocatable, save :: prev_grid_in, prev_grid_out
     ! - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
     !  SET PARAMETERS
     IRET=0

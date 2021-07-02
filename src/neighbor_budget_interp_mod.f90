@@ -12,13 +12,6 @@ module neighbor_budget_interp_mod
      module procedure interpolate_neighbor_budget_vector
   end interface interpolate_neighbor_budget
 
-  INTEGER,                 SAVE  :: MIX=-1
-  REAL,        ALLOCATABLE,SAVE  :: CROI(:),SROI(:)
-  REAL,        ALLOCATABLE,SAVE  :: XPTI(:),YPTI(:)
-  REAL,        ALLOCATABLE,SAVE  :: RLOI(:),RLAI(:)
-
-  class(ip_grid), allocatable :: prev_grid_in
-
 contains
 
   SUBROUTINE interpolate_neighbor_budget_scalar(IPOPT,grid_in,grid_out, &
@@ -462,6 +455,13 @@ contains
     REAL                           :: XPTB(MO),YPTB(MO)
 
     logical :: to_station_points
+
+    ! Save coeffecients between runs and only compute if grid has changed
+    INTEGER,                 SAVE  :: MIX=-1
+    REAL,        ALLOCATABLE,SAVE  :: CROI(:),SROI(:)
+    REAL,        ALLOCATABLE,SAVE  :: XPTI(:),YPTI(:)
+    REAL,        ALLOCATABLE,SAVE  :: RLOI(:),RLAI(:)
+    class(ip_grid), allocatable, save :: prev_grid_in
 
     select type(grid_out)
     type is(ip_station_points_grid)

@@ -601,7 +601,6 @@ contains
     type(grib1_descriptor) :: desc_in, desc_out
     class(ip_grid), allocatable :: grid_in, grid_out
 
-    ! - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
     IF(KGDSI(1).EQ.203) THEN
        KGDSI11=KGDSI(11)
        KGDSI(11)=IOR(KGDSI(11),256)

@@ -16,15 +16,6 @@ module bilinear_interp_mod
   private
   public :: interpolate_bilinear
 
-  ! Save coeffecients between calls and only compute if grids have changed
-  INTEGER,                    SAVE  :: NOX=-1,IRETX=-1
-  INTEGER,        ALLOCATABLE,SAVE  :: NXY(:,:,:)
-  REAL,           ALLOCATABLE,SAVE  :: RLATX(:),RLONX(:)
-  REAL,           ALLOCATABLE,SAVE  :: CROTX(:),SROTX(:)
-  REAL,           ALLOCATABLE,SAVE  :: WXY(:,:,:),CXY(:,:,:),SXY(:,:,:)
-
-  class(ip_grid), allocatable :: prev_grid_in, prev_grid_out
-
   interface interpolate_bilinear
      module procedure interpolate_bilinear_scalar
      module procedure interpolate_bilinear_vector
@@ -101,6 +92,13 @@ contains
     REAL                                 :: PMP,XIJ,YIJ,XF,YF,G,W
 
     logical :: to_station_points
+    
+    ! Save coeffecients between calls and only compute if grids have changed
+    INTEGER,                    SAVE  :: NOX=-1,IRETX=-1
+    INTEGER,        ALLOCATABLE,SAVE  :: NXY(:,:,:)
+    REAL,           ALLOCATABLE,SAVE  :: RLATX(:),RLONX(:)
+    REAL,           ALLOCATABLE,SAVE  :: WXY(:,:,:)
+    class(ip_grid), allocatable,save :: prev_grid_in, prev_grid_out
 
     IRET=0
     MP=IPOPT(1)
@@ -448,6 +446,15 @@ contains
     REAL                              :: CROI(MI),SROI(MI)
 
     logical :: to_station_points
+    
+    ! Save coeffecients between calls and only compute if grids have changed
+    INTEGER,                    SAVE  :: NOX=-1,IRETX=-1
+    INTEGER,        ALLOCATABLE,SAVE  :: NXY(:,:,:)
+    REAL,           ALLOCATABLE,SAVE  :: RLATX(:),RLONX(:)
+    REAL,           ALLOCATABLE,SAVE  :: CROTX(:),SROTX(:)
+    REAL,           ALLOCATABLE,SAVE  :: WXY(:,:,:),CXY(:,:,:),SXY(:,:,:)
+    class(ip_grid), allocatable,save :: prev_grid_in, prev_grid_out
+
     ! - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
     !  SET PARAMETERS
     IRET=0
