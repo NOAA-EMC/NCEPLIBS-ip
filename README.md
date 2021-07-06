@@ -42,11 +42,9 @@ make install
 
 ### Testing
 
-Testing requires [pFUnit](https://github.com/Goddard-Fortran-Ecosystem/pFUnit).
-
 ```
 cmake -DENABLE_TESTS=ON -DCMAKE_PREFIX_PATH="/path/to/pfunit;/path/to/NCEPLIBS" /path/to/NCEPLIBS-ip
-make -j2
+make
 make test
 ```
 
