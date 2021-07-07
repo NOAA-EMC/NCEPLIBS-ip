@@ -38,14 +38,7 @@ cd build
 cmake -DCMAKE_INSTALL_PREFIX=/path/to/install /path/to/NCEPLIBS-ip2
 make -j2
 make install
-```
-
-### Testing
-
-```
-cmake -DENABLE_TESTS=ON -DCMAKE_PREFIX_PATH="/path/to/pfunit;/path/to/NCEPLIBS" /path/to/NCEPLIBS-ip
-make
-make test
+make test (or ctest --verbose)
 ```
 
 ### Usage
