@@ -1,5 +1,6 @@
 cmake_minimum_required(VERSION 3.15)
 
+# Get the version from the VERSION file.
 file(STRINGS "VERSION" pVersion)
 
 project(
@@ -10,7 +11,6 @@ project(
 include(GNUInstallDirs)
 
 option(OPENMP "use OpenMP threading" OFF)
-option(ENABLE_TESTS "Build pfunit tests?" OFF)
 
 if(NOT CMAKE_BUILD_TYPE MATCHES "^(Debug|Release|RelWithDebInfo|MinSizeRel)$")
   message(STATUS "Setting build type to 'Release' as none was specified.")
