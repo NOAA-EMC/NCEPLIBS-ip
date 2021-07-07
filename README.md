@@ -48,6 +48,10 @@ make
 make test
 ```
 
+### Usage
+
+To use the ip library add `use ip_mod` to your Fortran code. It contains all the necessary public interfaces.
+
 ## Disclaimer
 
 The United States Department of Commerce (DOC) GitHub project code is
