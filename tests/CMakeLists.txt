@@ -5,10 +5,10 @@ execute_process(COMMAND cmake -E create_symlink
   )
 
 if(CMAKE_Fortran_COMPILER_ID MATCHES "^(Intel)$")
-  set(CMAKE_Fortran_FLAGS "-r8 -g -traceback -check all -warn all -assume byterecl")
+  set(CMAKE_Fortran_FLAGS "-r8 -g -traceback -check all -warn all -assume byterecl ${CMAKE_Fortran_FLAGS} ")
   set(CMAKE_C_FLAGS "-std=c99")
 elseif(CMAKE_Fortran_COMPILER_ID MATCHES "^(GNU)$")
-  set(CMAKE_Fortran_FLAGS "-fdefault-real-8 -fno-range-check -g -fbacktrace -fcheck=all -Wall -O0 -fimplicit-none -Wsurprising -Wextra")
+  set(CMAKE_Fortran_FLAGS "-fdefault-real-8 -fno-range-check -g -fbacktrace -fcheck=all -Wall -O0 -fimplicit-none -Wsurprising -Wextra ${CMAKE_Fortran_FLAGS} ")
 endif()
 
 if(${CMAKE_Fortran_COMPILER_ID} MATCHES "^(GNU)$" AND ${CMAKE_Fortran_COMPILER_VERSION} VERSION_GREATER_EQUAL 10)
