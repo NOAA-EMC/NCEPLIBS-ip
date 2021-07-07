@@ -63,5 +63,6 @@ jobs:
     
     - name: test
       run: |
+        ulimit -s unlimited
         cd $GITHUB_WORKSPACE/ip/build
         make test
