@@ -1,8 +1,8 @@
 ![Status](https://github.com/NOAA-EMC/NCEPLIBS-sp/workflows/Build%20and%20Test/badge.svg)
 
-# Interpolation Library 2
+# Interpolation Library
 
-The NCEP general interpolation library 2 (ip2lib) contains Fortran 90
+The NCEP general interpolation library contains Fortran 90
 subprograms to be used for interpolating between nearly all grids used
 at NCEP. The library is particularly efficient when interpolating many
 fields at one time. The library has been extensively tested with AIX
@@ -42,11 +42,9 @@ make install
 
 ### Testing
 
-Testing requires [pFUnit](https://github.com/Goddard-Fortran-Ecosystem/pFUnit).
-
 ```
 cmake -DENABLE_TESTS=ON -DCMAKE_PREFIX_PATH="/path/to/pfunit;/path/to/NCEPLIBS" /path/to/NCEPLIBS-ip
-make -j2
+make
 make test
 ```
 
