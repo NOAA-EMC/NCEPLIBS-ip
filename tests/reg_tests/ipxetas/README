@@ -1,0 +1,49 @@
+Regression test for routine ipxetas.  A Fortran program 
+does the following:
+
+1) Convert land/sea mask on a rotated lat/lon unstaggered "full" grid
+   to a rotated lat/lon "e"-staggered "h" point grid.
+2) Convert land/sea mask on a rotated lat/lon unstaggered "full" grid
+   to a rotated lat/lon "e"-staggered "v" point grid.
+3) Convert land/sea mask on a rotated lat/lon "e"-staggered "h" point
+   grid to a rotated lat/lon unstaggerd "full" grid.
+4) Convert u-component wind on a rotated lat/lon "e"-staggered "v" point
+   grid to a rotated lat/lon unstaggerd "full" grid.
+
+The program is compiled with all byte versions of the 'control'
+and 'test' libraries by invoking the make_reg_tests.ksh script
+located in the /reg_tests directory.  See the
+/reg_tests/README file for more information.
+
+The three byte versions of the library are:
+  > 4 byte integer/4 byte float
+  > 8 byte integer/8 byte float
+  > 8 byte float/4 byte integer
+
+The Fortran source code and make-related files are
+located in the ./sorc subdirectory.  The executables are
+(a total of six) stored in the ./exec subdirectory.
+
+The input data (grib 2 format) is in ./data.
+
+Output from the program is written to grib 2 files.
+
+The output grib 2 files from the 'control' and 'test' ip2 libraries
+are expected to be bit identical for the regression test to pass.
+
+This regression test is run by the runall.ksh script
+in the ./scripts subdirectory.  The runall.ksh script
+is run by the "Runall.${machine}" driver script located
+in /reg_tests.
+
+List of modules or routines tested:
+
+earth_radius
+gdswzd_mod
+gdswzd_rot_equid_cylind_egrid_mod
+ijkgds0
+ijkgds1
+ipolates
+ipxetas
+polates0
+polfixs

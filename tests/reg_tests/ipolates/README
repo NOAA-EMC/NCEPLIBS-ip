@@ -1,0 +1,87 @@
+Test the ipolates suite of routines to interpolate a global lat/lon
+grid of substrate temperature (with a bitmap) to several grids of
+various map projections.  All available interpolation methods -
+neighbor, bilinear, bicubic, spectral, budget, budget-neighbor -
+are invoked.  A simple Fortran program is used.
+
+The program is compiled with all byte versions of the 'control'
+and 'test' ip2libs by invoking the make_reg_tests.ksh script
+located in the /reg_tests directory.  See the
+/reg_tests/README file for more information.
+
+The three byte versions of the library are:
+  > 4 byte integer/4 byte float
+  > 8 byte integer/8 byte float
+  > 8 byte float/4 byte integer
+
+The Fortran source code and make-related files are
+located in the ./sorc subdirectory.  The executables (a total
+of six) are stored in the ./exec subdirectory.
+
+These ipolates routines have threads, so this regression test is run twice -
+with 1 and 4 threads.
+
+The input substrate temperature data is located in the ./data subdirectory.
+It is in grib 2 format.
+
+This temperature data is interpolated to the following grids:
+
+grid #       description
+======       ===========
+003          one-degree global lat/lon (ncep grid 3)
+008          mercator (ncep grid 8)
+127          t254 gaussian (ncep grid 127)
+203          rotated lat/lon e-staggered (number meaningless)
+             this is the old 12km eta grid - 'h' pts
+205          rotated lat/lon b-staggered (number meaningless)
+             this is the 12km nam grid - 'h' pts
+212          nh polar stereographic, spherical earth (number meaningless)
+218          lambert conformal (ncep grid 218)
+
+This regression test is run by the runall.ksh script
+in the ./scripts subdirectory.  The runall.ksh script
+is run by the "Runall.${machine}" driver scripts located
+in ../reg_tests.
+
+The interpolated temperature data is written to binary files.
+If the files from the 'control' and 'test' libraries
+are not bit identical, the regression test is considered
+failed.  Also, the files from the 1 and 4 thread 'test' library are compared.
+If not bit identical, the regression test fails.  This comparison
+is done by the ./scripts/compare.ksh script.
+
+The binary files have the following naming convention: 
+grid${grid#}.opt${option#}.${bytesize}byte.bin, where:
+
+ option#     Method
+    0        BILINEAR
+    1        BICUBIC
+    2        NEIGHBOR
+    3        BUDGET
+    4        SPECTRAL
+    6        NEIGHBOR-BUDGET
+
+These binary files may be viewed in Grads with the ".ctl" files in
+the ./grads subdirectory.  There is one ".ctl" file for each grid number.
+
+List of ip2lib modules or routines tested:
+
+earth_radius
+gdswzd_mod
+gdswzd_equid_cylind_mod
+gdswzd_gaussian_mod
+gdswzd_lambert_conf_mod
+gdswzd_mercator_mod
+gdswzd_polar_stereo_mod
+gdswzd_rot_equid_cylind_mod
+gdswzd_rot_equid_cylind_egrid_mod
+ijkgds0
+ijkgds1
+ipolates
+polates0
+polates1
+polates2
+polates3
+polates4
+polates6
+polfixs

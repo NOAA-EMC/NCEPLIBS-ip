@@ -1,0 +1,52 @@
+Test routines ipxwafs, ipxwafs2 and ipxwafs3 by transforming between
+full and thinned WAFS grids.  The full grids have the same number of
+points in each row.  In the thinned grids, the number of points in each
+row decrease toward the pole. These transforms are performed using a
+Fortran program.
+
+The program reads in a grib 2 file of data on the full/thinned WAFS
+grid and transforms it to its thinned/full counterpart.  Routine
+ipxwafs transforms data without bitmaps.  Routines ipxwafs2 and
+ipxwafs3 transform data with bitmaps - the former uses bilinear
+interpolation and the latter uses nearest neighbor.  The transformed
+data is written to a grib 2 file.
+
+The program source code and the make-related files are in the
+./sorc subdirectory.  The code is compiled with all byte
+versions of the 'control' and 'test' ip2 libraries:
+
+  > 4 byte integer/4 byte float
+  > 8 byte integer/8 byte float
+  > 8 byte float/4 byte integer
+
+To compile, invoke the make_reg_tests.ksh script located
+in the /reg_tests directory.  See the /reg_tests/README
+file for more information.  The executables (a total
+of six) are stored in the ./exec subdirectory.
+
+The input data for the program is located in the /data subdirectory.
+All input data are in grib 2 format.  The files are:
+
+  wafs.37.full.bitmap.grb2 (soil T on full WAFS grid #37 - land only)
+  wafs.37.full.grb2        (600 mb T on full WAFS grid #37)
+  wafs.37.thin.bitmap.grb2 (soil T on thinned WAFS grid #37 - land only)
+  wafs.37.thin.grb2        (600 mb T on thinned WAFS grid #37)
+  wafs.44.full.bitmap.grb2 (soil T on full WAFS grid #44 - land only)
+  wafs.44.full.grb2        (600 mb T on full WAFS grid #44)
+  wafs.44.thin.bitmap.grb2 (soil T on thinned WAFS grid #44 - land only)
+  wafs.44.thin.grb2        (600 mb T on thinned WAFS grid #44)
+
+This regression test is run by the runall.ksh script
+in the ./scripts subdirectory.  The runall.ksh script
+is run by the "Runall.${machine}" driver script located
+in /reg_tests.
+
+All output from the program is in grib 2.  If the grib 2 files from the
+'control' and 'test' libraries are not bit identical, the
+regression test is considered failed.
+
+List of routines tested:
+
+ipxwafs        
+ipxwafs2
+ipxwafs3
