@@ -27,7 +27,7 @@ if(OPENMP)
   find_package(OpenMP REQUIRED COMPONENTS Fortran)
 endif()
 
-find_package(sp 3.2.0 REQUIRED)
+find_package(sp 2.3.0 REQUIRED)
 
 # If doxygen documentation we enabled, build it. This must come before
 # adding the source code directories; the main documentation build
