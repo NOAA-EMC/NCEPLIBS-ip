@@ -2,7 +2,7 @@ name: GCC Build
 on: [push, pull_request]
 
 jobs:
-  GCC Build:
+  build:
     runs-on: ubuntu-latest
     env:
       FC: gfortran-9
