@@ -3,7 +3,7 @@ on: [push, pull_request]
 
 jobs:
   GCC Build:
-    runs-on: ubuntu-20.04
+    runs-on: ubuntu-latest
     env:
       FC: gfortran-9
       CC: gcc-9
@@ -21,7 +21,7 @@ jobs:
       with:
         repository: NOAA-EMC/NCEPLIBS-sp
         path: sp
-        ref: develop
+        ref: v2.3.3
 
     - name: build-sp
       run: |

@@ -8,7 +8,7 @@ defaults:
     shell: bash -leo pipefail {0}
 
 jobs:
-  Intel Build:
+  Intel-Build:
     runs-on: ubuntu-latest
     env:
       CC: icc
@@ -37,7 +37,7 @@ jobs:
       with:
         repository: NOAA-EMC/NCEPLIBS-sp
         path: sp
-        ref: develop
+        ref: v2.3.3
 
     - name: build-sp
       run: |
