@@ -10,6 +10,7 @@ project(
   
 include(GNUInstallDirs)
 
+option(ENABLE_DOCS "Enable generation of doxygen-based documentation." OFF)
 option(OPENMP "use OpenMP threading" OFF)
 
 if(NOT CMAKE_BUILD_TYPE MATCHES "^(Debug|Release|RelWithDebInfo|MinSizeRel)$")
@@ -26,7 +27,16 @@ if(OPENMP)
   find_package(OpenMP REQUIRED COMPONENTS Fortran)
 endif()
 
-find_package(sp REQUIRED)
+find_package(sp 3.2.0 REQUIRED)
+
+# If doxygen documentation we enabled, build it. This must come before
+# adding the source code directories; the main documentation build
+# must happen before any of the utility document builds.
+if(ENABLE_DOCS)
+  find_package(Doxygen REQUIRED)
+  set(abs_top_srcdir "${CMAKE_SOURCE_DIR}")
+  add_subdirectory(docs)  
+endif()
 
 add_subdirectory(src)
 

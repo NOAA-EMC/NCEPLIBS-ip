@@ -8,7 +8,7 @@ defaults:
     shell: bash -leo pipefail {0}
 
 jobs:
-  intel-build-and-test:
+  Intel Build:
     runs-on: ubuntu-latest
     env:
       CC: icc
@@ -65,4 +65,4 @@ jobs:
       run: |
         ulimit -s unlimited
         cd $GITHUB_WORKSPACE/ip/build
-        make test
+        ctest
