@@ -254,19 +254,20 @@ contains
   !! - 40 - GAUSSIAN EQUIDISTANT CYCLINDRICAL
   !!
   !! @param[in] igdtmpli Grid definition template array input grid.
-  !! Corresponds to the gfld%igdtmpl component of the
-  !! ncep g2 library gridmod data structure (SECTION 3 INFO):
+  !! Corresponds to the gfld%igdtmpl component of the NCEPLIBS-g2 gridmod data structure
+  !!
+  !! Section 3 Info:
   !!
   !! All map projections:
-  !! (1): SHAPE OF EARTH, OCTET 15
-  !! (2): SCALE FACTOR OF SPHERICAL EARTH RADIUS, OCTET 16
-  !! (3): SCALED VALUE OF RADIUS OF SPHERICAL EARTH, OCTETS 17-20
-  !! (4): SCALE FACTOR OF MAJOR AXIS OF ELLIPTICAL EARTH, OCTET 21
-  !! (5): SCALED VALUE OF MAJOR AXIS OF ELLIPTICAL EARTH, OCTETS 22-25
-  !! (6): SCALE FACTOR OF MINOR AXIS OF ELLIPTICAL EARTH, OCTET 26
-  !! (7): SCALED VALUE OF MINOR AXIS OF ELLIPTICAL EARTH, OCTETS 27-30
+  !! - (1): SHAPE OF EARTH, OCTET 15
+  !! - (2): SCALE FACTOR OF SPHERICAL EARTH RADIUS, OCTET 16
+  !! - (3): SCALED VALUE OF RADIUS OF SPHERICAL EARTH, OCTETS 17-20
+  !! - (4): SCALE FACTOR OF MAJOR AXIS OF ELLIPTICAL EARTH, OCTET 21
+  !! - (5): SCALED VALUE OF MAJOR AXIS OF ELLIPTICAL EARTH, OCTETS 22-25
+  !! - (6): SCALE FACTOR OF MINOR AXIS OF ELLIPTICAL EARTH, OCTET 26
+  !! - (7): SCALED VALUE OF MINOR AXIS OF ELLIPTICAL EARTH, OCTETS 27-30
   !!
-  !! EQUIDISTANT CYCLINDRICAL:
+  !! Equidistant Cyclindrical:
   !! - (8):  NUMBER OF POINTS ALONG A PARALLEL, OCTS 31-34
   !! - (9):  NUMBER OF POINTS ALONG A MERIDIAN, OCTS 35-38
   !! - (10): BASIC ANGLE OF INITIAL PRODUCTION DOMAIN, OCTETS 39-42.
@@ -280,7 +281,7 @@ contains
   !! - (18): J-DIRECTION INCREMENT, OCTETS 68-71
   !! - (19): SCANNING MODE, OCTET 72
   !!
-  !! MERCATOR CYCLINDRICAL:
+  !! Mercator Cyclindrical:
   !! - (8):  NUMBER OF POINTS ALONG A PARALLEL, OCTS 31-34
   !! - (9):  NUMBER OF POINTS ALONG A MERIDIAN, OCTS 35-38
   !! - (10): LATITUDE OF FIRST POINT, OCTETS 39-42
@@ -294,7 +295,7 @@ contains
   !! - (18): LONGITUDINAL GRID LENGTH, OCTETS 65-68
   !! - (19): LATITUDINAL GRID LENGTH, OCTETS 69-72
   !!
-  !! LAMBERT CONFORMAL CONICAL:
+  !! Lambert Conformal Conical:
   !! - (8):  NUMBER OF POINTS ALONG X-AXIS, OCTS 31-34
   !! - (9):  NUMBER OF POINTS ALONG Y-AXIS, OCTS 35-38
   !! - (10): LATITUDE OF FIRST POINT, OCTETS 39-42
@@ -311,7 +312,7 @@ contains
   !! - (21): LATITUDE OF SOUTH POLE OF PROJECTION, OCTETS 74-77
   !! - (22): LONGITUDE OF SOUTH POLE OF PROJECTION, OCTETS 78-81
   !!
-  !! GAUSSIAN CYLINDRICAL:
+  !! Gaussian Cylindrical:
   !! - (8):  NUMBER OF POINTS ALONG A PARALLEL, OCTS 31-34
   !! - (9):  NUMBER OF POINTS ALONG A MERIDIAN, OCTS 35-38
   !! - (10): BASIC ANGLE OF INITIAL PRODUCTION DOMAIN, OCTETS 39-42
@@ -325,7 +326,7 @@ contains
   !! - (18): NUMBER OF PARALLELS BETWEEN POLE AND EQUATOR, OCTETS 68-71
   !! - (19): SCANNING MODE, OCTET 72
   !!
-  !! POLAR STEREOGRAPHIC AZIMUTHAL:
+  !! Polar Stereographic Azimuthal:
   !! - (8):  NUMBER OF POINTS ALONG X-AXIS, OCTETS 31-34
   !! - (9):  NUMBER OF POINTS ALONG Y-AXIS, OCTETS 35-38
   !! - (10): LATITUDE OF FIRST GRID POINT, OCTETS 39-42
@@ -338,7 +339,7 @@ contains
   !! - (17): PROJECTION CENTER FLAG, OCTET 64
   !! - (18): SCANNING MODE FLAGS, OCTET 65
   !!
-  !! ROTATED EQUIDISTANT CYCLINDRICAL:
+  !! Rotated Equidistant Cyclindrical:
   !! - (8):  NUMBER OF POINTS ALONG A PARALLEL, OCTS 31-34
   !! - (9):  NUMBER OF POINTS ALONG A MERIDIAN, OCTS 35-38
   !! - (10): BASIC ANGLE OF INITIAL PRODUCTION DOMAIN, OCTETS 39-42
@@ -397,7 +398,7 @@ contains
   !! This example is interpolating 12 levels of temperatures
   !! from the 360 x 181 global grid (ncep grid 3)
   !! to the 93 x 68 hawaiian mercator grid (ncep grid 204).
-  !1
+  !!
   !! The example times are for the c90. As a reference, the cp time
   !! for unpacking the global 12 temperature fields is 0.04 seconds.
   !!
@@ -414,7 +415,7 @@ contains
   !!   N-BUDGET| 6 | -1,-1       |   0.15
   !!
   !!   The spectral interpolation is fast for the mercator grid.
-  !!   however, for some grids the spectral interpolation is slow.
+  !!   However, for some grids the spectral interpolation is slow.
   !!
   !!   The following example is interpolating 12 levels of temperatures
   !!   from the 360 x 181 global grid (ncep grid 3)
