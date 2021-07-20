@@ -273,12 +273,12 @@ contains
        IF(IRET.EQ.0) IRET=IRETX
        IF(.not. to_station_points) NO=0
     ENDIF
-  END SUBROUTINE interpolate_bicubic_scalar
+  end subroutine interpolate_bicubic_scalar
 
   !> @brief This subprogram performs bicubic interpolation
   !! from any grid to any grid for vector fields.
   !!
-  !! @details Bbitmaps are now allowed even when invalid points are within
+  !! @details Bitmaps are now allowed even when invalid points are within
   !! the bicubic template provided the minimum weight is reached.
   !!
   !! Options allow choices between straight bicubic (ipopt(1)=0)
