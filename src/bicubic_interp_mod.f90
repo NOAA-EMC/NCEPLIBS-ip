@@ -21,50 +21,57 @@ module bicubic_interp_mod
 
 contains
 
-  !> THIS SUBPROGRAM PERFORMS BICUBIC INTERPOLATION
-  !! FROM ANY GRID TO ANY GRID FOR SCALAR FIELDS.
-  !! BITMAPS ARE NOW ALLOWED EVEN WHEN INVALID POINTS ARE WITHIN
-  !! THE BICUBIC TEMPLATE PROVIDED THE MINIMUM WEIGHT IS REACHED. 
-  !! OPTIONS ALLOW CHOICES BETWEEN STRAIGHT BICUBIC (IPOPT(1)=0)
-  !! AND CONSTRAINED BICUBIC (IPOPT(1)=1) WHERE THE VALUE IS
-  !! CONFINED WITHIN THE RANGE OF THE SURROUNDING 16 POINTS.
-  !! ANOTHER OPTION IS THE MINIMUM PERCENTAGE FOR MASK,
-  !! I.E. PERCENT VALID INPUT DATA REQUIRED TO MAKE OUTPUT DATA,
-  !! (IPOPT(2)) WHICH DEFAULTS TO 50 (IF IPOPT(2)=-1).
-  !! BILINEAR USED WITHIN ONE GRID LENGTH OF BOUNDARIES.
-  !! ONLY HORIZONTAL INTERPOLATION IS PERFORMED.
-  !! THE CODE RECOGNIZES THE FOLLOWING PROJECTIONS, WHERE
-  !! FOR THE INPUT AND OUTPUT GRIDS, RESPECTIVELY:
-  !! AS AN ADDED BONUS THE NUMBER OF OUTPUT GRID POINTS
-  !! AND THEIR LATITUDES AND LONGITUDES ARE ALSO RETURNED.
-  !! ON THE OTHER HAND, THE OUTPUT CAN BE A SET OF STATION POINTS
-  !! IF IGDTNUMO<0, IN WHICH CASE THE NUMBER OF POINTS
-  !! AND THEIR LATITUDES AND LONGITUDES MUST BE INPUT.
-  !! OUTPUT BITMAPS WILL ONLY BE CREATED WHEN THE OUTPUT GRID
-  !! EXTENDS OUTSIDE OF THE DOMAIN OF THE INPUT GRID.
-  !! THE OUTPUT FIELD IS SET TO 0 WHERE THE OUTPUT BITMAP IS OFF.
+  !> @brief This subprogram performs bicubic interpolation
+  !! from any grid to any grid for scalar fields.
   !!
-  !! @param[in] ipopt INTEGER (20) INTERPOLATION OPTIONS
-  !! IPOPT(1)=0 FOR STRAIGHT BICUBIC;
-  !! IPOPT(1)=1 FOR CONSTRAINED BICUBIC WHERE VALUE IS CONFINED WITHIN THE RANGE OF THE SURROUNDING 4 POINTS.
-  !! IPOPT(2) IS MINIMUM PERCENTAGE FOR MASK (DEFAULTS TO 50 IF IPOPT(2)=-1)
+  !! @details Bitmaps are now allowed even when invalid points are within
+  !! the bicubic template provided the minimum weight is reached.
   !!
-  !! @param[in] grid_in Input grid
-  !! @param[in] grid_out Output grid
-  !! @param[in]  MI SKIP NUMBER BETWEEN INPUT GRID FIELDS IF KM>1 OR DIMENSION OF INPUT GRID FIELDS IF KM=1
-  !! @param[out] MO SKIP NUMBER BETWEEN OUTPUT GRID FIELDS IF KM>1 OR DIMENSION OF OUTPUT GRID FIELDS IF KM=1
-  !! @param[in]  km NUMBER OF FIELDS TO INTERPOLATE
-  !! @param[in]  IBI INPUT BITMAP FLAGS
-  !! @param[in]  LI INPUT BITMAPS (IF SOME IBI(K)=1)
-  !! @param[in]  GI INPUT FIELDS TO INTERPOLATE
-  !! @param[in,out] NO  NUMBER OF OUTPUT POINTS (ONLY IF IGDTNUMO<0)
-  !! @param[in,out] RLAT OUTPUT LATITUDES IN DEGREES (IF IGDTNUMO<0)
-  !! @param[in,out] RLON OUTPUT LONGITUDES IN DEGREES (IF IGDTNUMO<0)
-  !! @param[out] IBO OUTPUT BITMAP FLAGS
-  !! @param[out] LO OUTPUT BITMAPS (ALWAYS OUTPUT)
-  !! @param[out] GO OUTPUT FIELDS INTERPOLATED
-  !! @param[out] IRET RETURN CODE
-  !! 0 SUCCESSFUL INTERPOLATION, 2 UNRECOGNIZED INPUT GRID OR NO GRID OVERLAP, 3 UNRECOGNIZED OUTPUT GRID
+  !! Options allow choices between straight bicubic (ipopt(1)=0)
+  !! and constrained bicubic (ipopt(1)=1) where the value is
+  !! confined within the range of the surrounding 16 points.
+  !!
+  !! Another option is the minimum percentage for mask,
+  !! i.e. percent valid input data required to make output data,
+  !! (ipopt(2)) which defaults to 50 (if ipopt(2)=-1).
+  !!
+  !! Bilinear used within one grid length of boundaries.
+  !! Only horizontal interpolation is performed.
+  !!
+  !! The code recognizes the following projections, where
+  !! for the input and output grids, respectively:
+  !! as an added bonus the number of output grid points
+  !! and their latitudes and longitudes are also returned.
+  !! On the other hand, the output can be a set of station points
+  !! if igdtnumo<0, in which case the number of points
+  !! and their latitudes and longitudes must be input.
+  !! output bitmaps will only be created when the output grid
+  !! extends outside of the domain of the input grid.
+  !! the output field is set to 0 where the output bitmap is off.
+  !!
+  !! @param[in] ipopt Interpolation options.
+  !! - ipopt(1)=0 For straight bicubic;
+  !! - ipopt(1)=1 For constrained bicubic where value is confined within the range of the surrounding 4 points.
+  !! - ipopt(2) Is minimum percentage for mask (defaults to 50 if ipopt(2)=-1)
+  !!
+  !! @param[in] grid_in Input grid.
+  !! @param[in] grid_out Output grid.
+  !! @param[in]  mi Skip number between input grid fields if km>1 or dimension of input grid fields if km=1.
+  !! @param[out] mo Skip number between output grid fields if km>1 or dimension of output grid fields if km=1.
+  !! @param[in]  km Number of fields to interpolate.
+  !! @param[in]  ibi Input bitmap flags.
+  !! @param[in]  li Input bitmaps (if some ibi(k)=1).
+  !! @param[in]  gi Input fields to interpolate.
+  !! @param[in,out] no  Number of output points (only if igdtnumo<0).
+  !! @param[in,out] rlat Output latitudes in degrees (if igdtnumo<0).
+  !! @param[in,out] rlon Output longitudes in degrees (if igdtnumo<0).
+  !! @param[out] ibo Output bitmap flags.
+  !! @param[out] lo Output bitmaps (always output).
+  !! @param[out] go Output fields interpolated.
+  !! @param[out] iret Return code.
+  !! - 0 successful interpolation,
+  !! - 2 unrecognized input grid or no grid overlap
+  !! - 3 unrecognized output grid
   SUBROUTINE interpolate_bicubic_scalar(IPOPT,grid_in,grid_out, &
        MI,MO,KM,IBI,LI,GI, &
        NO,RLAT,RLON,IBO,LO,GO,IRET)
@@ -268,57 +275,65 @@ contains
     ENDIF
   END SUBROUTINE interpolate_bicubic_scalar
 
-  !> THIS SUBPROGRAM PERFORMS BICUBIC INTERPOLATION
-  !! FROM ANY GRID TO ANY GRID FOR VECTOR FIELDS.
-  !! BITMAPS ARE NOW ALLOWED EVEN WHEN INVALID POINTS ARE WITHIN
-  !! THE BICUBIC TEMPLATE PROVIDED THE MINIMUM WEIGHT IS REACHED. 
-  !! OPTIONS ALLOW CHOICES BETWEEN STRAIGHT BICUBIC (IPOPT(1)=0)
-  !! AND CONSTRAINED BICUBIC (IPOPT(1)=1) WHERE THE VALUE IS
-  !! CONFINED WITHIN THE RANGE OF THE SURROUNDING 16 POINTS.
-  !! ANOTHER OPTION IS THE MINIMUM PERCENTAGE FOR MASK,
-  !! I.E. PERCENT VALID INPUT DATA REQUIRED TO MAKE OUTPUT DATA,
-  !! (IPOPT(2)) WHICH DEFAULTS TO 50 (IF IPOPT(2)=-1).
-  !! BILINEAR USED WITHIN ONE GRID LENGTH OF BOUNDARIES.
-  !! ONLY HORIZONTAL INTERPOLATION IS PERFORMED.
-  !! THE CODE RECOGNIZES THE FOLLOWING PROJECTIONS, WHERE
-  !! FOR THE INPUT AND OUTPUT GRIDS, RESPECTIVELY:
-  !! AS AN ADDED BONUS THE NUMBER OF OUTPUT GRID POINTS
-  !! AND THEIR LATITUDES AND LONGITUDES ARE ALSO RETURNED.
-  !! ON THE OTHER HAND, THE OUTPUT CAN BE A SET OF STATION POINTS
-  !! IF IGDTNUMO<0, IN WHICH CASE THE NUMBER OF POINTS
-  !! AND THEIR LATITUDES AND LONGITUDES MUST BE INPUT.
-  !! OUTPUT BITMAPS WILL ONLY BE CREATED WHEN THE OUTPUT GRID
-  !! EXTENDS OUTSIDE OF THE DOMAIN OF THE INPUT GRID.
-  !! THE OUTPUT FIELD IS SET TO 0 WHERE THE OUTPUT BITMAP IS OFF.
+  !> @brief This subprogram performs bicubic interpolation
+  !! from any grid to any grid for vector fields.
+  !!
+  !! @details Bbitmaps are now allowed even when invalid points are within
+  !! the bicubic template provided the minimum weight is reached.
+  !!
+  !! Options allow choices between straight bicubic (ipopt(1)=0)
+  !! and constrained bicubic (ipopt(1)=1) where the value is
+  !! confined within the range of the surrounding 16 points.
+  !!
+  !! Another option is the minimum percentage for mask,
+  !! i.e. percent valid input data required to make output data,
+  !! (ipopt(2)) which defaults to 50 (if ipopt(2)=-1).
+  !!
+  !! Bilinear used within one grid length of boundaries.
+  !! Only horizontal interpolation is performed.
+  !!
+  !! The code recognizes the following projections, where
+  !! for the input and output grids, respectively:
+  !! as an added bonus the number of output grid points
+  !! and their latitudes and longitudes are also returned.
+  !! On the other hand, the output can be a set of station points
+  !! if igdtnumo<0, in which case the number of points
+  !! and their latitudes and longitudes must be input.
+  !!
+  !! Output bitmaps will only be created when the output grid
+  !! extends outside of the domain of the input grid.
+  !! the output field is set to 0 where the output bitmap is off.
   !!
   !! @param[in] ipopt INTEGER (20) INTERPOLATION OPTIONS
   !! - IPOPT(1)=0 FOR STRAIGHT BICUBIC;
   !! - IPOPT(1)=1 FOR CONSTRAINED BICUBIC WHERE VALUE IS CONFINED WITHIN THE RANGE OF THE SURROUNDING 4 POINTS.
   !! - IPOPT(2) IS MINIMUM PERCENTAGE FOR MASK (DEFAULTS TO 50 IF IPOPT(2)=-1)
   !!
-  !! @param[in] grid_in Input grid
-  !! @param[in] grid_out Output grid
-  !! @param[in]  MI SKIP NUMBER BETWEEN INPUT GRID FIELDS IF KM>1 OR DIMENSION OF INPUT GRID FIELDS IF KM=1
-  !! @param[out] MO SKIP NUMBER BETWEEN OUTPUT GRID FIELDS IF KM>1 OR DIMENSION OF OUTPUT GRID FIELDS IF KM=1
-  !! @param[in]  km NUMBER OF FIELDS TO INTERPOLATE
-  !! @param[in]  IBI INPUT BITMAP FLAGS
-  !! @param[in]  LI INPUT BITMAPS (IF SOME IBI(K)=1)
-  !! @param[in]  UI INPUT U-COMPONENT FIELDS to INTERPOLATE
-  !! @param[in]  VI INPUT V-COMPONENT FIELDS to INTERPOLATE
-  !! @param[in,out] NO  NUMBER OF OUTPUT POINTS (ONLY IF IGDTNUMO<0)
-  !! @param[in,out] RLAT OUTPUT LATITUDES IN DEGREES (IF IGDTNUMO<0)
-  !! @param[in,out] RLON OUTPUT LONGITUDES IN DEGREES (IF IGDTNUMO<0)
-  !! @param[in,out] CROT VECTOR ROTATION COSINES (IF IGDTNUMO<0) UGRID=CROT*UEARTH-SROT*VEARTH;
-  !! @param[in,out] SROT VECTOR ROTATION SINES (IF IGDTNUMO<0) VGRID=SROT*UEARTH+CROT*VEARTH)
-  !! @param[out] IBO OUTPUT BITMAP FLAGS
-  !! @param[out] LO OUTPUT BITMAPS (ALWAYS OUTPUT)
-  !! @param[out] UO OUTPUT U-COMPONENT FIELDS INTERPOLATED
-  !! @param[out] VO OUTPUT V-COMPONENT FIELDS INTERPOLATED
-  !! @param[out] IRET RETURN CODE
-  !! 0 SUCCESSFUL INTERPOLATION, 2 UNRECOGNIZED INPUT GRID OR NO GRID OVERLAP, 3 UNRECOGNIZED OUTPUT GRID
-  SUBROUTINE interpolate_bicubic_vector(IPOPT,grid_in,grid_out, &
-       MI,MO,KM,IBI,LI,UI,VI, &
-       NO,RLAT,RLON,CROT,SROT,IBO,LO,UO,VO,IRET)
+  !! @param[in] grid_in Input grid.
+  !! @param[in] grid_out Output grid.
+  !! @param[in]  mi Skip number between input grid fields if km>1 or dimension of input grid fields if km=1.
+  !! @param[out] mo Skip number between output grid fields if km>1 or dimension of output grid fields if km=1.
+  !! @param[in]  km Number of fields to interpolate.
+  !! @param[in]  ibi Input bitmap flags.
+  !! @param[in]  li Input bitmaps (if some ibi(k)=1).
+  !! @param[in]  ui Input u-component fields to interpolate.
+  !! @param[in]  vi Input v-component fields to interpolate.
+  !! @param[in,out] no Number of output points (only if igdtnumo<0).
+  !! @param[in,out] rlat Output latitudes in degrees (if igdtnumo<0).
+  !! @param[in,out] rlon Output longitudes in degrees (if igdtnumo<0).
+  !! @param[in,out] crot Vector rotation cosines (if igdtnumo<0) ugrid=crot*uearth-srot*vearth.
+  !! @param[in,out] srot Vector rotation sines (if igdtnumo<0) vgrid=srot*uearth+crot*vearth).
+  !! @param[out] ibo Output bitmap flags.
+  !! @param[out] lo Output bitmaps (always output).
+  !! @param[out] uo Output u-component fields interpolated.
+  !! @param[out] vo Output v-component fields interpolated.
+  !! @param[out] iret Return code.
+  !! - 0 successful interpolation
+  !! - 2 unrecognized input grid or no grid overlap
+  !! - 3 unrecognized output grid
+  subroutine interpolate_bicubic_vector(ipopt, grid_in, grid_out, &
+       mi, mo, km, ibi, li, ui, vi, &
+       no, rlat, rlon, crot, srot, ibo, lo, uo, vo, iret)
     class(ip_grid), intent(in) :: grid_in, grid_out
     INTEGER,            INTENT(IN   ) :: IPOPT(20)
     INTEGER,            INTENT(IN   ) :: IBI(KM),MI,MO,KM
@@ -550,6 +565,6 @@ contains
        IF(.not. to_station_points) NO=0
     ENDIF
     ! - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-  END SUBROUTINE INTERPOLATE_BICUBIC_VECTOR
+  end subroutine interpolate_bicubic_vector
 
 end module bicubic_interp_mod
