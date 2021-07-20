@@ -1,11 +1,11 @@
-# Documentation of the general interpolation library 2 - ip2lib
+# Documentation of the general interpolation library - iplib
 
 ## Introduction
 
-The NCEP general interpolation library 2 (ip2lib) contains Fortran 90 subprograms
+The NCEP general interpolation library (ip2lib) contains Fortran 90 subprograms
 to be used for interpolating between nearly all grids used at NCEP.
 The library is particularly efficient when interpolating many fields at one time.
-The library has been extensively tested with AIX and Intel Fortran compilers.
+The library has been extensively tested with GNU and Intel Fortran compilers.
 
 There are currently six interpolation methods available in the library:
 bilinear, bicubic, neighbor, budget, spectral and neighbor-budget.
@@ -204,6 +204,7 @@ Example 1.  Read a grib 2 file of scalar data on a global regular
 
  program example_1
 
+use ip_mod
  use grib_mod  ! ncep grib 2 library
 
  implicit none
