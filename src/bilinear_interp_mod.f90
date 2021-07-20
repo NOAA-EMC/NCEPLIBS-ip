@@ -23,28 +23,29 @@ module bilinear_interp_mod
 
 contains
 
-  !> THIS SUBPROGRAM PERFORMS BILINEAR INTERPOLATION
-  !! FROM ANY GRID TO ANY GRID FOR SCALAR FIELDS.
-  !! OPTIONS ALLOW VARYING THE MINIMUM PERCENTAGE FOR MASK,
-  !! I.E. PERCENT VALID INPUT DATA REQUIRED TO MAKE OUTPUT DATA,
-  !! (IPOPT(1)) WHICH DEFAULTS TO 50 (IF IPOPT(1)=-1).
-  !! ONLY HORIZONTAL INTERPOLATION IS PERFORMED.
-  !! IF NO INPUT DATA IS FOUND NEAR THE OUTPUT POINT, A SPIRAL
-  !! SEARCH MAY BE INVOKED BY SETTING IPOPT(2)> 0.
-  !! NO SEARCHING IS DONE IF OUTPUT POINT IS OUTSIDE THE INPUT GRID.
-  !! AS AN ADDED BONUS THE NUMBER OF OUTPUT GRID POINTS
-  !! AND THEIR LATITUDES AND LONGITUDES ARE ALSO RETURNED.
-  !! ON THE OTHER HAND, THE OUTPUT CAN BE A SET OF STATION POINTS
-  !! IF IGDTNUMO<0, IN WHICH CASE THE NUMBER OF POINTS
-  !! AND THEIR LATITUDES AND LONGITUDES MUST BE INPUT.
-  !! INPUT BITMAPS WILL BE INTERPOLATED TO OUTPUT BITMAPS.
-  !! OUTPUT BITMAPS WILL ALSO BE CREATED WHEN THE OUTPUT GRID
-  !! EXTENDS OUTSIDE OF THE DOMAIN OF THE INPUT GRID.
+  !> @brief This subprogram performs bilinear interpolation
+  !! from any grid to any grid for scalar fields.
+  !! 
+  !! @details Options allow varying the minimum percentage for mask,
+  !! i.e. percent valid input data required to make output data,
+  !! (ipopt(1)) which defaults to 50 (if ipopt(1)=-1).
+  !! only horizontal interpolation is performed.
+  !! if no input data is found near the output point, a spiral
+  !! search may be invoked by setting ipopt(2)> 0.
+  !! no searching is done if output point is outside the input grid.
+  !! as an added bonus the number of output grid points
+  !! and their latitudes and longitudes are also returned.
+  !! on the other hand, the output can be a set of station points
+  !! if igdtnumo<0, in which case the number of points
+  !! and their latitudes and longitudes must be input.
+  !! input bitmaps will be interpolated to output bitmaps.
+  !! output bitmaps will also be created when the output grid
+  !! extends outside of the domain of the input grid.
   !!
-  !! THE OUTPUT FIELD IS SET TO 0 WHERE THE OUTPUT BITMAP IS OFF.
+  !! The output field is set to 0 where the output bitmap is off.
   !! @param[in] ipopt interpolation options
-  !! IPOPT(1) IS MINIMUM PERCENTAGE FOR MASK (DEFAULTS TO 50 IF IPOPT(1)=-1)
-  !! IPOPT(2) IS WIDTH OF SQUARE TO EXAMINE IN SPIRAL SEARCH (DEFAULTS TO NO SEARCH IF IPOPT(2)=-1)
+  !! - IPOPT(1) IS MINIMUM PERCENTAGE FOR MASK (DEFAULTS TO 50 IF IPOPT(1)=-1)
+  !! - IPOPT(2) IS WIDTH OF SQUARE TO EXAMINE IN SPIRAL SEARCH (DEFAULTS TO NO SEARCH IF IPOPT(2)=-1)
   !! @param[in] grid_in Input grid
   !! @param[in] grid_out Output grid
   !! @param[in]  MI SKIP NUMBER BETWEEN INPUT GRID FIELDS IF KM>1 OR DIMENSION OF INPUT GRID FIELDS IF KM=1
@@ -60,9 +61,10 @@ contains
   !! @param[out] LO OUTPUT BITMAPS (ALWAYS OUTPUT)
   !! @param[out] GO OUTPUT FIELDS INTERPOLATED
   !! @param[out] IRET RETURN CODE
-  !! 0 SUCCESSFUL INTERPOLATION, 2 UNRECOGNIZED INPUT GRID OR NO GRID OVERLAP, 3 UNRECOGNIZED OUTPUT GRID
-  subroutine interpolate_bilinear_scalar(IPOPT,grid_in,grid_out,MI,MO,KM,IBI,LI,GI, &
-       NO,RLAT,RLON,IBO,LO,GO,IRET)
+  !! - 0 SUCCESSFUL INTERPOLATION
+  !! - 2 UNRECOGNIZED INPUT GRID OR NO GRID OVERLAP
+  !! - 3 UNRECOGNIZED OUTPUT GRID
+  subroutine interpolate_bilinear_scalar(IPOPT,grid_in,grid_out,MI,MO,KM,IBI,LI,GI,NO,RLAT,RLON,IBO,LO,GO,IRET)
     class(ip_grid), intent(in) :: grid_in, grid_out
     INTEGER,               INTENT(IN   ) :: IPOPT(20)
     INTEGER,               INTENT(IN   ) :: MI,MO,KM
@@ -92,7 +94,7 @@ contains
     REAL                                 :: PMP,XIJ,YIJ,XF,YF,G,W
 
     logical :: to_station_points
-    
+
     ! Save coeffecients between calls and only compute if grids have changed
     INTEGER,                    SAVE  :: NOX=-1,IRETX=-1
     INTEGER,        ALLOCATABLE,SAVE  :: NXY(:,:,:)
@@ -263,161 +265,66 @@ contains
        type is(ip_equid_cylind_grid)
           CALL POLFIXS(NO,MO,KM,RLAT,IBO,LO,GO)
        end select
-       ! - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
     ELSE
        IF(IRET.EQ.0) IRET=IRETX
        IF(.not. to_station_points) NO=0
     ENDIF
-    ! - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
   end subroutine interpolate_bilinear_scalar
 
-  SUBROUTINE interpolate_bilinear_vector(IPOPT,grid_in,grid_out, &
+
+  !> @brief This subprogram performs bilinear interpolation from any grid to any grid for vector fields.
+  !!
+  !! @details Options allow varying the minimum percentage for mask,
+  !! i.e. percent valid input data required to make output data,
+  !! (ipopt(1)) which defaults to 50 (if ipopt(1)=-1).
+  !!
+  !! Only horizontal interpolation is performed.
+  !! the input and output vectors are rotated so that they are
+  !! either resolved relative to the defined grid
+  !! in the direction of increasing x and y coordinates
+  !! or resolved relative to easterly and northerly directions,
+  !! as designated by their respective grid description sections.
+  !!
+  !! As an added bonus the number of output grid points
+  !! and their latitudes and longitudes are also returned
+  !! along with their vector rotation parameters.
+  !! on the other hand, the data may be interpolated to a set of
+  !! station points if igdtnumo < 0, in which case the number
+  !! of points and their latitudes and longitudes must be
+  !! input along with their vector rotation parameters.
+  !! input bitmaps will be interpolated to output bitmaps.
+  !! output bitmaps will also be created when the output grid
+  !! extends outside of the domain of the input grid.
+  !! the output field is set to 0 where the output bitmap is off.
+  !!
+  !! @param[in] IPOPT Interpolation options
+  !! - IPOPT(1) IS MINIMUM PERCENTAGE FOR MASK (DEFAULTS TO 50 IF IPOPT(1)=-1)
+  !! @param[in] grid_in Input grid
+  !! @param[in] grid_out Output grid
+  !! @param[in]  MI SKIP NUMBER BETWEEN INPUT GRID FIELDS IF KM>1 OR DIMENSION OF INPUT GRID FIELDS IF KM=1
+  !! @param[out] MO SKIP NUMBER BETWEEN OUTPUT GRID FIELDS IF KM>1 OR DIMENSION OF OUTPUT GRID FIELDS IF KM=1
+  !! @param[in]  km NUMBER OF FIELDS TO INTERPOLATE
+  !! @param[in]  IBI INPUT BITMAP FLAGS
+  !! @param[in]  LI INPUT BITMAPS (IF SOME IBI(K)=1)
+  !! @param[in]  UI INPUT U-COMPONENT FIELDS to INTERPOLATE
+  !! @param[in]  VI INPUT V-COMPONENT FIELDS to INTERPOLATE
+  !! @param[in,out] NO  NUMBER OF OUTPUT POINTS (ONLY IF IGDTNUMO<0)
+  !! @param[in,out] RLAT OUTPUT LATITUDES IN DEGREES (IF IGDTNUMO<0)
+  !! @param[in,out] RLON OUTPUT LONGITUDES IN DEGREES (IF IGDTNUMO<0)
+  !! @param[in,out] CROT VECTOR ROTATION COSINES (IF IGDTNUMO<0) UGRID=CROT*UEARTH-SROT*VEARTH;
+  !! @param[in,out] SROT VECTOR ROTATION SINES (IF IGDTNUMO<0) VGRID=SROT*UEARTH+CROT*VEARTH)
+  !! @param[out] IBO OUTPUT BITMAP FLAGS
+  !! @param[out] LO OUTPUT BITMAPS (ALWAYS OUTPUT)
+  !! @param[out] UO OUTPUT U-COMPONENT FIELDS INTERPOLATED
+  !! @param[out] VO OUTPUT V-COMPONENT FIELDS INTERPOLATED
+  !! @param[out] IRET RETURN CODE
+  !! - 0 SUCCESSFUL INTERPOLATION
+  !! - 2 UNRECOGNIZED INPUT GRID OR NO GRID OVERLAP
+  !! - 3 UNRECOGNIZED OUTPUT GRID  
+  SUBROUTINE interpolate_bilinear_vector(ipopt,grid_in,grid_out, &
        MI,MO,KM,IBI,LI,UI,VI, &
        NO,RLAT,RLON,CROT,SROT,IBO,LO,UO,VO,IRET)
-    !$$$  SUBPROGRAM DOCUMENTATION BLOCK
-    !
-    ! SUBPROGRAM:  POLATEV0   INTERPOLATE VECTOR FIELDS (BILINEAR)
-    !   PRGMMR: IREDELL       ORG: W/NMC23       DATE: 96-04-10
-    !
-    ! ABSTRACT: THIS SUBPROGRAM PERFORMS BILINEAR INTERPOLATION
-    !           FROM ANY GRID TO ANY GRID FOR VECTOR FIELDS.
-    !           OPTIONS ALLOW VARYING THE MINIMUM PERCENTAGE FOR MASK,
-    !           I.E. PERCENT VALID INPUT DATA REQUIRED TO MAKE OUTPUT DATA,
-    !           (IPOPT(1)) WHICH DEFAULTS TO 50 (IF IPOPT(1)=-1).
-    !           ONLY HORIZONTAL INTERPOLATION IS PERFORMED.
-    !
-    !           THE INPUT AND OUTPUT GRIDS ARE DEFINED BY THEIR GRIB 2 GRID
-    !           DEFINITION TEMPLATE AS DECODED BY THE NCEP G2 LIBRARY.  THE
-    !           CODE RECOGNIZES THE FOLLOWING PROJECTIONS, WHERE
-    !           "IGDTNUMI/O" IS THE GRIB 2 GRID DEFINTION TEMPLATE NUMBER
-    !           FOR THE INPUT AND OUTPUT GRIDS, RESPECTIVELY:
-    !             (IGDTNUMI/O=00) EQUIDISTANT CYLINDRICAL
-    !             (IGDTNUMI/O=01) ROTATED EQUIDISTANT CYLINDRICAL. "E" AND
-    !                             NON-"E" STAGGERED
-    !             (IGDTNUMI/O=10) MERCATOR CYLINDRICAL
-    !             (IGDTNUMI/O=20) POLAR STEREOGRAPHIC AZIMUTHAL
-    !             (IGDTNUMI/O=30) LAMBERT CONFORMAL CONICAL
-    !             (IGDTNUMI/O=40) GAUSSIAN CYLINDRICAL
-    !
-    !           THE INPUT AND OUTPUT VECTORS ARE ROTATED SO THAT THEY ARE
-    !           EITHER RESOLVED RELATIVE TO THE DEFINED GRID
-    !           IN THE DIRECTION OF INCREASING X AND Y COORDINATES
-    !           OR RESOLVED RELATIVE TO EASTERLY AND NORTHERLY DIRECTIONS,
-    !           AS DESIGNATED BY THEIR RESPECTIVE GRID DESCRIPTION SECTIONS.
-    !
-    !           AS AN ADDED BONUS THE NUMBER OF OUTPUT GRID POINTS
-    !           AND THEIR LATITUDES AND LONGITUDES ARE ALSO RETURNED
-    !           ALONG WITH THEIR VECTOR ROTATION PARAMETERS.
-    !           ON THE OTHER HAND, THE DATA MAY BE INTERPOLATED TO A SET OF
-    !           STATION POINTS IF IGDTNUMO<0, IN WHICH CASE THE NUMBER
-    !           OF POINTS AND THEIR LATITUDES AND LONGITUDES MUST BE
-    !           INPUT ALONG WITH THEIR VECTOR ROTATION PARAMETERS.
-    !
-    !           INPUT BITMAPS WILL BE INTERPOLATED TO OUTPUT BITMAPS.
-    !           OUTPUT BITMAPS WILL ALSO BE CREATED WHEN THE OUTPUT GRID
-    !           EXTENDS OUTSIDE OF THE DOMAIN OF THE INPUT GRID.
-    !           THE OUTPUT FIELD IS SET TO 0 WHERE THE OUTPUT BITMAP IS OFF.
-    !        
-    ! PROGRAM HISTORY LOG:
-    !   96-04-10  IREDELL
-    ! 1999-04-08  IREDELL  SPLIT IJKGDS INTO TWO PIECES
-    ! 2001-06-18  IREDELL  INCLUDE MINIMUM MASK PERCENTAGE OPTION
-    ! 2002-01-17  IREDELL  SAVE DATA FROM LAST CALL FOR OPTIMIZATION
-    ! 2007-05-22  IREDELL  EXTRAPOLATE UP TO HALF A GRID CELL
-    ! 2007-10-30  IREDELL  SAVE WEIGHTS AND THREAD FOR PERFORMANCE
-    ! 2012-06-26  GAYNO    FIX OUT-OF-BOUNDS ERROR.  SEE NCEPLIBS
-    !                      TICKET #9.
-    ! 2015-01-27  GAYNO    REPLACE CALLS TO GDSWIZ WITH MERGED VERSION
-    !                      OF GDSWZD.
-    ! 2015-07-13  GAYNO    CONVERT TO GRIB 2. REPLACE GRIB 1 KGDS ARRAYS
-    !                      WITH GRIB 2 GRID DEFINITION TEMPLATE ARRAYS.
-    !
-    ! USAGE:    CALL POLATEV0(IPOPT,IGDTNUMI,IGDTMPLI,IGDTLENI, &
-    !                         IGDTNUMO,IGDTMPLO,IGDTLENO, &
-    !                         MI,MO,KM,IBI,LI,UI,VI, &
-    !                         NO,RLAT,RLON,CROT,SROT,IBO,LO,UO,VO,IRET)
-    !
-    !   INPUT ARGUMENT LIST:
-    !     IPOPT    - INTEGER (20) INTERPOLATION OPTIONS
-    !                IPOPT(1) IS MINIMUM PERCENTAGE FOR MASK
-    !                (DEFAULTS TO 50 IF IPOPT(1)=-1)
-    !     IGDTNUMI - INTEGER GRID DEFINITION TEMPLATE NUMBER - INPUT GRID.
-    !                CORRESPONDS TO THE GFLD%IGDTNUM COMPONENT OF THE
-    !                NCEP G2 LIBRARY GRIDMOD DATA STRUCTURE:
-    !                  00 - EQUIDISTANT CYLINDRICAL
-    !                  01 - ROTATED EQUIDISTANT CYLINDRICAL.  "E"
-    !                       AND NON-"E" STAGGERED
-    !                  10 - MERCATOR CYCLINDRICAL
-    !                  20 - POLAR STEREOGRAPHIC AZIMUTHAL
-    !                  30 - LAMBERT CONFORMAL CONICAL
-    !                  40 - GAUSSIAN EQUIDISTANT CYCLINDRICAL
-    !     IGDTMPLI - INTEGER (IGDTLENI) GRID DEFINITION TEMPLATE ARRAY -
-    !                INPUT GRID. CORRESPONDS TO THE GFLD%IGDTMPL COMPONENT
-    !                OF THE NCEP G2 LIBRARY GRIDMOD DATA STRUCTURE
-    !                (SECTION 3 INFO).  SEE COMMENTS IN ROUTINE
-    !                IPOLATEV FOR COMPLETE DEFINITION.
-    !     IGDTLENI - INTEGER NUMBER OF ELEMENTS OF THE GRID DEFINITION
-    !                TEMPLATE ARRAY - INPUT GRID.  CORRESPONDS TO THE GFLD%IGDTLEN
-    !                COMPONENT OF THE NCEP G2 LIBRARY GRIDMOD DATA STRUCTURE.
-    !     IGDTNUMO - INTEGER GRID DEFINITION TEMPLATE NUMBER - OUTPUT GRID.
-    !                CORRESPONDS TO THE GFLD%IGDTNUM COMPONENT OF THE
-    !                NCEP G2 LIBRARY GRIDMOD DATA STRUCTURE. IGDTNUMO<0
-    !                MEANS INTERPOLATE TO RANDOM STATION POINTS.
-    !                OTHERWISE, SAME DEFINITION AS "IGDTNUMI".
-    !     IGDTMPLO - INTEGER (IGDTLENO) GRID DEFINITION TEMPLATE ARRAY -
-    !                OUTPUT GRID. CORRESPONDS TO THE GFLD%IGDTMPL COMPONENT
-    !                OF THE NCEP G2 LIBRARY GRIDMOD DATA STRUCTURE.
-    !                (SECTION 3 INFO).  SEE COMMENTS IN ROUTINE
-    !                IPOLATEV FOR COMPLETE DEFINITION.
-    !     IGDTLENO - INTEGER NUMBER OF ELEMENTS OF THE GRID DEFINITION
-    !                TEMPLATE ARRAY - OUTPUT GRID.  CORRESPONDS TO THE GFLD%IGDTLEN
-    !                COMPONENT OF THE NCEP G2 LIBRARY GRIDMOD DATA STRUCTURE.
-    !     MI       - INTEGER SKIP NUMBER BETWEEN INPUT GRID FIELDS IF KM>1
-    !                OR DIMENSION OF INPUT GRID FIELDS IF KM=1
-    !     MO       - INTEGER SKIP NUMBER BETWEEN OUTPUT GRID FIELDS IF KM>1
-    !                OR DIMENSION OF OUTPUT GRID FIELDS IF KM=1
-    !     KM       - INTEGER NUMBER OF FIELDS TO INTERPOLATE
-    !     IBI      - INTEGER (KM) INPUT BITMAP FLAGS
-    !     LI       - LOGICAL*1 (MI,KM) INPUT BITMAPS (IF SOME IBI(K)=1)
-    !     UI       - REAL (MI,KM) INPUT U-COMPONENT FIELDS TO INTERPOLATE
-    !     VI       - REAL (MI,KM) INPUT V-COMPONENT FIELDS TO INTERPOLATE
-    !     NO       - INTEGER NUMBER OF OUTPUT POINTS (ONLY IF IGDTNUMO<0)
-    !     RLAT     - REAL (MO) OUTPUT LATITUDES IN DEGREES (IF IGDTNUMO<0)
-    !     RLON     - REAL (MO) OUTPUT LONGITUDES IN DEGREES (IF IGDTNUMO<0)
-    !     CROT     - REAL (MO) VECTOR ROTATION COSINES (IF IGDTNUMO<0)
-    !     SROT     - REAL (MO) VECTOR ROTATION SINES (IF IGDTNUMO<0)
-    !                (UGRID=CROT*UEARTH-SROT*VEARTH;
-    !                 VGRID=SROT*UEARTH+CROT*VEARTH)
-    !
-    !   OUTPUT ARGUMENT LIST:
-    !     NO       - INTEGER NUMBER OF OUTPUT POINTS (ONLY IF IGDTNUMO>=0)
-    !     RLAT     - REAL (MO) OUTPUT LATITUDES IN DEGREES (IF IGDTNUMO>=0)
-    !     RLON     - REAL (MO) OUTPUT LONGITUDES IN DEGREES (IF IGDTNUMO>=0)
-    !     CROT     - REAL (MO) VECTOR ROTATION COSINES (IF IGDTNUMO>=0)
-    !     SROT     - REAL (MO) VECTOR ROTATION SINES (IF IGDTNUMO>=0)
-    !                (UGRID=CROT*UEARTH-SROT*VEARTH;
-    !                 VGRID=SROT*UEARTH+CROT*VEARTH)
-    !     IBO      - INTEGER (KM) OUTPUT BITMAP FLAGS
-    !     LO       - LOGICAL*1 (MO,KM) OUTPUT BITMAPS (ALWAYS OUTPUT)
-    !     UO       - REAL (MO,KM) OUTPUT U-COMPONENT FIELDS INTERPOLATED
-    !     VO       - REAL (MO,KM) OUTPUT V-COMPONENT FIELDS INTERPOLATED
-    !     IRET     - INTEGER RETURN CODE
-    !                0    SUCCESSFUL INTERPOLATION
-    !                2    UNRECOGNIZED INPUT GRID OR NO GRID OVERLAP
-    !                3    UNRECOGNIZED OUTPUT GRID
-    !
-    ! SUBPROGRAMS CALLED:
-    !   GDSWZD        GRID DESCRIPTION SECTION WIZARD
-    !   MOVECT        MOVE A VECTOR ALONG A GREAT CIRCLE
-    !   POLFIXV       MAKE MULTIPLE POLE VECTOR VALUES CONSISTENT
-    !   CHECK_GRIDS0V DETERMINE IF INPUT OR OUTPUT GRIDS HAVE CHANGED
-    !                 BETWEEN CALLS TO THIS ROUTINE.
-    !
-    ! ATTRIBUTES:
-    !   LANGUAGE: FORTRAN 90
-    !
-    !$$$
     class(ip_grid), intent(in) :: grid_in, grid_out
     INTEGER,            INTENT(IN   ) :: IPOPT(20),IBI(KM),MI,MO,KM
     INTEGER,            INTENT(INOUT) :: NO
