@@ -29,7 +29,6 @@ module ipolates_mod
 
 contains
 
-
   subroutine ipolates_grid(ip, ipopt, grid_in, grid_out, mi, mo, km, ibi, li, gi, no, rlat, rlon, ibo, lo, go, iret)
     class(ip_grid), intent(in) :: grid_in, grid_out
     INTEGER,    INTENT(IN   ) :: IP, IPOPT(20), KM, MI, MO
@@ -74,9 +73,91 @@ contains
 
   end subroutine ipolates_grid
 
-  SUBROUTINE IPOLATES_grib1(IP,IPOPT,KGDSI,KGDSO,MI,MO,KM,IBI,LI,GI, &
-       NO,RLAT,RLON,IBO,LO,GO,IRET) bind(C)
-    IMPLICIT NONE
+  !> @brief This subprogram interpolates scalar field from any grid to any grid.
+  !!
+  !! @details Only horizontal interpolation is performed.
+  !! The following interpolation methods are possible:
+  !! - (ip=0) bilinear
+  !! - (ip=1) bicubic
+  !! - (ip=2) neighbor
+  !! - (ip=3) budget
+  !! - (ip=4) spectral
+  !! - (ip=6) neighbor-budget
+  !!
+  !! Some of these methods have interpolation options and/or
+  !! restrictions on the input or output grids, both of which
+  !! are documented more fully in their respective subprograms.
+  !!
+  !! The grids are defined by their grid description sections
+  !! (passed in integer form as decoded by subprogram w3fi63).
+  !!
+  !! The current code recognizes the following projections:
+  !! - (kgds(1)=000) equidistant cylindrical
+  !! - (kgds(1)=001) mercator cylindrical
+  !! - (kgds(1)=003) lambert conformal conical
+  !! - (kgds(1)=004) gaussian cylindrical
+  !! - (kgds(1)=005) polar stereographic azimuthal
+  !! - (kgds(1)=203) rotated equidistant cylindrical - e-stagger
+  !! - (kgds(1)=205) rotated equidistant cylindrical - b-stagger
+  !!
+  !! Where kgds could be either input kgdsi or output kgdso.
+  !!
+  !! As an added bonus the number of output grid points
+  !! and their latitudes and longitudes are also returned.
+  !!
+  !! On the other hand, the output can be a set of station points
+  !! if kgdso(1)<0, in which case the number of points
+  !! and their latitudes and longitudes must be input.
+  !! for the budget approach, a subsection of the grid may
+  !! be output by subtracting kgdso(1) from 255 and passing
+  !! in the latitudes and longitudes of the points.
+  
+  !! Input bitmaps will be interpolated to output bitmaps.
+  !!
+  !! Output bitmaps will also be created when the output grid
+  !! extends outside of the domain of the input grid.
+  !! the output field is set to 0 where the output bitmap is off.
+  !!        
+  !! @param ip Interpolation method
+  !! - ip=0 for bilinear
+  !! - ip=1 for bicubic
+  !! - ip=2 for neighbor;
+  !! - ip=3 for budget;
+  !! - ip=4 for spectral;
+  !! - ip=6 for neighbor-budget
+  !!
+  !! @param ipopt Interpolation options
+  !! - ip=0: (No options)
+  !! - ip=1: Constraint option
+  !! - ip=2: (No options)
+  !! - ip=3: Number in radius, radius weights, search radius
+  !! - ip=4: Spectral shape, spectral truncation
+  !! - ip=6: Number in radius, radius weights ...)
+  !!
+  !! @param[in] kgdsi Input gds parameters as decoded by w3fi63.
+  !! @param[in] kgdso Output gds parameters.
+  !! @param[in] mi    Skip number between input grid fields if km>1 or dimension of input grid fields if km=1.
+  !! @param[in] mo    Skip number between output grid fields if km>1 or dimension of output grid fields if km=1.
+  !! @param[in] km    Number of fields to interpolate.
+  !! @param[in] ibi   Input bitmap flags.
+  !! @param[in] li    Input bitmaps (if respective ibi(k)=1).
+  !! @para[in] gi    Input fields to interpolate.
+  !! @param[out] no Number of output points (only if kgdso(1)<0).
+  !! @param[out] rlat Output latitudes in degrees (if kgdso(1)<0).
+  !! @param[out] rlon Output longitudes in degrees (if kgdso(1)<0).
+  !! @param[out] ibo Output bitmap flags.
+  !! @param[out] lo  Output bitmaps (always output).
+  !! @param[out] go  Output fields interpolated.
+  !! @param[out] iret Return code.
+  !! - 0 Successful interpolation.
+  !! - 1 Unrecognized interpolation method.
+  !! - 2 Unrecognized input grid or no grid overlap.
+  !! - 3 Unrecognized output grid.
+  !! - 1x Invalid bicubic method parameters.
+  !! - 3x Invalid budget method parameters.
+  !! - 4x Invalid spectral method parameters.
+  subroutine ipolates_grib1(ip,ipopt,kgdsi,kgdso,mi,mo,km,ibi,li,gi, &
+       no,rlat,rlon,ibo,lo,go,iret) bind(c)
     !
     INTEGER,    INTENT(IN   ) :: IP, IPOPT(20), KM, MI, MO
     INTEGER,    INTENT(IN   ) :: IBI(KM), KGDSI(200), KGDSO(200)
@@ -106,287 +187,251 @@ contains
   END SUBROUTINE IPOLATES_GRIB1
 
 
-  !$$$  SUBPROGRAM DOCUMENTATION BLOCK
-  !
-  ! SUBPROGRAM:  IPOLATES   IREDELL'S POLATE FOR SCALAR FIELDS
-  !   PRGMMR: IREDELL       ORG: W/NMC23       DATE: 96-04-10
-  !
-  ! ABSTRACT: THIS SUBPROGRAM INTERPOLATES SCALAR FIELDS
-  !           FROM ANY GRID TO ANY GRID (JOE IRWIN'S DREAM).
-  !           ONLY HORIZONTAL INTERPOLATION IS PERFORMED.
-  !           THE FOLLOWING INTERPOLATION METHODS ARE POSSIBLE:
-  !             (IP=0) BILINEAR
-  !             (IP=1) BICUBIC
-  !             (IP=2) NEIGHBOR
-  !             (IP=3) BUDGET
-  !             (IP=4) SPECTRAL
-  !             (IP=6) NEIGHBOR-BUDGET
-  !           SOME OF THESE METHODS HAVE INTERPOLATION OPTIONS AND/OR
-  !           RESTRICTIONS ON THE INPUT OR OUTPUT GRIDS, BOTH OF WHICH
-  !           ARE DOCUMENTED MORE FULLY IN THEIR RESPECTIVE SUBPROGRAMS.
-  !
-  !           THE INPUT AND OUTPUT GRIDS ARE DEFINED BY THEIR GRIB 2 GRID
-  !           DEFINITION TEMPLATE AS DECODED BY THE NCEP G2 LIBRARY.  THE
-  !           CURRENT CODE RECOGNIZES THE FOLLOWING PROJECTIONS, WHERE
-  !           "IGDTNUMI/O" IS THE GRIB 2 GRID DEFINTION TEMPLATE NUMBER
-  !           FOR THE INPUT AND OUTPUT GRIDS, RESPECTIVELY:
-  !             (IGDTNUMI/O=00) EQUIDISTANT CYLINDRICAL
-  !             (IGDTNUMI/O=01) ROTATED EQUIDISTANT CYLINDRICAL. "E" AND
-  !                             NON-"E" STAGGERED
-  !             (IGDTNUMI/O=10) MERCATOR CYLINDRICAL
-  !             (IGDTNUMI/O=20) POLAR STEREOGRAPHIC AZIMUTHAL
-  !             (IGDTNUMI/O=30) LAMBERT CONFORMAL CONICAL
-  !             (IGDTNUMI/O=40) GAUSSIAN CYLINDRICAL
-  !
-  !           AS AN ADDED BONUS THE NUMBER OF OUTPUT GRID POINTS
-  !           AND THEIR LATITUDES AND LONGITUDES ARE ALSO RETURNED.
-  !           ON THE OTHER HAND, DATA MAY BE INTERPOLATED TO A SET OF STATION
-  !           POINTS IF "IGDTNUMO"<0 (OR SUBTRACTED FROM 255 FOR THE BUDGET 
-  !           OPTION), IN WHICH CASE THE NUMBER OF POINTS AND
-  !           THEIR LATITUDES AND LONGITUDES MUST BE INPUT.
-  !
-  !           INPUT BITMAPS WILL BE INTERPOLATED TO OUTPUT BITMAPS.
-  !           OUTPUT BITMAPS WILL ALSO BE CREATED WHEN THE OUTPUT GRID
-  !           EXTENDS OUTSIDE OF THE DOMAIN OF THE INPUT GRID.
-  !           THE OUTPUT FIELD IS SET TO 0 WHERE THE OUTPUT BITMAP IS OFF.
-  !        
-  ! PROGRAM HISTORY LOG:
-  !   96-04-10  IREDELL
-  ! 2015-07-13  GAYNO    CONVERT TO GRIB 2. REPLACE GRIB 1 KGDS ARRAYS
-  !                      WITH GRIB 2 GRID DEFINITION TEMPLATE ARRAYS.
-  !
-  ! USAGE:    CALL IPOLATES(IP,IPOPT,IGDTNUMI,IGDTMPLI,IGDTLENI, &
-  !                         IGDTNUMO,IGDTMPLO,IGDTLENO, &
-  !                         MI,MO,KM,IBI,LI,GI, &
-  !                         NO,RLAT,RLON,IBO,LO,GO,IRET)
-  !
-  !   INPUT ARGUMENT LIST:
-  !     IP       - INTEGER INTERPOLATION METHOD
-  !                (IP=0 FOR BILINEAR;
-  !                 IP=1 FOR BICUBIC;
-  !                 IP=2 FOR NEIGHBOR;
-  !                 IP=3 FOR BUDGET;
-  !                 IP=4 FOR SPECTRAL;
-  !                 IP=6 FOR NEIGHBOR-BUDGET)
-  !     IPOPT    - INTEGER (20) INTERPOLATION OPTIONS
-  !                (IP=0: MIN % FOR MASK, SEARCH RADIUS
-  !                 IP=1: CONSTRAINT OPTION, MIN % FOR MASK
-  !                 IP=2: SEARCH RADIUS
-  !                 IP=3: NUMBER IN RADIUS, RADIUS WEIGHTS, SEARCH RADIUS
-  !                 IP=4: SPECTRAL SHAPE, SPECTRAL TRUNCATION
-  !                 IP=6: NUMBER IN RADIUS, RADIUS WEIGHTS, MIN % FOR MASK
-  !     IGDTNUMI - INTEGER GRID DEFINITION TEMPLATE NUMBER - INPUT GRID.
-  !                CORRESPONDS TO THE GFLD%IGDTNUM COMPONENT OF THE
-  !                NCEP G2 LIBRARY GRIDMOD DATA STRUCTURE:
-  !                  00 - EQUIDISTANT CYLINDRICAL
-  !                  01 - ROTATED EQUIDISTANT CYLINDRICAL.  "E"
-  !                       AND NON-"E" STAGGERED
-  !                  10 - MERCATOR CYCLINDRICAL
-  !                  20 - POLAR STEREOGRAPHIC AZIMUTHAL
-  !                  30 - LAMBERT CONFORMAL CONICAL
-  !                  40 - GAUSSIAN EQUIDISTANT CYCLINDRICAL
-  !     IGDTMPLI - INTEGER (IGDTLENI) GRID DEFINITION TEMPLATE ARRAY -
-  !                INPUT GRID. CORRESPONDS TO THE GFLD%IGDTMPL COMPONENT
-  !                OF THE NCEP G2 LIBRARY GRIDMOD DATA STRUCTURE 
-  !                (SECTION 3 INFO):
-  !                ALL MAP PROJECTIONS:
-  !                 (1):  SHAPE OF EARTH, OCTET 15
-  !                 (2):  SCALE FACTOR OF SPHERICAL EARTH RADIUS,
-  !                       OCTET 16
-  !                 (3):  SCALED VALUE OF RADIUS OF SPHERICAL EARTH,
-  !                       OCTETS 17-20
-  !                 (4):  SCALE FACTOR OF MAJOR AXIS OF ELLIPTICAL EARTH,
-  !                       OCTET 21
-  !                 (5):  SCALED VALUE OF MAJOR AXIS OF ELLIPTICAL EARTH,
-  !                       OCTETS 22-25
-  !                 (6):  SCALE FACTOR OF MINOR AXIS OF ELLIPTICAL EARTH,
-  !                       OCTET 26
-  !                 (7):  SCALED VALUE OF MINOR AXIS OF ELLIPTICAL EARTH,
-  !                       OCTETS 27-30
-  !                EQUIDISTANT CYCLINDRICAL:
-  !                 (8):  NUMBER OF POINTS ALONG A PARALLEL, OCTS 31-34
-  !                 (9):  NUMBER OF POINTS ALONG A MERIDIAN, OCTS 35-38
-  !                 (10): BASIC ANGLE OF INITIAL PRODUCTION DOMAIN,
-  !                       OCTETS 39-42.
-  !                 (11): SUBDIVISIONS OF BASIC ANGLE, OCTETS 43-46
-  !                 (12): LATITUDE OF FIRST GRID POINT, OCTETS 47-50
-  !                 (13): LONGITUDE OF FIRST GRID POINT, OCTETS 51-54
-  !                 (14): RESOLUTION AND COMPONENT FLAGS, OCTET 55
-  !                 (15): LATITUDE OF LAST GRID POINT, OCTETS 56-59
-  !                 (16): LONGITUDE OF LAST GRID POINT, OCTETS 60-63
-  !                 (17): I-DIRECTION INCREMENT, OCTETS 64-67
-  !                 (18): J-DIRECTION INCREMENT, OCTETS 68-71
-  !                 (19): SCANNING MODE, OCTET 72
-  !                MERCATOR CYCLINDRICAL:
-  !                 (8):  NUMBER OF POINTS ALONG A PARALLEL, OCTS 31-34
-  !                 (9):  NUMBER OF POINTS ALONG A MERIDIAN, OCTS 35-38
-  !                 (10): LATITUDE OF FIRST POINT, OCTETS 39-42
-  !                 (11): LONGITUDE OF FIRST POINT, OCTETS 43-46
-  !                 (12): RESOLUTION AND COMPONENT FLAGS, OCTET 47
-  !                 (13): TANGENT LATITUDE, OCTETS 48-51
-  !                 (14): LATITUDE OF LAST POINT, OCTETS 52-55
-  !                 (15): LONGITUDE OF LAST POINT, OCTETS 56-59
-  !                 (16): SCANNING MODE FLAGS, OCTET 60
-  !                 (17): ORIENTATION OF GRID, OCTETS 61-64
-  !                 (18): LONGITUDINAL GRID LENGTH, OCTETS 65-68
-  !                 (19): LATITUDINAL GRID LENGTH, OCTETS 69-72
-  !                LAMBERT CONFORMAL CONICAL:
-  !                 (8):  NUMBER OF POINTS ALONG X-AXIS, OCTS 31-34
-  !                 (9):  NUMBER OF POINTS ALONG Y-AXIS, OCTS 35-38
-  !                 (10): LATITUDE OF FIRST POINT, OCTETS 39-42
-  !                 (11): LONGITUDE OF FIRST POINT, OCTETS 43-46
-  !                 (12): RESOLUTION OF COMPONENT FLAG, OCTET 47
-  !                 (13): LATITUDE WHERE GRID LENGTHS SPECIFIED,
-  !                       OCTETS 48-51
-  !                 (14): LONGITUDE OF MERIDIAN THAT IS PARALLEL TO
-  !                       Y-AXIS, OCTETS 52-55
-  !                 (15): X-DIRECTION GRID LENGTH, OCTETS 56-59
-  !                 (16): Y-DIRECTION GRID LENGTH, OCTETS 60-63
-  !                 (17): PROJECTION CENTER FLAG, OCTET 64
-  !                 (18): SCANNING MODE, OCTET 65
-  !                 (19): FIRST TANGENT LATITUDE FROM POLE, OCTETS 66-69
-  !                 (20): SECOND TANGENT LATITUDE FROM POLE, OCTETS 70-73
-  !                 (21): LATITUDE OF SOUTH POLE OF PROJECTION,
-  !                       OCTETS 74-77
-  !                 (22): LONGITUDE OF SOUTH POLE OF PROJECTION,
-  !                       OCTETS 78-81
-  !                GAUSSIAN CYLINDRICAL:
-  !                 (8):  NUMBER OF POINTS ALONG A PARALLEL, OCTS 31-34
-  !                 (9):  NUMBER OF POINTS ALONG A MERIDIAN, OCTS 35-38
-  !                 (10): BASIC ANGLE OF INITIAL PRODUCTION DOMAIN,
-  !                       OCTETS 39-42
-  !                 (11): SUBDIVISIONS OF BASIC ANGLE, OCTETS 43-46
-  !                 (12): LATITUDE OF FIRST GRID POINT, OCTETS 47-50
-  !                 (13): LONGITUDE OF FIRST GRID POINT, OCTETS 51-54
-  !                 (14): RESOLUTION AND COMPONENT FLAGS, OCTET 55
-  !                 (15): LATITUDE OF LAST GRID POINT, OCTETS 56-59
-  !                 (16): LONGITUDE OF LAST GRID POINT, OCTETS 60-63
-  !                 (17): I-DIRECTION INCREMENT, OCTETS 64-67
-  !                 (18): NUMBER OF PARALLELS BETWEEN POLE AND EQUATOR,
-  !                       OCTETS 68-71
-  !                 (19): SCANNING MODE, OCTET 72
-  !                POLAR STEREOGRAPHIC AZIMUTHAL:
-  !                 (8):  NUMBER OF POINTS ALONG X-AXIS, OCTETS 31-34
-  !                 (9):  NUMBER OF POINTS ALONG Y-AXIS, OCTETS 35-38
-  !                 (10): LATITUDE OF FIRST GRID POINT, OCTETS 39-42
-  !                 (11): LONGITUDE OF FIRST GRID POINT, OCTETS 43-46
-  !                 (12): RESOLUTION AND COMPONENT FLAGS, OCTET 47
-  !                 (13): TRUE LATITUDE, OCTETS 48-51
-  !                 (14): ORIENTATION LONGITUDE, OCTETS 52-55
-  !                 (15): X-DIRECTION GRID LENGTH, OCTETS 56-59
-  !                 (16): Y-DIRECTION GRID LENGTH, OCTETS 60-63
-  !                 (17): PROJECTION CENTER FLAG, OCTET 64
-  !                 (18): SCANNING MODE FLAGS, OCTET 65
-  !                ROTATED EQUIDISTANT CYCLINDRICAL:
-  !                 (8):  NUMBER OF POINTS ALONG A PARALLEL, OCTS 31-34
-  !                 (9):  NUMBER OF POINTS ALONG A MERIDIAN, OCTS 35-38
-  !                 (10): BASIC ANGLE OF INITIAL PRODUCTION DOMAIN,
-  !                       OCTETS 39-42
-  !                 (11): SUBDIVISIONS OF BASIC ANGLE, OCTETS 43-46
-  !                 (12): LATITUDE OF FIRST GRID POINT, OCTETS 47-50
-  !                 (13): LONGITUDE OF FIRST GRID POINT, OCTETS 51-54
-  !                 (14): RESOLUTION AND COMPONENT FLAGS, OCTET 55
-  !                 (15): LATITUDE OF LAST GRID POINT, OCTETS 56-59
-  !                 (16): LONGITUDE OF LAST GRID POINT, OCTETS 60-63
-  !                 (17): I-DIRECTION INCREMENT, OCTETS 64-67
-  !                 (18): J-DIRECTION INCREMENT, OCTETS 68-71
-  !                 (19): SCANNING MODE, OCTET 72
-  !                 (20): LATITUDE OF SOUTHERN POLE OF PROJECTION,
-  !                       OCTETS 73-76
-  !                 (21): LONGITUDE OF SOUTHERN POLE OF PROJECTION,
-  !                       OCTETS 77-80
-  !                 (22): ANGLE OF ROTATION OF PROJECTION, OCTS 81-84
-  !     IGDTLENI - INTEGER NUMBER OF ELEMENTS OF THE GRID DEFINITION
-  !                TEMPLATE ARRAY - INPUT GRID.  CORRESPONDS TO THE GFLD%IGDTLEN
-  !                COMPONENT OF THE NCEP G2 LIBRARY GRIDMOD DATA STRUCTURE.
-  !     IGDTNUMO - INTEGER GRID DEFINITION TEMPLATE NUMBER - OUTPUT GRID.
-  !                CORRESPONDS TO THE GFLD%IGDTNUM COMPONENT OF THE
-  !                NCEP G2 LIBRARY GRIDMOD DATA STRUCTURE. SEE "IGDTNUMI"
-  !                FOR SPECIFIC TEMPLATE DEFINITIONS.  NOTE: IGDTNUMO<0
-  !                MEANS INTERPOLATE TO RANDOM STATION POINTS.
-  !     IGDTMPLO - INTEGER (IGDTLENO) GRID DEFINITION TEMPLATE ARRAY -
-  !                OUTPUT GRID. CORRESPONDS TO THE GFLD%IGDTMPL COMPONENT
-  !                OF THE NCEP G2 LIBRARY GRIDMOD DATA STRUCTURE.
-  !                SEE "IGDTMPLI" FOR DEFINITION OF ARRAY ELEMENTS
-  !     IGDTLENO - INTEGER NUMBER OF ELEMENTS OF THE GRID DEFINITION
-  !                TEMPLATE ARRAY - OUTPUT GRID.  CORRESPONDS TO THE GFLD%IGDTLEN
-  !                COMPONENT OF THE NCEP G2 LIBRARY GRIDMOD DATA STRUCTURE.
-  !     MI       - INTEGER SKIP NUMBER BETWEEN INPUT GRID FIELDS IF KM>1
-  !                OR DIMENSION OF INPUT GRID FIELDS IF KM=1
-  !     MO       - INTEGER SKIP NUMBER BETWEEN OUTPUT GRID FIELDS IF KM>1
-  !                OR DIMENSION OF OUTPUT GRID FIELDS IF KM=1
-  !     KM       - INTEGER NUMBER OF FIELDS TO INTERPOLATE
-  !     IBI      - INTEGER (KM) INPUT BITMAP FLAGS
-  !     LI       - LOGICAL*1 (MI,KM) INPUT BITMAPS (IF RESPECTIVE IBI(K)=1)
-  !     GI       - REAL (MI,KM) INPUT FIELDS TO INTERPOLATE
-  !     RLAT     - REAL (NO) OUTPUT LATITUDES IN DEGREES (IF IGDTNUMO<0)
-  !     RLON     - REAL (NO) OUTPUT LONGITUDES IN DEGREES (IF IGDTNUMO<0)
-  !
-  !   OUTPUT ARGUMENT LIST:
-  !     NO       - INTEGER NUMBER OF OUTPUT POINTS (ONLY IF IGDTNUMO>=0)
-  !     RLAT     - REAL (MO) OUTPUT LATITUDES IN DEGREES (IF IGDTNUMO>=0)
-  !     RLON     - REAL (MO) OUTPUT LONGITUDES IN DEGREES (IF IGDTNUMO>=0)
-  !     IBO      - INTEGER (KM) OUTPUT BITMAP FLAGS
-  !     LO       - LOGICAL*1 (MO,KM) OUTPUT BITMAPS (ALWAYS OUTPUT)
-  !     GO       - REAL (MO,KM) OUTPUT FIELDS INTERPOLATED
-  !     IRET     - INTEGER RETURN CODE
-  !                0    SUCCESSFUL INTERPOLATION
-  !                1    UNRECOGNIZED INTERPOLATION METHOD
-  !                2    UNRECOGNIZED INPUT GRID OR NO GRID OVERLAP
-  !                3    UNRECOGNIZED OUTPUT GRID
-  !                1X   INVALID BICUBIC METHOD PARAMETERS
-  !                3X   INVALID BUDGET METHOD PARAMETERS
-  !                4X   INVALID SPECTRAL METHOD PARAMETERS
-  !
-  ! SUBPROGRAMS CALLED:
-  !   POLATES0     INTERPOLATE SCALAR FIELDS (BILINEAR)
-  !   POLATES1     INTERPOLATE SCALAR FIELDS (BICUBIC)
-  !   POLATES2     INTERPOLATE SCALAR FIELDS (NEIGHBOR)
-  !   POLATES3     INTERPOLATE SCALAR FIELDS (BUDGET)
-  !   POLATES4     INTERPOLATE SCALAR FIELDS (SPECTRAL)
-  !   POLATES6     INTERPOLATE SCALAR FIELDS (NEIGHBOR-BUDGET)
-  !
-  ! REMARKS: EXAMPLES DEMONSTRATING RELATIVE CPU COSTS.
-  !   THIS EXAMPLE IS INTERPOLATING 12 LEVELS OF TEMPERATURES
-  !   FROM THE 360 X 181 GLOBAL GRID (NCEP GRID 3)
-  !   TO THE 93 X 68 HAWAIIAN MERCATOR GRID (NCEP GRID 204).
-  !   THE EXAMPLE TIMES ARE FOR THE C90.  AS A REFERENCE, THE CP TIME
-  !   FOR UNPACKING THE GLOBAL 12 TEMPERATURE FIELDS IS 0.04 SECONDS.
-  !
-  !   METHOD      IP  IPOPT          CP SECONDS
-  !   --------    --  -------------  ----------
-  !   BILINEAR    0                   0.03
-  !   BICUBIC     1   0               0.07
-  !   BICUBIC     1   1               0.07
-  !   NEIGHBOR    2                   0.01
-  !   BUDGET      3   -1,-1           0.48
-  !   SPECTRAL    4   0,40            0.22
-  !   SPECTRAL    4   1,40            0.24
-  !   SPECTRAL    4   0,-1            0.42
-  !   N-BUDGET    6   -1,-1           0.15
-  !
-  !   THE SPECTRAL INTERPOLATION IS FAST FOR THE MERCATOR GRID.
-  !   HOWEVER, FOR SOME GRIDS THE SPECTRAL INTERPOLATION IS SLOW.
-  !   THE FOLLOWING EXAMPLE IS INTERPOLATING 12 LEVELS OF TEMPERATURES
-  !   FROM THE 360 X 181 GLOBAL GRID (NCEP GRID 3)
-  !   TO THE 93 X 65 CONUS LAMBERT CONFORMAL GRID (NCEP GRID 211).
-  !
-  !   METHOD      IP  IPOPT          CP SECONDS
-  !   --------    --  -------------  ----------
-  !   BILINEAR    0                   0.03
-  !   BICUBIC     1   0               0.07
-  !   BICUBIC     1   1               0.07
-  !   NEIGHBOR    2                   0.01
-  !   BUDGET      3   -1,-1           0.51
-  !   SPECTRAL    4   0,40            3.94
-  !   SPECTRAL    4   1,40            5.02
-  !   SPECTRAL    4   0,-1           11.36
-  !   N-BUDGET    6   -1,-1           0.18
-  !
-  ! ATTRIBUTES:
-  !   LANGUAGE: FORTRAN 90
-  !
-  !$$$
+  !> @brief This subprogram interpolates scalar field from any grid to any grid.
+  !! @details Only horizontal interpolation is performed.
+  !!
+  !! The following interpolation methods are possible:
+  !! - (ip=0) bilinear
+  !! - (ip=1) bicubic
+  !! - (ip=2) neighbor
+  !! - (ip=3) budget
+  !! - (ip=4) spectral
+  !! - (ip=6) neighbor-budget
+  !!
+  !! Some of these methods have interpolation options and/or
+  !! restrictions on the input or output grids, both of which
+  !! are documented more fully in their respective subprograms.
+  !!
+  !! Input and output grids are defined by their grib 2 grid
+  !! definition template as decoded by the ncep g2 library. The
+  !! current code recognizes the following projections, where
+  !! "igdtnumi/o" is the grib 2 grid defintion template number
+  !! for the input and output grids, respectively:
+  !! - (igdtnumi/o=00) equidistant cylindrical
+  !! - (igdtnumi/o=01) rotated equidistant cylindrical. "e" and non-"e" staggered
+  !! - (igdtnumi/o=10) mercator cylindrical
+  !! - (igdtnumi/o=20) polar stereographic azimuthal
+  !! - (igdtnumi/o=30) lambert conformal conical
+  !! - (igdtnumi/o=40) gaussian cylindrical
+  !!
+  !! As an added bonus the number of output grid points
+  !! and their latitudes and longitudes are also returned.
+  !!
+  !! On the other hand, data may be interpolated to a set of station
+  !! points if "igdtnumo"<0 (or subtracted from 255 for the budget 
+  !! option), in which case the number of points and
+  !! their latitudes and longitudes must be input.
+  !!
+  !! Input bitmaps will be interpolated to output bitmaps.
+  !! Output bitmaps will also be created when the output grid
+  !! extends outside of the domain of the input grid.
+  !!
+  !! The output field is set to 0 where the output bitmap is off.
+  !!
+  !! @param[in] ip Interpolation method
+  !! - ip=0 for bilinear
+  !! - ip=1 for bicubic
+  !! - ip=2 for neighbor;
+  !! - ip=3 for budget;
+  !! - ip=4 for spectral;
+  !! - ip=6 for neighbor-budget
+  !!
+  !! @param[in] ipopt Interpolation options
+  !! - ip=0: (No options)
+  !! - ip=1: Constraint option
+  !! - ip=2: (No options)
+  !! - ip=3: Number in radius, radius weights, search radius
+  !! - ip=4: Spectral shape, spectral truncation
+  !! - ip=6: Number in radius, radius weights ...)
+  !!
+  !! @param[in] igdtnumi Grid definition template number for the input grid.
+  !! Corresponds to the gfld%igdtnum component of the ncep g2 library gridmod data structure:
+  !! - 00 - EQUIDISTANT CYLINDRICAL
+  !! - 01 - Rotated equidistant cylindrical. "e" and non-"e" staggered
+  !! - 10 - MERCATOR CYCLINDRICAL
+  !! - 20 - POLAR STEREOGRAPHIC AZIMUTHAL
+  !! - 30 - LAMBERT CONFORMAL CONICAL
+  !! - 40 - GAUSSIAN EQUIDISTANT CYCLINDRICAL
+  !!
+  !! @param[in] igdtmpli Grid definition template array input grid.
+  !! Corresponds to the gfld%igdtmpl component of the
+  !! ncep g2 library gridmod data structure (SECTION 3 INFO):
+  !!
+  !! All map projections:
+  !! (1): SHAPE OF EARTH, OCTET 15
+  !! (2): SCALE FACTOR OF SPHERICAL EARTH RADIUS, OCTET 16
+  !! (3): SCALED VALUE OF RADIUS OF SPHERICAL EARTH, OCTETS 17-20
+  !! (4): SCALE FACTOR OF MAJOR AXIS OF ELLIPTICAL EARTH, OCTET 21
+  !! (5): SCALED VALUE OF MAJOR AXIS OF ELLIPTICAL EARTH, OCTETS 22-25
+  !! (6): SCALE FACTOR OF MINOR AXIS OF ELLIPTICAL EARTH, OCTET 26
+  !! (7): SCALED VALUE OF MINOR AXIS OF ELLIPTICAL EARTH, OCTETS 27-30
+  !!
+  !! EQUIDISTANT CYCLINDRICAL:
+  !! - (8):  NUMBER OF POINTS ALONG A PARALLEL, OCTS 31-34
+  !! - (9):  NUMBER OF POINTS ALONG A MERIDIAN, OCTS 35-38
+  !! - (10): BASIC ANGLE OF INITIAL PRODUCTION DOMAIN, OCTETS 39-42.
+  !! - (11): SUBDIVISIONS OF BASIC ANGLE, OCTETS 43-46
+  !! - (12): LATITUDE OF FIRST GRID POINT, OCTETS 47-50
+  !! - (13): LONGITUDE OF FIRST GRID POINT, OCTETS 51-54
+  !! - (14): RESOLUTION AND COMPONENT FLAGS, OCTET 55
+  !! - (15): LATITUDE OF LAST GRID POINT, OCTETS 56-59
+  !! - (16): LONGITUDE OF LAST GRID POINT, OCTETS 60-63
+  !! - (17): I-DIRECTION INCREMENT, OCTETS 64-67
+  !! - (18): J-DIRECTION INCREMENT, OCTETS 68-71
+  !! - (19): SCANNING MODE, OCTET 72
+  !!
+  !! MERCATOR CYCLINDRICAL:
+  !! - (8):  NUMBER OF POINTS ALONG A PARALLEL, OCTS 31-34
+  !! - (9):  NUMBER OF POINTS ALONG A MERIDIAN, OCTS 35-38
+  !! - (10): LATITUDE OF FIRST POINT, OCTETS 39-42
+  !! - (11): LONGITUDE OF FIRST POINT, OCTETS 43-46
+  !! - (12): RESOLUTION AND COMPONENT FLAGS, OCTET 47
+  !! - (13): TANGENT LATITUDE, OCTETS 48-51
+  !! - (14): LATITUDE OF LAST POINT, OCTETS 52-55
+  !! - (15): LONGITUDE OF LAST POINT, OCTETS 56-59
+  !! - (16): SCANNING MODE FLAGS, OCTET 60
+  !! - (17): ORIENTATION OF GRID, OCTETS 61-64
+  !! - (18): LONGITUDINAL GRID LENGTH, OCTETS 65-68
+  !! - (19): LATITUDINAL GRID LENGTH, OCTETS 69-72
+  !!
+  !! LAMBERT CONFORMAL CONICAL:
+  !! - (8):  NUMBER OF POINTS ALONG X-AXIS, OCTS 31-34
+  !! - (9):  NUMBER OF POINTS ALONG Y-AXIS, OCTS 35-38
+  !! - (10): LATITUDE OF FIRST POINT, OCTETS 39-42
+  !! - (11): LONGITUDE OF FIRST POINT, OCTETS 43-46
+  !! - (12): RESOLUTION OF COMPONENT FLAG, OCTET 47
+  !! - (13): LATITUDE WHERE GRID LENGTHS SPECIFIED,OCTETS 48-51
+  !! - (14): LONGITUDE OF MERIDIAN THAT IS PARALLEL TO Y-AXIS, OCTETS 52-55
+  !! - (15): X-DIRECTION GRID LENGTH, OCTETS 56-59
+  !! - (16): Y-DIRECTION GRID LENGTH, OCTETS 60-63
+  !! - (17): PROJECTION CENTER FLAG, OCTET 64
+  !! - (18): SCANNING MODE, OCTET 65
+  !! - (19): FIRST TANGENT LATITUDE FROM POLE, OCTETS 66-69
+  !! - (20): SECOND TANGENT LATITUDE FROM POLE, OCTETS 70-73
+  !! - (21): LATITUDE OF SOUTH POLE OF PROJECTION, OCTETS 74-77
+  !! - (22): LONGITUDE OF SOUTH POLE OF PROJECTION, OCTETS 78-81
+  !!
+  !! GAUSSIAN CYLINDRICAL:
+  !! - (8):  NUMBER OF POINTS ALONG A PARALLEL, OCTS 31-34
+  !! - (9):  NUMBER OF POINTS ALONG A MERIDIAN, OCTS 35-38
+  !! - (10): BASIC ANGLE OF INITIAL PRODUCTION DOMAIN, OCTETS 39-42
+  !! - (11): SUBDIVISIONS OF BASIC ANGLE, OCTETS 43-46
+  !! - (12): LATITUDE OF FIRST GRID POINT, OCTETS 47-50
+  !! - (13): LONGITUDE OF FIRST GRID POINT, OCTETS 51-54
+  !! - (14): RESOLUTION AND COMPONENT FLAGS, OCTET 55
+  !! - (15): LATITUDE OF LAST GRID POINT, OCTETS 56-59
+  !! - (16): LONGITUDE OF LAST GRID POINT, OCTETS 60-63
+  !! - (17): I-DIRECTION INCREMENT, OCTETS 64-67
+  !! - (18): NUMBER OF PARALLELS BETWEEN POLE AND EQUATOR, OCTETS 68-71
+  !! - (19): SCANNING MODE, OCTET 72
+  !!
+  !! POLAR STEREOGRAPHIC AZIMUTHAL:
+  !! - (8):  NUMBER OF POINTS ALONG X-AXIS, OCTETS 31-34
+  !! - (9):  NUMBER OF POINTS ALONG Y-AXIS, OCTETS 35-38
+  !! - (10): LATITUDE OF FIRST GRID POINT, OCTETS 39-42
+  !! - (11): LONGITUDE OF FIRST GRID POINT, OCTETS 43-46
+  !! - (12): RESOLUTION AND COMPONENT FLAGS, OCTET 47
+  !! - (13): TRUE LATITUDE, OCTETS 48-51
+  !! - (14): ORIENTATION LONGITUDE, OCTETS 52-55
+  !! - (15): X-DIRECTION GRID LENGTH, OCTETS 56-59
+  !! - (16): Y-DIRECTION GRID LENGTH, OCTETS 60-63
+  !! - (17): PROJECTION CENTER FLAG, OCTET 64
+  !! - (18): SCANNING MODE FLAGS, OCTET 65
+  !!
+  !! ROTATED EQUIDISTANT CYCLINDRICAL:
+  !! - (8):  NUMBER OF POINTS ALONG A PARALLEL, OCTS 31-34
+  !! - (9):  NUMBER OF POINTS ALONG A MERIDIAN, OCTS 35-38
+  !! - (10): BASIC ANGLE OF INITIAL PRODUCTION DOMAIN, OCTETS 39-42
+  !! - (11): SUBDIVISIONS OF BASIC ANGLE, OCTETS 43-46
+  !! - (12): LATITUDE OF FIRST GRID POINT, OCTETS 47-50
+  !! - (13): LONGITUDE OF FIRST GRID POINT, OCTETS 51-54
+  !! - (14): RESOLUTION AND COMPONENT FLAGS, OCTET 55
+  !! - (15): LATITUDE OF LAST GRID POINT, OCTETS 56-59
+  !! - (16): LONGITUDE OF LAST GRID POINT, OCTETS 60-63
+  !! - (17): I-DIRECTION INCREMENT, OCTETS 64-67
+  !! - (18): J-DIRECTION INCREMENT, OCTETS 68-71
+  !! - (19): SCANNING MODE, OCTET 72
+  !! - (20): LATITUDE OF SOUTHERN POLE OF PROJECTION, OCTETS 73-76
+  !! - (21): LONGITUDE OF SOUTHERN POLE OF PROJECTION, OCTETS 77-80
+  !! - (22): ANGLE OF ROTATION OF PROJECTION, OCTS 81-84
+  !!
+  !! @param[in] igdtleni Number of elements of the grid definition
+  !! template array for the input grid. Corresponds to the gfld%igdtlen
+  !! component of the ncep g2 library gridmod data structure.
+  !!
+  !! @param[in] igdtnumo Grid definition template number for the output grid.
+  !! Corresponds to the gfld%igdtnum component of the
+  !! ncep g2 library gridmod data structure.
+  !! See "igdtnumi" for specific template definitions.
+  !! Note: igdtnumo<0 means interpolate to random station points.
+  !!
+  !! @param[in] igdtmplo Grid definition template array for the output grid.
+  !! Corresponds to the gfld%igdtmpl component of the ncep g2 library gridmod data structure.
+  !! See "igdtmpli" for definition of array elements.
+  !!
+  !! @param[in] igdtleno Number of elements of the grid definition template array for the output grid.  c
+  !! Corresponds to the gfld%igdtlen component of the ncep g2 library gridmod data structure.
+  !!
+  !! @param[in] mi    Skip number between input grid fields if km>1 or dimension of input grid fields if km=1.
+  !! @param[in] mo    Skip number between output grid fields if km>1 or dimension of output grid fields if km=1.
+  !! @param[in] km    Number of fields to interpolate.
+  !! @param[in] ibi   Input bitmap flags.
+  !! @param[in] li    Input bitmaps (if respective ibi(k)=1).
+  !! @para[in] gi    Input fields to interpolate.
+  !! @param[out] no Number of output points (only if kgdso(1)<0).
+  !! @param[out] rlat Output latitudes in degrees (if kgdso(1)<0).
+  !! @param[out] rlon Output longitudes in degrees (if kgdso(1)<0).
+  !! @param[out] ibo Output bitmap flags.
+  !! @param[out] lo  Output bitmaps (always output).
+  !! @param[out] go  Output fields interpolated.
+  !! @param[out] iret Return code.
+  !! - 0 Successful interpolation.
+  !! - 1 Unrecognized interpolation method.
+  !! - 2 Unrecognized input grid or no grid overlap.
+  !! - 3 Unrecognized output grid.
+  !! - 1x Invalid bicubic method parameters.
+  !! - 3x Invalid budget method parameters.
+  !! - 4x Invalid spectral method parameters.
+  !!
+  !! @note Examples demonstrating relative cpu costs.
+  !! This example is interpolating 12 levels of temperatures
+  !! from the 360 x 181 global grid (ncep grid 3)
+  !! to the 93 x 68 hawaiian mercator grid (ncep grid 204).
+  !1
+  !! The example times are for the c90. As a reference, the cp time
+  !! for unpacking the global 12 temperature fields is 0.04 seconds.
+  !!
+  !!   METHOD  | IP| IPOPT       |  CP SECONDS
+  !!   --------| --|-------------| ----------
+  !!   BILINEAR| 0 |             |   0.03
+  !!   BICUBIC | 1 | 0           |   0.07
+  !!   BICUBIC | 1 | 1           |   0.07
+  !!   NEIGHBOR| 2 |             |   0.01
+  !!   BUDGET  | 3 | -1,-1       |   0.48
+  !!   SPECTRAL| 4 | 0,40        |   0.22
+  !!   SPECTRAL| 4 | 1,40        |   0.24
+  !!   SPECTRAL| 4 | 0,-1        |   0.42
+  !!   N-BUDGET| 6 | -1,-1       |   0.15
+  !!
+  !!   The spectral interpolation is fast for the mercator grid.
+  !!   however, for some grids the spectral interpolation is slow.
+  !!
+  !!   The following example is interpolating 12 levels of temperatures
+  !!   from the 360 x 181 global grid (ncep grid 3)
+  !!   to the 93 x 65 conus lambert conformal grid (ncep grid 211).
+  !!
+  !!   METHOD  | IP| IPOPT        |CP SECONDS
+  !!   --------| --| -------------|----------
+  !!   BILINEAR| 0 |              | 0.03
+  !!   BICUBIC | 1 | 0            | 0.07
+  !!   BICUBIC | 1 | 1            | 0.07
+  !!   NEIGHBOR| 2 |              | 0.01
+  !!   BUDGET  | 3 | -1,-1        | 0.51
+  !!   SPECTRAL| 4 | 0,40         | 3.94
+  !!   SPECTRAL| 4 | 1,40         | 5.02
+  !!   SPECTRAL| 4 | 0,-1         | 11.36
+  !!   N-BUDGET| 6 | -1,-1        | 0.18
+  !!
   SUBROUTINE IPOLATES_grib2(IP,IPOPT,IGDTNUMI,IGDTMPLI,IGDTLENI, &
        IGDTNUMO,IGDTMPLO,IGDTLENO, &
        MI,MO,KM,IBI,LI,GI, &
