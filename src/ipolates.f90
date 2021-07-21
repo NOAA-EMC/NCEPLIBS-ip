@@ -102,7 +102,7 @@ contains
   end subroutine ipolates_grid
 
   !> @brief This subprogram interpolates scalar field from any grid
-  !to any grid given a grib1 Grid Descriptor Section.
+  !! to any grid given a grib1 Grid Descriptor Section.
   !!
   !! @details Only horizontal interpolation is performed.
   !! The following interpolation methods are possible:
@@ -140,7 +140,6 @@ contains
   !! for the budget approach, a subsection of the grid may
   !! be output by subtracting kgdso(1) from 255 and passing
   !! in the latitudes and longitudes of the points.
-  
   !! Input bitmaps will be interpolated to output bitmaps.
   !!
   !! Output bitmaps will also be created when the output grid
@@ -170,7 +169,7 @@ contains
   !! @param[in] km    Number of fields to interpolate.
   !! @param[in] ibi   Input bitmap flags.
   !! @param[in] li    Input bitmaps (if respective ibi(k)=1).
-  !! @para[in] gi    Input fields to interpolate.
+  !! @param[in] gi    Input fields to interpolate.
   !! @param[out] no Number of output points (only if kgdso(1)<0).
   !! @param[out] rlat Output latitudes in degrees (if kgdso(1)<0).
   !! @param[out] rlon Output longitudes in degrees (if kgdso(1)<0).
