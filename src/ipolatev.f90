@@ -55,6 +55,7 @@ contains
   !! - 1x Invalid bicubic method parameters.
   !! - 3x Invalid budget method parameters.
   !! - 4x Invalid spectral method parameters.
+  !! @date July 2021
   SUBROUTINE ipolatev_grid(IP,IPOPT,grid_in,grid_out, &
        MI,MO,KM,IBI,LI,UI,VI, &
        NO,RLAT,RLON,CROT,SROT,IBO,LO,UO,VO,IRET)
@@ -362,6 +363,7 @@ contains
   !!   SPECTRAL| 4 | 0,-1         | 12.60
   !!   N-BUDGET| 6 | -1,-1        | 0.33
   !!
+  !! @date July 2021
   SUBROUTINE IPOLATEV_grib2(IP,IPOPT,IGDTNUMI,IGDTMPLI,IGDTLENI, &
        IGDTNUMO,IGDTMPLO,IGDTLENO, &
        MI,MO,KM,IBI,LI,UI,VI, &
@@ -456,7 +458,6 @@ contains
   !! - ip=0 (bilinear): (No options)
   !! - ip=1 Cbicubic): constraint option
   !! - ip=2 (neighbor): (No options)
-
   !! - ip=3 (budget): Number in radius, radius weights, search radius
   !! - ip=4 (spectral): Spectral shape, spectral truncation
   !! - ip=6 (neighbor-budget): Number in radius, radius weights ...)
