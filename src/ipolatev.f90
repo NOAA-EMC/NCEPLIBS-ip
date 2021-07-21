@@ -1,12 +1,5 @@
 module ipolatev_mod
-  use bilinear_interp_mod
-  use bicubic_interp_mod
-  use neighbor_interp_mod
-  use budget_interp_mod
-  use spectral_interp_mod
-  use neighbor_budget_interp_mod
   use ip_interpolators_mod
-
   use ip_grid_factory_mod
   use ip_grid_descriptor_mod
   use ip_grid_mod
