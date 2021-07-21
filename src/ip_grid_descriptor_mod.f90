@@ -63,7 +63,9 @@ contains
 
   !> Initialize grib-1 descriptor from integer grid definition section (GDS).
   !! @param[in] gds Grib-1 grid definition section.
+  !!
   !! @return Initialized Grib-1 descriptor.
+  !!
   !! @author Kyle Gerheiser
   !! @date July 2021
   function init_grib1_descriptor(gds) result(desc)
@@ -77,8 +79,12 @@ contains
   end function init_grib1_descriptor
 
   !> Initialize grib-2 descriptor from integer grid definition template (GDT).
+  !! @param[in] gdt_num Grib-2 grid number.
+  !! @param[in] gdt_len Lenght of the grid definition template.
   !! @param[in] gds Grib-2 grid definition template.
+  !!
   !! @return Initialized Grib-2 descriptor.
+  !!
   !! @author Kyle Gerheiser
   !! @date July 2021
   function init_grib2_descriptor(gdt_num, gdt_len, gdt_tmpl) result(desc)
@@ -98,7 +104,9 @@ contains
   !> Test whether two grid descriptors are the same
   !! @param[in] grid1 An ip_grid_descriptor.
   !! @param[in] grid2 Another ip_grid_descriptor.
+  !!
   !! @return True if the grids are the same, false if they are not.
+  !!
   !! @author Kyle Gerheiser
   !! @date July 2021
   logical function is_same_grid(grid1, grid2)
@@ -126,7 +134,9 @@ contains
   !> Test whether two grib1_descriptors are the same.
   !! @param[in] self The grib1_descriptor which this routine was called on.
   !! @param[in] grid_desc A grib1_descriptor to compare.
+  !!
   !! @return  True if the grids are the same, false if they are not.
+  !!
   !! @author Kyle Gerheiser
   !! @date July 2021
   logical function is_same_grid_grib1(self, grid_desc) result(same_grid)
@@ -143,7 +153,9 @@ contains
   !> Test whether two grib2_descriptors are the same.
   !! @param[in] self The grib2_descriptor which this routine was called on.
   !! @param[in] grid_desc grib2_descriptor to compare.
+  !!
   !! @return  True if the grids are the same, false if they are not.
+  !!
   !! @author Kyle Gerheiser
   !! @date July 2021
   logical function is_same_grid_grib2(self, grid_desc) result(same_grid)
