@@ -1,11 +1,15 @@
 !> @file
-!! @brief Uses derived type grid descriptor objects to abstract away the raw Grib-1 and Grib-2 grid definitions.
+!! @brief Uses derived type grid descriptor objects to abstract away
+!! the raw Grib-1 and Grib-2 grid definitions.
 !! @author Kyle Gerheiser
 
-!> @brief Uses derived type grid descriptor objects to abstract away the raw Grib-1 and Grib-2 grid definitions.
+!> @brief Uses derived type grid descriptor objects to abstract away
+!!the raw Grib-1 and Grib-2 grid definitions.
 !! @detail
-!! An abstract ip_grid_descriptor class is subclassed by the Grib-1 and Grib-2 descriptor types which contain
-!! the raw integer grib arrays. A comparison operator to test whether two grid descriptors are the same.
+!! An abstract ip_grid_descriptor class is subclassed by the
+!! Grib-1 and Grib-2 descriptor types which contain the raw integer
+!! grib arrays. A comparison operator to test whether two grid
+!! descriptors are the same is also included.
 !! @author Kyle Gerheiser
 !! @date July 2021
 module ip_grid_descriptor_mod
@@ -19,7 +23,7 @@ module ip_grid_descriptor_mod
 
   public :: operator(==)
 
-  !> @brief Abstract descriptor object which represents a grib1 or grib2 descriptor.
+  !> Abstract descriptor object which represents a grib1 or grib2 descriptor.
   !! @date July 2021
   type, abstract :: ip_grid_descriptor
      integer :: grid_num !< Integer representing the grid type (see *_GRID_ID_GRIB1/2 in ip_grid_mod). 
@@ -27,7 +31,8 @@ module ip_grid_descriptor_mod
      procedure :: is_same_grid
   end type ip_grid_descriptor
 
-  !> @brief Descriptor representing a grib1 grib descriptor section (GDS) with an integer array
+  !> Descriptor representing a grib1 grib descriptor section (GDS)
+  !> with an integer array
   !! @date July 2021
   type, extends(ip_grid_descriptor) :: grib1_descriptor
      integer :: gds(200) !< Grib-1 grib descriptor section (GDS)
@@ -35,7 +40,7 @@ module ip_grid_descriptor_mod
      procedure :: is_same_grid_grib1 
   end type grib1_descriptor
 
-  !> @brief Grib-2 descriptor containing a grib2 GDT represented by an integer array
+  !> Grib-2 descriptor containing a grib2 GDT represented by an integer array
   !! @date July 2021
   type, extends(ip_grid_descriptor) :: grib2_descriptor
      integer :: gdt_num !< Grid number which represents grid type.
@@ -56,9 +61,10 @@ module ip_grid_descriptor_mod
   
 contains
 
-  !> @brief Initialize grib-1 descriptor from integer grid definition section
-  !! @param[in] gds Grib-1 GDS
+  !> Initialize grib-1 descriptor from integer grid definition section (GDS).
+  !! @param[in] gds Grib-1 grid definition section.
   !! @return Initialized Grib-1 descriptor.
+  !! @author Kyle Gerheiser
   !! @date July 2021
   function init_grib1_descriptor(gds) result(desc)
     type(grib1_descriptor) :: desc
@@ -70,9 +76,10 @@ contains
 
   end function init_grib1_descriptor
 
-  !> @brief Initialize grib-2 descriptor from integer grid definition template
-  !! @param[in] gds Grib-2 GDT
+  !> Initialize grib-2 descriptor from integer grid definition template (GDT).
+  !! @param[in] gds Grib-2 grid definition template.
   !! @return Initialized Grib-2 descriptor.
+  !! @author Kyle Gerheiser
   !! @date July 2021
   function init_grib2_descriptor(gdt_num, gdt_len, gdt_tmpl) result(desc)
     type(grib2_descriptor) :: desc
@@ -88,10 +95,11 @@ contains
     
   end function init_grib2_descriptor
 
-  !> @brief Test whether two grid descriptors are the same by comparing their type and value.
+  !> Test whether two grid descriptors are the same
   !! @param[in] grid1 An ip_grid_descriptor.
   !! @param[in] grid2 Another ip_grid_descriptor.
   !! @return True if the grids are the same, false if they are not.
+  !! @author Kyle Gerheiser
   !! @date July 2021
   logical function is_same_grid(grid1, grid2)
     class(ip_grid_descriptor), intent(in) :: grid1, grid2
@@ -115,10 +123,11 @@ contains
 
   end function is_same_grid
 
-  !> @brief Test whether two grib1_descriptors are the same.
+  !> Test whether two grib1_descriptors are the same.
   !! @param[in] self The grib1_descriptor which this routine was called on.
   !! @param[in] grid_desc A grib1_descriptor to compare.
   !! @return  True if the grids are the same, false if they are not.
+  !! @author Kyle Gerheiser
   !! @date July 2021
   logical function is_same_grid_grib1(self, grid_desc) result(same_grid)
     class(grib1_descriptor), intent(in) :: self, grid_desc
@@ -131,10 +140,11 @@ contains
 
   end function is_same_grid_grib1
 
-  !> @brief Test whether two grib2_descriptors are the same.
+  !> Test whether two grib2_descriptors are the same.
   !! @param[in] self The grib2_descriptor which this routine was called on.
   !! @param[in] grid_desc grib2_descriptor to compare.
   !! @return  True if the grids are the same, false if they are not.
+  !! @author Kyle Gerheiser
   !! @date July 2021
   logical function is_same_grid_grib2(self, grid_desc) result(same_grid)
     class(grib2_descriptor), intent(in) :: self, grid_desc
