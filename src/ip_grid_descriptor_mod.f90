@@ -1,11 +1,11 @@
 !> @file
-!! @brief Uses derived type grid descriptor objects to abstract away
+!! Uses derived type grid descriptor objects to abstract away
 !! the raw Grib-1 and Grib-2 grid definitions.
 !! @author Kyle Gerheiser
 
-!> @brief Uses derived type grid descriptor objects to abstract away
-!!the raw Grib-1 and Grib-2 grid definitions.
-!! @detail
+!> Uses derived type grid descriptor objects to abstract away
+!! the raw Grib-1 and Grib-2 grid definitions.
+!!
 !! An abstract ip_grid_descriptor class is subclassed by the
 !! Grib-1 and Grib-2 descriptor types which contain the raw integer
 !! grib arrays. A comparison operator to test whether two grid
