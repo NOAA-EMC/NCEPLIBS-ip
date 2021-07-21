@@ -135,6 +135,7 @@ contains
   !! @param[in] self The grib2_descriptor which this routine was called on.
   !! @param[in] grid_desc grib2_descriptor to compare.
   !! @return  True if the grids are the same, false if they are not.
+  !! @date July 2021
   logical function is_same_grid_grib2(self, grid_desc) result(same_grid)
     class(grib2_descriptor), intent(in) :: self, grid_desc
 
