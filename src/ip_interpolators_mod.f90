@@ -5,14 +5,13 @@
 !> Top-level module to export interpolation routines and constants.
 !! @author Kyle Gerheiser
 module ip_interpolators_mod
-  implicit none
-
   use bilinear_interp_mod
   use bicubic_interp_mod
   use budget_interp_mod
   use neighbor_interp_mod
   use spectral_interp_mod
   use neighbor_budget_interp_mod
+  implicit none
 
   !> @param Constant to choose BILINEAR interpolation method
   integer, parameter, public :: BILINEAR_INTERP_ID = 0
