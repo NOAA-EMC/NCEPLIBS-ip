@@ -5,7 +5,6 @@
 The NCEP general interpolation library (ip2lib) contains Fortran 90 subprograms
 to be used for interpolating between nearly all grids used at NCEP.
 The library is particularly efficient when interpolating many fields at one time.
-The library has been extensively tested with GNU and Intel Fortran compilers.
 
 There are currently six interpolation methods available in the library:
 bilinear, bicubic, neighbor, budget, spectral and neighbor-budget.
