@@ -7,12 +7,7 @@
 !!
 !! @author George Gayno, Mark Iredell, Kyle Gerheiser
 module ipolates_mod
-  use bilinear_interp_mod
-  use bicubic_interp_mod
-  use budget_interp_mod
-  use neighbor_interp_mod
-  use spectral_interp_mod
-  use neighbor_budget_interp_mod
+  use ip_interpolators_mod
   use ip_grid_descriptor_mod
   use ip_grid_factory_mod
   use ip_interpolators_mod
@@ -29,7 +24,34 @@ module ipolates_mod
 
 contains
 
-  subroutine ipolates_grid(ip, ipopt, grid_in, grid_out, mi, mo, km, ibi, li, gi, no, rlat, rlon, ibo, lo, go, iret)
+  !> @brief Interpolates scalar fields between grids given ip_grid objects.
+  !! @details Calls the specific interpolation routines on the generic ip_grids created from a grib1/grib2 descriptor.
+  !! @param[in]  ip Interpolation method.
+  !! @param[in]  ipopt Interpolation options.
+  !! @param[in]  grid_in Input grid.
+  !! @param[in]  grid_out Output grid object created.
+  !! @param[in]  mi   Skip number between input grid fields if km>1 or dimension of input grid fields if km=1.
+  !! @param[in]  mo   Skip number between output grid fields if km>1 or dimension of output grid fields if km=1.
+  !! @param[in]  km   Number of fields to interpolate.
+  !! @param[in]  ibi  Input bitmap flags.
+  !! @param[in]  li   Input bitmaps (if respective ibi(k)=1).
+  !! @param[in]  gi   Input fields to interpolate.
+  !! @param[out] no   Number of output points (only if kgdso(1)<0).
+  !! @param[out] rlat Output latitudes in degrees (if kgdso(1)<0).
+  !! @param[out] rlon Output longitudes in degrees (if kgdso(1)<0).
+  !! @param[out] ibo  Output bitmap flags.
+  !! @param[out] lo   Output bitmaps (always output).
+  !! @param[out] go   Output fields interpolated.
+  !! @param[out] iret Return code.
+  !! - 0 Successful interpolation.
+  !! - 1 Unrecognized interpolation method.
+  !! - 2 Unrecognized input grid or no grid overlap.
+  !! - 3 Unrecognized output grid.
+  !! - 1x Invalid bicubic method parameters.
+  !! - 3x Invalid budget method parameters.
+  !! - 4x Invalid spectral method parameters.
+  subroutine ipolates_grid(ip, ipopt, grid_in, grid_out, mi, mo, km,&
+       & ibi, li, gi, no, rlat, rlon, ibo, lo, go, iret)
     class(ip_grid), intent(in) :: grid_in, grid_out
     INTEGER,    INTENT(IN   ) :: IP, IPOPT(20), KM, MI, MO
     INTEGER,    INTENT(IN   ) :: IBI(KM)
@@ -46,17 +68,23 @@ contains
 
     select case(ip)
     case(BILINEAR_INTERP_ID)
-       CALL interpolate_bilinear(IPOPT,grid_in,grid_out,MI,MO,KM,IBI,LI,GI,NO,RLAT,RLON,IBO,LO,GO,IRET)
+       CALL interpolate_bilinear(IPOPT,grid_in,grid_out,MI,MO,KM,IBI&
+            &,LI,GI,NO,RLAT,RLON,IBO,LO,GO,IRET)
     case(BICUBIC_INTERP_ID)
-       CALL interpolate_bicubic(IPOPT,grid_in,grid_out,MI,MO,KM,IBI,LI,GI,NO,RLAT,RLON,IBO,LO,GO,IRET)
+       CALL interpolate_bicubic(IPOPT,grid_in,grid_out,MI,MO,KM,IBI&
+            &,LI,GI,NO,RLAT,RLON,IBO,LO,GO,IRET)
     case(NEIGHBOR_INTERP_ID)
-       CALL interpolate_neighbor(IPOPT,grid_in,grid_out,MI,MO,KM,IBI,LI,GI,NO,RLAT,RLON,IBO,LO,GO,IRET)
+       CALL interpolate_neighbor(IPOPT,grid_in,grid_out,MI,MO,KM,IBI&
+            &,LI,GI,NO,RLAT,RLON,IBO,LO,GO,IRET)
     case(BUDGET_INTERP_ID)
-       CALL interpolate_budget(IPOPT,grid_in,grid_out,MI,MO,KM,IBI,LI,GI,NO,RLAT,RLON,IBO,LO,GO,IRET)
+       CALL interpolate_budget(IPOPT,grid_in,grid_out,MI,MO,KM,IBI,LI&
+            &,GI,NO,RLAT,RLON,IBO,LO,GO,IRET)
     case(SPECTRAL_INTERP_ID)
-       CALL interpolate_spectral(IPOPT,grid_in,grid_out,MI,MO,KM,IBI,GI,NO,RLAT,RLON,IBO,LO,GO,IRET)
+       CALL interpolate_spectral(IPOPT,grid_in,grid_out,MI,MO,KM,IBI&
+            &,GI,NO,RLAT,RLON,IBO,LO,GO,IRET)
     case(NEIGHBOR_BUDGET_INTERP_ID)
-       CALL interpolate_neighbor_budget(IPOPT,grid_in,grid_out,MI,MO,KM,IBI,LI,GI,NO,RLAT,RLON,IBO,LO,GO,IRET)
+       CALL interpolate_neighbor_budget(IPOPT,grid_in,grid_out,MI,MO&
+            &,KM,IBI,LI,GI,NO,RLAT,RLON,IBO,LO,GO,IRET)
     case default
        ! IF(KGDSO(1).GE.0) NO=0
        ! DO K=1,KM
@@ -73,7 +101,8 @@ contains
 
   end subroutine ipolates_grid
 
-  !> @brief This subprogram interpolates scalar field from any grid to any grid.
+  !> @brief This subprogram interpolates scalar field from any grid
+  !to any grid given a grib1 Grid Descriptor Section.
   !!
   !! @details Only horizontal interpolation is performed.
   !! The following interpolation methods are possible:
@@ -119,20 +148,20 @@ contains
   !! the output field is set to 0 where the output bitmap is off.
   !!        
   !! @param ip Interpolation method
-  !! - ip=0 for bilinear
-  !! - ip=1 for bicubic
-  !! - ip=2 for neighbor;
-  !! - ip=3 for budget;
-  !! - ip=4 for spectral;
-  !! - ip=6 for neighbor-budget
+  !! - ip = BILINEAR_INTERP_ID = 0 for bilinear
+  !! - ip = BICUBIC_INTERP_ID = 1 for bicubic
+  !! - ip = NEIGHBOR_INTERP_ID = 2 for neighbor;
+  !! - ip = BUDGET_INTERP_ID = 3 for budget;
+  !! - ip = SPECTRAL_INTERP_ID = 4 for spectral;
+  !! - ip = NEIGHBOR_BUDGET_INTERP_ID = 6 for neighbor-budget
   !!
   !! @param ipopt Interpolation options
-  !! - ip=0: (No options)
-  !! - ip=1: Constraint option
-  !! - ip=2: (No options)
-  !! - ip=3: Number in radius, radius weights, search radius
-  !! - ip=4: Spectral shape, spectral truncation
-  !! - ip=6: Number in radius, radius weights ...)
+  !! - ip=0 (bilinear): (No options)
+  !! - ip=1 Cbicubic): constraint option
+  !! - ip=2 (neighbor): (No options)
+  !! - ip=3 (budget): Number in radius, radius weights, search radius
+  !! - ip=4 (spectral): Spectral shape, spectral truncation
+  !! - ip=6 (neighbor-budget): Number in radius, radius weights ...)
   !!
   !! @param[in] kgdsi Input gds parameters as decoded by w3fi63.
   !! @param[in] kgdso Output gds parameters.
@@ -187,8 +216,10 @@ contains
   END SUBROUTINE IPOLATES_GRIB1
 
 
-  !> @brief This subprogram interpolates scalar field from any grid to any grid.
-  !! @details Only horizontal interpolation is performed.
+  !> @brief This subprogram interpolates scalar field from any grid to any grid given a grib2 descriptor.
+  !! @details Wrapper for ipolates_grid which converts a grib1 descriptor into an ip_grid_descriptor,
+  !! which is used to create an ip_grid.
+  !! Only horizontal interpolation is performed.
   !!
   !! The following interpolation methods are possible:
   !! - (ip=0) bilinear
