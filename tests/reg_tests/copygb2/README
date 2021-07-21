@@ -1,0 +1,49 @@
+Regression test for ncep copygb2 program.
+
+Invoke a modified version of copygb2 to interpolate global
+lat/lon scalar and vector data to several grids of different
+map projections.  copygb2 invokes routine "ipolates" for scalar
+interpolation and "ipoloatv" for vector interpolation.  All
+interpolation options are used:
+   - bilinear
+   - bicubic
+   - neighbor
+   - budget
+   - spectral
+   - neighbor-budget
+ 
+The input data - in grib 2 format - is in the ./data directory.
+
+The copygb2 source code and make-related files are located
+in the ./sorc subdirectory.
+
+The program is compiled with all byte versions of the 'control' and 'test' 
+ip2lib by invoking the make_reg_test.ksh script located
+in the /reg_tests directory.  See the /reg_tests/README
+file for more information before compiling.  
+
+The three byte versions of the library are:
+  > 4 byte integer/4 byte float
+  > 8 byte integer/8 byte float
+  > 8 byte float/4 byte integer
+
+The executables (a total of six) are stored in the 
+./exec subdirectory.
+
+The regression test is run 'stand-alone' by invoking
+the proper driver script in the ./scripts subdirectory as follows:
+
+"cat run.wcoss.lsf | bsub"       (wcoss phase 1/2 machine)
+"cat run.wcoss-cray.lsf | bsub"  (wcoss cray machine)
+"cat run.wcoss-dell.lsf | bsub"  (wcoss phase 3/Dell machine)
+"sbatch run.theia.ksh"           (theia machine)
+
+This driver script calls the copygb2.ksh child script located in ./scripts.
+
+The interpolated data output from copygb2 is in grib 2 format.
+If the grib 2 files from the 'control' and 'test' ip2lib are
+not bit identical, the regression test is considered failed.
+
+This is considered a 'supplemental' regression test and it is NOT
+run as part of the full suite of tests from the Runall.${machine}.ksh
+driver in the ./reg_tests directory.

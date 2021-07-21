@@ -1,18 +1,12 @@
-# This is the CMake file for building the docs directory of NCEPLIBS-ip.
-#
-# Ed Hartnett 10/5/20
-
-if(ENABLE_DOCS)
+# This is the CMake file for building the docs directory of NCEPLIBS-ip
+IF(ENABLE_DOCS)
 
   # Create doxyfile.
-  set(abs_top_srcdir "${CMAKE_SOURCE_DIR}")
-  configure_file(${CMAKE_CURRENT_SOURCE_DIR}/Doxyfile.in ${CMAKE_CURRENT_BINARY_DIR}/Doxyfile @ONLY)
-
-  # Build documentation with target all.
-  add_custom_target(doc ALL
+  SET(abs_top_srcdir "${CMAKE_SOURCE_DIR}")
+  CONFIGURE_FILE(${CMAKE_CURRENT_SOURCE_DIR}/Doxyfile.in ${CMAKE_CURRENT_BINARY_DIR}/Doxyfile @ONLY)
+  ADD_CUSTOM_TARGET(doc ALL
     ${DOXYGEN_EXECUTABLE} ${CMAKE_CURRENT_BINARY_DIR}/Doxyfile
     WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
     COMMENT "Generating API Documentation with Doxygen" VERBATIM)
 
-endif(ENABLE_DOCS)
-
+ENDIF(ENABLE_DOCS)

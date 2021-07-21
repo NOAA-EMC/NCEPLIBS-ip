@@ -1,0 +1,68 @@
+name: Intel Build
+on: [push, pull_request]
+
+# Use custom shell with -l so .bash_profile is sourced which loads intel/oneapi/setvars.sh
+# without having to do it in manually every step
+defaults:
+  run:
+    shell: bash -leo pipefail {0}
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    env:
+      CC: icc
+      FC: ifort
+      CXX: icpc
+    strategy:
+      matrix:
+        os: [ubuntu-latest]
+
+    steps:
+
+    # See https://software.intel.com/content/www/us/en/develop/articles/oneapi-repo-instructions.html
+    - name: install-intel
+      run: |
+        cd /tmp
+        wget https://apt.repos.intel.com/intel-gpg-keys/GPG-PUB-KEY-INTEL-SW-PRODUCTS.PUB
+        sudo apt-key add GPG-PUB-KEY-INTEL-SW-PRODUCTS.PUB
+        rm GPG-PUB-KEY-INTEL-SW-PRODUCTS.PUB
+        echo "deb https://apt.repos.intel.com/oneapi all main" | sudo tee /etc/apt/sources.list.d/oneAPI.list
+        sudo apt-get update
+        sudo apt-get install intel-oneapi-dev-utilities intel-oneapi-mpi-devel intel-oneapi-openmp intel-oneapi-compiler-fortran intel-oneapi-compiler-dpcpp-cpp-and-cpp-classic
+        echo "source /opt/intel/oneapi/setvars.sh" >> ~/.bash_profile
+      
+    - name: checkout-sp
+      uses: actions/checkout@v2
+      with:
+        repository: NOAA-EMC/NCEPLIBS-sp
+        path: sp
+        ref: v2.3.3
+
+    - name: build-sp
+      run: |
+        cd sp
+        mkdir build
+        cd build
+        cmake .. -DCMAKE_INSTALL_PREFIX=~/sp
+        make -j2
+        make install
+
+    - name: checkout
+      uses: actions/checkout@v2
+      with: 
+        path: ip
+
+    - name: build
+      run: |
+        cd ip
+        mkdir build 
+        cd build
+        cmake .. -DENABLE_TESTS=ON -DOPENMP=ON -DCMAKE_PREFIX_PATH="~/"
+        make -j2
+    
+    - name: test
+      run: |
+        ulimit -s unlimited
+        cd $GITHUB_WORKSPACE/ip/build
+        ctest --output-on-failure

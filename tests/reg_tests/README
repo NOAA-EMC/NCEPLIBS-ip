@@ -1,0 +1,316 @@
+---------------------------------------------------------------
+HOW TO RUN THE REGRESSION TEST SUITE
+---------------------------------------------------------------
+
+The regression test suite consists of six Fortran programs
+that invoke a subset of IPOLATES2 (or IP2LIB) routines.  
+Developers are required to run this test suite to ensure their
+branch changes perform as expected before they are merged to 
+the master.
+
+The following steps are required to setup and run the test suite:
+
+(1) Compile the 'test' and 'control' IPOLATES2 libraries.
+
+   The suite tests all three precision versions of IPOLATES2:
+
+   -4 byte integer/4 byte float ("_4")
+   -4 byte integer/8 byte float ("_d")
+   -8 byte integer/8 byte float ("_8")
+
+   The 'test' libraries are your branch copies, while 
+   the 'control' libaries are the head of master.
+
+(2) Link the 'test' and 'control' IPOLATES2 libraries and 
+    their include directories (which contain their Fortran
+    module files) to the ./reg_tests/lib directory
+    in your branch.  
+
+    The regression test build expects the 'test' and 'control'
+    libraries and include directories in the ./reg_tests/lib 
+    directory with the following names:
+
+    libip2_ctl_4.a  (4 byte integer/4 byte float library, control)
+    libip2_ctl_8.a  (8 byte integer/8 byte float library, control)
+    libip2_ctl_d.a  (4 byte integer/8 byte float library, control)
+    libip2_test_4.a  (4 byte integer/4 byte float library, test)
+    libip2_test_8.a  (8 byte integer/8 byte float library, test)
+    libip2_test_d.a  (4 byte integer/8 byte float library, test)
+
+    incmod_ctl_4  (4 byte integer/4 byte float include dir, control)
+    incmod_ctl_8  (8 byte integer/8 byte float include dir, control)
+    incmod_ctl_d  (4 byte integer/8 byte float include dir, control)
+    incmod_test_4 (4 byte integer/4 byte float include dir, test)
+    incmod_test_8 (8 byte integer/8 byte float include dir, test)
+    incmod_test_d (4 byte integer/8 byte float include dir, test)
+
+    One way to place these libraries and include directories in 
+    the ./reg_tests/lib directory is thru unix links.  Suppose
+    the trunk and branch libraries were built using an
+    'nco-style' installation.  First, change to the
+    ./reg_tests/lib directory:
+
+    "cd /branch/reg_tests/lib"
+
+    Then, link each library and include directory to the 
+    name expected by the regression test build:
+    
+    "ln -s /master/ip2/vX.Y.Z/libip2_vX.Y.Z_4.a  ./libip2_ctl_4.a"
+    "ln -s /master/ip2/vX.Y.Z/libip2_vX.Y.Z_8.a  ./libip2_ctl_8.a"
+    "ln -s /master/ip2/vX.Y.Z/libip2_vX.Y.Z_d.a  ./libip2_ctl_d.a"
+    "ln -s /branch/ip2/vX.Y.Z/libip2_vX.Y.Z_4.a  ./libip2_test_4.a"
+    "ln -s /branch/ip2/vX.Y.Z/libip2_vX.Y.Z_8.a  ./libip2_test_8.a"
+    "ln -s /branch/ip2/vX.Y.Z/libip2_vX.Y.Z_d.a  ./libip2_test_d.a"
+
+    "ln -s /master/ip2/vX.Y.Z/include/ip2_vX.Y.Z_4  ./incmod_ctl_4"
+    "ln -s /master/ip2/vX.Y.Z/include/ip2_vX.Y.Z_8  ./incmod_ctl_8"
+    "ln -s /master/ip2/vX.Y.Z/include/ip2_vX.Y.Z_d  ./incmod_ctl_d"
+    "ln -s /branch/ip2/vX.Y.Z/include/ip2_vX.Y.Z_4  ./incmod_test_4"
+    "ln -s /branch/ip2/vX.Y.Z/include/ip2_vX.Y.Z_8  ./incmod_test_8"
+    "ln -s /branch/ip2/vX.Y.Z/include/ip2_vX.Y.Z_d  ./incmod_test_d"
+
+(3) Check the ./reg_tests/config-setup/*.setup files in your branch.
+
+    These files contain the compiler, compiler flags and link flags 
+    used to compile the regression test suite.  There is one file
+    for the Intel Fortran compiler (ifort.setup) and one for the
+    Cray compiler (crayftn.setup).  The regression suite has
+    been run with both compilers on WCOSS-Cray.  On WCOSS-Phase 1/2,
+    WCOSS Dell (Phase 3) and Theia, only the Intel compiler has been used.
+    You should not need to change the settings in these files.
+    To use a different compiler, you will need to create
+    your own "setup" file and point to it in the build script
+    (see section 5).
+
+(4) Ensure the build process can find the NCEP SP, W3NCO,
+    BACIO, and G2 libraries.  The NCEP G2 library requires
+    third party libraries JASPER, PNG AND Z.
+
+    The build process is run by the "make_reg_tests.ksh"
+    script (use the "make_reg_tests_wcoss-cray.sh" script
+    on WCOSS-Cray).  The path/name of these libraries
+    are stored in the following build script environment variables:
+    
+    SP_LIB4    - SP 4 byte integer/4 byte float version
+    SP_LIB8    - SP 8 byte integer/8 byte float version
+    SP_LIBd    - SP 4 byte integer/8 byte float version
+    W3NCO_LIB4 - W3NCO 4 byte integer/4 byte float version
+    W3NCO_LIB8 - W3NCO 8 byte integer/8 byte float version
+    W3NCO_LIBd - W3NCO 4 byte integer/8 byte float version
+    BACIO_LIB4 - BACIO 4 byte integer/4 byte float version
+    BACIO_LIB8 - BACIO 8 byte integer/8 byte float version
+    G2_LIB4    - G2 4 byte integer/4 byte float version
+    G2_LIBd    - G2 4 byte integer/8 byte float version
+    G2_LIB8    - G2 8 byte integer/8 byte float version
+    JASPER_LIB - JASPER - only one verion
+    PNG_LIB    - PNG - only one version
+    Z_LIB      - Z - only one version
+
+    The G2 library contains module files.  The path to these
+    files are stored in these environment variables: 
+
+    G2_INC4    - 4 byte integer/4 byte float version
+    G2_INCd    - 4 byte integer/8 byte float version
+    G2_INC8    - 8 byte integer/8 byte float version
+
+    There is no mixed precision ("_d") version of BACIO.
+
+    There is no official "8" byte integer/float version
+    of G2.  A version exists on WCOSS Phase 1/2 under:
+    /global/noscrub/George.Gayno/g2_lib.  On Theia, a copy
+    is here: /scratch4/NCEPDEV/da/noscrub/George.Gayno/g2_v2.5.0.
+    On WCOSS-Cray: /gpfs/hps/emc/global/noscrub/George.Gayno/g2_lib
+    On WCOSS-Dell: /gpfs/dell2/emc/modeling/noscrub/George.Gayno/ip2lib.git/g2_lib
+
+    On WCOSS-Phase1/2, WCOSS-Cray, WCOSS-Dell and Theia, these environment
+    variables are set via modules in the build script.
+    These settings may be overidden or set (if running
+    on a machine other than WCOSS or Theia) by manually
+    setting the environment variables on the command line
+    line before running "make_reg_tests.ksh".  
+
+    Example (if using tcsh):
+
+    setenv W3NCO_LIB4 $pathname/libw3nco_4.a
+    setenv SP_LIB4 $pathname/libsp_4.a
+    ... and so on ...
+
+(5) Build the regression tests suite.
+
+    The suite is built with the "./reg_tests/make_reg_tests.ksh" script.
+    (On WCOSS-Cray, use "make_reg_tests_wcoss-cray.sh".)
+
+    By default, the Intel Fortran compiler is used.  The compiler,
+    compiler flags and link flags are stored in ./config-setup/ifort.setup,
+    which is sourced by the build script.  To use the "crayftn.setup" file
+    (only on WCOSS-Cray) or your own setup file, you will need to manually
+    edit the build script.
+
+    To build, type "make_reg_tests.ksh" (use "make_reg_tests_wcoss-cray.sh
+                                         on WCOSS-Cray).
+
+    Log output from the 'ctl' and 'test' builds will be in the
+    config*log files.  There will be six executables for
+    each individual regression test (one for each 'ctl' and 'test' library version).
+    These executables will be located in the ./exec sub-directory for
+    the regression test.  The source code is in the ./sorc sub-directory.
+
+(6) Kickoff the regression test suite.
+
+    There are driver run scripts for WCOSS and Theia located in
+    ./reg_tests. 
+
+    To start the tests on WCOSS-Phase 1/2, simply type the script name -
+    Runall.wcoss.ksh - on the command line.  A series of
+    "daisy-chained" jobs steps will be submitted.  To check
+    the job queue type "bjobs".
+
+    On WCOSS-Cray, start the tests by invoking the "Runall.wcoss-cray.ksh" 
+    script on the command line.   A series of  "daisy-chained" jobs steps
+    will be submitted.  To check the job queue type "bjobs".
+
+    On WCOSS-Dell (Phase 3), invoke the "Runall.wcoss-dell.sh" script 
+    with no arguments.  A series of "daisy-chained" jobs will be submitted.
+    To check the job queue, type "bjobs".
+
+    On Theia, the "Runall.theia.ksh" script is used.  Before running, 
+    set the project code that will be charged when running the test
+    suite.  The project code is script variable $PROJECT_CODE. The
+    default is the "fv3-cpu" project.  You may change the code by manually
+    editing the script or doing "setenv PROJECT_CODE $code_name" on 
+    the command line.  To find out which projects you
+    are authorized to use, type "account_params".  After
+    setting the project code, start the tests by typing
+    "Runall.theia.ksh" on the command line.  A series of
+    "daisy-chained" jobs steps will be submitted.  To check
+    the job queue, type: "squeue -u USERNAME"
+    
+(7) Check results.
+
+    On WCOSS-Phase1/2, the default run directory is /stmpp1/${LOGNAME}/regression
+    On WCOSS-Cray, the default run directory is /gpfs/hps/stmp/${LOGNAME}/regression
+    On WCOSS-Dell, the default run directory is /gpfs/dell1/stmp/${LOGNAME}/regression
+    On Theia, the default run directory is /scratch3/NCEPDEV/stmp1/$LOGNAME/regression
+    (The run directory is variable $WORK_DIR in the driver script).
+
+    Log output from the test suite will be in "regression.log"  To monitor as
+    the suite is running, do: grep ">>>" regression.log
+    
+    Once the suite is complete, a summary is placed in "summary.log"   Any failures
+    should be investigated.
+
+---------------------------------------------------------------
+DETAILS ON EACH INDIVIDUAL REGRESSION TEST
+---------------------------------------------------------------
+
+The tests in the following subdirectories are designed to test 
+a subset of IP2LIB.  It was too difficult to create a single test
+that exercised every routine.  
+
+1)  gdswzd - A fortran program that calls gdswzd
+    and all of its child routines to calculate lat/lon and
+    other map-related fields for several grids of
+    of various map projections.
+2)  ipolates - A fortran program that interpolates a global
+    lat/lon grid of substrate temperature to several grids of various
+    projections using the ipolates suite of routines.  All
+    interpolation options are used:
+      1) bilinear
+      2) neighbor
+      3) budget
+      4) spectral
+      5) bicubic
+      6) neighbor-budget
+    This test is run twice, with 1 and 4 threads.
+3)  ipolatev - A fortran program that interpolates a global
+    lat/lon grid of vector u/v wind to several grids of various
+    projections using the ipolatev suite of routines.  All
+    interpolation options are used:
+      1) bilinear
+      2) neighbor
+      3) budget
+      4) spectral
+      5) bicubic
+      6) neighbor-budget
+    This test is run twice, with 1 and 4 threads.
+4)  ipxetas - A fortran program that calls routine ipxetas
+    to transform between data on a staggered and unstaggered
+    eta grid (rotated lat/lon with arakawa "e" staggering):
+      1) Create staggered mass data from unstaggered data.
+      2) Create staggered velocity data from unstaggered data.
+      3) Create unstaggered data from staggered mass data.
+      4) Create unstaggered data from staggered velocity data.
+5)  ipxwafs - Test routines ipxwafs, ipxwafs2 and ipxwafs3 by 
+    transforming data between 'full' and 'thinned' WAFS grids 37 and 44.
+    Routine ixpwafs does not handle bitmapped data, so a field of
+    600mb temperature is transformed when testing this routine.  
+    Routines ipxwafs2/3 do handle bitmaps, so a field of soil temperature
+    (land only) is transformed.
+6)  copygb2 - A modified version of the copygb2 program is used to 
+    transform global lat/lon fields of u/v wind, terrain height, and
+    maximum snow albedo to the following grids types:
+      1) global 0.5-degree
+      2) mercator (ncep grid 8)
+      3) t254 gaussian
+      4) nh polar stereographic
+      5) lambert conformal (ncep grid 218)
+    All interpolation options are used:
+      1) bilinear
+      2) neighbor
+      3) budget
+      4) spectral
+      5) bicubic
+      6) neighbor-budget
+    Because this tests calls the same routines as other regression
+    tests, it is not currently called from the regression driver scripts.
+    However, it may be run stand-alone using the scripts in ./copygb2/scripts.
+
+Within each regression directory, the ./sorc subdirectory will contain the
+source code and make-related files required for the regression test. A script
+to run the individual regression test is under the ./scripts subdirectory.
+The executables (after compilation) are stored under the ./exec subdirectory.
+Any input data is stored in the ./data subdirectory.  Grads control files
+to view any binary output data are stored in the ./grads subdirectory.  Some 
+Grads control files do not have map backgrounds specified.  They are only 
+used to sanity check the data.  So when viewing, do a 'set mproj off'. 
+
+More detailed information about each test is described in a README file in that
+test's subdirectory.
+
+Below is a table of a routine or module and which regression test(s) invoke it.
+
+subroutine or
+module name                      regression test
+===============                  ===============
+
+earth_radius                     gdswzd, ipolates, ipolatev, ipxetas, copygb2
+gdswzd_mod                       gdswzd, ipolates, ipolatev, ipxetas, copygb2
+gdswzd_equid_cylind_mod          gdswzd, ipolates, ipolatev, copygb2
+gdswzd_gaussian_mod              gdswzd, ipolates, ipolatev, copygb2
+gdswzd_lambert_conf_mod          gdswzd, ipolates, ipolatev, copygb2
+gdswzd_mercator_mod              gdswzd, ipolates, ipolatev, copygb2
+gdswzd_polar_stereo              gdswzd, ipolates, ipolatev, copygb2
+gdswzd_rot_equid_cylind_egrid    gdswzd, ipolates, ipolatev, ipxetas
+gdswzd_rot_equid_cylind_mod      gdswzd, ipolates, ipolatev
+ijkgds0                          ipolates,   ipolatev, ipxetas,  copygb2
+ijkgds1                          ipolates,   ipolatev, ipxetas,  copygb2
+ipolates                         ipolates,   ipxetas,  copygb2
+ipolatev                         ipolatev,   copygb2
+ipxwafs                          ipxwafs
+ipxwafs2                         ipxwafs
+ipxwafs3                         ipxwafs
+movect                           ipolatev,   copygb2
+polates0                         ipolates,   ipxetas,  copygb2
+polates1                         ipolates,   copygb2
+polates2                         ipolates,   copygb2
+polates3                         ipolates,   copygb2
+polates4                         ipolates,   copygb2
+polates6                         ipolates,   copygb2
+polatev0                         ipolatev,   copygb2
+polatev1                         ipolatev,   copygb2
+polatev2                         ipolatev,   copygb2
+polatev3                         ipolatev,   copygb2
+polatev4                         ipolatev,   copygb2
+polatev6                         ipolatev,   copygb2
+polfixs                          ipolates,   ipxetas,  copygb2
+polfixv                          ipolatev,   copygb2

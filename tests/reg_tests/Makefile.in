@@ -1,0 +1,31 @@
+# @configure_input@
+
+# Top level makefile template
+
+MAKE="gmake"
+
+# Target specification
+all clean install uninstall:
+	cd copygb2/sorc && $(MAKE) $@
+	cd gdswzd/sorc && $(MAKE) $@
+	cd ipxetas/sorc && $(MAKE) $@
+	cd ipxwafs/sorc && $(MAKE) $@
+	cd ipolates/sorc && $(MAKE) $@
+	cd ipolatev/sorc && $(MAKE) $@
+
+distclean:
+	cd copygb2/sorc && $(MAKE) $@
+	cd gdswzd/sorc && $(MAKE) $@
+	cd ipxetas/sorc && $(MAKE) $@
+	cd ipxwafs/sorc && $(MAKE) $@
+	cd ipolates/sorc && $(MAKE) $@
+	cd ipolatev/sorc && $(MAKE) $@
+	-rm Makefile config*.log config.status
+
+Makefile: Makefile.in config.status
+	./config.status $@
+
+config.status: configure
+	./config.status --recheck
+
+.PHONY: all clean distclean check install uninstall

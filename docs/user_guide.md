@@ -1,13 +1,10 @@
-@mainpage
+# Documentation of the general interpolation library - iplib
 
-## Documentation of the general interpolation library iplib
+## Introduction
 
-January, 2014
-
-The NCEP general interpolation library (iplib) contains Fortran 90 subprograms
+The NCEP general interpolation library (ip2lib) contains Fortran 90 subprograms
 to be used for interpolating between nearly all grids used at NCEP.
 The library is particularly efficient when interpolating many fields at one time.
-The library has been extensively tested with AIX and Intel Fortran compilers.
 
 There are currently six interpolation methods available in the library:
 bilinear, bicubic, neighbor, budget, spectral and neighbor-budget.
@@ -22,7 +19,7 @@ created to locate invalid data where the output grid extends outside the domain
 of the input grid. 
 
 The driver routine for interpolating scalars is ipolates, while the routine
-for interpolating vectors is ipolatv.  The interpolation method is chosen
+for interpolating vectors is ipolatev.  The interpolation method is chosen
 via the first argument of these routines (variable IP).  Sub-options are
 set via the IPOPT array.
 
@@ -55,19 +52,19 @@ box extends halfway to its neighboring grid point in each direction.
 The method actually averages bilinearly interpolated values in a square array
 of points distributed within each output grid box.  This method can
 interpolate data with bitmaps.  There are several sub-options:
-  (1) The number of points in the radius of the square array may be set.
+-  (1) The number of points in the radius of the square array may be set.
    The default is 2, meaning that 25 sample points will be averaged
    for each output value.  
-  (2) The respective averaging weights for the radius points are adjustable.
+-  (2) The respective averaging weights for the radius points are adjustable.
    The default is for all weights equal to 1, giving an unweighted average.
-  (3) Optionally, one may assume the boxes stretch nearly all the way to each of 
+-  (3) Optionally, one may assume the boxes stretch nearly all the way to each of 
    the neighboring grid points and the weights are the adjoint of the bilinear 
    interpolation weights.
-  (4) The percent of valid input data required to make output data is
+-  (4) The percent of valid input data required to make output data is
    adjustable.  The default is 50%.
-  (5) In cases where there is no or insufficient valid input data,
+-  (5) In cases where there is no or insufficient valid input data,
    a spiral search may be invoked to search for the nearest valid data.
-   search squre (scalar interpolation only). 
+   search square (scalar interpolation only). 
 
 Spectral interpolation is chosen by setting IP=4.  This method has two sub-options,
 to (1) set the spectral shape (triangular or rhomboidal) and (2) set the 
@@ -83,12 +80,12 @@ centered around each output grid point and stretching nearly halfway
 to each of the neighboring grid points. The main difference with 
 the budget interpolation (IP=3) is neighbor vs bilinear interpolation
 of the square box of points.  There are the following sub-options:
-  (1) The number of points in the radius of the square array may be set.
+-  (1) The number of points in the radius of the square array may be set.
    The default is 2, meaning that 25 sample points will be averaged
    for each output value.  
-  (2) The respective averaging weights for the radius points are adjustable.
+-  (2) The respective averaging weights for the radius points are adjustable.
    The default is for all weights equal to 1, giving an unweighted average.
-  (3) The percent of valid input data required to make output data is
+-  (3) The percent of valid input data required to make output data is
    adjustable.  The default is 50%.
 
 The library can handle two-dimensional vector fields as well as scalar fields.
@@ -102,21 +99,20 @@ keeping their orientations with respect to the great circle constant, before
 independently interpolating the respective components.  This ensures that vector
 interpolation will be consistent over the whole globe including the poles.
 
-The input and output grids are defined by their respective GRIB grid description
-sections (GDS) passed in integer form KGDS as decoded by subprogram w3fi63
-in w3ncolib or by subprogram makgds in this library.  That is, the interpolation
-subprograms can readily interpolate from a GRIB field that is unpacked
-by subprogram w3fi63; the interpolation subprograms can also readily
-interpolate to an NCEP pre-defined grid that is expanded into KGDS form by 
-subprogram makgds (which in turn calls w3fi71).  There are currently seven grid
-projections recognized in the library.  The projections are respectively
-equidistant cylindrical (KGDS(1)=000), Mercator cylindrical (KGDS(1)=001),
-Lambert conformal conical (KGDS(1)=003), Gaussian cylindrical (KGDS(1)=004), 
-polar stereographic azimuthal (KGDS(1)=005), semi-staggered "E" grid 
-on rotated equidistant cyclindrical (KGDS(1)=203), and non-staggered
-grid on rotated equidistant cyclindrical grid (KGDS(1)=205).
+The input and output grids are defined by their respective GRIB2 grid definition
+template and template number as decoced by the NCEP G2 library.  There
+are six map projections recognized by the library:
 
-If the output data representation type is negative (KGDSO(1)<0), then the
+Grid def. template #    | Map projection
+--------------------    | ---------------------------------
+       00               | Equidistant cyclindrical
+       01               | Rotated equidistant cylindrical
+       10               | Mercator cyclindrical
+       20               | Polar stereographic azimuthal
+       30               | Lambert conformal conical
+       40               | Gaussian equidistant cyclindrical
+
+If the output grid definition template number is negative, then the
 output data may be just a set of station points.  In this case, the user must pass
 the number of points to be output along with their latitudes and longitudes.
 For vector interpolation, the vector rotations parameters must also be passed.
@@ -131,17 +127,17 @@ are obliged to be constant at the pole and vector components are obliged
 to exhibit a wavenumber one variation at the pole.
 
 Generally, only regular grids can be interpolated in this library.  However,
-the thinned WAFS grids and the staggered eta grids can be interpolated by using
-transform subprograms (ipxwafs and ipxetas, respectively) in this library that
-will either expand the irregular grid to a regular grid or contract a regular
-grid to an irregular grid as necessary.
+the thinned WAFS grids may be expanded to a regular grid (or vice versa)
+using subprograms ipxwafs/2/3.  Eta data (with Arakawa "E" staggering)
+on the "H" or "V" grid may be expanded to a filled regular grid (or vice versa)
+using subprogram ipxetas.
 
 The return code issued by an interpolation subprogram determines whether
 it ran successfully or how it failed.  Check nonzero return codes
 against the docblock of the respective subprogram.
 
 Developers are encouraged to create additional interpolation methods or
-to create additional map projection "wizards" for iplib.
+to create additional map projection "wizards" for ip2lib.
 
 Questions may be directed to: NCEP.List.EMC.nceplibs.Developers@noaa.gov
 
@@ -178,334 +174,430 @@ Grid description section decoders
 
    Name       |Function
    ----       |------------------------------------------------------------------
-   GDSWZD     |GRID DESCRIPTION SECTION WIZARD
-   GDSWZD_C   |'C' WRAPPER FOR CALLING GDSWZD
-   GDSWZD00   |GDS WIZARD FOR EQUIDISTANT CYCLINDRICAL
-   GDSWZD01   |GDS WIZARD FOR MERCATOR CYCLINDRICAL
-   GDSWZD03   |GDS WIZARD FOR LAMBERT CONFORMAL CONICAL
-   GDSWZD04   |GDS WIZARD FOR GAUSSIAN CYCLINDRICAL
-   GDSWZD05   |GDS WIZARD FOR POLAR STEREOGRAPHIC
-   GDSWZDCB   |GDS WIZARD FOR ROTATED EQUIDISTANT CYCLINDRICAL "E" STAGGER.
-   GDSWZDCD   |GDS WIZARD FOR ROTATED EQUIDISTANT CYCLINDRICAL NON "E" STAGGER.
-   GAUSSLAT   |COMPUTE GAUSSIAN LATITUDES
-   IJKGDS0/1  |RETURN FIELD POSITION FOR A GIVEN GRID POINT
-   MAKGDS     |MAKE OR BREAK A GRID DESCRIPTION SECTION
-
+   GDSWZD                          |GRID DESCRIPTION SECTION WIZARD
+   GDSWZD_C                        |'C' WRAPPER FOR CALLING GDSWZD
+   GDSWZD_EQUID_CYLIND             |GDS WIZARD FOR EQUIDISTANT CYCLINDRICAL
+   GDSWZD_MERCATOR                 |GDS WIZARD FOR MERCATOR CYCLINDRICAL
+   GDSWZD_LAMBERT_CONF             |GDS WIZARD FOR LAMBERT CONFORMAL CONICAL
+   GDSWZD_GAUSSIAN                 |GDS WIZARD FOR GAUSSIAN CYCLINDRICAL
+   GDSWZD_POLAR_STEREO             |GDS WIZARD FOR POLAR STEREOGRAPHIC
+   GDSWZD_ROT_EQUID_CYLIND_EGRID   |GDS WIZARD FOR ROTATED EQUIDISTANT CYCLINDRICAL "E" STAGGER.
+   GDSWZD_ROT_EQUID_CYLIND         |GDS WIZARD FOR ROTATED EQUIDISTANT CYCLINDRICAL NON "E" STAGGER.
+   IJKGDS0/1                       |RETURN FIELD POSITION FOR A GIVEN GRID POINT
+   
 Transform subprograms for special irregular grids
 
-   Name        |Function
-   ----        |------------------------------------------------------------------
+   Name       |Function
+   ----       |------------------------------------------------------------------
    IPXWAFS/2/3 |  EXPAND OR CONTRACT WAFS GRIDS
 
-## How to inoke iplib: examples
-
-### Example 1
-
-Interpolate from an arbitrary input grid (probably 1x1) to NCEP grid
-27 (65x65 northern polar stereographic).  Interpolate heights
-bilinearly and winds bicubically.  Interpolate soil moisture and
-precipitation using bitmaps with the budget method.  Encode the soil
-moisture bitmap in GRIB.  Subprograms GETGB and PUTGB from w3ncolib
-are referenced.
+## How to invoke ip2lib: examples
 
 <pre>
-c example of using ipolate package.
-c see documentation of ipolates and ipolatev
-c for further possible options.
-      integer ipopt(20)
-      integer jpds(25),jgds(22),kpdsi(25),kgdsi(22),kpdso(25),kgdso(22)
-      parameter(ji=360*181,ig=27,jo=65*65,km=4)
-      real rlat(jo),rlon(jo),crot(jo),srot(jo)
-      integer ibi(km),ibo(km)
-      logical li(ji,km),lo(jo,km)
-      real hi(ji,km),ri(ji),ui(ji),vi(ji)
-      real ho(jo,km),ro(jo),uo(jo),vo(jo)
-      character gdso(42)
-      integer lev(km)
-      data lev/1000,500,250,100/
-c define 65x65 grid
-      call makgds(ig,kgdso,gdso,lengds,iret)
-      if(iret.ne.0) call exit(iret)
-       kgdso(4)=-20826! fix w3fi71 error
-      print *,'kgdso=',kgdso
-      ipopt=0
-c interpolate 4 levels of height to 65x65 bilinearly
-      do k=1,km
-        jpds=-1
-        jpds(5)=7
-        jpds(6)=100
-        jpds(7)=lev(k)
-        call getgb(11,31,ji,0,jpds,jgds,ki,kr,kpdsi,kgdsi,
-     &             li(1,k),hi(1,k),iret)
-        if(iret.ne.0) call exit(iret)
-        call putgb(50,ki,kpdsi,kgdsi,li(1,k),hi(1,k),iret)
-        if(iret.ne.0) call exit(iret)
-        ibi(k)=mod(kpdsi(4)/64,2)
-        print *,'ibi(k)=',ibi(k)
-      enddo
-      call ipolates(0,ipopt,kgdsi,kgdso,ji,jo,km,ibi,li,hi,
-     &              ko,rlat,rlon,ibo,lo,ho,iret)
-      if(iret.ne.0) call exit(iret)
-      kpdso=kpdsi
-      kpdso(3)=ig
-      do k=1,km
-        kpdso(7)=lev(k)
-        call putgb(51,ko,kpdso,kgdso,lo(1,k),ho(1,k),iret)
-        if(iret.ne.0) call exit(iret)
-      enddo
-c interpolate precipitation to 65x65 with budget method
-c (zero rain is masked out)
-      jpds=-1
-      jpds(5)=61
-      call getgb(11,31,ji,0,jpds,jgds,ki,kr,kpdsi,kgdsi,
-     &           li,ri,iret)
-      if(iret.ne.0) call exit(iret)
-      call putgb(50,ki,kpdsi,kgdsi,li,ri,iret)
-      if(iret.ne.0) call exit(iret)
-      ipopt(1)=-1
-      ipopt(2)=-1
-      li(1:ki,1)=ri(1:ki).gt.0.
-      call ipolates(3,ipopt,kgdsi,kgdso,ji,jo,1,1,li,ri,
-     &              ko,rlat,rlon,ibo,lo,ro,iret)
-      if(iret.ne.0) call exit(iret)
-      kpdso=kpdsi
-      kpdso(3)=ig
-      call putgb(51,ko,kpdso,kgdso,lo,ro,iret)
-      if(iret.ne.0) call exit(iret)
-c interpolate soil moisture to 65x65 with budget method
-      jpds=-1
-      jpds(5)=144
-      jpds(6)=112
-      jpds(7)=10
-      call getgb(11,31,ji,0,jpds,jgds,ki,kr,kpdsi,kgdsi,
-     &           li,ri,iret)
-      if(iret.ne.0) call exit(iret)
-      call putgb(50,ki,kpdsi,kgdsi,li,ri,iret)
-      if(iret.ne.0) call exit(iret)
-      ibi(1)=mod(kpdsi(4)/64,2)
-      ipopt(1)=-1
-      ipopt(2)=-1
-      call ipolates(3,ipopt,kgdsi,kgdso,ji,jo,1,ibi,li,ri,
-     &              ko,rlat,rlon,ibo,lo,ro,iret)
-      if(iret.ne.0) call exit(iret)
-      kpdso=kpdsi
-      kpdso(3)=ig
-      kpdso(4)=128+64*ibo(1)
-      call putgb(51,ko,kpdso,kgdso,lo,ro,iret)
-      if(iret.ne.0) call exit(iret)
-c interpolate 200 mb winds to 65x65 bicubically
-      jpds=-1
-      jpds(5)=33
-      jpds(6)=100
-      jpds(7)=200
-      call getgb(11,31,ji,0,jpds,jgds,ki,kr,kpdsi,kgdsi,
-     &           li,ui,iret)
-      if(iret.ne.0) call exit(iret)
-      call putgb(50,ki,kpdsi,kgdsi,li,ui,iret)
-      if(iret.ne.0) call exit(iret)
-      jpds(5)=34
-      call getgb(11,31,ji,0,jpds,jgds,ki,kr,kpdsi,kgdsi,
-     &           li,vi,iret)
-      if(iret.ne.0) call exit(iret)
-      call putgb(50,ki,kpdsi,kgdsi,li,vi,iret)
-      if(iret.ne.0) call exit(iret)
-      ipopt(1)=0
-      call ipolatev(1,ipopt,kgdsi,kgdso,ji,jo,1,0,li,ui,vi,
-     &              ko,rlat,rlon,crot,srot,ibo,lo,uo,vo,iret)
-      if(iret.ne.0) call exit(iret)
-      kpdso=kpdsi
-      kpdso(3)=ig
-      kpdso(5)=33
-      call putgb(51,ko,kpdso,kgdso,lo,uo,iret)
-      if(iret.ne.0) call exit(iret)
-      kpdso(5)=34
-      call putgb(51,ko,kpdso,kgdso,lo,vo,iret)
-      if(iret.ne.0) call exit(iret)
-      stop
-      end
-</pre>
+***********************************************************************
+Example 1.  Read a grib 2 file of scalar data on a global regular
+            1-deg lat/lon grid and call ipolates to interpolate
+            it to NCEP standard grid 218, a lambert conformal grid.
+            Uses the NCEP G2 library to degrib the data.
+***********************************************************************
 
-### Example 2
+ program example_1
 
-Interpolate winds from an arbitrary input grid (probably 1x1) to 4
-station points while truncating spectrally to R30.
+use ip_mod
+ use grib_mod  ! ncep grib 2 library
 
-<pre>
-c read and unpack the 500 mb winds, truncate to R30,
-c and interpolate to 4 corners of a box
-      integer ipopt(20)
-      integer jpds(25),jgds(22),kpdsi(25),kgdsi(22),kgdso(22)
-      parameter(jf=360*181,kp=4)
-      real rlat(kp),rlon(kp),crot(kp),srot(kp)
-      logical lgi(jf),lgo(kp)
-      real ui(jf),vi(jf),uo(kp),vo(kp)
-      jpds=-1
-      jpds(5)=33
-      jpds(6)=100
-      jpds(7)=500
-      call getgb(11,31,jf,0,jpds,jgds,kf,kr,kpdsi,kgdsi,
-     &           lgi,ui,iret)
-      jpds(5)=34
-      call getgb(11,31,jf,0,jpds,jgds,kf,kr,kpdsi,kgdsi,
-     &           lgi,vi,iret)
-      kgdso=-1
-      rlat(1)=20.
-      rlat(2)=20.
-      rlat(3)=10.
-      rlat(4)=10.
-      rlon(1)=-50.
-      rlon(2)=-40.
-      rlon(3)=-50.
-      rlon(4)=-40.
-      crot=1.
-      srot=0.
-      ipopt(1)=1
-      ipopt(2)=30
-      uo=-999
-      vo=-999
-      call ipolatev(4,ipopt,kgdsi,kgdso,jf,kp,1,0,lgi,ui,vi,
-     &              kp,rlat,rlon,crot,srot,ibo,lgo,uo,vo,iret)
-      print '(2(2x,2f8.2))',(uo(k),vo(k),k=1,kp)
-      end
-</pre>
+ implicit none
 
-### Example 3
+ character(len=100)      :: input_file
 
-Interpolate winds from an arbitrary input grid (probably 1x1)
-bilinearly to 3 station points.
+ integer                 :: iunit, iret, lugi
+ integer                 :: mi, mo, no
+ integer, allocatable    :: ibi(:), ibo(:)
+ integer                 :: ip, ipopt(20)
+ integer                 :: j, jdisc, jpdtn, jgdtn, k, km
+ integer                 :: jids(200), jgdt(200), jpdt(200)
+ integer                 :: idim_input, jdim_input
+ integer                 :: idim_output, jdim_output
 
-<pre>
-c read and unpack 4 levels of heights and winds
-c and interpolate to 3 sonde sites.
-      integer ipopt(20)
-      integer jpds(25),jgds(22),kpdsi(25),kgdsi(22),kgdso(22)
-      parameter(ji=360*181,km=4,jo=3)
-      real rlat(jo),rlon(jo),crot(jo),srot(jo)
-      integer ibi(km),ibo(km)
-      logical li(ji,km),lo(jo,km)
-      real hi(ji,km),ui(ji,km),vi(ji,km),ho(jo,km),uo(jo,km),vo(jo,km)
-      integer lev(km)
-      data lev/1000,500,250,100/
-c define output locations
-      kgdso=-1
-      rlat(1)=22.2
-      rlat(2)=33.3
-      rlat(3)=44.4
-      rlon(1)=-50.
-      rlon(2)=-40.
-      rlon(3)=-30.
-      crot=1.
-      srot=0.
-c heights
-      do k=1,km
-        jpds=-1
-        jpds(5)=7
-        jpds(6)=100
-        jpds(7)=lev(k)
-        call getgb(11,31,ji,0,jpds,jgds,ki,kr,kpdsi,kgdsi,
-     &             li(1,k),hi(1,k),iret)
-        if(iret.ne.0) call exit(iret)
-        ibi(k)=mod(kpdsi(4)/64,2)
-      enddo
-      call ipolates(0,ipopt,kgdsi,kgdso,ji,jo,km,ibi,li,hi,
-     &              jo,rlat,rlon,ibo,lo,ho,iret)
-      if(iret.ne.0) call exit(iret)
-c winds
-      do k=1,km
-        jpds=-1
-        jpds(5)=33
-        jpds(6)=100
-        jpds(7)=lev(k)
-        call getgb(11,31,ji,0,jpds,jgds,ki,kr,kpdsi,kgdsi,
-     &             li(1,k),ui(1,k),iret)
-        if(iret.ne.0) call exit(iret)
-        jpds=-1
-        jpds(5)=34
-        jpds(6)=100
-        jpds(7)=lev(k)
-        call getgb(11,31,ji,0,jpds,jgds,ki,kr,kpdsi,kgdsi,
-     &             li(1,k),vi(1,k),iret)
-        if(iret.ne.0) call exit(iret)
-        ibi(k)=mod(kpdsi(4)/64,2)
-      enddo
-      call ipolatev(0,ipopt,kgdsi,kgdso,ji,jo,km,ibi,li,ui,vi,
-     &              jo,rlat,rlon,crot,srot,ibo,lo,uo,vo,iret)
-      if(iret.ne.0) call exit(iret)
-      print '((i8,3(2x,3f8.2)))',
-     & (lev(k),(ho(j,k),uo(j,k),vo(j,k),j=1,jo),k=1,km)
-      end
-</pre>
+ logical                 :: unpack
+ logical*1, allocatable  :: input_bitmap(:,:), output_bitmap(:,:)
 
-Example 4. Interpolate 850 mb height and winds from the staggered meso-eta
-           to a regional 0.25 degree grid.
-<pre>
-      integer ipopt(20)
-      integer jpds(25),jgds(22),kpdsi(25),kgdsi(22),kpdso(25),kgdso(22)
-      integer kgdsi2(22)
-      parameter(ji=361*271,ig=255,jo=121*81)
-      real rlat(jo),rlon(jo),crot(jo),srot(jo)
-      logical li(ji),lo(jo)
-      real fi(ji),fi2(ji),fo(jo)
-      real vi(ji),vi2(ji),vo(jo)
-      character gdso(400)
-      kgdso=0
-      kgdso(1)=0
-      kgdso(2)=121
-      kgdso(3)=81
-      kgdso(4)=30000
-      kgdso(5)=-90000
-      kgdso(6)=128
-      kgdso(7)=50000
-      kgdso(8)=-60000
-      kgdso(9)=250
-      kgdso(10)=250
-      kgdso(11)=64
-      kgdso(19)=0
-      kgdso(20)=255
-      if(iret.ne.0) call exit(iret)
-      ipopt=0
-      jpds=-1
-      jpds(6)=100
-      jpds(7)=850
-      jpds(5)=7
-      call getgb(11,31,ji,0,jpds,jgds,ki,kr,kpdsi,kgdsi,
-     &           li,fi,iret)
-      if(iret.ne.0) call exit(iret)
-      call ipxetas(1,ji,ji,1,kgdsi,fi,kgdsi2,fi2,iret)
-      if(iret.ne.0) call exit(iret)
-      call ipolates(0,ipopt,kgdsi2,kgdso,ji,jo,1,0,li,fi2,
-     &              ko,rlat,rlon,ibo,lo,fo,iret)
-      if(iret.ne.0) call exit(iret)
-      kpdso=kpdsi
-      kpdso(3)=ig
-      kpdso(4)=128+64*ibo
-      kpdso(22)=1
-      call putgb(51,ko,kpdso,kgdso,lo,fo,iret)
-      if(iret.ne.0) call exit(iret)
-      jpds(5)=33
-      call getgb(11,31,ji,0,jpds,jgds,ki,kr,kpdsi,kgdsi,
-     &           li,fi,iret)
-      if(iret.ne.0) call exit(iret)
-      call ipxetas(2,ji,ji,1,kgdsi,fi,kgdsi2,fi2,iret)
-      if(iret.ne.0) call exit(iret)
-      jpds(5)=34
-      call getgb(11,31,ji,0,jpds,jgds,ki,kr,kpdsi,kgdsi,
-     &           li,vi,iret)
-      if(iret.ne.0) call exit(iret)
-      call ipxetas(2,ji,ji,1,kgdsi,vi,kgdsi2,vi2,iret)
-      if(iret.ne.0) call exit(iret)
-      call ipolatev(0,ipopt,kgdsi2,kgdso,ji,jo,1,0,li,fi2,vi2,
-     &              ko,rlat,rlon,crot,srot,ibo,lo,fo,vo,iret)
-      if(iret.ne.0) call exit(iret)
-      kpdso=kpdsi
-      kpdso(3)=ig
-      kpdso(4)=128+64*ibo
-      kpdso(22)=1
-      kpdso(5)=33
-      call putgb(51,ko,kpdso,kgdso,lo,fo,iret)
-      if(iret.ne.0) call exit(iret)
-      kpdso(5)=34
-      call putgb(51,ko,kpdso,kgdso,lo,vo,iret)
-      if(iret.ne.0) call exit(iret)
-      end
+ real, allocatable       :: input_data(:,:)
+ real, allocatable       :: output_rlat(:), output_rlon(:)
+ real, allocatable       :: output_data(:,:)
+
+ type(gribfield)         :: gfld_input
+
+!---------------------------------------------------------------------------
+! the output grid specs.  this is ncep grid 218, a lambert conformal
+! grid.  the grid definition information is stored in section 3
+! of a grib 2 message.
+!---------------------------------------------------------------------------
+
+ integer, parameter :: igdtnum218 = 30 ! grid definition template number.
+                                       ! "30" is lambert conformal.
+ integer, parameter :: igdtlen218 = 22 ! number of array elements needed
+                                       ! for a lambert conf. grid definition
+                                       ! template.
+ integer     :: igdtmpl218(igdtlen218) ! the grid definition template.
+                                       ! the entries are:
+                                       ! 1 -shape of earth, oct 15
+                                       ! 2 -scale factor, spherical earth, oct 16
+                                       ! 3 -scaled value, spherical earth, octs 17-20
+                                       ! 4 -scale factor, major axis of
+                                       !    elliptical earth, oct 21
+                                       ! 5 -scaled value of major axis of
+                                       !    elliptical earth, octs 22-25
+                                       ! 6 -scale factor, minor axis of
+                                       !    elliptical earth, oct 26
+                                       ! 7 -scaled value of minor axis of
+                                       !    elliptical earth, octs 27-30
+                                       ! 8 -number points along x-axis, octs 31-34
+                                       ! 9 -number points along y-axis, octs 35-38
+                                       ! 10-latitude of first point, octs 39-42
+                                       ! 11-longitude of first point, octs 43-46
+                                       ! 12-resolution and component flags, oct 47
+                                       ! 13-latitude where grid lengths specified, 
+                                       !    octs 48-51
+                                       ! 14-longitude parallel to y-axis, octs 52-55
+                                       ! 15-x-direction grid length, octs 56-59
+                                       ! 16-y-direction grid length, octs 60-63
+                                       ! 17-projection center flag, oct 64
+                                       ! 18-scanning mode, oct 65
+                                       ! 19-first tangent latitude from pole, octs 66-69
+                                       ! 20-second tangent latitude from pole, octs 70-73
+                                       ! 21-latitude of south pole, octs 74-77
+                                       ! 22-longitude of south pole, octs 78-81
+
+ integer, parameter :: missing=b'11111111111111111111111111111111'
+ data igdtmpl218 / 6, 255, missing, 255, missing, 255, missing, 614, 428, &
+                  12190000, 226541000, 56, 25000000, 265000000, &
+                  12191000, 12191000, 0, 64, 25000000, 25000000, -90000000, 0/
+
+!---------------------------------------------------------------------------
+! open the grib 2 file containing data to be interpolated.  for this
+! example, there are two data records.
+!---------------------------------------------------------------------------
+
+ iunit=9
+ input_file="${path}/input.data.grib2"
+ call baopenr (iunit, input_file, iret)
+
+!---------------------------------------------------------------------------
+! prep for call to g2 library to degrib data. the data are on a regular
+! lat/lon grid with i/j dimension of 360/181.  
+!---------------------------------------------------------------------------
+
+ idim_input = 360  ! the i/j dimensions of input grid
+ jdim_input = 181
+ mi         = idim_input * jdim_input   ! total number of pts, input grid
+
+ jdisc   = -1         ! search for any discipline
+ jpdtn   = -1         ! search for any product definition template number
+ jgdtn   =  0         ! search for grid definition template number 0 - regular lat/lon grid
+ jids    = -9999      ! array of values in identification section, set to wildcard
+ jgdt    = -9999      ! array of values in grid definition template 3.m
+ jgdt(8) = idim_input ! search for grid with i/j of 360/181
+ jgdt(9) = jdim_input
+ jpdt    = -9999      ! array of values in product definition template 4.n
+ unpack  = .true.     ! unpack data
+ lugi    = 0          ! no index file
+
+ nullify(gfld_input%idsect)
+ nullify(gfld_input%local)
+ nullify(gfld_input%list_opt)
+ nullify(gfld_input%igdtmpl)  ! holds the grid definition template information
+ nullify(gfld_input%ipdtmpl)
+ nullify(gfld_input%coord_list)
+ nullify(gfld_input%idrtmpl)
+ nullify(gfld_input%bmap)     ! holds the bitmap
+ nullify(gfld_input%fld)      ! holds the data
+
+!---------------------------------------------------------------------------
+! degrib the data.  non-zero "iret" indicates a problem during degrib.
+!---------------------------------------------------------------------------
+
+ km = 2                  ! number of records to interpolate
+
+ allocate(ibi(km))
+ allocate(input_bitmap(mi,km))
+ allocate(input_data(mi,km))
+
+ do j = 0, (km-1)    ! number of records to skip
+
+   call getgb2(iunit, lugi, j, jdisc, jids, jpdtn, jpdt, jgdtn, jgdt, &
+               unpack, k, gfld_input, iret)
+
+   if (iret /= 0) stop
+
+!---------------------------------------------------------------------------
+! does input data have a bitmap?
+!---------------------------------------------------------------------------
+
+   if (gfld_input%ibmap==0) then  ! input data has bitmap
+     ibi(k)            = 1        ! tell ipolates to use bitmap
+     input_bitmap(:,k) = gfld_input%bmap
+   else                           ! no bitmap, data everywhere
+     ibi(k)            = 0        ! tell ipolates there is no bitmap
+     input_bitmap(:,k) = .true.
+   endif
+
+   input_data(:,k) = gfld_input%fld  ! the input data field
+ 
+ enddo
+
+ call baclose (iunit, iret)
+
+!---------------------------------------------------------------------------
+! setup arguments for ipolates (scalar interpolation) call.
+!---------------------------------------------------------------------------
+
+ ip       = 0                         ! bilinear interpolation
+ ipopt    = 0                         ! options for bilinear:
+ ipopt(1) = 75                        ! set minimum mask to 75%
+
+!---------------------------------------------------------------------------
+! the i/j dimensions of the output grid.
+!---------------------------------------------------------------------------
+
+ idim_output = igdtmpl218(8)
+ jdim_output = igdtmpl218(9)
+ mo          = idim_output * jdim_output ! total number of output pts
+
+!---------------------------------------------------------------------------
+! will hold the latitude, longitude, data and bitmap on the output grid,
+! which are computed in ipolates.
+!---------------------------------------------------------------------------
+
+ allocate (ibo(km))              ! bitmap flags on output grid
+ allocate (output_rlat(mo))
+ allocate (output_rlon(mo))
+ allocate (output_data(mo,km))
+ allocate (output_bitmap(mo,km))
+
+!---------------------------------------------------------------------------
+! call ipolates to interpolate scalar data.  non-zero "iret" indicates
+! a problem.
+!---------------------------------------------------------------------------
+
+ call ipolates(ip, ipopt, gfld_input%igdtnum, gfld_input%igdtmpl, &
+               gfld_input%igdtlen, igdtnum218, igdtmpl218, igdtlen218, &
+               mi, mo, km, ibi, input_bitmap, input_data, no, output_rlat, &
+               output_rlon, ibo, output_bitmap, output_data, iret)
+
+ if (iret /= 0) stop
+
+!---------------------------------------------------------------------------
+! write interpolated data to file.  if ipolates computed a bitmap (ibo==1) 
+! for the output grid, one may mask out this data with a flag value.
+!---------------------------------------------------------------------------
+
+ open (10, file="./output.bin", access='direct', recl=idim_output*jdim_output*4)
+
+ do k = 1, km
+   if(ibo(k)==1) where (.not. output_bitmap(:,k)) output_data(:,k) = -999.
+   write(10, rec=k) output_data(:,k)
+ enddo
+ write(10, rec=km+1) output_rlat
+ write(10, rec=km+2) output_rlon
+
+ close(10)
+
+ end program example_1
+
+***********************************************************************
+Example 2.  Read a grib 2 file of u/v wind data on a global regular
+            1-deg lat/lon grid and call ipolatev to interpolate
+            it to four random station points.  Uses the NCEP
+            G2 library to degrib the data.
+***********************************************************************
+
+ program example_2
+
+ use grib_mod  ! ncep grib 2 library
+
+ implicit none
+
+ character(len=100)      :: input_file
+
+ integer                 :: iunit, iret, lugi
+ integer                 :: mi, mo, no
+ integer                 :: ibi, ibo
+ integer                 :: ip, ipopt(20)
+ integer                 :: j, jdisc, jpdtn, jgdtn, k, km
+ integer                 :: jids(200), jgdt(200), jpdt(200)
+ integer                 :: idim_input, jdim_input
+
+ logical                 :: unpack
+ logical*1, allocatable  :: input_bitmap(:), output_bitmap(:)
+
+ real, allocatable       :: input_u_data(:), input_v_data(:)
+ real, allocatable       :: output_rlat(:), output_rlon(:)
+ real, allocatable       :: output_crot(:), output_srot(:)
+ real, allocatable       :: output_u_data(:), output_v_data(:)
+
+ type(gribfield)         :: gfld_input
+
+!---------------------------------------------------------------------------
+! the output "grid" is a series of random station points.  in this case,
+! set the grid definition template number of a negative number.
+! the grid definition template array information is not used, so set
+! to a flag value.
+!---------------------------------------------------------------------------
+
+ integer, parameter      :: igdtnumo = -1 
+ integer, parameter      :: igdtleno =  1
+ integer                 :: igdtmplo(igdtleno)
+
+ data igdtmplo / -9999 /
+
+!---------------------------------------------------------------------------
+! open the grib 2 file containing data to be interpolated.  for this
+! example, there is one record of u-wind and v-wind.
+!---------------------------------------------------------------------------
+
+ iunit=9
+ input_file="./reg_tests/copygb2/data/uv_wind.grb2"
+ call baopenr (iunit, input_file, iret)
+
+!---------------------------------------------------------------------------
+! prep for call to g2 library to degrib data. the data are on a regular
+! lat/lon grid with i/j dimension of 360/181.  
+!---------------------------------------------------------------------------
+
+ idim_input = 360  ! the i/j dimensions of input grid
+ jdim_input = 181
+ mi         = idim_input * jdim_input   ! total number of pts, input grid
+
+ jdisc   = -1         ! search for any discipline
+ jpdtn   = -1         ! search for any product definition template number
+ jgdtn   =  0         ! search for grid definition template number 0 - regular lat/lon grid
+ jids    = -9999      ! array of values in identification section, set to wildcard
+ jgdt    = -9999      ! array of values in grid definition template 3.m
+ jgdt(8) = idim_input ! search for grid with i/j of 360/181
+ jgdt(9) = jdim_input
+ jpdt    = -9999      ! array of values in product definition template 4.n
+ unpack  = .true.     ! unpack data
+ lugi    = 0          ! no index file
+
+ nullify(gfld_input%idsect)
+ nullify(gfld_input%local)
+ nullify(gfld_input%list_opt)
+ nullify(gfld_input%igdtmpl)  ! holds the grid definition template information
+ nullify(gfld_input%ipdtmpl)
+ nullify(gfld_input%coord_list)
+ nullify(gfld_input%idrtmpl)
+ nullify(gfld_input%bmap)     ! holds the bitmap
+ nullify(gfld_input%fld)      ! holds the data
+
+!---------------------------------------------------------------------------
+! degrib the data.  non-zero "iret" indicates a problem during degrib.
+!---------------------------------------------------------------------------
+
+ allocate(input_bitmap(mi))
+ allocate(input_u_data(mi))
+ allocate(input_v_data(mi))
+
+!---------------------------------------------------------------------------
+! read u-wind record.
+!---------------------------------------------------------------------------
+
+ j = 0
+ call getgb2(iunit, lugi, j, jdisc, jids, jpdtn, jpdt, jgdtn, jgdt, &
+             unpack, k, gfld_input, iret)
+
+ if (iret /= 0) stop
+
+!---------------------------------------------------------------------------
+! does input data have a bitmap?
+!---------------------------------------------------------------------------
+
+ if (gfld_input%ibmap==0) then  ! input data has bitmap
+   ibi          = 1             ! tell ipolates to use bitmap
+   input_bitmap = gfld_input%bmap
+ else                           ! no bitmap, data everywhere
+   ibi          = 0             ! tell ipolates there is no bitmap
+   input_bitmap = .true.
+ endif
+
+ input_u_data = gfld_input%fld  ! the input u-wind data
+ 
+!---------------------------------------------------------------------------
+! read v-wind record.
+!---------------------------------------------------------------------------
+
+ j = 1
+ call getgb2(iunit, lugi, j, jdisc, jids, jpdtn, jpdt, jgdtn, jgdt, &
+             unpack, k, gfld_input, iret)
+
+ if (iret /= 0) stop
+
+ input_v_data = gfld_input%fld  ! the input v-wind data
+
+ call baclose (iunit, iret)
+
+!---------------------------------------------------------------------------
+! setup arguments for ipolatev (vector interpolation) call.
+!---------------------------------------------------------------------------
+
+ km       = 1                         ! number of records to interpolate
+ ip       = 0                         ! bilinear interpolation
+ ipopt    = 0                         ! options for bilinear:
+ ipopt(1) = 75                        ! set minimum mask to 75%
+
+!---------------------------------------------------------------------------
+! interpolate to four random station points.
+!---------------------------------------------------------------------------
+
+ mo = 4
+ no = mo
+
+!---------------------------------------------------------------------------
+! when interpolating to random station points, need to pass to ipolatev
+! their latitude, longitude and the sines and cosines of the vector
+! rotation angles.  the vector rotation is defined:
+!
+! ugrid=crot*uearth-sort*vearth
+! vgrid=srot*uearth+cort*vearth
+!---------------------------------------------------------------------------
+
+ allocate (output_rlat(mo))
+ allocate (output_rlon(mo))
+ allocate (output_srot(mo))
+ allocate (output_crot(mo))
+ allocate (output_u_data(mo))
+ allocate (output_v_data(mo))
+ allocate (output_bitmap(mo))
+
+ output_rlat(1) = 45.0
+ output_rlon(1) = -100.0
+ output_rlat(2) = 35.0
+ output_rlon(2) = -100.0
+ output_rlat(3) = 40.0
+ output_rlon(3) = -90.0
+ output_rlat(4) = 35.0
+ output_rlon(4) = -120.0
+
+ output_srot = 0.0   ! no turning of wind
+ output_crot = 1.0
+
+!---------------------------------------------------------------------------
+! call ipolatev to interpolate vector data.  non-zero "iret" indicates
+! a problem.
+!---------------------------------------------------------------------------
+ 
+ call ipolatev(ip, ipopt, gfld_input%igdtnum, gfld_input%igdtmpl, &
+               gfld_input%igdtlen, igdtnumo, igdtmplo, igdtleno, &
+               mi, mo, km, ibi, input_bitmap, input_u_data, input_v_data, &
+               no, output_rlat, output_rlon, output_crot, output_srot, &
+               ibo, output_bitmap, output_u_data, output_v_data, iret)
+
+ if (iret /= 0) stop
+
+ do k = 1, mo
+   print*,'station point ',k,' latitude ',output_rlat(k),' longitude ', &
+   output_rlon(k), ' u-wind ', output_u_data(k), ' v-wind ', output_v_data(k)
+ enddo
+
+ end program example_2
 </pre>
