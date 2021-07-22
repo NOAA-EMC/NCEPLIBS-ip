@@ -1,5 +1,5 @@
 !> @file
-!! Gaussian grid coordinate transformations
+!! @brief Gaussian grid coordinate transformations
 !! @author Mark Iredell, George Gayno, Kyle Gerheiser
 !! @date July 2021
 
@@ -398,8 +398,8 @@ contains
     ! - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   END SUBROUTINE GAUSSIAN_ERROR
 
-  !> This subprogram computes the vector rotation sines and
-  !! cosines for a gaussian cylindrical grid.
+  !> Computes the vector rotation sines and cosines for a gaussian
+  !! cylindrical grid.
   !!
   !! @param[out] crot Clockwise vector rotation cosines.
   !! @param[out] srot Clockwise vector rotation sines.
