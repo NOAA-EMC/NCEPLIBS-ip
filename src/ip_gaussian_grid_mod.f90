@@ -1,6 +1,12 @@
 !> @file
-!! @brief Gaussian grid
+!! Gaussian grid coordinate transformations
+!! @author Mark Iredell, George Gayno, Kyle Gerheiser
+!! @date July 2021
 
+!> Gaussian grid coordinate transformations
+!!
+!! @author George Gayno, Mark Iredell, Kyle Gerheiser
+!! @date July 2021
 module ip_gaussian_grid_mod
   use ip_grid_descriptor_mod
   use ip_grid_mod
@@ -82,6 +88,7 @@ contains
   !! @param[in] g1_desc A grib1_descriptor
   !!
   !! @author Kyle Gerheiser
+  !! @date July 2021
   subroutine init_grib2(self, g2_desc)
     class(ip_gaussian_grid), intent(inout) :: self
     type(grib2_descriptor), intent(in) :: g2_desc
@@ -124,125 +131,50 @@ contains
 
   end subroutine init_grib2
 
-  !$$$  SUBPROGRAM DOCUMENTATION BLOCK
-  !
-  ! SUBPROGRAM:  GDSWZD_GAUSSIAN   GDS WIZARD FOR GAUSSIAN CYLINDRICAL
-  !   PRGMMR: IREDELL       ORG: W/NMC23       DATE: 96-04-10
-  !
-  ! ABSTRACT: THIS SUBPROGRAM DECODES THE GRIB 2 GRID DEFINITION
-  !           TEMPLATE (PASSED IN INTEGER FORM AS DECODED BY THE
-  !           NCEP G2 LIBRARY) AND RETURNS ONE OF THE FOLLOWING:
-  !             (IOPT=+1) EARTH COORDINATES OF SELECTED GRID COORDINATES
-  !             (IOPT=-1) GRID COORDINATES OF SELECTED EARTH COORDINATES
-  !           WORKS FOR GAUSSIAN CYLINDRICAL PROJECTIONS.
-  !           IF THE SELECTED COORDINATES ARE MORE THAN ONE GRIDPOINT
-  !           BEYOND THE THE EDGES OF THE GRID DOMAIN, THEN THE RELEVANT
-  !           OUTPUT ELEMENTS ARE SET TO FILL VALUES.
-  !           THE ACTUAL NUMBER OF VALID POINTS COMPUTED IS RETURNED TOO.
-  !           OPTIONALLY, THE VECTOR ROTATIONS, THE MAP JACOBIANS AND
-  !           THE GRID BOX AREAS MAY BE RETURNED AS WELL.  TO COMPUTE
-  !           THE VECTOR ROTATIONS, THE OPTIONAL ARGUMENTS 'SROT' AND 'CROT'
-  !           MUST BE PRESENT.  TO COMPUTE THE MAP JACOBIANS, THE
-  !           OPTIONAL ARGUMENTS 'XLON', 'XLAT', 'YLON', 'YLAT' MUST BE PRESENT.
-  !           TO COMPUTE THE GRID BOX AREAS, THE OPTIONAL ARGUMENT
-  !           'AREA' MUST BE PRESENT.
-  !
-  ! PROGRAM HISTORY LOG:
-  !   96-04-10  IREDELL
-  !   97-10-20  IREDELL  INCLUDE MAP OPTIONS
-  ! 1999-04-08  IREDELL  USE SUBROUTINE SPLAT
-  ! 2001-06-18  IREDELL  CORRECT AREA COMPUTATION
-  ! 2012-08-01  GAYNO    CORRECT AREA COMPUTATION AT POLE.
-  !                      CORRECT YLAT COMPUTATION.
-  ! 2015-01-21  GAYNO    MERGER OF GDSWIZ04 AND GDSWZD04.  MAKE
-  !                      CROT,SORT,XLON,XLAT,YLON,YLAT AND AREA
-  !                      OPTIONAL ARGUMENTS.  MAKE PART OF A MODULE.
-  !                      MOVE VECTOR ROTATION, MAP JACOBIAN AND GRID
-  !                      BOX AREA COMPUTATIONS TO SEPARATE SUBROUTINES.
-  ! 2015-07-13  GAYNO    CONVERT TO GRIB 2. REPLACE GRIB 1 KGDS ARRAY
-  !                      WITH GRIB 2 GRID DEFINITION TEMPLATE ARRAY.
-  !                      RENAME AS "GDSWZD_GAUSSIAN".
-  ! 2018-07-20  WESLEY   ADD THREADS.
-  !
-  ! USAGE:    CALL GDSWZD_GAUSSIAN(IGDTNUM,IGDTMPL,IGDTLEN,IOPT,NPTS,FILL,
-  !    &                           XPTS,YPTS,RLON,RLAT,NRET,
-  !    &                           CROT,SROT,XLON,XLAT,YLON,YLAT,AREA)
-  !
-  !   INPUT ARGUMENT LIST:
-  !     IGDTNUM  - INTEGER GRID DEFINITION TEMPLATE NUMBER.
-  !                CORRESPONDS TO THE GFLD%IGDTNUM COMPONENT OF THE
-  !                NCEP G2 LIBRARY GRIDMOD DATA STRUCTURE.
-  !                MUST BE "40" FOR GAUSSIAN GRIDS.
-  !     IGDTMPL  - INTEGER (IGDTLEN) GRID DEFINITION TEMPLATE ARRAY.
-  !                CORRESPONDS TO THE GFLD%IGDTMPL COMPONENT OF THE
-  !                NCEP G2 LIBRARY GRIDMOD DATA STRUCTURE FOR SECTION
-  !                THREE:
-  !                 (1):  SHAPE OF EARTH, OCTET 15
-  !                 (2):  SCALE FACTOR OF SPHERICAL EARTH RADIUS,
-  !                       OCTET 16
-  !                 (3):  SCALED VALUE OF RADIUS OF SPHERICAL EARTH,
-  !                       OCTETS 17-20
-  !                 (4):  SCALE FACTOR OF MAJOR AXIS OF ELLIPTICAL EARTH,
-  !                       OCTET 21
-  !                 (5):  SCALED VALUE OF MAJOR AXIS OF ELLIPTICAL EARTH,
-  !                       OCTETS 22-25
-  !                 (6):  SCALE FACTOR OF MINOR AXIS OF ELLIPTICAL EARTH,
-  !                       OCTET 26
-  !                 (7):  SCALED VALUE OF MINOR AXIS OF ELLIPTICAL EARTH,
-  !                       OCTETS 27-30
-  !                 (8):  NUMBER OF POINTS ALONG A PARALLEL, OCTS 31-34
-  !                 (9):  NUMBER OF POINTS ALONG A MERIDIAN, OCTS 35-38
-  !                 (10): BASIC ANGLE OF INITIAL PRODUCTION DOMAIN,
-  !                       OCTETS 39-42
-  !                 (11): SUBDIVISIONS OF BASIC ANGLE, OCTETS 43-46
-  !                 (12): LATITUDE OF FIRST GRID POINT, OCTETS 47-50
-  !                 (13): LONGITUDE OF FIRST GRID POINT, OCTETS 51-54
-  !                 (14): RESOLUTION AND COMPONENT FLAGS, OCTET 55
-  !                 (15): LATITUDE OF LAST GRID POINT, OCTETS 56-59
-  !                 (16): LONGITUDE OF LAST GRID POINT, OCTETS 60-63
-  !                 (17): I-DIRECTION INCREMENT, OCTETS 64-67
-  !                 (18): NUMBER OF PARALLELS BETWEEN POLE AND EQUATOR, 
-  !                       OCTETS 68-71
-  !                 (19): SCANNING MODE, OCTET 72
-  !     IGDTLEN  - INTEGER NUMBER OF ELEMENTS (19) OF THE GRID DEFINITION
-  !                TEMPLATE ARRAY.  CORRESPONDS TO THE GFLD%IGDTLEN
-  !                COMPONENT OF THE NCEP G2 LIBRARY GRIDMOD DATA STRUCTURE.
-  !     IOPT     - INTEGER OPTION FLAG
-  !                (+1 TO COMPUTE EARTH COORDS OF SELECTED GRID COORDS)
-  !                (-1 TO COMPUTE GRID COORDS OF SELECTED EARTH COORDS)
-  !     NPTS     - INTEGER MAXIMUM NUMBER OF COORDINATES
-  !     FILL     - REAL FILL VALUE TO SET INVALID OUTPUT DATA
-  !                (MUST BE IMPOSSIBLE VALUE; SUGGESTED VALUE: -9999.)
-  !     XPTS     - REAL (NPTS) GRID X POINT COORDINATES IF IOPT>0
-  !     YPTS     - REAL (NPTS) GRID Y POINT COORDINATES IF IOPT>0
-  !     RLON     - REAL (NPTS) EARTH LONGITUDES IN DEGREES E IF IOPT<0
-  !                (ACCEPTABLE RANGE: -360. TO 360.)
-  !     RLAT     - REAL (NPTS) EARTH LATITUDES IN DEGREES N IF IOPT<0
-  !                (ACCEPTABLE RANGE: -90. TO 90.)
-  !
-  !   OUTPUT ARGUMENT LIST:
-  !     XPTS     - REAL (NPTS) GRID X POINT COORDINATES IF IOPT<0
-  !     YPTS     - REAL (NPTS) GRID Y POINT COORDINATES IF IOPT<0
-  !     RLON     - REAL (NPTS) EARTH LONGITUDES IN DEGREES E IF IOPT>0
-  !     RLAT     - REAL (NPTS) EARTH LATITUDES IN DEGREES N IF IOPT>0
-  !     NRET     - INTEGER NUMBER OF VALID POINTS COMPUTED
-  !     CROT     - REAL, OPTIONAL (NPTS) CLOCKWISE VECTOR ROTATION COSINES
-  !     SROT     - REAL, OPTIONAL (NPTS) CLOCKWISE VECTOR ROTATION SINES
-  !                (UGRID=CROT*UEARTH-SROT*VEARTH;
-  !                 VGRID=SROT*UEARTH+CROT*VEARTH)
-  !     XLON     - REAL, OPTIONAL (NPTS) DX/DLON IN 1/DEGREES
-  !     XLAT     - REAL, OPTIONAL (NPTS) DX/DLAT IN 1/DEGREES
-  !     YLON     - REAL, OPTIONAL (NPTS) DY/DLON IN 1/DEGREES
-  !     YLAT     - REAL, OPTIONAL (NPTS) DY/DLAT IN 1/DEGREES
-  !     AREA     - REAL, OPTIONAL (NPTS) AREA WEIGHTS IN M**2
-  !
-  ! EXTERNAL SUBPROGRAMS CALLED:
-  !   SPLAT      COMPUTE LATITUDE FUNCTIONS
-  !
-  ! ATTRIBUTES:
-  !   LANGUAGE: FORTRAN 90
-  !
-  !$$$
+  !> Calculates Earth coordinates (iopt = 1) or grid coorindates (iopt = -1)
+  !! for Gaussian grids.
+  !!
+  !! If the selected coordinates are more than one gridpoint
+  !! beyond the the edges of the grid domain, then the relevant
+  !! output elements are set to fill values.
+  !!
+  !! The actual number of valid points computed is returned too.
+  !! Optionally, the vector rotations, the map jacobians and
+  !! the grid box areas may be returned as well.
+  !!
+  !! To compute the vector rotations, the optional arguments 'srot' and 'crot'
+  !! must be present.
+  !!
+  !! To compute the map jacobians, the optional arguments
+  !! 'xlon', 'xlat', 'ylon', 'ylat' must be present.
+  !!
+  !! To compute the grid box areas, the optional argument
+  !! 'area' must be present.
+  !!
+  !! @param[in] self The grid object gdswzd was called on.
+  !! @param[in] iopt option flag
+  !!            - +1 to compute earth coords of selected grid coords.
+  !!            - -1 o compute grid coords of selected earth coords.
+  !! @param[in] npts Maximum number of coordinates.
+  !! @param[in] fill Fill value to set invalid output data.
+  !!            Must be impossible value; suggested value: -9999.
+  !! @param[inout] xpts Grid x point coordinates if iopt>0.
+  !! @param[inout] ypts Grid y point coordinates if iopt>0.
+  !! @param[inout] rlon Earth longitudes in degrees e if iopt<0
+  !!                   (Acceptable range: -360. to 360.)
+  !! @param[inout] rlat Earth latitudes in degrees n if iopt<0
+  !!                (Acceptable range: -90. to 90.)
+  !! @param[out] nret Number of valid points computed.
+  !! @param[out] crot Optional clockwise vector rotation cosines.
+  !! @param[out] srot Optional clockwise vector rotation sines.
+  !! @param[out] xlon Optional dx/dlon in 1/degrees.
+  !! @param[out] xlat Optional dx/dlat in 1/degrees.
+  !! @param[out] ylon Optional dy/dlon in 1/degrees.
+  !! @param[out] ylat Optional dy/dlat in 1/degrees.
+  !! @param[out] area Optional area weights in m**2.
+  !!
+  !! @author Mark Iredell, George Gayno, Kyle Gerheiser
+  !! @date July 2021
   SUBROUTINE GDSWZD_GAUSSIAN(self,IOPT,NPTS,FILL, &
        XPTS,YPTS,RLON,RLAT,NRET, &
        CROT,SROT,XLON,XLAT,YLON,YLAT,AREA)
@@ -413,6 +345,7 @@ contains
     IF (ALLOCATED(YLAT_ROW)) DEALLOCATE(YLAT_ROW)
     ! - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   END SUBROUTINE GDSWZD_GAUSSIAN
+  
   ! - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   SUBROUTINE GAUSSIAN_ERROR(IOPT,FILL,RLAT,RLON,XPTS,YPTS,NPTS)
     !$$$  SUBPROGRAM DOCUMENTATION BLOCK
@@ -463,37 +396,20 @@ contains
     ENDIF
     ! - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   END SUBROUTINE GAUSSIAN_ERROR
-  !
+
+  !> This subprogram computes the vector rotation sines and
+  !! cosines for a gaussian cylindrical grid.
+  !!
+  !! @param[out] crot Clockwise vector rotation cosines.
+  !! @param[out] srot Clockwise vector rotation sines.
+  !!
+  !! @note
+  !! ugrid=crot*uearth-srot*vearth;
+  !! vgrid=srot*uearth+crot*vearth)
+  !!
+  !! @author George Gayno
+  !! @date July 2021
   SUBROUTINE GAUSSIAN_VECT_ROT(CROT,SROT)
-    !
-    ! SUBPROGRAM:  GAUSSIAN_VECT_ROT   VECTOR ROTATION FIELDS FOR
-    !                                  GAUSSIAN CYLINDRICAL GRIDS
-    !
-    !   PRGMMR: GAYNO     ORG: W/NMC23       DATE: 2015-01-21
-    !
-    ! ABSTRACT: THIS SUBPROGRAM COMPUTES THE VECTOR ROTATION SINES AND
-    !           COSINES FOR A GAUSSIAN CYLINDRICAL GRID.
-    !
-    ! PROGRAM HISTORY LOG:
-    ! 2015-01-21  GAYNO    INITIAL VERSION
-    ! 2015-09-17  GAYNO    RENAME AS "GAUSSIAN_VECT_ROT"
-    !
-    ! USAGE:    CALL GAUSSIAN_VECT_ROT(CROT,SROT)
-    !
-    !   INPUT ARGUMENT LIST:
-    !     NONE
-    !
-    !   OUTPUT ARGUMENT LIST:
-    !     CROT     - CLOCKWISE VECTOR ROTATION COSINES (REAL)
-    !     SROT     - CLOCKWISE VECTOR ROTATION SINES (REAL)
-    !                (UGRID=CROT*UEARTH-SROT*VEARTH;
-    !                 VGRID=SROT*UEARTH+CROT*VEARTH)
-    !
-    ! ATTRIBUTES:
-    !   LANGUAGE: FORTRAN 90
-    !
-    !$$$
-    !
     IMPLICIT NONE
 
     REAL,                INTENT(  OUT) :: CROT, SROT
@@ -502,38 +418,19 @@ contains
     SROT=0.0
 
   END SUBROUTINE GAUSSIAN_VECT_ROT
-  !
-  SUBROUTINE GAUSSIAN_MAP_JACOB(YPTS, XLON, XLAT, YLON, YLAT)
-    !$$$  SUBPROGRAM DOCUMENTATION BLOCK
-    !
-    ! SUBPROGRAM:  GAUSSIAN_MAP_JACOB  MAP JACOBIANS FOR
-    !                                  GAUSSIAN CYLINDRICAL GRIDS
-    !
-    !   PRGMMR: GAYNO     ORG: W/NMC23       DATE: 2015-01-21
-    !
-    ! ABSTRACT: THIS SUBPROGRAM COMPUTES THE MAP JACOBIANS FOR
-    !           A GAUSSIAN CYLINDRICAL GRID.
-    !
-    ! PROGRAM HISTORY LOG:
-    ! 2015-01-21  GAYNO    INITIAL VERSION
-    ! 2015-09-17  GAYNO    RENAME AS "GAUSSIAN_MAP_JACOB"
-    !
-    ! USAGE:  CALL GAUSSIAN_MAP_JACOB(YPTS,XLON,XLAT,YLON,YLAT)
-    !
-    !   INPUT ARGUMENT LIST:
-    !     YPTS     - Y-INDEX OF GRID POINT (REAL)
-    !
-    !   OUTPUT ARGUMENT LIST:
-    !     XLON     - DX/DLON IN 1/DEGREES (REAL)
-    !     XLAT     - DX/DLAT IN 1/DEGREES (REAL)
-    !     YLON     - DY/DLON IN 1/DEGREES (REAL)
-    !     YLAT     - DY/DLAT IN 1/DEGREES (REAL)
-    !
-    ! ATTRIBUTES:
-    !   LANGUAGE: FORTRAN 90
-    !
-    !$$$
 
+  
+  !> Computes the map jacobians for a gaussian cylindrical grid.
+  !!
+  !! @param[in] ypts y-index of grid point.
+  !! @param[out] xlon dx/dlon in 1/degrees.
+  !! @param[out] xlat dx/dlat in 1/degrees.
+  !! @param[out] ylon dy/dlon in 1/degrees.
+  !! @param[out] ylat dy/dlat in 1/degrees.
+  !!
+  !! @author George Gayno
+  !! @date July 2021
+  SUBROUTINE GAUSSIAN_MAP_JACOB(YPTS, XLON, XLAT, YLON, YLAT)
     IMPLICIT NONE
 
     REAL,                INTENT(IN   ) :: YPTS
@@ -545,34 +442,15 @@ contains
     YLAT=YLAT_ROW(NINT(YPTS))
 
   END SUBROUTINE GAUSSIAN_MAP_JACOB
-  !
+
+  !> Computes the grid box area for a gaussian cylindrical grid.
+  !!
+  !! @param[in] ypts y-index of grid point.
+  !! @param[out] area Area weights in m^2
+  !!
+  !! @author Mark Iredell, George Gayno
+  !! @date July 2021
   SUBROUTINE GAUSSIAN_GRID_AREA(YPTS,AREA)
-    !$$$  SUBPROGRAM DOCUMENTATION BLOCK
-    !
-    ! SUBPROGRAM:  GAUSSIAN_GRID_AREA  GRID BOX AREA FOR
-    !                                  GAUSSIAN CYLINDRICAL GRIDS
-    !
-    !   PRGMMR: GAYNO     ORG: W/NMC23       DATE: 2015-01-21
-    !
-    ! ABSTRACT: THIS SUBPROGRAM COMPUTES THE GRID BOX AREA FOR
-    !           A GAUSSIAN CYLINDRICAL GRID.
-    !
-    ! PROGRAM HISTORY LOG:
-    ! 2015-01-21  GAYNO    INITIAL VERSION
-    ! 2015-09-17  GAYNO    RENAME AS "GAUSSIAN_GRID_AREA"
-    !
-    ! USAGE:  CALL GAUSSIAN_GRID_AREA(YPTS,AREA)
-    !
-    !   INPUT ARGUMENT LIST:
-    !     YPTS     - Y-INDEX OF GRID POINT (REAL)
-    !
-    !   OUTPUT ARGUMENT LIST:
-    !     AREA     - AREA WEIGHTS IN M**2 (REAL)
-    !
-    ! ATTRIBUTES:
-    !   LANGUAGE: FORTRAN 90
-    !
-    !$$$
     IMPLICIT NONE
 
     REAL,            INTENT(IN   ) :: YPTS
