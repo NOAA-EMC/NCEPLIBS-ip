@@ -1,5 +1,5 @@
 !> @file
-!! Equidistant cylindrical grib decoder and grid coordinate transformations.
+!! @brief Equidistant cylindrical grib decoder and grid coordinate transformations.
 !! @author Mark Iredell, George Gayno, Kyle Gerheiser
 !! @date July 2021
 
