@@ -1,3 +1,13 @@
+!> @file
+!! @brief Routines for creating an ip_grid given a Grib descriptor.
+!! 
+!! @author Mark Iredell, George Gayno, Kyle Gerheiser
+!! @date July 2021
+
+!> Routines for creating an ip_grid given a Grib descriptor.
+!!
+!! @author George Gayno, Mark Iredell, Kyle Gerheiser
+!! @date July 2021
 module ip_grid_factory_mod
   use ip_grid_descriptor_mod
   use ip_grids_mod
@@ -13,6 +23,13 @@ module ip_grid_factory_mod
 
 contains
 
+  !> Initializes a polymorphic ip_grid object from an ip_grid_descriptor.
+  !!
+  !! @param[in] grid_desc Grid descriptor created from a grib1/grib2 template.
+  !! @return Initialized ip_grid.
+  !!
+  !! @author Kyle Gerheiser
+  !! @date July 2021
   function init_grid_generic(grid_desc) result(grid)
     class(ip_grid_descriptor), intent(in) :: grid_desc
     class(ip_grid), allocatable :: grid
@@ -24,8 +41,15 @@ contains
        grid = init_grid_grib2(grid_desc)
     end select
   end function init_grid_generic
-  
 
+  !> Initializes a polymorphic ip_grid from a grib1_descriptor.
+  !! The concrete grid type is chosen based on the grid number in the descriptor.
+  !!
+  !! @param[in] g1_desc
+  !! @return Initialized grid.
+  !!
+  !! @author Kyle Gerheiser
+  !! @date July 2021
   function init_grid_grib1(g1_desc) result(grid)
     type(grib1_descriptor), intent(in) :: g1_desc
     class(ip_grid), allocatable :: grid
@@ -53,7 +77,15 @@ contains
     allocate(grid%descriptor, source = g1_desc)
   end function init_grid_grib1
 
-
+  
+  !> Initializes a polymorphic ip_grid from a grib2_descriptor.
+  !! The concrete grid type is chosen based on the grid number in the descriptor.
+  !!
+  !! @param[in] g2_desc
+  !! @return Initialized grid.
+  !!
+  !! @author Kyle Gerheiser
+  !! @date July 2021
   function init_grid_grib2(g2_desc) result(grid)
     type(grib2_descriptor), intent(in) :: g2_desc
     class(ip_grid), allocatable :: grid
