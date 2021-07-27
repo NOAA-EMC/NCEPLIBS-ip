@@ -43,7 +43,10 @@ module ip_grid_mod
   !> Abstract grid that holds fields and methods common to all grids.
   !! ip_grid is meant to be subclassed when implementing a new grid.
   !!
-  !! There are three methods that must be implemented: init_grib1, init_grib2, and gdswzd.
+  !! There are three methods that must be implemented:
+  !! - init_grib1
+  !! - init_grib2
+  !! - gdswzd
   !!
   !! The init methods are responsible for setting up the grid
   !! using grib1/grib2 descriptors.
