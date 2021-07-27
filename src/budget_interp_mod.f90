@@ -1,8 +1,9 @@
 !> @file
 !! @brief Budget interpolation routines for scalars and vectors
 !! @author Mark Iredell, Kyle Gerheiser
+!! @date July 2021
 
-!> Budget interpolation routines for scalars and vectors
+!> Budget interpolation routines for scalars and vectors.
 !!
 !! @author George Gayno, Mark Iredell, Kyle Gerheiser
 module budget_interp_mod
@@ -23,56 +24,68 @@ module budget_interp_mod
 
 contains
 
-  !> THIS SUBPROGRAM PERFORMS BUDGET INTERPOLATION
-  !! FROM ANY GRID TO ANY GRID (OR TO RANDOM STATION
-  !! POINTS) FOR SCALAR FIELDS.  THE ALGORITHM
-  !! SIMPLY COMPUTES (WEIGHTED) AVERAGES OF
-  !! BILINEARLY INTERPOLATED POINTS ARRANGED IN A SQUARE BOX
-  !! CENTERED AROUND EACH OUTPUT GRID POINT AND STRETCHING
-  !! NEARLY HALFWAY TO EACH OF THE NEIGHBORING GRID POINTS.
-  !! OPTIONS ALLOW CHOICES OF NUMBER OF POINTS IN EACH RADIUS
-  !! FROM THE CENTER POINT (IPOPT(1)) WHICH DEFAULTS TO 2
-  !! (IF IPOPT(1)=-1) MEANING THAT 25 POINTS WILL BE AVERAGED;
-  !! FURTHER OPTIONS ARE THE RESPECTIVE WEIGHTS FOR THE RADIUS
-  !! POINTS STARTING AT THE CENTER POINT (IPOPT(2:2+IPOPT(1))
-  !! WHICH DEFAULTS TO ALL 1 (IF IPOPT(1)=-1 OR IPOPT(2)=-1).
-  !! A SPECIAL INTERPOLATION IS DONE IF IPOPT(2)=-2.
-  !! IN THIS CASE, THE BOXES STRETCH NEARLY ALL THE WAY TO
-  !! EACH OF THE NEIGHBORING GRID POINTS AND THE WEIGHTS
-  !! ARE THE ADJOINT OF THE BILINEAR INTERPOLATION WEIGHTS.
-  !! THIS CASE GIVES QUASI-SECOND-ORDER BUDGET INTERPOLATION.
-  !! ANOTHER OPTION IS THE MINIMUM PERCENTAGE FOR MASK,
-  !! I.E. PERCENT VALID INPUT DATA REQUIRED TO MAKE OUTPUT DATA,
-  !! (IPOPT(3+IPOPT(1)) WHICH DEFAULTS TO 50 (IF -1).
-  !! IN CASES WHERE THERE IS NO OR INSUFFICIENT VALID INPUT DATA,
-  !! THE USER MAY CHOOSE TO SEARCH FOR THE NEAREST VALID DATA. 
-  !! THIS IS INVOKED BY SETTING IPOPT(20) TO THE WIDTH OF 
-  !! THE SEARCH SQUARE. THE DEFAULT IS 1 (NO SEARCH).  SQUARES ARE
-  !! SEARCHED FOR VALID DATA IN A SPIRAL PATTERN
-  !! STARTING FROM THE CENTER.  NO SEARCHING IS DONE WHERE
-  !! THE OUTPUT GRID IS OUTSIDE THE INPUT GRID.
-  !! ONLY HORIZONTAL INTERPOLATION IS PERFORMED.
+  !> Performs budget interpolation
+  !! from any grid to any grid (or to random station
+  !! points) for scalar fields.
   !!
-  !! @param[in] ipopt INTERPOLATION OPTIONS
-  !! IPOPT(1) IS NUMBER OF RADIUS POINTS (DEFAULTS TO 2 IF IPOPT(1)=-1);
-  !! IPOPT(2:2+IPOPT(1)) ARE RESPECTIVE WEIGHTS (DEFAULTS TO ALL 1 IF IPOPT(1)=-1 OR IPOPT(2)=-1).
-  !! IPOPT(3+IPOPT(1)) IS MINIMUM PERCENTAGE FOR MASK (DEFAULTS TO 50 IF IPOPT(3+IPOPT(1)=-1)
+  !! The algorithm simply computes (weighted) averages of
+  !! bilinearly interpolated points arranged in a square box
+  !! centered around each output grid point and stretching
+  !! nearly halfway to each of the neighboring grid points.
+  !!
+  !! Options allow choices of number of points in each radius
+  !! from the center point (ipopt(1)) which defaults to 2
+  !! (if ipopt(1)=-1) meaning that 25 points will be averaged;
+  !! further options are the respective weights for the radius
+  !! points starting at the center point (ipopt(2:2+ipopt(1))
+  !! which defaults to all 1 (if ipopt(1)=-1 or ipopt(2)=-1).
+  !!
+  !! A special interpolation is done if ipopt(2)=-2.
+  !! in this case, the boxes stretch nearly all the way to
+  !! each of the neighboring grid points and the weights
+  !! are the adjoint of the bilinear interpolation weights.
+  !! This case gives quasi-second-order budget interpolation.
+  !!
+  !! Another option is the minimum percentage for mask,
+  !! i.e. percent valid input data required to make output data,
+  !! (ipopt(3+ipopt(1)) which defaults to 50 (if -1).
+  !!
+  !! In cases where there is no or insufficient valid input data,
+  !! the user may choose to search for the nearest valid data. 
+  !! this is invoked by setting ipopt(20) to the width of 
+  !! the search square. The default is 1 (no search). Squares are
+  !! searched for valid data in a spiral pattern
+  !! starting from the center. No searching is done where
+  !! the output grid is outside the input grid.
+  !!
+  !! Only horizontal interpolation is performed.
+  !!
+  !! @param[in] ipopt Interpolation options
+  !! - ipopt(1) is number of radius points (defaults to 2 if ipopt(1)=-1).
+  !! - ipopt(2:2+ipopt(1)) are respective weights (defaults to all 1 if ipopt(1)=-1 or ipopt(2)=-1).
+  !! - ipopt(3+ipopt(1)) is minimum percentage for mask (defaults to 50 if ipopt(3+ipopt(1)=-1).
   !! @param[in] grid_in Input grid
   !! @param[in] grid_out Output grid
-  !! @param[in]  MI SKIP NUMBER BETWEEN INPUT GRID FIELDS IF KM>1 OR DIMENSION OF INPUT GRID FIELDS IF KM=1
-  !! @param[out] MO SKIP NUMBER BETWEEN OUTPUT GRID FIELDS IF KM>1 OR DIMENSION OF OUTPUT GRID FIELDS IF KM=1
-  !! @param[in]  km NUMBER OF FIELDS TO INTERPOLATE
-  !! @param[in]  IBI INPUT BITMAP FLAGS
-  !! @param[in]  LI INPUT BITMAPS (IF SOME IBI(K)=1)
-  !! @param[in]  GI INPUT FIELDS TO INTERPOLATE
-  !! @param[in,out] NO  NUMBER OF OUTPUT POINTS (ONLY IF IGDTNUMO<0)
-  !! @param[in,out] RLAT OUTPUT LATITUDES IN DEGREES (IF IGDTNUMO<0)
-  !! @param[in,out] RLON OUTPUT LONGITUDES IN DEGREES (IF IGDTNUMO<0)
-  !! @param[out] IBO OUTPUT BITMAP FLAGS
-  !! @param[out] LO OUTPUT BITMAPS (ALWAYS OUTPUT)
-  !! @param[out] GO OUTPUT FIELDS INTERPOLATED
-  !! @param[out] IRET RETURN CODE
-  !! 0 SUCCESSFUL INTERPOLATION, 2 UNRECOGNIZED INPUT GRID OR NO GRID OVERLAP, 3 UNRECOGNIZED OUTPUT GRID, 32 INVALID BUDGET METHOD PARAMETERS
+  !! @param[in]  mi Skip number between input grid fields if km>1 or dimension of input grid fields if km=1.
+  !! @param[out] mo Skip number between output grid fields if km>1 or dimension of output grid fields if km=1.
+  !! @param[in]  km Number of fields to interpolate.
+  !! @param[in]  ibi Input bitmap flags.
+  !! @param[in]  li Input bitmaps (if some ibi(k)=1).
+  !! @param[in]  gi Input fields to interpolate.
+  !! @param[in,out] no  Number of output points (only if igdtnumo<0).
+  !! @param[in,out] rlat Output latitudes in degrees (if igdtnumo<0).
+  !! @param[in,out] rlon Output longitudes in degrees (if igdtnumo<0).
+  !! @param[out] ibo Output bitmap flags.
+  !! @param[out] lo Output bitmaps (always output).
+  !! @param[out] go Output fields interpolated.
+  !! @param[out] iret Return code.
+  !! - 0 Successful interpolation.
+  !! - 2 Unrecognized input grid or no grid overlap.
+  !! - 3 Unrecognized output grid.
+  !! - 32 Invalid budget method parameters.
+  !!
+  !! @author Marke Iredell, George Gayno, Kyle Gerheiser
+  !! @date July 2021
   SUBROUTINE interpolate_budget_scalar(IPOPT,grid_in,grid_out, &
        MI,MO,KM,IBI,LI,GI, &
        NO,RLAT,RLON,IBO,LO,GO,IRET)
@@ -326,219 +339,76 @@ contains
     ! - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   END SUBROUTINE interpolate_budget_scalar
 
-  !> THIS SUBPROGRAM PERFORMS BUDGET INTERPOLATION
-  !! FROM ANY GRID TO ANY GRID (OR TO RANDOM STATION
-  !! POINTS) FOR VECTOR FIELDS.  THE ALGORITHM
-  !! SIMPLY COMPUTES (WEIGHTED) AVERAGES OF
-  !! BILINEARLY INTERPOLATED POINTS ARRANGED IN A SQUARE BOX
-  !! CENTERED AROUND EACH OUTPUT GRID POINT AND STRETCHING
-  !! NEARLY HALFWAY TO EACH OF THE NEIGHBORING GRID POINTS.
-  !! OPTIONS ALLOW CHOICES OF NUMBER OF POINTS IN EACH RADIUS
-  !! FROM THE CENTER POINT (IPOPT(1)) WHICH DEFAULTS TO 2
-  !! (IF IPOPT(1)=-1) MEANING THAT 25 POINTS WILL BE AVERAGED;
-  !! FURTHER OPTIONS ARE THE RESPECTIVE WEIGHTS FOR THE RADIUS
-  !! POINTS STARTING AT THE CENTER POINT (IPOPT(2:2+IPOPT(1))
-  !! WHICH DEFAULTS TO ALL 1 (IF IPOPT(1)=-1 OR IPOPT(2)=-1).
-  !! A SPECIAL INTERPOLATION IS DONE IF IPOPT(2)=-2.
-  !! IN THIS CASE, THE BOXES STRETCH NEARLY ALL THE WAY TO
-  !! EACH OF THE NEIGHBORING GRID POINTS AND THE WEIGHTS
-  !! ARE THE ADJOINT OF THE BILINEAR INTERPOLATION WEIGHTS.
-  !! THIS CASE GIVES QUASI-SECOND-ORDER BUDGET INTERPOLATION.
-  !! ANOTHER OPTION IS THE MINIMUM PERCENTAGE FOR MASK,
-  !! I.E. PERCENT VALID INPUT DATA REQUIRED TO MAKE OUTPUT DATA,
-  !! (IPOPT(3+IPOPT(1)) WHICH DEFAULTS TO 50 (IF -1).
-  !! IN CASES WHERE THERE IS NO OR INSUFFICIENT VALID INPUT DATA,
-  !! THE USER MAY CHOOSE TO SEARCH FOR THE NEAREST VALID DATA. 
-  !! THIS IS INVOKED BY SETTING IPOPT(20) TO THE WIDTH OF 
-  !! THE SEARCH SQUARE. THE DEFAULT IS 1 (NO SEARCH).  SQUARES ARE
-  !! SEARCHED FOR VALID DATA IN A SPIRAL PATTERN
-  !! STARTING FROM THE CENTER.  NO SEARCHING IS DONE WHERE
-  !! THE OUTPUT GRID IS OUTSIDE THE INPUT GRID.
-  !! ONLY HORIZONTAL INTERPOLATION IS PERFORMED.
+  
+  !> This subprogram performs budget interpolation
+  !! from any grid to any grid (or to random station
+  !! points) for vector fields.
   !!
-  !! param[in] ipopt INTERPOLATION OPTIONS
-  !! IPOPT(1) IS NUMBER OF RADIUS POINTS (DEFAULTS TO 2 IF IPOPT(1)=-1);
-  !! IPOPT(2:2+IPOPT(1)) ARE RESPECTIVE WEIGHTS (DEFAULTS TO ALL 1 IF IPOPT(1)=-1 OR IPOPT(2)=-1).
-  !! IPOPT(3+IPOPT(1)) IS MINIMUM PERCENTAGE FOR MASK (DEFAULTS TO 50 IF IPOPT(3+IPOPT(1)=-1)
-  !! @param[in] grid_in Input grid
-  !! @param[in] grid_out Output grid
-  !! @param[in]  MI SKIP NUMBER BETWEEN INPUT GRID FIELDS IF KM>1 OR DIMENSION OF INPUT GRID FIELDS IF KM=1
-  !! @param[out] MO SKIP NUMBER BETWEEN OUTPUT GRID FIELDS IF KM>1 OR DIMENSION OF OUTPUT GRID FIELDS IF KM=1
-  !! @param[in]  km NUMBER OF FIELDS TO INTERPOLATE
-  !! @param[in]  IBI INPUT BITMAP FLAGS
-  !! @param[in]  LI INPUT BITMAPS (IF SOME IBI(K)=1)
-  !! @param[in]  UI INPUT U-COMPONENT FIELDS to INTERPOLATE
-  !! @param[in]  VI INPUT V-COMPONENT FIELDS to INTERPOLATE
-  !! @param[in,out] NO  NUMBER OF OUTPUT POINTS (ONLY IF IGDTNUMO<0)
-  !! @param[in,out] RLAT OUTPUT LATITUDES IN DEGREES (IF IGDTNUMO<0)
-  !! @param[in,out] RLON OUTPUT LONGITUDES IN DEGREES (IF IGDTNUMO<0)
-  !! @param[in,out] CROT VECTOR ROTATION COSINES (IF IGDTNUMO<0) UGRID=CROT*UEARTH-SROT*VEARTH;
-  !! @param[in,out] SROT VECTOR ROTATION SINES (IF IGDTNUMO<0) VGRID=SROT*UEARTH+CROT*VEARTH)
-  !! @param[out] IBO OUTPUT BITMAP FLAGS
-  !! @param[out] LO OUTPUT BITMAPS (ALWAYS OUTPUT)
-  !! @param[out] UO OUTPUT U-COMPONENT FIELDS INTERPOLATED
-  !! @param[out] VO OUTPUT V-COMPONENT FIELDS INTERPOLATED
-  !! @param[out] IRET RETURN CODE
-  !! 0 SUCCESSFUL INTERPOLATION, 2 UNRECOGNIZED INPUT GRID OR NO GRID OVERLAP, 3 UNRECOGNIZED OUTPUT GRID, 32 INVALID BUDGET PARAMETERS
+  !! The algorithm simply computes (weighted) averages of
+  !! bilinearly interpolated points arranged in a square box
+  !! centered around each output grid point and stretching
+  !! nearly halfway to each of the neighboring grid points.
+  !!
+  !! Options allow choices of number of points in each radius
+  !! from the center point (ipopt(1)) which defaults to 2
+  !! (if ipopt(1)=-1) meaning that 25 points will be averaged;
+  !! further options are the respective weights for the radius
+  !! points starting at the center point (ipopt(2:2+ipopt(1))
+  !! which defaults to all 1 (if ipopt(1)=-1 or ipopt(2)=-1).
+  !!
+  !! A special interpolation is done if ipopt(2)=-2.
+  !! in this case, the boxes stretch nearly all the way to
+  !! each of the neighboring grid points and the weights
+  !! are the adjoint of the bilinear interpolation weights.
+  !! This case gives quasi-second-order budget interpolation.
+  !!
+  !! Another option is the minimum percentage for mask,
+  !! i.e. percent valid input data required to make output data,
+  !! (ipopt(3+ipopt(1)) which defaults to 50 (if -1).
+  !!
+  !! In cases where there is no or insufficient valid input data,
+  !! the user may choose to search for the nearest valid data. 
+  !! this is invoked by setting ipopt(20) to the width of 
+  !! the search square. The default is 1 (no search). Squares are
+  !! searched for valid data in a spiral pattern
+  !! starting from the center. No searching is done where
+  !! the output grid is outside the input grid.
+  !!
+  !! Only horizontal interpolation is performed.
+  !!
+  !! param[in] ipopt interpolation options
+  !! ipopt(1) Number of radius points (defaults to 2 if ipopt(1)=-1);
+  !! ipopt(2:2+ipopt(1)) Respective weights (defaults to all 1 if ipopt(1)=-1 or ipopt(2)=-1).
+  !! ipopt(3+ipopt(1)) Minimum percentage for mask (defaults to 50 if ipopt(3+ipopt(1)=-1)
+  !! @param[in] grid_in Input grid.
+  !! @param[in] grid_out Output grid.
+  !! @param[in]  mi skip Number between input grid fields if km>1 or dimension of input grid fields if km=1.
+  !! @param[out] mo skip Number between output grid fields if km>1 or dimension of output grid fields if km=1.
+  !! @param[in]  km Number of fields to interpolate.
+  !! @param[in]  ibi Input bitmap flags.
+  !! @param[in]  li Input bitmaps (if some ibi(k)=1).
+  !! @param[in]  ui Input u-component fields to interpolate.
+  !! @param[in]  vi Input v-component fields to interpolate.
+  !! @param[in,out] no  Number of output points (only if igdtnumo<0)
+  !! @param[in,out] rlat Output latitudes in degrees (if igdtnumo<0)
+  !! @param[in,out] rlon Output longitudes in degrees (if igdtnumo<0)
+  !! @param[in,out] crot Vector rotation cosines. If interpolating subgrid ugrid=crot * uearth - srot * vearth.
+  !! @param[in,out] srot Vector rotation sines. If interpolating subgrid vgrid = srot * uearth + crot * vearth.
+  !! @param[out] ibo Output bitmap flags.
+  !! @param[out] lo Output bitmaps (always output).
+  !! @param[out] uo Output u-component fields interpolated.
+  !! @param[out] vo Output v-component fields interpolated.
+  !! @param[out] iret Return code.
+  !! - 0 Successful interpolation.
+  !! - 2 Unrecognized input grid or no grid overlap.
+  !! - 3 Unrecognized output grid.
+  !! - 32 Invalid budget method parameters.
+  !! 
+  !! @author Marke Iredell, George Gayno, Kyle Gerheiser
+  !! @date July 2021
   SUBROUTINE interpolate_budget_vector(IPOPT,grid_in,grid_out, &
        MI,MO,KM,IBI,LI,UI,VI, &
        NO,RLAT,RLON,CROT,SROT,IBO,LO,UO,VO,IRET)
-    !$$$  SUBPROGRAM DOCUMENTATION BLOCK
-    !
-    ! SUBPROGRAM:  POLATEV3   INTERPOLATE VECTOR FIELDS (BUDGET)
-    !   PRGMMR: IREDELL       ORG: W/NMC23       DATE: 96-04-10
-    !
-    ! ABSTRACT: THIS SUBPROGRAM PERFORMS BUDGET INTERPOLATION
-    !           FROM ANY GRID TO ANY GRID FOR VECTOR FIELDS.
-    !           THE ALGORITHM SIMPLY COMPUTES (WEIGHTED) AVERAGES
-    !           OF BILINEARLY INTERPOLATED POINTS ARRANGED IN A SQUARE BOX
-    !           CENTERED AROUND EACH OUTPUT GRID POINT AND STRETCHING
-    !           NEARLY HALFWAY TO EACH OF THE NEIGHBORING GRID POINTS.
-    !           OPTIONS ALLOW CHOICES OF NUMBER OF POINTS IN EACH RADIUS
-    !           FROM THE CENTER POINT (IPOPT(1)) WHICH DEFAULTS TO 2
-    !           (IF IPOPT(1)=-1) MEANING THAT 25 POINTS WILL BE AVERAGED;
-    !           FURTHER OPTIONS ARE THE RESPECTIVE WEIGHTS FOR THE RADIUS
-    !           POINTS STARTING AT THE CENTER POINT (IPOPT(2:2+IPOPT(1))
-    !           WHICH DEFAULTS TO ALL 1 (IF IPOPT(1)=-1 OR IPOPT(2)=-1).
-    !           A SPECIAL INTERPOLATION IS DONE IF IPOPT(2)=-2.
-    !           IN THIS CASE, THE BOXES STRETCH NEARLY ALL THE WAY TO
-    !           EACH OF THE NEIGHBORING GRID POINTS AND THE WEIGHTS
-    !           ARE THE ADJOINT OF THE BILINEAR INTERPOLATION WEIGHTS.
-    !           THIS CASE GIVES QUASI-SECOND-ORDER BUDGET INTERPOLATION.
-    !           ANOTHER OPTION IS THE MINIMUM PERCENTAGE FOR MASK,
-    !           I.E. PERCENT VALID INPUT DATA REQUIRED TO MAKE OUTPUT DATA,
-    !           (IPOPT(3+IPOPT(1)) WHICH DEFAULTS TO 50 (IF -1).
-    !           ONLY HORIZONTAL INTERPOLATION IS PERFORMED.
-    !
-    !           THE INPUT AND OUTPUT GRIDS ARE DEFINED BY THEIR GRIB 2 GRID
-    !           DEFINITION TEMPLATE AS DECODED BY THE NCEP G2 LIBRARY.  THE
-    !           CODE RECOGNIZES THE FOLLOWING PROJECTIONS, WHERE
-    !           "IGDTNUMI/O" IS THE GRIB 2 GRID DEFINTION TEMPLATE NUMBER
-    !           FOR THE INPUT AND OUTPUT GRIDS, RESPECTIVELY:
-    !             (IGDTNUMI/O=00) EQUIDISTANT CYLINDRICAL
-    !             (IGDTNUMI/O=01) ROTATED EQUIDISTANT CYLINDRICAL. "E" AND
-    !                             NON-"E" STAGGERED
-    !             (IGDTNUMI/O=10) MERCATOR CYLINDRICAL
-    !             (IGDTNUMI/O=20) POLAR STEREOGRAPHIC AZIMUTHAL
-    !             (IGDTNUMI/O=30) LAMBERT CONFORMAL CONICAL
-    !             (IGDTNUMI/O=40) GAUSSIAN CYLINDRICAL
-    !
-    !           THE INPUT AND OUTPUT VECTORS ARE ROTATED SO THAT THEY ARE
-    !           EITHER RESOLVED RELATIVE TO THE DEFINED GRID
-    !           IN THE DIRECTION OF INCREASING X AND Y COORDINATES
-    !           OR RESOLVED RELATIVE TO EASTERLY AND NORTHERLY DIRECTIONS,
-    !           AS DESIGNATED BY THEIR RESPECTIVE GRID DESCRIPTION SECTIONS.
-    !
-    !           AS AN ADDED BONUS THE NUMBER OF OUTPUT GRID POINTS AND
-    !           THEIR LATITUDES AND LONGITUDES ARE ALSO RETURNED
-    !           ALONG WITH THEIR VECTOR ROTATION PARAMETERS. ON THE OTHER
-    !           THE OUTPUT CAN BE A SET OF STATION POINTS IF
-    !           IGDTNUMO=IGDTNUMO-255, IN WHICH CASE THE NUMBER OF POINTS
-    !           AND THEIR LATITUDES AND LONGITUDES MUST BE INPUT.
-    !
-    !           INPUT BITMAPS WILL BE INTERPOLATED TO OUTPUT BITMAPS.
-    !           OUTPUT BITMAPS WILL ALSO BE CREATED WHEN THE OUTPUT GRID
-    !           EXTENDS OUTSIDE OF THE DOMAIN OF THE INPUT GRID.
-    !           THE OUTPUT FIELD IS SET TO 0 WHERE THE OUTPUT BITMAP IS OFF.
-    !        
-    ! PROGRAM HISTORY LOG:
-    !   96-04-10  IREDELL
-    ! 1999-04-08  IREDELL  SPLIT IJKGDS INTO TWO PIECES
-    ! 1999-04-08  IREDELL  ADDED BILINEAR OPTION IPOPT(2)=-2
-    ! 2001-06-18  IREDELL  INCLUDE MINIMUM MASK PERCENTAGE OPTION
-    ! 2002-01-17  IREDELL  SAVE DATA FROM LAST CALL FOR OPTIMIZATION
-    ! 2006-01-05  GAYNO    ADDED OPTION TO TO DO SUBSECTION OF OUTPUT GRID.
-    ! 2015-01-27  GAYNO    REPLACE CALLS TO GDSWIZ WITH NEW MERGED
-    !                      ROUTINE GDSWZD.
-    ! 2015-07-13  GAYNO    CONVERT TO GRIB 2. REPLACE GRIB 1 KGDS ARRAYS
-    !                      WITH GRIB 2 GRID DEFINITION TEMPLATE ARRAYS.
-    !
-    ! USAGE:    CALL POLATEV3(IPOPT,IGDTNUMI,IGDTMPLI,IGDTLENI, &
-    !                     IGDTNUMO,IGDTMPLO,IGDTLENO, &
-    !                     MI,MO,KM,IBI,LI,UI,VI, &
-    !                     NO,RLAT,RLON,CROT,SROT,IBO,LO,UO,VO,IRET)
-    !
-    !   INPUT ARGUMENT LIST:
-    !     IPOPT    - INTEGER (20) INTERPOLATION OPTIONS
-    !                IPOPT(1) IS NUMBER OF RADIUS POINTS
-    !                (DEFAULTS TO 2 IF IPOPT(1)=-1);
-    !                IPOPT(2:2+IPOPT(1)) ARE RESPECTIVE WEIGHTS
-    !                (DEFAULTS TO ALL 1 IF IPOPT(1)=-1 OR IPOPT(2)=-1).
-    !                IPOPT(3+IPOPT(1)) IS MINIMUM PERCENTAGE FOR MASK
-    !                (DEFAULTS TO 50 IF IPOPT(3+IPOPT(1)=-1)
-    !     IGDTNUMI - INTEGER GRID DEFINITION TEMPLATE NUMBER - INPUT GRID.
-    !                CORRESPONDS TO THE GFLD%IGDTNUM COMPONENT OF THE
-    !                NCEP G2 LIBRARY GRIDMOD DATA STRUCTURE:
-    !                  00 - EQUIDISTANT CYLINDRICAL
-    !                  01 - ROTATED EQUIDISTANT CYLINDRICAL.  "E"
-    !                       AND NON-"E" STAGGERED
-    !                  10 - MERCATOR CYCLINDRICAL
-    !                  20 - POLAR STEREOGRAPHIC AZIMUTHAL
-    !                  30 - LAMBERT CONFORMAL CONICAL
-    !                  40 - GAUSSIAN EQUIDISTANT CYCLINDRICAL
-    !     IGDTMPLI - INTEGER (IGDTLENI) GRID DEFINITION TEMPLATE ARRAY -
-    !                INPUT GRID. CORRESPONDS TO THE GFLD%IGDTMPL COMPONENT
-    !                OF THE NCEP G2 LIBRARY GRIDMOD DATA STRUCTURE.
-    !                (SECTION 3 INFO).  SEE COMMENTS IN ROUTINE
-    !                IPOLATEV FOR COMPLETE DEFINITION.
-    !     IGDTLENI - INTEGER NUMBER OF ELEMENTS OF THE GRID DEFINITION
-    !                TEMPLATE ARRAY - INPUT GRID.  CORRESPONDS TO THE GFLD%IGDTLEN
-    !                COMPONENT OF THE NCEP G2 LIBRARY GRIDMOD DATA STRUCTURE.
-    !     IGDTNUMO - INTEGER GRID DEFINITION TEMPLATE NUMBER - OUTPUT GRID.
-    !                CORRESPONDS TO THE GFLD%IGDTNUM COMPONENT OF THE
-    !                NCEP G2 LIBRARY GRIDMOD DATA STRUCTURE. IGDTNUMO=IGDTNUM-255
-    !                MEANS INTERPOLATE TO RANDOM STATION POINTS.
-    !                OTHERWISE, SAME DEFINITION AS "IGDTNUMI".
-    !     IGDTMPLO - INTEGER (IGDTLENO) GRID DEFINITION TEMPLATE ARRAY -
-    !                OUTPUT GRID. CORRESPONDS TO THE GFLD%IGDTMPL COMPONENT
-    !                OF THE NCEP G2 LIBRARY GRIDMOD DATA STRUCTURE.
-    !                (SECTION 3 INFO).  SEE COMMENTS IN ROUTINE
-    !                IPOLATEV FOR COMPLETE DEFINITION.
-    !     IGDTLENO - INTEGER NUMBER OF ELEMENTS OF THE GRID DEFINITION
-    !                TEMPLATE ARRAY - OUTPUT GRID.  CORRESPONDS TO THE GFLD%IGDTLEN
-    !                COMPONENT OF THE NCEP G2 LIBRARY GRIDMOD DATA STRUCTURE.
-    !     MI       - INTEGER SKIP NUMBER BETWEEN INPUT GRID FIELDS IF KM>1
-    !                OR DIMENSION OF INPUT GRID FIELDS IF KM=1
-    !     MO       - INTEGER SKIP NUMBER BETWEEN OUTPUT GRID FIELDS IF KM>1
-    !                OR DIMENSION OF OUTPUT GRID FIELDS IF KM=1
-    !     KM       - INTEGER NUMBER OF FIELDS TO INTERPOLATE
-    !     IBI      - INTEGER (KM) INPUT BITMAP FLAGS
-    !     LI       - LOGICAL*1 (MI,KM) INPUT BITMAPS (IF SOME IBI(K)=1)
-    !     UI       - REAL (MI,KM) INPUT U-COMPONENT FIELDS TO INTERPOLATE
-    !     VI       - REAL (MI,KM) INPUT V-COMPONENT FIELDS TO INTERPOLATE
-    !     RLAT     - REAL (MO) INPUT LATITUDES IN DEGREES (IGDTNUMO<0)
-    !     RLON     - REAL (MO) INPUT LONGITUDES IN DEGREES (IGDTNUMO<0)
-    !
-    !   OUTPUT ARGUMENT LIST:
-    !     NO       - INTEGER NUMBER OF OUTPUT POINTS
-    !     RLAT     - REAL (MO) OUTPUT LATITUDES IN DEGREES (IGDTNUMO>=0)
-    !     RLON     - REAL (MO) OUTPUT LONGITUDES IN DEGREES (IGDTNUMO>=0)
-    !     CROT     - REAL (MO) VECTOR ROTATION COSINES
-    !     SROT     - REAL (MO) VECTOR ROTATION SINES
-    !                (UGRID=CROT*UEARTH-SROT*VEARTH;
-    !                 VGRID=SROT*UEARTH+CROT*VEARTH)
-    !     IBO      - INTEGER (KM) OUTPUT BITMAP FLAGS
-    !     LO       - LOGICAL*1 (MO,KM) OUTPUT BITMAPS (ALWAYS OUTPUT)
-    !     UO       - REAL (MO,KM) OUTPUT U-COMPONENT FIELDS INTERPOLATED
-    !     VO       - REAL (MO,KM) OUTPUT V-COMPONENT FIELDS INTERPOLATED
-    !     IRET     - INTEGER RETURN CODE
-    !                0    SUCCESSFUL INTERPOLATION
-    !                2    UNRECOGNIZED INPUT GRID OR NO GRID OVERLAP
-    !                3    UNRECOGNIZED OUTPUT GRID
-    !                32   INVALID BUDGET METHOD PARAMETERS
-    !
-    ! SUBPROGRAMS CALLED:
-    !   CHECK_GRIDS3V CHECK IF GRID SPECS HAVE CHANGED
-    !   GDSWZD        GRID DESCRIPTION SECTION WIZARD
-    !   IJKGDS0       SET UP PARAMETERS FOR IJKGDS1
-    !   IJKGDS1       RETURN FIELD POSITION FOR A GIVEN GRID POINT
-    !   MOVECT        MOVE A VECTOR ALONG A GREAT CIRCLE
-    !   POLFIXV       MAKE MULTIPLE POLE VECTOR VALUES CONSISTENT
-    !
-    ! ATTRIBUTES:
-    !   LANGUAGE: FORTRAN 90
-    !
-    !$$$
     class(ip_grid), intent(in) :: grid_in, grid_out
     INTEGER,          INTENT(IN   ) :: IPOPT(20), IBI(KM)
     INTEGER,          INTENT(IN   ) :: KM, MI, MO
