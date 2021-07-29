@@ -1,37 +1,76 @@
+!> @file
+!! @brief Abstract ip_grid type
+!!
+!! @author Kyle Gerheiser
+!! @date July 2021
+
+!> Abstract ip_grid type
 module ip_grid_mod
   use ip_grid_descriptor_mod
   implicit none
 
-  integer, public, parameter :: EQUID_CYLIND_GRID_ID_GRIB1 = 0
-  integer, public, parameter :: MERCATOR_GRID_ID_GRIB1 = 1
-  integer, public, parameter :: LAMBERT_CONF_GRID_ID_GRIB1 = 3
-  integer, public, parameter :: GAUSSIAN_GRID_ID_GRIB1 = 4
-  integer, public, parameter :: POLAR_STEREO_GRID_ID_GRIB1 = 5
-  integer, public, parameter :: ROT_EQUID_CYLIND_E_GRID_ID_GRIB1 = 203
-  integer, public, parameter :: ROT_EQUID_CYLIND_B_GRID_ID_GRIB1 = 205
+  integer, public, parameter :: EQUID_CYLIND_GRID_ID_GRIB1 = 0 !< Integer grid number for equidistant cylindrical grid in grib1
+  integer, public, parameter :: MERCATOR_GRID_ID_GRIB1 = 1 !< Integer grid number for Mercator grid in grib1
+  integer, public, parameter :: LAMBERT_CONF_GRID_ID_GRIB1 = 3 !< Integer grid number for Lambert Conformal grid in grib1
+  integer, public, parameter :: GAUSSIAN_GRID_ID_GRIB1 = 4 !< Integer grid number for Gaussian grid in grib1
+  integer, public, parameter :: POLAR_STEREO_GRID_ID_GRIB1 = 5 !< Integer grid number for polar stereo grid in grib1
+  integer, public, parameter :: ROT_EQUID_CYLIND_E_GRID_ID_GRIB1 = 203 !< Integer grid number for rotated equidistant cylindrical E-stagger grid
+  integer, public, parameter :: ROT_EQUID_CYLIND_B_GRID_ID_GRIB1 = 205 !< Integer grid number for rotated equidistant cylindrical B-stagger grid
 
-  integer, public, parameter :: EQUID_CYLIND_GRID_ID_GRIB2 = 0
-  integer, public, parameter :: ROT_EQUID_CYLIND_GRID_ID_GRIB2 = 1
-  integer, public, parameter :: MERCATOR_GRID_ID_GRIB2 = 10
-  integer, public, parameter :: POLAR_STEREO_GRID_ID_GRIB2 = 20
-  integer, public, parameter :: LAMBERT_CONF_GRID_ID_GRIB2 = 30
-  integer, public, parameter :: GAUSSIAN_GRID_ID_GRIB2 = 40
+  integer, public, parameter :: EQUID_CYLIND_GRID_ID_GRIB2 = 0 !< Integer grid number for equidistant cylindrical grid in grib2
+  integer, public, parameter :: ROT_EQUID_CYLIND_GRID_ID_GRIB2 = 1 !< Integer grid number for rotated equidistant cylindrical grid in grib2
+  integer, public, parameter :: MERCATOR_GRID_ID_GRIB2 = 10 !< Integer grid number for Mercator grid in grib2
+  integer, public, parameter :: POLAR_STEREO_GRID_ID_GRIB2 = 20 !< Integer grid number for polar stereo grid in grib2
+  integer, public, parameter :: LAMBERT_CONF_GRID_ID_GRIB2 = 30 !< Integer grid number for Lambert conformal grid in grib2
+  integer, public, parameter :: GAUSSIAN_GRID_ID_GRIB2 = 40 !< Integer grid number for Gaussian grid in grib2
 
   private
   public :: ip_grid, gdswzd_interface, operator(==)
 
+  !> Abstract grid that holds fields and methods common to all grids.
+  !! ip_grid is meant to be subclassed when implementing a new grid.
+  !!
+  !! There are three methods that must be implemented:
+  !! - init_grib1
+  !! - init_grib2
+  !! - gdswzd
+  !!
+  !! The init methods are responsible for setting up the grid
+  !! using grib1/grib2 descriptors.
+  !!
+  !! Gdswzd performs transformations to/from Earth coordinates and grid coordinates.
+  !!
+  !! @author Kyle Gerheiser
+  !! @date July 2021
   type, abstract :: ip_grid
      class(ip_grid_descriptor), allocatable :: descriptor
-
-     integer :: im, jm, nm
-     integer :: nscan, kscan, nscan_field_pos
-     integer :: iwrap, jwrap1, jwrap2
      
-     real :: rerth, eccen_squared
+     integer :: im !< Number of x points
+     integer :: jm !< Number of y points
+     integer :: nm !< Total number of points
+
+     !> @param Scanning mode.
+     !! 0 if x first then y;
+     !! 1 if y first then x;
+     !! 3 if staggered diagonal like projection 203.
+     integer :: nscan 
+     integer :: kscan !< Mass/wind flag for staggered diagonal (0 if mass; 1 if wind)
+
+     integer :: nscan_field_pos !< nscan for field_pos routine. Can be different than nscan due to differences in grib/grib2.
+     
+     integer :: iwrap !< x wraparound increment (0 if no wraparound).
+     integer :: jwrap1 !< y wraparound lower pivot point (0 if no wraparound).
+     integer :: jwrap2 !< y wraparound upper pivot point (0 if no wraparound).
+     real :: rerth !< Radius of the Earth.
+     real :: eccen_squared !< Eccentricity of the Earth squared (e^2)
    contains
+     !> Initializer for grib1 input descriptor.
      procedure(init_grib1_interface), deferred :: init_grib1
+     !> Initializer for grib2 input descriptor.
      procedure(init_grib2_interface), deferred :: init_grib2
+     !> Coordinate transformations for the grid.
      procedure(gdswzd_interface), deferred :: gdswzd
+     !> Field position for a given grid point.
      procedure :: field_pos
      generic :: init => init_grib1, init_grib2
   end type ip_grid
@@ -73,11 +112,30 @@ module ip_grid_mod
 
 contains
 
+  !> Compares two grids.
+  !!
+  !! @param[in] grid1 An ip_grid
+  !! @param[in] grid2 Another ip_grid
+  !!
+  !! @return True if the grids are the same, false if not.
+  !!
+  !! @author Kyle Gerheiser
+  !! @date July 2021
   logical function is_same_grid(grid1, grid2)
     class(ip_grid), intent(in) :: grid1, grid2
     is_same_grid = grid1%descriptor == grid2%descriptor
   end function is_same_grid
-  
+
+  !> Returns the field position for a given grid point.
+  !!
+  !! @param[in] self
+  !! @param[in] i 
+  !! @param[in] j
+  !!
+  !! @return Integer position in grib field to locate grid point.
+  !!
+  !! @author Mark Iredell, George Gayno, Kyle Gerheiser
+  !! @date April 1996
   function field_pos(self, i, j)
     class(ip_grid), intent(in) :: self
     integer, intent(in) :: i, j
