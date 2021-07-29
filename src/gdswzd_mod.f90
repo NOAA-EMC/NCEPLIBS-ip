@@ -1,7 +1,7 @@
 !> @file
 !! @brief Driver module for gdswzd routines.
 !!
-!! @date July 2021
+!! @date Jan 2015
 !! @author George Gayno, Kyle Gerheiser
 
 !> Driver module for gdswzd routines.
@@ -21,7 +21,7 @@
 !! - Rotated Equidistant Cyclindrical ("E" and non-"E" staggers)
 !!
 !! @author Mark Iredell, George Gayno, Kyle Gerheiser
-!! @date July 2021
+!! @date Jan 2015
 MODULE GDSWZD_MOD
   use ip_grid_descriptor_mod
   use ip_grids_mod
