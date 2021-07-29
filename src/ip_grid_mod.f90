@@ -57,16 +57,33 @@ module ip_grid_mod
   !! @date July 2021
   type, abstract :: ip_grid
      class(ip_grid_descriptor), allocatable :: descriptor
-
-     integer :: im, jm, nm
-     integer :: nscan, kscan, nscan_field_pos
-     integer :: iwrap, jwrap1, jwrap2
      
-     real :: rerth, eccen_squared
+     integer :: im !< Number of x points
+     integer :: jm !< Number of y points
+     integer :: nm !< Total number of points
+
+     !> @param Scanning mode.
+     !! 0 if x first then y;
+     !! 1 if y first then x;
+     !! 3 if staggered diagonal like projection 203.
+     integer :: nscan 
+     integer :: kscan !< Mass/wind flag for staggered diagonal (0 if mass; 1 if wind)
+
+     integer :: nscan_field_pos !< nscan for field_pos routine. Can be different than nscan due to differences in grib/grib2.
+     
+     integer :: iwrap !< x wraparound increment (0 if no wraparound).
+     integer :: jwrap1 !< y wraparound lower pivot point (0 if no wraparound).
+     integer :: jwrap2 !< y wraparound upper pivot point (0 if no wraparound).
+     real :: rerth !< Radius of the Earth.
+     real :: eccen_squared !< Eccentricity of the Earth squared (e^2)
    contains
+     !> Initializer for grib1 input descriptor.
      procedure(init_grib1_interface), deferred :: init_grib1
+     !> Initializer for grib2 input descriptor.
      procedure(init_grib2_interface), deferred :: init_grib2
+     !> Coordinate transformations for the grid.
      procedure(gdswzd_interface), deferred :: gdswzd
+     !> Field position for a given grid point.
      procedure :: field_pos
      generic :: init => init_grib1, init_grib2
   end type ip_grid
@@ -125,13 +142,13 @@ contains
   !> Returns the field position for a given grid point.
   !!
   !! @param[in] self
-  !! @param[in] i
+  !! @param[in] i 
   !! @param[in] j
   !!
   !! @return Integer position in grib field to locate grid point.
   !!
-  !! @author Kyle Gerheiser
-  !! @date July 2021
+  !! @author Mark Iredell, George Gayno, Kyle Gerheiser
+  !! @date April 1996
   function field_pos(self, i, j)
     class(ip_grid), intent(in) :: self
     integer, intent(in) :: i, j
@@ -142,12 +159,21 @@ contains
     integer :: jwrap1, jwrap2, kscan, nscan
 
     ! extract from navigation parameter array
+    ! Number of x points
     im=self%im
+    ! Number of y points
     jm=self%jm
+    ! x wraparound increment (0 if no wraparound)
     iwrap=self%iwrap
+    ! y wraparound lower pivot point (0 if no wraparound)
     jwrap1=self%jwrap1
+    ! y wraparound upper pivot point (0 if no wraparound)
     jwrap2=self%jwrap2
+    ! Scanning mode 0 if x first then y;
+    ! 1 if y first then x;
+    ! 3 if staggered diagonal like projection 203
     nscan=self%nscan_field_pos
+    ! Mass/wind flag for staggered diagonal (0 if mass; 1 if wind)
     kscan=self%kscan
 
     ! compute wraparounds in x and y if necessary and possible
