@@ -159,21 +159,12 @@ contains
     integer :: jwrap1, jwrap2, kscan, nscan
 
     ! extract from navigation parameter array
-    ! Number of x points
     im=self%im
-    ! Number of y points
     jm=self%jm
-    ! x wraparound increment (0 if no wraparound)
     iwrap=self%iwrap
-    ! y wraparound lower pivot point (0 if no wraparound)
     jwrap1=self%jwrap1
-    ! y wraparound upper pivot point (0 if no wraparound)
     jwrap2=self%jwrap2
-    ! Scanning mode 0 if x first then y;
-    ! 1 if y first then x;
-    ! 3 if staggered diagonal like projection 203
     nscan=self%nscan_field_pos
-    ! Mass/wind flag for staggered diagonal (0 if mass; 1 if wind)
     kscan=self%kscan
 
     ! compute wraparounds in x and y if necessary and possible
