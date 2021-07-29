@@ -9,33 +9,20 @@ module ip_grid_mod
   use ip_grid_descriptor_mod
   implicit none
 
-  !> @param Integer grid number for equidistant cylindrical grid in grib1
-  integer, public, parameter :: EQUID_CYLIND_GRID_ID_GRIB1 = 0
-  !> @param Integer grid number for Mercator grid in grib1
-  integer, public, parameter :: MERCATOR_GRID_ID_GRIB1 = 1
-  !> @param Integer grid number for Lambert Conformal grid in grib1
-  integer, public, parameter :: LAMBERT_CONF_GRID_ID_GRIB1 = 3
-  !> @param Integer grid number for Gaussian grid in grib1
-  integer, public, parameter :: GAUSSIAN_GRID_ID_GRIB1 = 4
-  !> @param Integer grid number for polar stereo grid in grib1
-  integer, public, parameter :: POLAR_STEREO_GRID_ID_GRIB1 = 5
-  !> @param Integer grid number for rotated equidistant cylindrical E-stagger grid
-  integer, public, parameter :: ROT_EQUID_CYLIND_E_GRID_ID_GRIB1 = 203
-  !> @param Integer grid number for rotated equidistant cylindrical B-stagger grid
-  integer, public, parameter :: ROT_EQUID_CYLIND_B_GRID_ID_GRIB1 = 205
+  integer, public, parameter :: EQUID_CYLIND_GRID_ID_GRIB1 = 0 !< Integer grid number for equidistant cylindrical grid in grib1
+  integer, public, parameter :: MERCATOR_GRID_ID_GRIB1 = 1 !< Integer grid number for Mercator grid in grib1
+  integer, public, parameter :: LAMBERT_CONF_GRID_ID_GRIB1 = 3 !< Integer grid number for Lambert Conformal grid in grib1
+  integer, public, parameter :: GAUSSIAN_GRID_ID_GRIB1 = 4 !< Integer grid number for Gaussian grid in grib1
+  integer, public, parameter :: POLAR_STEREO_GRID_ID_GRIB1 = 5 !< Integer grid number for polar stereo grid in grib1
+  integer, public, parameter :: ROT_EQUID_CYLIND_E_GRID_ID_GRIB1 = 203 !< Integer grid number for rotated equidistant cylindrical E-stagger grid
+  integer, public, parameter :: ROT_EQUID_CYLIND_B_GRID_ID_GRIB1 = 205 !< Integer grid number for rotated equidistant cylindrical B-stagger grid
 
-  !> @param Integer grid number for equidistant cylindrical grid in grib2
-  integer, public, parameter :: EQUID_CYLIND_GRID_ID_GRIB2 = 0
-  !> @param Integer grid number for rotated equidistant cylindrical grid in grib2
-  integer, public, parameter :: ROT_EQUID_CYLIND_GRID_ID_GRIB2 = 1
-  !> @param Integer grid number for Mercator grid in grib2
-  integer, public, parameter :: MERCATOR_GRID_ID_GRIB2 = 10
-  !> @param Integer grid number for polar stereo grid in grib2
-  integer, public, parameter :: POLAR_STEREO_GRID_ID_GRIB2 = 20
-  !> @param Integer grid number for Lambert conformal grid in grib2
-  integer, public, parameter :: LAMBERT_CONF_GRID_ID_GRIB2 = 30
-  !> @param Integer grid number for Gaussian grid in grib2
-  integer, public, parameter :: GAUSSIAN_GRID_ID_GRIB2 = 40
+  integer, public, parameter :: EQUID_CYLIND_GRID_ID_GRIB2 = 0 !< Integer grid number for equidistant cylindrical grid in grib2
+  integer, public, parameter :: ROT_EQUID_CYLIND_GRID_ID_GRIB2 = 1 !< Integer grid number for rotated equidistant cylindrical grid in grib2
+  integer, public, parameter :: MERCATOR_GRID_ID_GRIB2 = 10 !< Integer grid number for Mercator grid in grib2
+  integer, public, parameter :: POLAR_STEREO_GRID_ID_GRIB2 = 20 !< Integer grid number for polar stereo grid in grib2
+  integer, public, parameter :: LAMBERT_CONF_GRID_ID_GRIB2 = 30 !< Integer grid number for Lambert conformal grid in grib2
+  integer, public, parameter :: GAUSSIAN_GRID_ID_GRIB2 = 40 !< Integer grid number for Gaussian grid in grib2
 
   private
   public :: ip_grid, gdswzd_interface, operator(==)
