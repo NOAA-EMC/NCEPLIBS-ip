@@ -484,7 +484,7 @@ contains
   !! vgrid=srot*uearth+crot*vearth)
   !!
   !! @author George Gayno
-  !! @date July 2021
+  !! @date Jan 2015
   SUBROUTINE ROT_EQUID_CYLIND_EGRID_VECT_ROT(RLON, CROT, SROT)
     IMPLICIT NONE
 
