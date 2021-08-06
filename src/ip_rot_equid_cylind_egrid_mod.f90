@@ -1,3 +1,12 @@
+!> @file
+!! @brief Rotated equidistant cylindrical grib decoder and grid coordinate transformations.
+!! @author Mark Iredell, George Gayno, Kyle Gerheiser
+!! @date July 2021
+
+!> Rotated equidistant cylindrical grib decoder and grid coordinate transformations.
+!!
+!! @author George Gayno, Mark Iredell, Kyle Gerheiser
+!! @date July 2021
 module ip_rot_equid_cylind_egrid_mod
   use iso_fortran_env, only: real64
   use ip_grid_descriptor_mod
@@ -29,6 +38,13 @@ module ip_rot_equid_cylind_egrid_mod
 
 contains
 
+  !> Initializes a rotated equidistant cylindrical grid given a grib1_descriptor object.
+  !! 
+  !! @param[inout] self The grid to initialize
+  !! @param[in] g1_desc A grib1_descriptor
+  !!
+  !! @author Kyle Gerheiser
+  !! @date July 2021
   subroutine init_grib1(self, g1_desc)
     class(ip_rot_equid_cylind_egrid), intent(inout) :: self
     type(grib1_descriptor), intent(in) :: g1_desc
@@ -99,6 +115,13 @@ contains
 
   end subroutine init_grib1
 
+
+  !> Initializes a rotated equidistant cylindrical grid given a grib2_descriptor object.
+  !! @param[inout] self The grid to initialize
+  !! @param[in] g2_desc A grib2_descriptor
+  !!
+  !! @author Kyle Gerheiser
+  !! @date July 2021
   subroutine init_grib2(self, g2_desc)
     class(ip_rot_equid_cylind_egrid), intent(inout) :: self
     type(grib2_descriptor), intent(in) :: g2_desc
@@ -156,136 +179,56 @@ contains
   end subroutine init_grib2
 
 
+  !> Calculates Earth coordinates (iopt = 1) or grid coorindates (iopt = -1)
+  !! for rotated equidistant cylindrical grids.
+  !!
+  !! Works for e-staggered rotated equidistant cylindrical projections.
+  !! The scan mode determines whether this is an "h" or "v" grid.
+  !!
+  !! If the selected coordinates are more than one gridpoint
+  !! beyond the the edges of the grid domain, then the relevant
+  !! output elements are set to fill values.
+  !!
+  !! The actual number of valid points computed is returned too.
+  !! Optionally, the vector rotations, the map jacobians and
+  !! the grid box areas may be returned as well.
+  !!
+  !! To compute the vector rotations, the optional arguments 'srot' and 'crot'
+  !! must be present.
+  !!
+  !! To compute the map jacobians, the optional arguments
+  !! 'xlon', 'xlat', 'ylon', 'ylat' must be present.
+  !!
+  !! To compute the grid box areas, the optional argument
+  !! 'area' must be present.
+  !!
+  !! @param[in] self The grid object gdswzd was called on.
+  !! @param[in] iopt option flag
+  !!            - +1 to compute earth coords of selected grid coords.
+  !!            - -1 o compute grid coords of selected earth coords.
+  !! @param[in] npts Maximum number of coordinates.
+  !! @param[in] fill Fill value to set invalid output data.
+  !!            Must be impossible value; suggested value: -9999.
+  !! @param[inout] xpts Grid x point coordinates if iopt>0.
+  !! @param[inout] ypts Grid y point coordinates if iopt>0.
+  !! @param[inout] rlon Earth longitudes in degrees e if iopt<0
+  !!                   (Acceptable range: -360. to 360.)
+  !! @param[inout] rlat Earth latitudes in degrees n if iopt<0
+  !!                (Acceptable range: -90. to 90.)
+  !! @param[out] nret Number of valid points computed.
+  !! @param[out] crot Optional clockwise vector rotation cosines.
+  !! @param[out] srot Optional clockwise vector rotation sines.
+  !! @param[out] xlon Optional dx/dlon in 1/degrees.
+  !! @param[out] xlat Optional dx/dlat in 1/degrees.
+  !! @param[out] ylon Optional dy/dlon in 1/degrees.
+  !! @param[out] ylat Optional dy/dlat in 1/degrees.
+  !! @param[out] area Optional area weights in m**2.
+  !!
+  !! @author Mark Iredell, George Gayno, Kyle Gerheiser
+  !! @date Jan 2015
   SUBROUTINE GDSWZD_ROT_EQUID_CYLIND_EGRID(self,IOPT,NPTS,&
        FILL,XPTS,YPTS,RLON,RLAT,NRET, &
        CROT,SROT,XLON,XLAT,YLON,YLAT,AREA)
-    !$$$  SUBPROGRAM DOCUMENTATION BLOCK
-    !
-    ! SUBPROGRAM:  GDSWZD_ROT_EQUID_CYLIND_EGRID   GDS WIZARD FOR ROTATED 
-    !                                              EQUIDISTANT CYLINDRICAL
-    !
-    !   PRGMMR: IREDELL       ORG: W/NMC23       DATE: 96-04-10
-    !
-    ! ABSTRACT: THIS SUBPROGRAM DECODES THE GRIB 2 GRID DEFINITION
-    !           TEMPLATE (PASSED IN INTEGER FORM AS DECODED BY THE
-    !           NCEP G2 LIBRARY) AND RETURNS ONE OF THE FOLLOWING:
-    !             (IOPT=+1) EARTH COORDINATES OF SELECTED GRID COORDINATES
-    !             (IOPT=-1) GRID COORDINATES OF SELECTED EARTH COORDINATES
-    !           WORKS FOR E-STAGGERED ROTATED EQUIDISTANT CYLINDRICAL PROJECTIONS.
-    !           THE SCAN MODE (SECTION 3, OCTET 72, BITS 5-6) DETERMINE
-    !           WHETHER THIS IS AN "H" OR "V" GRID.  IF THE SELECTED
-    !           COORDINATES ARE MORE THAN ONE GRIDPOINT BEYOND THE
-    !           EDGES OF THE GRID DOMAIN, THEN THE RELEVANT OUTPUT ELEMENTS
-    !           ARE SET TO FILL VALUES. THE ACTUAL NUMBER OF VALID POINTS
-    !           COMPUTED IS RETURNED TOO. OPTIONALLY, THE VECTOR ROTATIONS,
-    !           THE MAP JACOBIANS AND THE GRID BOX AREAS MAY BE RETURNED.
-    !           TO COMPUTE THE VECTOR ROTATIONS, THE OPTIONAL ARGUMENTS
-    !           'SROT' AND 'CROT'  MUST BE PRESENT.  TO COMPUTE THE MAP
-    !           JACOBIANS, THE OPTIONAL ARGUMENTS 'XLON', 'XLAT', 
-    !           'YLON', 'YLAT' MUST BE PRESENT. TO COMPUTE THE GRID BOX
-    !           AREAS, THE OPTIONAL ARGUMENT 'AREA' MUST BE PRESENT.
-    !
-    ! PROGRAM HISTORY LOG:
-    !   96-04-10  IREDELL
-    !   97-10-20  IREDELL  INCLUDE MAP OPTIONS
-    !   98-08-19  BALDWIN  MODIFY GDSWZDC9 FOR TYPE 203 ETA GRIDS
-    ! 2003-06-11  IREDEL   INCREASE PRECISION
-    ! 2012-08-02  GAYNO    INCREASE XMAX SO ON-GRID POINTS ARE NOT
-    !                      TAGGED AS OFF-GRID.
-    ! 2015-01-21  GAYNO    MERGER OF GDSWIZCB AND GDSWZDCB.  MAKE
-    !                      CROT,SORT,XLON,XLAT,YLON,YLAT AND AREA
-    !                      OPTIONAL ARGUMENTS.  MAKE PART OF A MODULE.
-    !                      MOVE VECTOR ROTATION, MAP JACOBIAN AND GRID
-    !                      BOX AREA COMPUTATIONS TO SEPARATE SUBROUTINES.
-    ! 2015-07-14  GAYNO    CONVERT TO GRIB 2. REPLACE GRIB 1 KGDS ARRAY
-    !                      WITH GRIB 2 GRID DEFINITION TEMPLATE ARRAY.
-    !                      RENAME AS "GDSWZD_ROT_EQUID_CYLIND_EGRID".
-    !                      USE CORNER POINT (1,1) AS THE "ANCHOR POINT" 
-    !                      SO ROUTINE WILL WORK WITH NESTS.
-    !
-    ! USAGE:    CALL GDSWZD_ROT_EQUID_CYLIND_EGRID(IGDTNUM,IGDTMPL,IGDTLEN,IOPT,
-    !    &                 NPTS,FILL,XPTS,YPTS,RLON,RLAT,NRET,
-    !    &                 CROT,SROT,XLON,XLAT,YLON,YLAT,AREA)
-    !
-    !   INPUT ARGUMENT LIST:
-    !     IGDTNUM  - INTEGER GRID DEFINITION TEMPLATE NUMBER.
-    !                CORRESPONDS TO THE GFLD%IGDTNUM COMPONENT OF THE
-    !                NCEP G2 LIBRARY GRIDMOD DATA STRUCTURE.
-    !     IGDTMPL  - INTEGER (IGDTLEN) GRID DEFINITION TEMPLATE ARRAY.
-    !                CORRESPONDS TO THE GFLD%IGDTMPL COMPONENT OF THE
-    !                NCEP G2 LIBRARY GRIDMOD DATA STRUCTURE FOR SECTION
-    !                THREE:
-    !                 (1):  SHAPE OF EARTH, OCTET 15
-    !                 (2):  SCALE FACTOR OF SPHERICAL EARTH RADIUS,
-    !                       OCTET 16
-    !                 (3):  SCALED VALUE OF RADIUS OF SPHERICAL EARTH,
-    !                       OCTETS 17-20
-    !                 (4):  SCALE FACTOR OF MAJOR AXIS OF ELLIPTICAL EARTH,
-    !                       OCTET 21
-    !                 (5):  SCALED VALUE OF MAJOR AXIS OF ELLIPTICAL EARTH,
-    !                       OCTETS 22-25
-    !                 (6):  SCALE FACTOR OF MINOR AXIS OF ELLIPTICAL EARTH,
-    !                       OCTET 26
-    !                 (7):  SCALED VALUE OF MINOR AXIS OF ELLIPTICAL EARTH,
-    !                       OCTETS 27-30
-    !                 (8):  NUMBER OF POINTS ALONG A PARALLEL, OCTS 31-34
-    !                 (9):  NUMBER OF POINTS ALONG A MERIDIAN, OCTS 35-38
-    !                 (10): BASIC ANGLE OF INITIAL PRODUCTION DOMAIN,
-    !                       OCTETS 39-42
-    !                 (11): SUBDIVISIONS OF BASIC ANGLE, OCTETS 43-46
-    !                 (12): LATITUDE OF FIRST GRID POINT IN X/Y SPACE
-    !                       (BEFORE ROTATION), OCTETS 47-50
-    !                 (13): LONGITUDE OF FIRST GRID POINT IN X/Y
-    !                       SPACE (BEFORE ROTATION), OCTETS 51-54
-    !                 (14): RESOLUTION AND COMPONENT FLAGS, OCTET 55
-    !                 (15): LATITUDE OF LAST GRID POINT IN X/Y SPACE
-    !                       (BEFORE ROTATION), OCTETS 56-59
-    !                 (16): LONGITUDE OF LAST GRID POINT IN X/Y
-    !                       SPACE (BEFORE ROTATION), OCTETS 60-63
-    !                 (17): I-DIRECTION INCREMENT, OCTETS 64-67
-    !                 (18): J-DIRECTION INCREMENT, OCTETS 68-71
-    !                 (19): SCANNING MODE, OCTET 72
-    !                 (20): LATITUDE OF SOUTHERN POLE OF PROJECTION, 
-    !                       OCTETS 73-76
-    !                 (21): LONGITUDE OF SOUTHERN POLE OF PROJECTION,
-    !                       OCTETS 77-80
-    !                 (22): ANGLE OF ROTATION OF PROJECTION, OCTS 81-84
-    !     IGDTLEN  - INTEGER NUMBER OF ELEMENTS (22) OF THE GRID DEFINITION
-    !                TEMPLATE ARRAY.  CORRESPONDS TO THE GFLD%IGDTLEN
-    !                COMPONENT OF THE NCEP G2 LIBRARY GRIDMOD DATA STRUCTURE.
-    !     IOPT     - INTEGER OPTION FLAG
-    !                (+1 TO COMPUTE EARTH COORDS OF SELECTED GRID COORDS)
-    !                (-1 TO COMPUTE GRID COORDS OF SELECTED EARTH COORDS)
-    !     NPTS     - INTEGER MAXIMUM NUMBER OF COORDINATES
-    !     FILL     - REAL FILL VALUE TO SET INVALID OUTPUT DATA
-    !                (MUST BE IMPOSSIBLE VALUE; SUGGESTED VALUE: -9999.)
-    !     XPTS     - REAL (NPTS) GRID X POINT COORDINATES IF IOPT>0
-    !     YPTS     - REAL (NPTS) GRID Y POINT COORDINATES IF IOPT>0
-    !     RLON     - REAL (NPTS) EARTH LONGITUDES IN DEGREES E IF IOPT<0
-    !                (ACCEPTABLE RANGE: -360. TO 360.)
-    !     RLAT     - REAL (NPTS) EARTH LATITUDES IN DEGREES N IF IOPT<0
-    !                (ACCEPTABLE RANGE: -90. TO 90.)
-    !
-    !   OUTPUT ARGUMENT LIST:
-    !     XPTS     - REAL (NPTS) GRID X POINT COORDINATES IF IOPT<0
-    !     YPTS     - REAL (NPTS) GRID Y POINT COORDINATES IF IOPT<0
-    !     RLON     - REAL (NPTS) EARTH LONGITUDES IN DEGREES E IF IOPT>0
-    !     RLAT     - REAL (NPTS) EARTH LATITUDES IN DEGREES N IF IOPT>0
-    !     NRET     - INTEGER NUMBER OF VALID POINTS COMPUTED
-    !     CROT     - REAL, OPTIONAL (NPTS) CLOCKWISE VECTOR ROTATION COSINES
-    !     SROT     - REAL, OPTIONAL (NPTS) CLOCKWISE VECTOR ROTATION SINES
-    !                (UGRID=CROT*UEARTH-SROT*VEARTH;
-    !                 VGRID=SROT*UEARTH+CROT*VEARTH)
-    !     XLON     - REAL, OPTIONAL (NPTS) DX/DLON IN 1/DEGREES
-    !     XLAT     - REAL, OPTIONAL (NPTS) DX/DLAT IN 1/DEGREES
-    !     YLON     - REAL, OPTIONAL (NPTS) DY/DLON IN 1/DEGREES
-    !     YLAT     - REAL, OPTIONAL (NPTS) DY/DLAT IN 1/DEGREES
-    !     AREA     - REAL, OPTIONAL (NPTS) AREA WEIGHTS IN M**2
-    !
-    ! ATTRIBUTES:
-    !   LANGUAGE: FORTRAN 90
-    !
-    !$$$
     IMPLICIT NONE
     !
     class(ip_rot_equid_cylind_egrid), intent(in) :: self
@@ -528,40 +471,21 @@ contains
     ENDIF
     ! - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   END SUBROUTINE ROT_EQUID_CYLIND_EGRID_ERROR
-  !
+
+  !> Computes the vector rotation sines and
+  !! cosines for a rotated equidistant cylindrical grid.
+  !!
+  !! @param[in] rlon Longitude in degrees.
+  !! @param[out] crot Clockwise vector rotation cosines.
+  !! @param[out] srot Clockwise vector rotation sines.
+  !!
+  !! @note
+  !! ugrid=crot*uearth-srot*vearth;
+  !! vgrid=srot*uearth+crot*vearth)
+  !!
+  !! @author George Gayno
+  !! @date July 2021
   SUBROUTINE ROT_EQUID_CYLIND_EGRID_VECT_ROT(RLON, CROT, SROT)
-    !$$$  SUBPROGRAM DOCUMENTATION BLOCK
-    !
-    ! SUBPROGRAM:  ROT_EQUID_CYLIND_EGRID_VECT_ROT  VECTOR ROTATION FIELDS 
-    !                                               FOR ROTATED EQUIDISTANT 
-    !                                               CYLINDRICAL "E" GRIDS.
-    !
-    !   PRGMMR: GAYNO     ORG: W/NMC23       DATE: 2015-01-21
-    !
-    ! ABSTRACT: THIS SUBPROGRAM COMPUTES THE VECTOR ROTATION SINES AND
-    !           COSINES FOR A ROTATED EQUIDISTANT CYLINDRICAL GRID -
-    !           "E" STAGGER.
-    !
-    ! PROGRAM HISTORY LOG:
-    ! 2015-01-21  GAYNO    INITIAL VERSION
-    ! 2015-09-17  GAYNO    RENAME AS "ROT_EQUID_CYLIND_EGRID_VECT_ROT"
-    !
-    ! USAGE:    CALL ROT_EQUID_CYLIND_EGRID_VECT_ROT(RLON, CROT, SROT)
-    !
-    !   INPUT ARGUMENT LIST:
-    !     RLON     - LONGITUDE IN DEGREES (REAL)
-    !
-    !   OUTPUT ARGUMENT LIST:
-    !     CROT     - CLOCKWISE VECTOR ROTATION COSINES (REAL)
-    !     SROT     - CLOCKWISE VECTOR ROTATION SINES (REAL)
-    !                (UGRID=CROT*UEARTH-SROT*VEARTH;
-    !                 VGRID=SROT*UEARTH+CROT*VEARTH)
-    !
-    ! ATTRIBUTES:
-    !   LANGUAGE: FORTRAN 90
-    !
-    !$$$
-    !
     IMPLICIT NONE
 
     REAL         ,    INTENT(IN   ) :: RLON
@@ -584,43 +508,20 @@ contains
     ENDIF
 
   END SUBROUTINE ROT_EQUID_CYLIND_EGRID_VECT_ROT
-  !
+
+  !> Computes the map jacobians for a rotated equidistant cylindrical grid.
+  !!
+  !! @param[in] fill Fill value for undefined points.
+  !! @param[in] rlon Longitude in degrees.
+  !! @param[out] xlon dx/dlon in 1/degrees.
+  !! @param[out] xlat dx/dlat in 1/degrees.
+  !! @param[out] ylon dy/dlon in 1/degrees.
+  !! @param[out] ylat dy/dlat in 1/degrees.
+  !!
+  !! @author George Gayno
+  !! @date Jan 2015
   SUBROUTINE ROT_EQUID_CYLIND_EGRID_MAP_JACOB(FILL, RLON, &
        XLON, XLAT, YLON, YLAT)
-    !$$$  SUBPROGRAM DOCUMENTATION BLOCK
-    !
-    ! SUBPROGRAM:  ROT_EQUID_CYLIND_EGRID_MAP_JACOB:
-    !   MAP JACOBIANS FOR ROTATED EQUIDISTANT CYLINDRICAL 
-    !   GRIDS - "E" STAGGER.
-    !
-    !   PRGMMR: GAYNO     ORG: W/NMC23       DATE: 2015-01-21
-    !
-    ! ABSTRACT: THIS SUBPROGRAM COMPUTES THE MAP JACOBIANS FOR
-    !           A ROTATED EQUIDISTANT CYLINDRICAL GRID - 
-    !           "E" STAGGER.
-    !
-    ! PROGRAM HISTORY LOG:
-    ! 2015-01-21  GAYNO    INITIAL VERSION
-    ! 2015-09-17  GAYNO    RENAME AS "ROT_EQUID_CYLIND_EGRID_MAP_JACOB"
-    !
-    ! USAGE:  CALL ROT_EQUID_CYLIND_EGRID_MAP_JACOB(FILL,RLON,XLON,
-    !                                               XLAT,YLON,YLAT)
-    !
-    !   INPUT ARGUMENT LIST:
-    !     FILL     - FILL VALUE FOR UNDEFINED POINTS (REAL)
-    !     RLON     - LONGITUDE IN DEGREES (REAL)
-    !
-    !   OUTPUT ARGUMENT LIST:
-    !     XLON     - DX/DLON IN 1/DEGREES (REAL)
-    !     XLAT     - DX/DLAT IN 1/DEGREES (REAL)
-    !     YLON     - DY/DLON IN 1/DEGREES (REAL)
-    !     YLAT     - DY/DLAT IN 1/DEGREES (REAL)
-    !
-    ! ATTRIBUTES:
-    !   LANGUAGE: FORTRAN 90
-    !
-    !$$$
-    !
     IMPLICIT NONE
 
     REAL         ,    INTENT(IN   ) :: FILL, RLON
@@ -649,37 +550,15 @@ contains
     ENDIF
 
   END SUBROUTINE ROT_EQUID_CYLIND_EGRID_MAP_JACOB
-  !
+
+  !> Computes the grid box area for a rotated equidistant cylindrical grid.
+  !!
+  !! @param[in] fill Fill value for undefined points.
+  !! @param[out] area Area weights in m^2.
+  !!
+  !! @author George Gayno
+  !! @date Jan 2015
   SUBROUTINE ROT_EQUID_CYLIND_EGRID_GRID_AREA(FILL, AREA)
-    !$$$  SUBPROGRAM DOCUMENTATION BLOCK
-    !
-    ! SUBPROGRAM:  ROT_EQUID_CYLIND_EGRID_GRID_AREA:
-    !    GRID BOX AREA FOR ROTATED EQUIDISTANT CYLINDRICAL
-    !    GRIDS - "E" STAGGER.
-    !
-    !   PRGMMR: GAYNO     ORG: W/NMC23       DATE: 2015-01-21
-    !
-    ! ABSTRACT: THIS SUBPROGRAM COMPUTES THE GRID BOX AREA FOR
-    !           A ROTATED EQUIDISTANT CYLINDRICAL GRID -
-    !           "E" STAGGER.
-    !
-    ! PROGRAM HISTORY LOG:
-    ! 2015-01-21  GAYNO    INITIAL VERSION
-    ! 2015-09-17  GAYNO    RENAME AS "ROT_EQUID_CYLIND_EGRID_GRID_AREA"
-    !
-    ! USAGE:  CALL ROT_EQUID_CYLIND_EGRID_GRID_AREA(FILL,AREA)
-    !
-    !   INPUT ARGUMENT LIST:
-    !     FILL     - FILL VALUE FOR UNDEFINED POINTS (REAL)
-    !
-    !   OUTPUT ARGUMENT LIST:
-    !     AREA     - AREA WEIGHTS IN M**2 (REAL)
-    !
-    ! ATTRIBUTES:
-    !   LANGUAGE: FORTRAN 90
-    !
-    !$$$
-    !
     IMPLICIT NONE
 
     REAL,             INTENT(IN   ) :: FILL
