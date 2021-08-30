@@ -405,8 +405,8 @@ contains
     desc_in = init_descriptor(igdtnumi, igdtleni, igdtmpli)
     desc_out = init_descriptor(igdtnumo, igdtleno, igdtmplo)
 
-    grid_in = init_grid(desc_in)
-    grid_out = init_grid(desc_out)
+    call init_grid(grid_in, desc_in)
+    call init_grid(grid_out, desc_out)
 
     CALL ipolatev_grid(ip,IPOPT,grid_in,grid_out, &
          MI,MO,KM,IBI,LI,UI,VI,&
@@ -577,8 +577,8 @@ contains
     desc_in = init_descriptor(kgdsi)
     desc_out = init_descriptor(kgdso)
 
-    grid_in = init_grid(desc_in)
-    grid_out = init_grid(desc_out)
+    call init_grid(grid_in, desc_in)
+    call init_grid(grid_out, desc_out)
 
     CALL ipolatev_grid(ip,IPOPT,grid_in,grid_out, &
          MI,MO,KM,IBI,LI,UI,VI,&
