@@ -9,7 +9,7 @@
 module ipolates_mod
   use ip_interpolators_mod
   use ip_grid_descriptor_mod
-  use ip_grid_factory_mod
+  use ip_grid_factory_mod, only: init_grid
   use ip_interpolators_mod
   use ip_grid_mod
   implicit none
@@ -207,8 +207,8 @@ contains
     desc_in = init_descriptor(kgdsi)
     desc_out = init_descriptor(kgdso)
 
-    grid_in = init_grid(desc_in)
-    grid_out = init_grid(desc_out)
+    call init_grid(grid_in, desc_in)
+    call init_grid(grid_out, desc_out)
 
     call ipolates_grid(ip, ipopt, grid_in, grid_out, mi, mo, km, ibi, li, gi, no, rlat, rlon, ibo, lo, go, iret)
 
@@ -489,8 +489,8 @@ contains
     desc_in = init_descriptor(igdtnumi, igdtleni, igdtmpli)
     desc_out = init_descriptor(igdtnumo, igdtleno, igdtmplo)
 
-    grid_in = init_grid(desc_in)
-    grid_out = init_grid(desc_out)
+    call init_grid(grid_in, desc_in)
+    call init_grid(grid_out, desc_out)
 
     CALL ipolates_grid(ip,IPOPT,grid_in,grid_out,MI,MO,KM,IBI,LI,GI,NO,RLAT,RLON,IBO,LO,GO,IRET)
 

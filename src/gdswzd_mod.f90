@@ -679,7 +679,7 @@ CONTAINS
     class(ip_grid), allocatable :: grid
 
     desc = init_descriptor(igdtnum, igdtlen, igdtmpl)
-    grid = init_grid(desc)
+    call init_grid(grid, desc)
     
     call gdswzd_grid(grid,IOPT,NPTS,FILL, &
          XPTS,YPTS,RLON,RLAT,NRET, &
@@ -771,7 +771,7 @@ CONTAINS
     class(ip_grid), allocatable :: grid
 
     desc = init_descriptor(kgds)
-    grid = init_grid(desc)
+    call init_grid(grid, desc)
     
     call gdswzd_grid(grid,IOPT,NPTS,FILL, &
          XPTS,YPTS,RLON,RLAT,NRET, &
@@ -866,7 +866,7 @@ CONTAINS
     class(ip_grid), allocatable :: grid
 
     desc = init_descriptor(kgds)
-    grid = init_grid(desc)
+    call init_grid(grid, desc)
     
     call gdswzd_grid(grid,IOPT,NPTS,FILL, &
          XPTS,YPTS,RLON,RLAT,NRET, &

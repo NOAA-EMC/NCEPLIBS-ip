@@ -265,8 +265,8 @@ contains
     desc_in = init_descriptor(igdtnumi, igdtleni, igdtmpli)
     desc_out = init_descriptor(igdtnumo, igdtleno, igdtmplo)
 
-    grid_in = init_grid(desc_in)
-    grid_out = init_grid(desc_out)
+    call init_grid(grid_in, desc_in)
+    call init_grid(grid_out, desc_out)
     ! - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
     !  COMPUTE NUMBER OF OUTPUT POINTS AND THEIR LATITUDES AND LONGITUDES.
     IRET=0
@@ -574,8 +574,9 @@ contains
     desc_in = init_descriptor(kgdsi)
     desc_out = init_descriptor(kgdso)
 
-    grid_in = init_grid(desc_in)
-    grid_out = init_grid(desc_out)
+    call init_grid(grid_in, desc_in)
+    call init_grid(grid_out, desc_out)
+    
     ! - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
     !  COMPUTE NUMBER OF OUTPUT POINTS AND THEIR LATITUDES AND LONGITUDES.
     IRET=0
@@ -940,8 +941,8 @@ contains
     desc_in = init_descriptor(igdtnumi, igdtleni, igdtmpli)
     desc_out = init_descriptor(igdtnumo, igdtleno, igdtmplo)
 
-    grid_in = init_grid(desc_in)
-    grid_out = init_grid(desc_out)
+    call init_grid(grid_in, desc_in)
+    call init_grid(grid_out, desc_out)
 
     ! - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
     !  COMPUTE NUMBER OF OUTPUT POINTS AND THEIR LATITUDES AND LONGITUDES.
@@ -1277,8 +1278,8 @@ contains
     desc_in = init_descriptor(kgdsi)
     desc_out = init_descriptor(kgdso)
 
-    grid_in = init_grid(desc_in)
-    grid_out = init_grid(desc_out)
+    call init_grid(grid_in, desc_in)
+    call init_grid(grid_out, desc_out)
     ! - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
     !  COMPUTE NUMBER OF OUTPUT POINTS AND THEIR LATITUDES AND LONGITUDES.
     IRET=0

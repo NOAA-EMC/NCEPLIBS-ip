@@ -126,9 +126,9 @@ contains
 
     select type(grid_out)
     type is(ip_station_points_grid)
-       grid_desc_out2 = grid_out%descriptor
+       allocate(grid_desc_out2, source = grid_out%descriptor)
        grid_desc_out2%grid_num = 255 + grid_out%descriptor%grid_num
-       grid_out2 = init_grid(grid_desc_out2)
+       call init_grid(grid_out2, grid_desc_out2)
 
        CALL GDSWZD(grid_out2,-1,MO,FILL,XPTS,YPTS,RLON,RLAT,NO)
        IF(NO.EQ.0) then
@@ -460,10 +460,10 @@ contains
     ! The type of the subgrid is calculated by 255 + 
     select type(grid_out)
     type is(ip_station_points_grid)
-       desc_out_subgrid = grid_out%descriptor
+       allocate(desc_out_subgrid, source = grid_out%descriptor)
        desc_out_subgrid%grid_num = 255 + grid_out%descriptor%grid_num
 
-       grid_out2 = init_grid(desc_out_subgrid)
+       call init_grid(grid_out2, desc_out_subgrid)
        CALL GDSWZD(grid_out2,-1,MO,FILL,XPTS,YPTS, &
             RLON,RLAT,NO,CROT,SROT)
        IF(NO.EQ.0) IRET=3

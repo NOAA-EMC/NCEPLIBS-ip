@@ -25,34 +25,34 @@ contains
 
   !> Initializes a polymorphic ip_grid object from an ip_grid_descriptor.
   !!
+  !! @param[out] grid Grid to initialize
   !! @param[in] grid_desc Grid descriptor created from a grib1/grib2 template.
-  !! @return Initialized ip_grid.
   !!
   !! @author Kyle Gerheiser
   !! @date July 2021
-  function init_grid_generic(grid_desc) result(grid)
+  subroutine init_grid_generic(grid, grid_desc)
     class(ip_grid_descriptor), intent(in) :: grid_desc
-    class(ip_grid), allocatable :: grid
+    class(ip_grid), allocatable, intent(out) :: grid
 
     select type(grid_desc)
     type is(grib1_descriptor)
-       grid = init_grid_grib1(grid_desc)
+       call init_grid_grib1(grid, grid_desc)
     type is(grib2_descriptor)
-       grid = init_grid_grib2(grid_desc)
+       call init_grid_grib2(grid, grid_desc)
     end select
-  end function init_grid_generic
+  end subroutine init_grid_generic
 
   !> Initializes a polymorphic ip_grid from a grib1_descriptor.
   !! The concrete grid type is chosen based on the grid number in the descriptor.
   !!
+  !! @param[out] grid Grid to initialize
   !! @param[in] g1_desc
-  !! @return Initialized grid.
   !!
   !! @author Kyle Gerheiser
   !! @date July 2021
-  function init_grid_grib1(g1_desc) result(grid)
+  subroutine init_grid_grib1(grid, g1_desc)
     type(grib1_descriptor), intent(in) :: g1_desc
-    class(ip_grid), allocatable :: grid
+    class(ip_grid), allocatable, intent(out) :: grid
     
     select case(g1_desc%grid_num)
     case(:-1)
@@ -75,20 +75,20 @@ contains
 
     call grid%init(g1_desc)
     allocate(grid%descriptor, source = g1_desc)
-  end function init_grid_grib1
+  end subroutine init_grid_grib1
 
   
   !> Initializes a polymorphic ip_grid from a grib2_descriptor.
   !! The concrete grid type is chosen based on the grid number in the descriptor.
   !!
-  !! @param[in] g2_desc
-  !! @return Initialized grid.
+  !! @param[out] grid Grid to initialize
+  !! @param[in] g2_desc Grib2 descriptor
   !!
   !! @author Kyle Gerheiser
   !! @date July 2021
-  function init_grid_grib2(g2_desc) result(grid)
+  subroutine init_grid_grib2(grid, g2_desc)
     type(grib2_descriptor), intent(in) :: g2_desc
-    class(ip_grid), allocatable :: grid
+    class(ip_grid), allocatable, intent(out) :: grid
 
     integer :: i_offset_odd, i_offset_even
 
@@ -120,6 +120,6 @@ contains
 
     call grid%init(g2_desc)
     allocate(grid%descriptor, source = g2_desc)
-  end function init_grid_grib2
+  end subroutine init_grid_grib2
   
 end module ip_grid_factory_mod
