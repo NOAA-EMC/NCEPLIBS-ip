@@ -1,48 +1,63 @@
 /*
-@licstart  The following is the entire license notice for the
-JavaScript code in this file.
+ @licstart  The following is the entire license notice for the JavaScript code in this file.
 
-Copyright (C) 1997-2019 by Dimitri van Heesch
+ The MIT License (MIT)
 
-This program is free software; you can redistribute it and/or modify
-it under the terms of version 2 of the GNU General Public License as published by
-the Free Software Foundation
+ Copyright (C) 1997-2020 by Dimitri van Heesch
 
-This program is distributed in the hope that it will be useful,
-but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
-GNU General Public License for more details.
+ Permission is hereby granted, free of charge, to any person obtaining a copy of this software
+ and associated documentation files (the "Software"), to deal in the Software without restriction,
+ including without limitation the rights to use, copy, modify, merge, publish, distribute,
+ sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is
+ furnished to do so, subject to the following conditions:
 
-You should have received a copy of the GNU General Public License along
-with this program; if not, write to the Free Software Foundation, Inc.,
-51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
+ The above copyright notice and this permission notice shall be included in all copies or
+ substantial portions of the Software.
 
-@licend  The above is the entire license notice
-for the JavaScript code in this file
+ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING
+ BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
+ NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM,
+ DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+
+ @licend  The above is the entire license notice for the JavaScript code in this file
 */
 var NAVTREE =
 [
   [ "NCEPLIBS-ip", "index.html", [
-    [ "Files", "files.html", [
-      [ "Documentation of the general interpolation library iplib", "index.html#autotoc_md0", null ],
-      [ "Entry point list", "index.html#autotoc_md1", null ],
-      [ "How to inoke iplib: examples", "index.html#autotoc_md2", [
-        [ "Example 1", "index.html#autotoc_md3", null ]
-      ] ],
-      [ "Example 2", "index.html#autotoc_md4", null ],
-      [ "Example 3", "index.html#autotoc_md5", null ],
-      [ "File List", "files.html", "files_dup" ],
-      [ "Globals", "globals.html", [
-        [ "All", "globals.html", null ],
-        [ "Functions/Subroutines", "globals_func.html", null ]
+    [ "Documentation of the general interpolation library - iplib", "md__Users_KIG_Desktop_dev_work_NCEPLIBS_ip_docs_user_guide.html", [
+      [ "Introduction", "md__Users_KIG_Desktop_dev_work_NCEPLIBS_ip_docs_user_guide.html#autotoc_md1", null ],
+      [ "Entry point list", "md__Users_KIG_Desktop_dev_work_NCEPLIBS_ip_docs_user_guide.html#autotoc_md2", null ],
+      [ "How to invoke ip2lib: examples", "md__Users_KIG_Desktop_dev_work_NCEPLIBS_ip_docs_user_guide.html#autotoc_md3", null ]
+    ] ],
+    [ "Modules", "namespaces.html", [
+      [ "Modules List", "namespaces.html", "namespaces_dup" ],
+      [ "Module Members", "namespacemembers.html", [
+        [ "All", "namespacemembers.html", null ],
+        [ "Functions/Subroutines", "namespacemembers_func.html", null ],
+        [ "Variables", "namespacemembers_vars.html", null ]
       ] ]
+    ] ],
+    [ "Data Types List", "annotated.html", [
+      [ "Data Types List", "annotated.html", "annotated_dup" ],
+      [ "Class Hierarchy", "hierarchy.html", "hierarchy" ],
+      [ "Data Fields", "functions.html", [
+        [ "All", "functions.html", null ],
+        [ "Functions/Subroutines", "functions_func.html", null ],
+        [ "Variables", "functions_vars.html", null ]
+      ] ]
+    ] ],
+    [ "Files", "files.html", [
+      [ "File List", "files.html", "files_dup" ]
     ] ]
   ] ]
 ];
 
 var NAVTREEINDEX =
 [
-"files.html"
+"annotated.html",
+"namespaceip__gaussian__grid__mod.html#ab602a870a477c7ab77438700af4e7780",
+"structip__rot__equid__cylind__egrid__mod_1_1ip__rot__equid__cylind__egrid.html"
 ];
 
 var SYNCONMSG = 'click to disable panel synchronisation';
