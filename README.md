@@ -5,8 +5,7 @@
 The NCEP general interpolation library contains Fortran 90
 subprograms to be used for interpolating between nearly all grids used
 at NCEP. The library is particularly efficient when interpolating many
-fields at one time. The library has been extensively tested with AIX
-and Intel Fortran compilers.
+fields at one time.
 
 This is part of the [NCEPLIBS](https://github.com/NOAA-EMC/NCEPLIBS)
 project.
@@ -19,6 +18,8 @@ library:
 - budget
 - spectral
 - neighbor-budget
+
+For full documentation see https://noaa-emc.github.io/NCEPLIBS-ip/.
 
 ### Authors
 
