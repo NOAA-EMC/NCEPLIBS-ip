@@ -102,7 +102,7 @@ contains
 
   end subroutine ipolates_grid
 
-  !> @brief Special case of ipolates_grib1 when interpolating a single field.
+  !> Special case of ipolates_grib1 when interpolating a single field.
   !! Removes the km dimension of input arrays so scalars can be passed to ibi/ibo.
   !!
   !! @param ip Interpolation method
@@ -143,6 +143,9 @@ contains
   !! - 1x Invalid bicubic method parameters.
   !! - 3x Invalid budget method parameters.
   !! - 4x Invalid spectral method parameters.
+  !!
+  !! @date Jan 2022
+  !! @author Kyle Gerheiser
    subroutine ipolates_grib1_single_field(ip,ipopt,kgdsi,kgdso,mi,mo,km,ibi,li,gi, &
        no,rlat,rlon,ibo,lo,go,iret) bind(c)
     !

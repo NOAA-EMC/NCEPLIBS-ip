@@ -594,9 +594,9 @@ contains
 
   END SUBROUTINE IPOLATEV_grib1
 
-  !> @brief Special case of ipolatev_grib1 when interpolating a single field.
+  !> Special case of ipolatev_grib1 when interpolating a single field.
   !! Removes the km dimension of input arrays so scalars can be passed to ibi/ibo.
-  !! to any grid given a grib1 Grid Descriptor Section.
+  !!
   !! @param ip Interpolation method
   !! - ip = BILINEAR_INTERP_ID = 0 for bilinear
   !! - ip = BICUBIC_INTERP_ID = 1 for bicubic
@@ -639,6 +639,7 @@ contains
   !! - 1x Invalid bicubic method parameters.
   !! - 3x Invalid budget method parameters.
   !! - 4x Invalid spectral method parameters.
+  !!
   !! @date Jan 2022
   !! @author Kyle Gerheiser
   subroutine ipolatev_grib1_single_field(ip,ipopt,kgdsi,kgdso,mi,mo,km,ibi,li,ui,vi, &
