@@ -15,10 +15,11 @@ module ipolates_mod
   implicit none
 
   private
-  public :: ipolates, ipolates_grib1, ipolates_grib2
+  public :: ipolates, ipolates_grib2, ipolates_grib1_single_field, ipolates_grib1
 
   interface ipolates
      module procedure ipolates_grib1
+     module procedure ipolates_grib1_single_field
      module procedure ipolates_grib2
   end interface ipolates
 
@@ -100,6 +101,44 @@ contains
     end select
 
   end subroutine ipolates_grid
+
+   subroutine ipolates_grib1_single_field(ip,ipopt,kgdsi,kgdso,mi,mo,km,ibi,li,gi, &
+       no,rlat,rlon,ibo,lo,go,iret) bind(c)
+    !
+    INTEGER,    INTENT(IN   ) :: IP, IPOPT(20), KM, MI, MO
+    INTEGER,    INTENT(IN   ) :: IBI, KGDSI(200), KGDSO(200)
+    INTEGER,    INTENT(INOUT) :: NO
+    INTEGER,    INTENT(  OUT) :: IRET, IBO
+    !
+    LOGICAL*1,  INTENT(IN   ) :: LI(MI)
+    LOGICAL*1,  INTENT(  OUT) :: LO(MO)
+    !
+    REAL,       INTENT(IN   ) :: GI(MI)
+    REAL,       INTENT(INOUT) :: RLAT(MO),RLON(MO)
+    REAL,       INTENT(  OUT) :: GO(MO)
+    !
+    INTEGER                   :: K, N
+
+    type(grib1_descriptor) :: desc_in, desc_out
+    class(ip_grid), allocatable :: grid_in, grid_out
+    integer :: ibo_array(1)
+
+    desc_in = init_descriptor(kgdsi)
+    desc_out = init_descriptor(kgdso)
+
+    call init_grid(grid_in, desc_in)
+    call init_grid(grid_out, desc_out)
+
+    ! Can't pass expression (e.g. [ibo]) to intent(out) argument.
+    ! Initialize placeholder array of size 1 to make rank match.
+    ibo_array(1) = ibo
+
+    call ipolates_grid(ip, ipopt, grid_in, grid_out, mi, mo, km, [ibi], li, gi, no, rlat, rlon, ibo_array, lo, go, iret)
+
+    ibo = ibo_array(1)
+
+  END SUBROUTINE IPOLATES_grib1_single_field
+
 
   !> @brief This subprogram interpolates scalar field from any grid
   !! to any grid given a grib1 Grid Descriptor Section.
@@ -212,8 +251,8 @@ contains
 
     call ipolates_grid(ip, ipopt, grid_in, grid_out, mi, mo, km, ibi, li, gi, no, rlat, rlon, ibo, lo, go, iret)
 
-  END SUBROUTINE IPOLATES_GRIB1
-
+  END SUBROUTINE IPOLATES_grib1
+  
 
   !> @brief This subprogram interpolates scalar field from any grid to any grid given a grib2 descriptor.
   !! @details Wrapper for ipolates_grid which converts a grib1 descriptor into an ip_grid_descriptor,

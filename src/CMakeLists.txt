@@ -6,7 +6,7 @@ set(fortran_src
   ip_mod.f90 ip_grid_descriptor_mod.f90 ip_grid_mod.f90 ip_station_points_grid_mod.f90 ip_gaussian_grid_mod.f90
   ip_equid_cylind_grid_mod.f90 ip_lambert_conf_grid_mod.f90 ip_mercator_grid_mod.f90 ip_polar_stereo_grid_mod.f90
   ip_rot_equid_cylind_egrid_mod.f90 ip_rot_equid_cylind_grid_mod.f90 constants_mod.f90 ip_grids_mod.f90 ip_grid_factory_mod.f90
-  ip_interpolators_mod.f90 earth_radius_mod.f90 polfix_mod.f90
+  ip_interpolators_mod.f90 earth_radius_mod.f90 polfix_mod.f90 makgds.f90
   )
 
 if(CMAKE_Fortran_COMPILER_ID MATCHES "^(Intel)$")

@@ -16,13 +16,14 @@ module ipolatev_mod
   implicit none
 
   private
-  public :: ipolatev, ipolatev_grib1, ipolatev_grib2
+  public :: ipolatev, ipolatev_grib2, ipolatev_grib1_single_field, ipolatev_grib1
 
   interface ipolatev
      module procedure ipolatev_grib1
+     module procedure ipolatev_grib1_single_field
      module procedure ipolatev_grib2
   end interface ipolatev
-
+  
 contains
 
   !> Interpolates scalar fields between grids given ip_grid objects.
@@ -591,8 +592,64 @@ contains
        KGDSO(11)=KGDSO11
     ENDIF
 
-  END SUBROUTINE IPOLATEV_GRIB1
+  END SUBROUTINE IPOLATEV_grib1
 
+  subroutine ipolatev_grib1_single_field(ip,ipopt,kgdsi,kgdso,mi,mo,km,ibi,li,ui,vi, &
+       no,rlat,rlon,crot,srot,ibo,lo,uo,vo,iret) bind(c)
+    IMPLICIT NONE
+    !
+    INTEGER,               INTENT(IN   ):: IP, IPOPT(20), IBI
+    INTEGER,               INTENT(IN   ):: KM, MI, MO
+    INTEGER,               INTENT(INOUT):: KGDSI(200), KGDSO(200)
+    INTEGER,               INTENT(  OUT):: IBO, IRET, NO
+    !
+    LOGICAL*1,             INTENT(IN   ):: LI(MI)
+    LOGICAL*1,             INTENT(  OUT):: LO(MO)
+    !
+    REAL,                  INTENT(IN   ):: UI(MI),VI(MI)
+    REAL,                  INTENT(INOUT):: CROT(MO),SROT(MO)
+    REAL,                  INTENT(INOUT):: RLAT(MO),RLON(MO)
+    REAL,                  INTENT(  OUT):: UO(MO),VO(MO)
+    !
+    INTEGER                             :: K, N, KGDSI11, KGDSO11
+
+    type(grib1_descriptor) :: desc_in, desc_out
+    class(ip_grid), allocatable :: grid_in, grid_out
+    integer :: ibo_array(1)
+
+    ! Can't pass expression (e.g. [ibo]) to intent(out) argument.
+    ! Initialize placeholder array of size 1 to make rank match.
+    ibo_array(1) = ibo
+
+    IF(KGDSI(1).EQ.203) THEN
+       KGDSI11=KGDSI(11)
+       KGDSI(11)=IOR(KGDSI(11),256)
+    ENDIF
+    IF(KGDSO(1).EQ.203) THEN
+       KGDSO11=KGDSO(11)
+       KGDSO(11)=IOR(KGDSO(11),256)
+    ENDIF
+
+    desc_in = init_descriptor(kgdsi)
+    desc_out = init_descriptor(kgdso)
+
+    call init_grid(grid_in, desc_in)
+    call init_grid(grid_out, desc_out)
+
+    CALL ipolatev_grid(ip,IPOPT,grid_in,grid_out, &
+         MI,MO,KM,[IBI],LI,UI,VI,&
+         NO,RLAT,RLON,CROT,SROT,IBO_array,LO,UO,VO,IRET)
+
+    ibo = ibo_array(1)
+
+    IF(KGDSI(1).EQ.203) THEN
+       KGDSI(11)=KGDSI11
+    ENDIF
+    IF(KGDSO(1).EQ.203) THEN
+       KGDSO(11)=KGDSO11
+    ENDIF
+
+  END SUBROUTINE ipolatev_grib1_single_field
 
 end module ipolatev_mod
 
