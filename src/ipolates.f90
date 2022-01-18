@@ -15,10 +15,11 @@ module ipolates_mod
   implicit none
 
   private
-  public :: ipolates, ipolates_grib1, ipolates_grib2
+  public :: ipolates, ipolates_grib2, ipolates_grib1_single_field, ipolates_grib1
 
   interface ipolates
      module procedure ipolates_grib1
+     module procedure ipolates_grib1_single_field
      module procedure ipolates_grib2
   end interface ipolates
 
@@ -100,6 +101,88 @@ contains
     end select
 
   end subroutine ipolates_grid
+
+  !> Special case of ipolates_grib1 when interpolating a single field.
+  !! Removes the km dimension of input arrays so scalars can be passed to ibi/ibo.
+  !!
+  !! @param ip Interpolation method
+  !! - ip = BILINEAR_INTERP_ID = 0 for bilinear
+  !! - ip = BICUBIC_INTERP_ID = 1 for bicubic
+  !! - ip = NEIGHBOR_INTERP_ID = 2 for neighbor;
+  !! - ip = BUDGET_INTERP_ID = 3 for budget;
+  !! - ip = SPECTRAL_INTERP_ID = 4 for spectral;
+  !! - ip = NEIGHBOR_BUDGET_INTERP_ID = 6 for neighbor-budget
+  !!
+  !! @param ipopt Interpolation options
+  !! - ip=0 (bilinear): (No options)
+  !! - ip=1 Cbicubic): constraint option
+  !! - ip=2 (neighbor): (No options)
+  !! - ip=3 (budget): Number in radius, radius weights, search radius
+  !! - ip=4 (spectral): Spectral shape, spectral truncation
+  !! - ip=6 (neighbor-budget): Number in radius, radius weights ...)
+  !!
+  !! @param[in] kgdsi Input gds parameters as decoded by w3fi63.
+  !! @param[in] kgdso Output gds parameters.
+  !! @param[in] mi    Skip number between input grid fields if km>1 or dimension of input grid fields if km=1.
+  !! @param[in] mo    Skip number between output grid fields if km>1 or dimension of output grid fields if km=1.
+  !! @param[in] km    Number of fields to interpolate.
+  !! @param[in] ibi   Input bitmap flags.
+  !! @param[in] li    Input bitmaps (if respective ibi(k)=1).
+  !! @param[in] gi    Input fields to interpolate.
+  !! @param[out] no Number of output points (only if kgdso(1)<0).
+  !! @param[out] rlat Output latitudes in degrees (if kgdso(1)<0).
+  !! @param[out] rlon Output longitudes in degrees (if kgdso(1)<0).
+  !! @param[out] ibo Output bitmap flags.
+  !! @param[out] lo  Output bitmaps (always output).
+  !! @param[out] go  Output fields interpolated.
+  !! @param[out] iret Return code.
+  !! - 0 Successful interpolation.
+  !! - 1 Unrecognized interpolation method.
+  !! - 2 Unrecognized input grid or no grid overlap.
+  !! - 3 Unrecognized output grid.
+  !! - 1x Invalid bicubic method parameters.
+  !! - 3x Invalid budget method parameters.
+  !! - 4x Invalid spectral method parameters.
+  !!
+  !! @date Jan 2022
+  !! @author Kyle Gerheiser
+   subroutine ipolates_grib1_single_field(ip,ipopt,kgdsi,kgdso,mi,mo,km,ibi,li,gi, &
+       no,rlat,rlon,ibo,lo,go,iret) bind(c)
+    !
+    INTEGER,    INTENT(IN   ) :: IP, IPOPT(20), KM, MI, MO
+    INTEGER,    INTENT(IN   ) :: IBI, KGDSI(200), KGDSO(200)
+    INTEGER,    INTENT(INOUT) :: NO
+    INTEGER,    INTENT(  OUT) :: IRET, IBO
+    !
+    LOGICAL*1,  INTENT(IN   ) :: LI(MI)
+    LOGICAL*1,  INTENT(  OUT) :: LO(MO)
+    !
+    REAL,       INTENT(IN   ) :: GI(MI)
+    REAL,       INTENT(INOUT) :: RLAT(MO),RLON(MO)
+    REAL,       INTENT(  OUT) :: GO(MO)
+    !
+    INTEGER                   :: K, N
+
+    type(grib1_descriptor) :: desc_in, desc_out
+    class(ip_grid), allocatable :: grid_in, grid_out
+    integer :: ibo_array(1)
+
+    desc_in = init_descriptor(kgdsi)
+    desc_out = init_descriptor(kgdso)
+
+    call init_grid(grid_in, desc_in)
+    call init_grid(grid_out, desc_out)
+
+    ! Can't pass expression (e.g. [ibo]) to intent(out) argument.
+    ! Initialize placeholder array of size 1 to make rank match.
+    ibo_array(1) = ibo
+
+    call ipolates_grid(ip, ipopt, grid_in, grid_out, mi, mo, km, [ibi], li, gi, no, rlat, rlon, ibo_array, lo, go, iret)
+
+    ibo = ibo_array(1)
+
+  END SUBROUTINE IPOLATES_grib1_single_field
+
 
   !> @brief This subprogram interpolates scalar field from any grid
   !! to any grid given a grib1 Grid Descriptor Section.
@@ -212,8 +295,8 @@ contains
 
     call ipolates_grid(ip, ipopt, grid_in, grid_out, mi, mo, km, ibi, li, gi, no, rlat, rlon, ibo, lo, go, iret)
 
-  END SUBROUTINE IPOLATES_GRIB1
-
+  END SUBROUTINE IPOLATES_grib1
+  
 
   !> @brief This subprogram interpolates scalar field from any grid to any grid given a grib2 descriptor.
   !! @details Wrapper for ipolates_grid which converts a grib1 descriptor into an ip_grid_descriptor,

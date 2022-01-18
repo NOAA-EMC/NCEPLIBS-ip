@@ -16,13 +16,14 @@ module ipolatev_mod
   implicit none
 
   private
-  public :: ipolatev, ipolatev_grib1, ipolatev_grib2
+  public :: ipolatev, ipolatev_grib2, ipolatev_grib1_single_field, ipolatev_grib1
 
   interface ipolatev
      module procedure ipolatev_grib1
+     module procedure ipolatev_grib1_single_field
      module procedure ipolatev_grib2
   end interface ipolatev
-
+  
 contains
 
   !> Interpolates scalar fields between grids given ip_grid objects.
@@ -591,8 +592,112 @@ contains
        KGDSO(11)=KGDSO11
     ENDIF
 
-  END SUBROUTINE IPOLATEV_GRIB1
+  END SUBROUTINE IPOLATEV_grib1
 
+  !> Special case of ipolatev_grib1 when interpolating a single field.
+  !! Removes the km dimension of input arrays so scalars can be passed to ibi/ibo.
+  !!
+  !! @param ip Interpolation method
+  !! - ip = BILINEAR_INTERP_ID = 0 for bilinear
+  !! - ip = BICUBIC_INTERP_ID = 1 for bicubic
+  !! - ip = NEIGHBOR_INTERP_ID = 2 for neighbor;
+  !! - ip = BUDGET_INTERP_ID = 3 for budget;
+  !! - ip = SPECTRAL_INTERP_ID = 4 for spectral;
+  !! - ip = NEIGHBOR_BUDGET_INTERP_ID = 6 for neighbor-budget
+  !! @param ipopt Interpolation options
+  !! - ip=0 (bilinear): (No options)
+  !! - ip=1 Cbicubic): constraint option
+  !! - ip=2 (neighbor): (No options)
+  !! - ip=3 (budget): Number in radius, radius weights, search radius
+  !! - ip=4 (spectral): Spectral shape, spectral truncation
+  !! - ip=6 (neighbor-budget): Number in radius, radius weights ...)
+  !! @param[in] kgdsi Input gds parameters as decoded by w3fi63.
+  !! @param[in] kgdso Output gds parameters.
+  !! @param[in] mi Skip number between input grid fields if km>1 or
+  !! dimension of input grid fields if km=1.
+  !! @param[in] mo Skip number between output grid fields if km>1 or
+  !! dimension of output grid fields if km=1.
+  !! @param[in] km    Number of fields to interpolate.
+  !! @param[in] ibi   Input bitmap flags.
+  !! @param[in] li    Input bitmaps (if respective ibi(k)=1).
+  !! @param[in] ui    Input u-component fields to interpolate.
+  !! @param[in] vi    Input v-component fields to interpolate.
+  !! @param[out] no Number of output points (only if kgdso(1)<0).
+  !! @param[out] rlat Output latitudes in degrees (if kgdso(1)<0).
+  !! @param[out] rlon Output longitudes in degrees (if kgdso(1)<0).
+  !! @param[inout] crot Vector rotation cosines (if igdtnumo>=0).
+  !! @param[inout] srot Vector rotation sines (if igdtnumo>=0).
+  !! @param[out] ibo Output bitmap flags.
+  !! @param[out] lo  Output bitmaps (always output).
+  !! @param[out] uo  Output u-component fields interpolated.
+  !! @param[out] vo  Output v-component fields interpolated.
+  !! @param[out] iret Return code.
+  !! - 0 Successful interpolation.
+  !! - 1 Unrecognized interpolation method.
+  !! - 2 Unrecognized input grid or no grid overlap.
+  !! - 3 Unrecognized output grid.
+  !! - 1x Invalid bicubic method parameters.
+  !! - 3x Invalid budget method parameters.
+  !! - 4x Invalid spectral method parameters.
+  !!
+  !! @date Jan 2022
+  !! @author Kyle Gerheiser
+  subroutine ipolatev_grib1_single_field(ip,ipopt,kgdsi,kgdso,mi,mo,km,ibi,li,ui,vi, &
+       no,rlat,rlon,crot,srot,ibo,lo,uo,vo,iret) bind(c)
+    IMPLICIT NONE
+    !
+    INTEGER,               INTENT(IN   ):: IP, IPOPT(20), IBI
+    INTEGER,               INTENT(IN   ):: KM, MI, MO
+    INTEGER,               INTENT(INOUT):: KGDSI(200), KGDSO(200)
+    INTEGER,               INTENT(  OUT):: IBO, IRET, NO
+    !
+    LOGICAL*1,             INTENT(IN   ):: LI(MI)
+    LOGICAL*1,             INTENT(  OUT):: LO(MO)
+    !
+    REAL,                  INTENT(IN   ):: UI(MI),VI(MI)
+    REAL,                  INTENT(INOUT):: CROT(MO),SROT(MO)
+    REAL,                  INTENT(INOUT):: RLAT(MO),RLON(MO)
+    REAL,                  INTENT(  OUT):: UO(MO),VO(MO)
+    !
+    INTEGER                             :: K, N, KGDSI11, KGDSO11
+
+    type(grib1_descriptor) :: desc_in, desc_out
+    class(ip_grid), allocatable :: grid_in, grid_out
+    integer :: ibo_array(1)
+
+    ! Can't pass expression (e.g. [ibo]) to intent(out) argument.
+    ! Initialize placeholder array of size 1 to make rank match.
+    ibo_array(1) = ibo
+
+    IF(KGDSI(1).EQ.203) THEN
+       KGDSI11=KGDSI(11)
+       KGDSI(11)=IOR(KGDSI(11),256)
+    ENDIF
+    IF(KGDSO(1).EQ.203) THEN
+       KGDSO11=KGDSO(11)
+       KGDSO(11)=IOR(KGDSO(11),256)
+    ENDIF
+
+    desc_in = init_descriptor(kgdsi)
+    desc_out = init_descriptor(kgdso)
+
+    call init_grid(grid_in, desc_in)
+    call init_grid(grid_out, desc_out)
+
+    CALL ipolatev_grid(ip,IPOPT,grid_in,grid_out, &
+         MI,MO,KM,[IBI],LI,UI,VI,&
+         NO,RLAT,RLON,CROT,SROT,IBO_array,LO,UO,VO,IRET)
+
+    ibo = ibo_array(1)
+
+    IF(KGDSI(1).EQ.203) THEN
+       KGDSI(11)=KGDSI11
+    ENDIF
+    IF(KGDSO(1).EQ.203) THEN
+       KGDSO(11)=KGDSO11
+    ENDIF
+
+  END SUBROUTINE ipolatev_grib1_single_field
 
 end module ipolatev_mod
 
