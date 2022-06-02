@@ -43,7 +43,7 @@ jobs:
         cd ip
         mkdir build 
         cd build
-        cmake .. -DENABLE_DOCS=No -DCMAKE_PREFIX_PATH="~/" -DOPENMP=ON -DCMAKE_Fortran_FLAGS="-g -fprofile-abs-path -fprofile-arcs -ftest-coverage -O0"
+        cmake .. -DENABLE_DOCS=No -DCMAKE_PREFIX_PATH="~/" -DOPENMP=ON -DCMAKE_Fortran_FLAGS="-g -fprofile-abs-path -fprofile-arcs -ftest-coverage -O0 -fsanitize=address -fno-omit-frame-pointer"
         make -j2
     
     - name: test
