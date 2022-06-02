@@ -1,9 +1,11 @@
 !> @file
-!! @brief Rotated equidistant cylindrical grib decoder and grid coordinate transformations.
+!! @brief Rotated equidistant cylindrical grib decoder and grid
+!! coordinate transformations.
 !! @author Mark Iredell, George Gayno, Kyle Gerheiser
 !! @date July 2021
 
-!> Rotated equidistant cylindrical grib decoder and grid coordinate transformations.
+!> Rotated equidistant cylindrical grib decoder and grid coordinate
+!> transformations.
 !!
 !! @author George Gayno, Mark Iredell, Kyle Gerheiser
 !! @date July 2021
@@ -18,7 +20,7 @@ module ip_rot_equid_cylind_egrid_mod
   private
   public :: ip_rot_equid_cylind_egrid
 
-  integer, parameter :: kd = real64
+  integer, parameter :: kd = real64 !< ???
 
   type, extends(ip_grid) :: ip_rot_equid_cylind_egrid
      real(kd) :: rlon0, rlon1, rlat1, clat0, slat0
@@ -30,11 +32,19 @@ module ip_rot_equid_cylind_egrid_mod
      procedure :: gdswzd => gdswzd_rot_equid_cylind_egrid
   end type ip_rot_equid_cylind_egrid
 
-  INTEGER                         :: IROT
+  INTEGER :: IROT !< ???
 
-  REAL(KIND=KD)                   :: CLAT, CLAT0, CLATR
-  REAL(KIND=KD)                   :: CLON, DLATS, DLONS, RERTH
-  REAL(KIND=KD)                   :: RLON0, SLAT, SLAT0, SLATR
+  REAL(KIND=KD) :: CLAT !< ???
+  REAL(KIND=KD) :: CLAT0 !< ???
+  REAL(KIND=KD) :: CLATR !< ???
+  REAL(KIND=KD) :: CLON !< ???
+  REAL(KIND=KD) :: DLATS !< ???
+  REAL(KIND=KD) :: DLONS !< ???
+  REAL(KIND=KD) :: RERTH !< ???
+  REAL(KIND=KD) :: RLON0 !< ???
+  REAL(KIND=KD) :: SLAT !< ???
+  REAL(KIND=KD) :: SLAT0 !< ???
+  REAL(KIND=KD) :: SLATR !< ???
 
 contains
 
@@ -417,42 +427,32 @@ contains
           ENDIF
        ENDDO
     ENDIF
-    ! - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   END SUBROUTINE GDSWZD_ROT_EQUID_CYLIND_EGRID
-  ! - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-  SUBROUTINE ROT_EQUID_CYLIND_EGRID_ERROR(IOPT,FILL,RLAT,RLON,XPTS,YPTS,NPTS)
-    !$$$  SUBPROGRAM DOCUMENTATION BLOCK
-    !
-    ! SUBPROGRAM:  ROT_EQUID_CYLIND_EGRID_ERROR  ERROR HANDLER
-    !   PRGMMR: GAYNO       ORG: W/NMC23       DATE: 2015-07-13
-    !
-    ! ABSTRACT: UPON AN ERROR, THIS SUBPROGRAM ASSIGNS
-    !           A "FILL" VALUE TO THE OUTPUT FIELDS.
 
-    ! PROGRAM HISTORY LOG:
-    ! 2015-07-13  GAYNO     INITIAL VERSION
-    ! 2015-09-17  GAYNO     RENAME AS "ROT_EQUID_CYLIND_EGRID_ERROR"
-    !
-    ! USAGE:   CALL ROT_EQUID_CYLIND_EGRID_ERROR(IOPT,FILL,RLAT,RLON,
-    !                                            XPTS,YPTS,NPTS)
-    !
-    !   INPUT ARGUMENT LIST:
-    !     IOPT     - INTEGER OPTION FLAG
-    !                (+1 TO COMPUTE EARTH COORDS OF SELECTED GRID COORDS)
-    !                (-1 TO COMPUTE GRID COORDS OF SELECTED EARTH COORDS)
-    !     NPTS     - INTEGER MAXIMUM NUMBER OF COORDINATES
-    !     FILL     - REAL FILL VALUE TO SET INVALID OUTPUT DATA
-    !                (MUST BE IMPOSSIBLE VALUE; SUGGESTED VALUE: -9999.)
-    !   OUTPUT ARGUMENT LIST:
-    !     RLON     - REAL (NPTS) EARTH LONGITUDES IN DEGREES E IF IOPT<0
-    !     RLAT     - REAL (NPTS) EARTH LATITUDES IN DEGREES N IF IOPT<0
-    !     XPTS     - REAL (NPTS) GRID X POINT COORDINATES IF IOPT>0
-    !     YPTS     - REAL (NPTS) GRID Y POINT COORDINATES IF IOPT>0
-    !
-    ! ATTRIBUTES:
-    !   LANGUAGE: FORTRAN 90
-    !
-    !$$$
+  !> Error handler.
+  !>
+  !> UPON AN ERROR, THIS SUBPROGRAM ASSIGNS A "FILL" VALUE TO THE
+  !> OUTPUT FIELDS.
+  !>
+  !> ### Program History Log
+  !> Date | Programmer | Comments
+  !> -----|------------|---------
+  !> 2015-07-13 | GAYNO | Initial version
+  !> 2015-09-17 | GAYNO | Rename as "rot_equid_cylind_egrid_error"
+  !>
+  !> @param[in] iopt option flag
+  !> - 1 to compute earth coords of selected grid coords
+  !> - -1 to compute grid coords of selected earth coords
+  !> @param[in] fill fill value to set invalid output data (must be
+  !> impossible value; suggested value: -9999.)
+  !> @param[out] rlat (npts) earth latitudes in degrees n if iopt<0
+  !> @param[out] rlon (npts) earth longitudes in degrees e if iopt<0
+  !> @param[out] xpts (npts) grid x point coordinates if iopt>0
+  !> @param[out] ypts (npts) grid y point coordinates if iopt>0
+  !> @param[in] npts maximum number of coordinates
+  !>
+  !> @author GAYNO @date 2015-07-13
+  SUBROUTINE ROT_EQUID_CYLIND_EGRID_ERROR(IOPT,FILL,RLAT,RLON,XPTS,YPTS,NPTS)
     IMPLICIT NONE
     !
     INTEGER, INTENT(IN   ) :: IOPT, NPTS
@@ -460,7 +460,7 @@ contains
     REAL,    INTENT(IN   ) :: FILL
     REAL,    INTENT(  OUT) :: RLAT(NPTS),RLON(NPTS)
     REAL,    INTENT(  OUT) :: XPTS(NPTS),YPTS(NPTS)
-    ! - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
     IF(IOPT>=0) THEN
        RLON=FILL
        RLAT=FILL
@@ -469,7 +469,6 @@ contains
        XPTS=FILL
        YPTS=FILL
     ENDIF
-    ! - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   END SUBROUTINE ROT_EQUID_CYLIND_EGRID_ERROR
 
   !> Computes the vector rotation sines and
