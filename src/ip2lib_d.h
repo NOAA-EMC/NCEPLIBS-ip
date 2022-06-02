@@ -7,4 +7,8 @@ void gdswzd(int igdtnum, int *igdtmpl, int igdtlen, int iopt,
             double *crot, double *srot, double *xlon, double *xlat,
             double *ylon, double *ylat, double *area);
 
+void gdswzd_grib1(int kgds, int iopt, int npts, double *fill, double *xpts,
+		  double *ypts, double *rlon, double *rlat, int nret, double *crot,
+		  double *srot, double *xlon, double *xlat, double *ylon,
+		  double *ylat, double *area);
 #endif
