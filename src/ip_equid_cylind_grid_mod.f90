@@ -29,7 +29,7 @@ module ip_equid_cylind_grid_mod
 
   REAL :: DLAT !< Grid resolution in degrees n/s direction.
   REAL :: DLON !< Grid resolution in degrees e/w direction.
-  REAL :: RERTH !< ???
+  REAL :: RERTH !< Radius of the Earth.
 
 contains
 
