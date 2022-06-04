@@ -6,6 +6,7 @@
 !> Budget interpolation routines for scalars and vectors.
 !!
 !! @author George Gayno, Mark Iredell, Kyle Gerheiser
+!! @date July 2021
 module budget_interp_mod
   use gdswzd_mod
   use polfix_mod
@@ -24,68 +25,69 @@ module budget_interp_mod
 
 contains
 
-  !> Performs budget interpolation
-  !! from any grid to any grid (or to random station
-  !! points) for scalar fields.
-  !!
-  !! The algorithm simply computes (weighted) averages of
-  !! bilinearly interpolated points arranged in a square box
-  !! centered around each output grid point and stretching
-  !! nearly halfway to each of the neighboring grid points.
-  !!
-  !! Options allow choices of number of points in each radius
-  !! from the center point (ipopt(1)) which defaults to 2
-  !! (if ipopt(1)=-1) meaning that 25 points will be averaged;
-  !! further options are the respective weights for the radius
-  !! points starting at the center point (ipopt(2:2+ipopt(1))
-  !! which defaults to all 1 (if ipopt(1)=-1 or ipopt(2)=-1).
-  !!
-  !! A special interpolation is done if ipopt(2)=-2.
-  !! in this case, the boxes stretch nearly all the way to
-  !! each of the neighboring grid points and the weights
-  !! are the adjoint of the bilinear interpolation weights.
-  !! This case gives quasi-second-order budget interpolation.
-  !!
-  !! Another option is the minimum percentage for mask,
-  !! i.e. percent valid input data required to make output data,
-  !! (ipopt(3+ipopt(1)) which defaults to 50 (if -1).
-  !!
-  !! In cases where there is no or insufficient valid input data,
-  !! the user may choose to search for the nearest valid data. 
-  !! this is invoked by setting ipopt(20) to the width of 
-  !! the search square. The default is 1 (no search). Squares are
-  !! searched for valid data in a spiral pattern
-  !! starting from the center. No searching is done where
-  !! the output grid is outside the input grid.
-  !!
-  !! Only horizontal interpolation is performed.
-  !!
-  !! @param[in] ipopt Interpolation options
-  !! - ipopt(1) is number of radius points (defaults to 2 if ipopt(1)=-1).
-  !! - ipopt(2:2+ipopt(1)) are respective weights (defaults to all 1 if ipopt(1)=-1 or ipopt(2)=-1).
-  !! - ipopt(3+ipopt(1)) is minimum percentage for mask (defaults to 50 if ipopt(3+ipopt(1)=-1).
-  !! @param[in] grid_in Input grid
-  !! @param[in] grid_out Output grid
-  !! @param[in]  mi Skip number between input grid fields if km>1 or dimension of input grid fields if km=1.
-  !! @param[out] mo Skip number between output grid fields if km>1 or dimension of output grid fields if km=1.
-  !! @param[in]  km Number of fields to interpolate.
-  !! @param[in]  ibi Input bitmap flags.
-  !! @param[in]  li Input bitmaps (if some ibi(k)=1).
-  !! @param[in]  gi Input fields to interpolate.
-  !! @param[in,out] no  Number of output points (only if igdtnumo<0).
-  !! @param[in,out] rlat Output latitudes in degrees (if igdtnumo<0).
-  !! @param[in,out] rlon Output longitudes in degrees (if igdtnumo<0).
-  !! @param[out] ibo Output bitmap flags.
-  !! @param[out] lo Output bitmaps (always output).
-  !! @param[out] go Output fields interpolated.
-  !! @param[out] iret Return code.
-  !! - 0 Successful interpolation.
-  !! - 2 Unrecognized input grid or no grid overlap.
-  !! - 3 Unrecognized output grid.
-  !! - 32 Invalid budget method parameters.
-  !!
-  !! @author Marke Iredell, George Gayno, Kyle Gerheiser
-  !! @date July 2021
+  !> Performs budget interpolation from any grid to any grid (or to
+  !> random station points) for scalar fields.
+  !>
+  !> The algorithm simply computes (weighted) averages of bilinearly
+  !> interpolated points arranged in a square box centered around each
+  !> output grid point and stretching nearly halfway to each of the
+  !> neighboring grid points.
+  !>
+  !> Options allow choices of number of points in each radius from the
+  !> center point (ipopt(1)) which defaults to 2 (if ipopt(1)=-1)
+  !> meaning that 25 points will be averaged; further options are the
+  !> respective weights for the radius points starting at the center
+  !> point (ipopt(2:2+ipopt(1)) which defaults to all 1 (if
+  !> ipopt(1)=-1 or ipopt(2)=-1).
+  !>
+  !> A special interpolation is done if ipopt(2)=-2.  in this case,
+  !> the boxes stretch nearly all the way to each of the neighboring
+  !> grid points and the weights are the adjoint of the bilinear
+  !> interpolation weights.  This case gives quasi-second-order budget
+  !> interpolation.
+  !>
+  !> Another option is the minimum percentage for mask, i.e. percent
+  !> valid input data required to make output data, (ipopt(3+ipopt(1))
+  !> which defaults to 50 (if -1).
+  !>
+  !> In cases where there is no or insufficient valid input data, the
+  !> user may choose to search for the nearest valid data.  this is
+  !> invoked by setting ipopt(20) to the width of the search
+  !> square. The default is 1 (no search). Squares are searched for
+  !> valid data in a spiral pattern starting from the center. No
+  !> searching is done where the output grid is outside the input
+  !> grid.
+  !>
+  !> Only horizontal interpolation is performed.
+  !>
+  !> @param[in] ipopt Interpolation options
+  !> - ipopt(1) is number of radius points (defaults to 2 if ipopt(1)=-1).
+  !> - ipopt(2:2+ipopt(1)) are respective weights (defaults to all 1 if ipopt(1)=-1 or ipopt(2)=-1).
+  !> - ipopt(3+ipopt(1)) is minimum percentage for mask (defaults to 50 if ipopt(3+ipopt(1)=-1).
+  !> @param[in] grid_in Input grid
+  !> @param[in] grid_out Output grid
+  !> @param[in] mi Skip number between input grid fields if km>1 or
+  !> dimension of input grid fields if km=1.
+  !> @param[out] mo Skip number between output grid fields if km>1 or
+  !> dimension of output grid fields if km=1.
+  !> @param[in] km Number of fields to interpolate.
+  !> @param[in] ibi Input bitmap flags.
+  !> @param[in] li Input bitmaps (if some ibi(k)=1).
+  !> @param[in] gi Input fields to interpolate.
+  !> @param[in,out] no  Number of output points (only if igdtnumo<0).
+  !> @param[in,out] rlat Output latitudes in degrees (if igdtnumo<0).
+  !> @param[in,out] rlon Output longitudes in degrees (if igdtnumo<0).
+  !> @param[out] ibo Output bitmap flags.
+  !> @param[out] lo Output bitmaps (always output).
+  !> @param[out] go Output fields interpolated.
+  !> @param[out] iret Return code.
+  !> - 0 Successful interpolation.
+  !> - 2 Unrecognized input grid or no grid overlap.
+  !> - 3 Unrecognized output grid.
+  !> - 32 Invalid budget method parameters.
+  !>
+  !> @author Marke Iredell, George Gayno, Kyle Gerheiser
+  !> @date July 2021
   SUBROUTINE interpolate_budget_scalar(IPOPT,grid_in,grid_out, &
        MI,MO,KM,IBI,LI,GI, &
        NO,RLAT,RLON,IBO,LO,GO,IRET)
@@ -339,73 +341,76 @@ contains
     ! - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   END SUBROUTINE interpolate_budget_scalar
 
-  
-  !> This subprogram performs budget interpolation
-  !! from any grid to any grid (or to random station
-  !! points) for vector fields.
-  !!
-  !! The algorithm simply computes (weighted) averages of
-  !! bilinearly interpolated points arranged in a square box
-  !! centered around each output grid point and stretching
-  !! nearly halfway to each of the neighboring grid points.
-  !!
-  !! Options allow choices of number of points in each radius
-  !! from the center point (ipopt(1)) which defaults to 2
-  !! (if ipopt(1)=-1) meaning that 25 points will be averaged;
-  !! further options are the respective weights for the radius
-  !! points starting at the center point (ipopt(2:2+ipopt(1))
-  !! which defaults to all 1 (if ipopt(1)=-1 or ipopt(2)=-1).
-  !!
-  !! A special interpolation is done if ipopt(2)=-2.
-  !! in this case, the boxes stretch nearly all the way to
-  !! each of the neighboring grid points and the weights
-  !! are the adjoint of the bilinear interpolation weights.
-  !! This case gives quasi-second-order budget interpolation.
-  !!
-  !! Another option is the minimum percentage for mask,
-  !! i.e. percent valid input data required to make output data,
-  !! (ipopt(3+ipopt(1)) which defaults to 50 (if -1).
-  !!
-  !! In cases where there is no or insufficient valid input data,
-  !! the user may choose to search for the nearest valid data. 
-  !! this is invoked by setting ipopt(20) to the width of 
-  !! the search square. The default is 1 (no search). Squares are
-  !! searched for valid data in a spiral pattern
-  !! starting from the center. No searching is done where
-  !! the output grid is outside the input grid.
-  !!
-  !! Only horizontal interpolation is performed.
-  !!
-  !! param[in] ipopt interpolation options
-  !! ipopt(1) Number of radius points (defaults to 2 if ipopt(1)=-1);
-  !! ipopt(2:2+ipopt(1)) Respective weights (defaults to all 1 if ipopt(1)=-1 or ipopt(2)=-1).
-  !! ipopt(3+ipopt(1)) Minimum percentage for mask (defaults to 50 if ipopt(3+ipopt(1)=-1)
-  !! @param[in] grid_in Input grid.
-  !! @param[in] grid_out Output grid.
-  !! @param[in]  mi skip Number between input grid fields if km>1 or dimension of input grid fields if km=1.
-  !! @param[out] mo skip Number between output grid fields if km>1 or dimension of output grid fields if km=1.
-  !! @param[in]  km Number of fields to interpolate.
-  !! @param[in]  ibi Input bitmap flags.
-  !! @param[in]  li Input bitmaps (if some ibi(k)=1).
-  !! @param[in]  ui Input u-component fields to interpolate.
-  !! @param[in]  vi Input v-component fields to interpolate.
-  !! @param[in,out] no  Number of output points (only if igdtnumo<0)
-  !! @param[in,out] rlat Output latitudes in degrees (if igdtnumo<0)
-  !! @param[in,out] rlon Output longitudes in degrees (if igdtnumo<0)
-  !! @param[in,out] crot Vector rotation cosines. If interpolating subgrid ugrid=crot * uearth - srot * vearth.
-  !! @param[in,out] srot Vector rotation sines. If interpolating subgrid vgrid = srot * uearth + crot * vearth.
-  !! @param[out] ibo Output bitmap flags.
-  !! @param[out] lo Output bitmaps (always output).
-  !! @param[out] uo Output u-component fields interpolated.
-  !! @param[out] vo Output v-component fields interpolated.
-  !! @param[out] iret Return code.
-  !! - 0 Successful interpolation.
-  !! - 2 Unrecognized input grid or no grid overlap.
-  !! - 3 Unrecognized output grid.
-  !! - 32 Invalid budget method parameters.
-  !! 
-  !! @author Marke Iredell, George Gayno, Kyle Gerheiser
-  !! @date July 2021
+  !> This subprogram performs budget interpolation from any grid to
+  !> any grid (or to random station points) for vector fields.
+  !>
+  !> The algorithm simply computes (weighted) averages of bilinearly
+  !> interpolated points arranged in a square box centered around each
+  !> output grid point and stretching nearly halfway to each of the
+  !> neighboring grid points.
+  !>
+  !> Options allow choices of number of points in each radius from the
+  !> center point (ipopt(1)) which defaults to 2 (if ipopt(1)=-1)
+  !> meaning that 25 points will be averaged; further options are the
+  !> respective weights for the radius points starting at the center
+  !> point (ipopt(2:2+ipopt(1)) which defaults to all 1 (if
+  !> ipopt(1)=-1 or ipopt(2)=-1).
+  !>
+  !> A special interpolation is done if ipopt(2)=-2.  in this case,
+  !> the boxes stretch nearly all the way to each of the neighboring
+  !> grid points and the weights are the adjoint of the bilinear
+  !> interpolation weights.  This case gives quasi-second-order budget
+  !> interpolation.
+  !>
+  !> Another option is the minimum percentage for mask, i.e. percent
+  !> valid input data required to make output data, (ipopt(3+ipopt(1))
+  !> which defaults to 50 (if -1).
+  !>
+  !> In cases where there is no or insufficient valid input data, the
+  !> user may choose to search for the nearest valid data.  this is
+  !> invoked by setting ipopt(20) to the width of the search
+  !> square. The default is 1 (no search). Squares are searched for
+  !> valid data in a spiral pattern starting from the center. No
+  !> searching is done where the output grid is outside the input
+  !> grid.
+  !>
+  !> Only horizontal interpolation is performed.
+  !>
+  !> @param[in] ipopt interpolation options ipopt(1) Number of radius
+  !> points (defaults to 2 if ipopt(1)=-1); ipopt(2:2+ipopt(1))
+  !> Respective weights (defaults to all 1 if ipopt(1)=-1 or
+  !> ipopt(2)=-1).  ipopt(3+ipopt(1)) Minimum percentage for mask
+  !> (defaults to 50 if ipopt(3+ipopt(1)=-1)
+  !> @param[in] grid_in Input grid.
+  !> @param[in] grid_out Output grid.
+  !> @param[in] mi skip Number between input grid fields if km>1 or
+  !> dimension of input grid fields if km=1.
+  !> @param[out] mo skip Number between output grid fields if km>1 or
+  !> dimension of output grid fields if km=1.
+  !> @param[in] km Number of fields to interpolate.
+  !> @param[in] ibi Input bitmap flags.
+  !> @param[in] li Input bitmaps (if some ibi(k)=1).
+  !> @param[in] ui Input u-component fields to interpolate.
+  !> @param[in] vi Input v-component fields to interpolate.
+  !> @param[in,out] no  Number of output points (only if igdtnumo<0)
+  !> @param[in,out] rlat Output latitudes in degrees (if igdtnumo<0)
+  !> @param[in,out] rlon Output longitudes in degrees (if igdtnumo<0)
+  !> @param[in,out] crot Vector rotation cosines. If interpolating
+  !> subgrid ugrid=crot * uearth - srot * vearth.
+  !> @param[in,out] srot Vector rotation sines. If interpolating
+  !> subgrid vgrid = srot * uearth + crot * vearth.
+  !> @param[out] ibo Output bitmap flags.
+  !> @param[out] lo Output bitmaps (always output).
+  !> @param[out] uo Output u-component fields interpolated.
+  !> @param[out] vo Output v-component fields interpolated.
+  !> @param[out] iret Return code.
+  !> - 0 Successful interpolation.
+  !> - 2 Unrecognized input grid or no grid overlap.
+  !> - 3 Unrecognized output grid.
+  !> - 32 Invalid budget method parameters.
+  !> 
+  !> @author Marke Iredell, George Gayno, Kyle Gerheiser
+  !> @date July 2021
   SUBROUTINE interpolate_budget_vector(IPOPT,grid_in,grid_out, &
        MI,MO,KM,IBI,LI,UI,VI, &
        NO,RLAT,RLON,CROT,SROT,IBO,LO,UO,VO,IRET)

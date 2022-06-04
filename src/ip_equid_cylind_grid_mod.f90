@@ -24,7 +24,7 @@ module ip_equid_cylind_grid_mod
    contains
      procedure :: init_grib1
      procedure :: init_grib2
-     procedure :: gdswzd => gdswzd_equid_cylind
+     procedure :: gdswzd => gdswzd_equid_cylind !< See gdswzd_equid_cylind().
   end type ip_equid_cylind_grid
 
   REAL :: DLAT !< Grid resolution in degrees n/s direction.
