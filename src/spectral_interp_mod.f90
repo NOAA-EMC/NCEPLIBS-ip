@@ -1,3 +1,10 @@
+!> @file
+!! @brief Interpolate spectral.
+!! @author Mark Iredell @date 96-04-10
+
+!> @brief Interpolate spectral.
+!!
+!! @author Mark Iredell @date 96-04-10
 module spectral_interp_mod
   use gdswzd_mod
   use ip_grid_mod
@@ -25,6 +32,25 @@ module spectral_interp_mod
 
 contains
 
+  !> Interpolate spectral scalar.
+  !>
+  !> @param ipopt ???
+  !> @param grid_in ???
+  !> @param grid_out ???
+  !> @param MI ???
+  !> @param MO ???
+  !> @param KM ???
+  !> @param IBI ???
+  !> @param GI ???
+  !> @param NO ???
+  !> @param RLAT ???
+  !> @param RLON ???
+  !> @param IBO ???
+  !> @param LO ???
+  !> @param GO ???
+  !> @param IRET ???
+  !>
+  !! @author Mark Iredell @date 96-04-10
   subroutine interpolate_spectral_scalar(IPOPT,grid_in,grid_out, &
        MI,MO,KM,IBI,GI, &
        NO,RLAT,RLON,IBO,LO,GO,IRET)
@@ -56,11 +82,31 @@ contains
                MI,MO,KM,IBI,GI,NO,RLAT,RLON,IBO,LO,GO,IRET)
        end select
     end select
-
-
   end subroutine interpolate_spectral_scalar
 
-
+  !> Interpolate spectral vector.
+  !>
+  !> @param ipopt ???
+  !> @param grid_in ???
+  !> @param grid_out ???
+  !> @param MI ???
+  !> @param MO ???
+  !> @param KM ???
+  !> @param IBI ???
+  !> @param UI ???
+  !> @param VI ???
+  !> @param NO ???
+  !> @param RLAT ???
+  !> @param RLON ???
+  !> @param CROT ???
+  !> @param SROT ???
+  !> @param IBO ???
+  !> @param LO ???
+  !> @param UO ???
+  !> @param VO ???
+  !> @param IRET ???
+  !>
+  !! @author Mark Iredell @date 96-04-10
   subroutine interpolate_spectral_vector(IPOPT,grid_in,grid_out, &
        MI,MO,KM,IBI,UI,VI, &
        NO,RLAT,RLON,CROT,SROT,IBO,LO,UO,VO,IRET)
@@ -98,131 +144,101 @@ contains
 
   end subroutine interpolate_spectral_vector
 
-
+  !> Interpolate scalar fields (spectral).
+  !>
+  !> This subprogram performs spectral interpolation from any grid to
+  !> any grid for scalar fields. It requires that the input fields be
+  !> uniformly global. OPTIONS ALLOW CHOICES BETWEEN TRIANGULAR SHAPE
+  !> (IPOPT(1)=0) and rhomboidal shape (ipopt(1)=1) which has no
+  !> default; a second option is the truncation (ipopt(2)) which
+  !> defaults to a sensible truncation for the input grid (if
+  !> opt(2)=-1).
+  !>
+  !> @note If the output grid is not found in a special list, then the
+  !> transform back to grid is not very fast.  This special list
+  !> contains global cylindrical grids, polar stereographic grids
+  !> centered at the pole and mercator grids. only horizontal
+  !> interpolation is performed.
+  !>
+  !> The code recognizes the following projections, where "igdtnumi/o"
+  !> is the grib 2 grid defintion template number for the input and
+  !> onutput grids, respectively:
+  !> - (igdtnumi/o=00) equidistant cylindrical
+  !> - (igdtnumo  =01) rotated equidistant cylindrical. "e" and non-"e" staggered
+  !> - (igdtnumo  =10) mercator cylindrical
+  !> - (igdtnumo  =20) polar stereographic azimuthal
+  !> - (igdtnumo  =30) lambert conformal conical
+  !> - (igdtnumi/o=40) gaussian cylindrical
+  !>
+  !> As an added bonus the number of output grid points and their
+  !> latitudes and longitudes are also returned. On the other hand,
+  !> the output can be a set of station points if igdtnumo<0, in which
+  !> case the number of points and their latitudes and longitudes must
+  !> be input.  output bitmaps will not be created.
+  !>        
+  !> ### Program History Log
+  !> Date | Programmer | Comments
+  !> -----|------------|---------
+  !>   96-04-10 | Iredell | initial
+  !> 2001-06-18 | Iredell | improve detection of special fast transform
+  !> 2015-01-27 | Gayno | replace calls to gdswiz with new merged version of gdswzd.
+  !> 2015-07-13 | Gayno | convert to grib 2. replace grib 1 kgds arrays with grib 2 grid definition template arrays.
+  !>
+  !> @param[in] ipopt (20) interpolation options; ipopt(1)=0 for
+  !> triangular, ipopt(1)=1 for rhomboidal; ipopt(2) is truncation
+  !> number (defaults to sensible if ipopt(2)=-1).
+  !> @param[in] igdtnumi grid definition template number - input
+  !> grid. Corresponds to the gfld%igdtnum component of the ncep g2
+  !> library gridmod data structure.
+  !> - 00 - equidistant cylindrical
+  !> - 01 - rotated equidistant cylindrical.  "e" and non-"e" staggered
+  !> - 10 - mercator cyclindrical
+  !> - 20 - polar stereographic azimuthal
+  !> - 30 - lambert conformal conical
+  !> - 40 - gaussian equidistant cyclindrical
+  !> @param[in] igdtmpli (igdtleni) grid definition template array -
+  !> input grid. corresponds to the gfld%igdtmpl component of the ncep
+  !> g2 library gridmod data structure: (section 3 info). See comments
+  !> in routine ipolates() for complete definition.
+  !> @param[in] igdtleni number of elements of the grid definition
+  !> template array - input grid.  corresponds to the gfld%igdtlen
+  !> component of the ncep g2 library gridmod data structure.
+  !> @param[in] igdtnumo grid definition template number - output
+  !> grid. Corresponds to the gfld%igdtnum component of the ncep g2
+  !> library gridmod data structure. igdtnumo<0 means interpolate to
+  !> random station points. Otherwise, same definition as "igdtnumi".
+  !> @param[in] igdtmplo (igdtleno) grid definition template array -
+  !> output grid. corresponds to the gfld%igdtmpl component of the
+  !> ncep g2 library gridmod data structure. (section 3 info).  see
+  !> comments in routine ipolates() for complete definition.
+  !> @param[in] igdtleno number of elements of the grid definition
+  !> template array - output grid.  corresponds to the gfld%igdtlen
+  !> component of the ncep g2 library gridmod data structure.
+  !> @param[in] mi skip number between input grid fields if km>1 or
+  !> dimension of input grid fields if km=1
+  !> @param[in] mo skip number between output grid fields if km>1 or
+  !> dimension of output grid fields if km=1
+  !> @param[out] km number of fields to interpolate
+  !> @param[out] ibi (km) input bitmap flags (must be all 0)
+  !> @param[out] gi (mi,km) input fields to interpolate
+  !> @param[out] no number of output points (only if igdtnumo>=0)
+  !> @param[out] rlat (mo) output latitudes in degrees (if igdtnumo<0)
+  !> @param[out] rlon (mo) output longitudes in degrees (if igdtnumo<0)
+  !> @param[out] ibo (km) output bitmap flags
+  !> @param[out] lo *1 (mo,km) output bitmaps (always output)
+  !> @param[out] go (mo,km) output fields interpolated
+  !> @param[out] iret return code
+  !> - 0 successful interpolation
+  !> - 2 unrecognized input grid or no grid overlap
+  !> - 3 unrecognized output grid
+  !> - 41 invalid nonglobal input grid
+  !> - 42 invalid spectral method parameters
+  !>
+  !>! @author Mark Iredell @date 96-04-10
   SUBROUTINE POLATES4_grib2(IPOPT,IGDTNUMI,IGDTMPLI,IGDTLENI, &
        IGDTNUMO,IGDTMPLO,IGDTLENO, &
        MI,MO,KM,IBI,GI, &
        NO,RLAT,RLON,IBO,LO,GO,IRET)
-    !$$$  SUBPROGRAM DOCUMENTATION BLOCK
-    !
-    ! SUBPROGRAM:  POLATES4   INTERPOLATE SCALAR FIELDS (SPECTRAL)
-    !   PRGMMR: IREDELL       ORG: W/NMC23       DATE: 96-04-10
-    !
-    ! ABSTRACT: THIS SUBPROGRAM PERFORMS SPECTRAL INTERPOLATION
-    !           FROM ANY GRID TO ANY GRID FOR SCALAR FIELDS.
-    !           IT REQUIRES THAT THE INPUT FIELDS BE UNIFORMLY GLOBAL.
-    !           OPTIONS ALLOW CHOICES BETWEEN TRIANGULAR SHAPE (IPOPT(1)=0)
-    !           AND RHOMBOIDAL SHAPE (IPOPT(1)=1) WHICH HAS NO DEFAULT;
-    !           A SECOND OPTION IS THE TRUNCATION (IPOPT(2)) WHICH DEFAULTS 
-    !           TO A SENSIBLE TRUNCATION FOR THE INPUT GRID (IF OPT(2)=-1).
-    !           NOTE THAT IF THE OUTPUT GRID IS NOT FOUND IN A SPECIAL LIST,
-    !           THEN THE TRANSFORM BACK TO GRID IS NOT VERY FAST.
-    !           THIS SPECIAL LIST CONTAINS GLOBAL CYLINDRICAL GRIDS,
-    !           POLAR STEREOGRAPHIC GRIDS CENTERED AT THE POLE
-    !           AND MERCATOR GRIDS. ONLY HORIZONTAL INTERPOLATION IS PERFORMED.
-    !
-    !           THE CODE RECOGNIZES THE FOLLOWING PROJECTIONS, WHERE
-    !           "IGDTNUMI/O" IS THE GRIB 2 GRID DEFINTION TEMPLATE NUMBER
-    !           FOR THE INPUT AND OnUTPUT GRIDS, RESPECTIVELY:
-    !             (IGDTNUMI/O=00) EQUIDISTANT CYLINDRICAL
-    !             (IGDTNUMO  =01) ROTATED EQUIDISTANT CYLINDRICAL. "E" AND
-    !                             NON-"E" STAGGERED
-    !             (IGDTNUMO  =10) MERCATOR CYLINDRICAL
-    !             (IGDTNUMO  =20) POLAR STEREOGRAPHIC AZIMUTHAL
-    !             (IGDTNUMO  =30) LAMBERT CONFORMAL CONICAL
-    !             (IGDTNUMI/O=40) GAUSSIAN CYLINDRICAL
-    !           AS AN ADDED BONUS THE NUMBER OF OUTPUT GRID POINTS
-    !           AND THEIR LATITUDES AND LONGITUDES ARE ALSO RETURNED.
-    !           ON THE OTHER HAND, THE OUTPUT CAN BE A SET OF STATION POINTS
-    !           IF IGDTNUMO<0, IN WHICH CASE THE NUMBER OF POINTS
-    !           AND THEIR LATITUDES AND LONGITUDES MUST BE INPUT.
-    !           OUTPUT BITMAPS WILL NOT BE CREATED.
-    !        
-    ! PROGRAM HISTORY LOG:
-    !   96-04-10  IREDELL
-    ! 2001-06-18  IREDELL  IMPROVE DETECTION OF SPECIAL FAST TRANSFORM
-    ! 2015-01-27  GAYNO    REPLACE CALLS TO GDSWIZ WITH NEW MERGED
-    !                      VERSION OF GDSWZD.
-    ! 2015-07-13  GAYNO    CONVERT TO GRIB 2. REPLACE GRIB 1 KGDS ARRAYS
-    !                      WITH GRIB 2 GRID DEFINITION TEMPLATE ARRAYS.
-    !
-    ! USAGE:    CALL POLATES4(IPOPT,IGDTNUMI,IGDTMPLI,IGDTLENI, &
-    !                         IGDTNUMO,IGDTMPLO,IGDTLENO, &
-    !                         MI,MO,KM,IBI,LI,GI, &
-    !                         NO,RLAT,RLON,IBO,LO,GO,IRET)
-    !
-    !   INPUT ARGUMENT LIST:
-    !     IPOPT    - INTEGER (20) INTERPOLATION OPTIONS
-    !                IPOPT(1)=0 FOR TRIANGULAR, IPOPT(1)=1 FOR RHOMBOIDAL;
-    !                IPOPT(2) IS TRUNCATION NUMBER
-    !                (DEFAULTS TO SENSIBLE IF IPOPT(2)=-1).
-    !     IGDTNUMI - INTEGER GRID DEFINITION TEMPLATE NUMBER - INPUT GRID.
-    !                CORRESPONDS TO THE GFLD%IGDTNUM COMPONENT OF THE
-    !                NCEP G2 LIBRARY GRIDMOD DATA STRUCTURE.
-    !                  00 - EQUIDISTANT CYLINDRICAL
-    !                  01 - ROTATED EQUIDISTANT CYLINDRICAL.  "E"
-    !                       AND NON-"E" STAGGERED
-    !                  10 - MERCATOR CYCLINDRICAL
-    !                  20 - POLAR STEREOGRAPHIC AZIMUTHAL
-    !                  30 - LAMBERT CONFORMAL CONICAL
-    !                  40 - GAUSSIAN EQUIDISTANT CYCLINDRICAL
-    !     IGDTMPLI - INTEGER (IGDTLENI) GRID DEFINITION TEMPLATE ARRAY -
-    !                INPUT GRID. CORRESPONDS TO THE GFLD%IGDTMPL COMPONENT
-    !                OF THE NCEP G2 LIBRARY GRIDMOD DATA STRUCTURE:
-    !                (SECTION 3 INFO).  SEE COMMENTS IN ROUTINE
-    !                IPOLATES FOR COMPLETE DEFINITION.
-    !     IGDTLENI - INTEGER NUMBER OF ELEMENTS OF THE GRID DEFINITION
-    !                TEMPLATE ARRAY - INPUT GRID.  CORRESPONDS TO THE GFLD%IGDTLEN
-    !                COMPONENT OF THE NCEP G2 LIBRARY GRIDMOD DATA STRUCTURE.
-    !     IGDTNUMO - INTEGER GRID DEFINITION TEMPLATE NUMBER - OUTPUT GRID.
-    !                CORRESPONDS TO THE GFLD%IGDTNUM COMPONENT OF THE
-    !                NCEP G2 LIBRARY GRIDMOD DATA STRUCTURE. IGDTNUMO<0
-    !                MEANS INTERPOLATE TO RANDOM STATION POINTS.
-    !                OTHERWISE, SAME DEFINITION AS "IGDTNUMI".
-    !     IGDTMPLO - INTEGER (IGDTLENO) GRID DEFINITION TEMPLATE ARRAY -
-    !                OUTPUT GRID. CORRESPONDS TO THE GFLD%IGDTMPL COMPONENT
-    !                OF THE NCEP G2 LIBRARY GRIDMOD DATA STRUCTURE.
-    !                (SECTION 3 INFO).  SEE COMMENTS IN ROUTINE
-    !                IPOLATES FOR COMPLETE DEFINITION.
-    !     IGDTLENO - INTEGER NUMBER OF ELEMENTS OF THE GRID DEFINITION
-    !                TEMPLATE ARRAY - OUTPUT GRID.  CORRESPONDS TO THE GFLD%IGDTLEN
-    !                COMPONENT OF THE NCEP G2 LIBRARY GRIDMOD DATA STRUCTURE.
-    !     MI       - INTEGER SKIP NUMBER BETWEEN INPUT GRID FIELDS IF KM>1
-    !                OR DIMENSION OF INPUT GRID FIELDS IF KM=1
-    !     MO       - INTEGER SKIP NUMBER BETWEEN OUTPUT GRID FIELDS IF KM>1
-    !                OR DIMENSION OF OUTPUT GRID FIELDS IF KM=1
-    !     KM       - INTEGER NUMBER OF FIELDS TO INTERPOLATE
-    !     IBI      - INTEGER (KM) INPUT BITMAP FLAGS (MUST BE ALL 0)
-    !     GI       - REAL (MI,KM) INPUT FIELDS TO INTERPOLATE
-    !     RLAT     - REAL (MO) OUTPUT LATITUDES IN DEGREES (IF IGDTNUMO<0)
-    !     RLON     - REAL (MO) OUTPUT LONGITUDES IN DEGREES (IF IGDTNUMO<0)
-    !
-    !   OUTPUT ARGUMENT LIST:
-    !     NO       - INTEGER NUMBER OF OUTPUT POINTS (ONLY IF IGDTNUMO>=0)
-    !     RLAT     - REAL (MO) OUTPUT LATITUDES IN DEGREES (IF IGDTNUMO>=0)
-    !     RLON     - REAL (MO) OUTPUT LONGITUDES IN DEGREES (IF IGDTNUMO>=0)
-    !     IBO      - INTEGER (KM) OUTPUT BITMAP FLAGS
-    !     LO       - LOGICAL*1 (MO,KM) OUTPUT BITMAPS (ALWAYS OUTPUT)
-    !     GO       - REAL (MO,KM) OUTPUT FIELDS INTERPOLATED
-    !     IRET     - INTEGER RETURN CODE
-    !                0    SUCCESSFUL INTERPOLATION
-    !                2    UNRECOGNIZED INPUT GRID OR NO GRID OVERLAP
-    !                3    UNRECOGNIZED OUTPUT GRID
-    !                41   INVALID NONGLOBAL INPUT GRID
-    !                42   INVALID SPECTRAL METHOD PARAMETERS
-    !
-    ! SUBPROGRAMS CALLED:
-    !   EARTH_RADIUS DETERMINE SIZE/SHAPE OF EARTH
-    !   GDSWZD       GRID DESCRIPTION SECTION WIZARD
-    !   SPTRUN       SPECTRALLY TRUNCATE GRIDDED SCALAR FIELDS
-    !   SPTRUNS      SPECTRALLY INTERPOLATE SCALARS TO POLAR STEREO.
-    !   SPTRUNM      SPECTRALLY INTERPOLATE SCALARS TO MERCATOR
-    !   SPTRUNG      SPECTRALLY INTERPOLATE SCALARS TO STATIONS
-    !
-    ! ATTRIBUTES:
-    !   LANGUAGE: FORTRAN 90
-    !
-    !$$$
     INTEGER,          INTENT(IN   ) :: IGDTNUMI, IGDTLENI
     INTEGER,          INTENT(IN   ) :: IGDTMPLI(IGDTLENI)
     INTEGER,          INTENT(IN   ) :: IGDTNUMO, IGDTLENO
@@ -453,87 +469,78 @@ contains
           ENDDO
        ENDDO
     ENDIF
-    ! - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   END SUBROUTINE POLATES4_GRIB2
 
-
-  !> @file
-  !! INTERPOLATE SCALAR FIELDS (SPECTRAL)
-  !! @author IREDELL @date 96-04-10
-  !
-  !> THIS SUBPROGRAM PERFORMS SPECTRAL INTERPOLATION
-  !!           FROM ANY GRID TO ANY GRID FOR SCALAR FIELDS.
-  !!           IT REQUIRES THAT THE INPUT FIELDS BE UNIFORMLY GLOBAL.
-  !!           OPTIONS ALLOW CHOICES BETWEEN TRIANGULAR SHAPE (IPOPT(1)=0)
-  !!           AND RHOMBOIDAL SHAPE (IPOPT(1)=1) WHICH HAS NO DEFAULT;
-  !!           A SECOND OPTION IS THE TRUNCATION (IPOPT(2)) WHICH DEFAULTS 
-  !!           TO A SENSIBLE TRUNCATION FOR THE INPUT GRID (IF OPT(2)=-1).
-  !!           NOTE THAT IF THE OUTPUT GRID IS NOT FOUND IN A SPECIAL LIST,
-  !!           THEN THE TRANSFORM BACK TO GRID IS NOT VERY FAST.
-  !!           THIS SPECIAL LIST CONTAINS GLOBAL CYLINDRICAL GRIDS,
-  !!           POLAR STEREOGRAPHIC GRIDS CENTERED AT THE POLE
-  !!           AND MERCATOR GRIDS.
-  !!           ONLY HORIZONTAL INTERPOLATION IS PERFORMED.
-  !!           THE GRIDS ARE DEFINED BY THEIR GRID DESCRIPTION SECTIONS
-  !!           (PASSED IN INTEGER FORM AS DECODED BY SUBPROGRAM W3FI63).
-  !!           THE CURRENT CODE RECOGNIZES THE FOLLOWING PROJECTIONS:
-  !!             (KGDS(1)=000) EQUIDISTANT CYLINDRICAL
-  !!             (KGDS(1)=001) MERCATOR CYLINDRICAL
-  !!             (KGDS(1)=003) LAMBERT CONFORMAL CONICAL
-  !!             (KGDS(1)=004) GAUSSIAN CYLINDRICAL (SPECTRAL NATIVE)
-  !!             (KGDS(1)=005) POLAR STEREOGRAPHIC AZIMUTHAL
-  !!             (KGDS(1)=203) ROTATED EQUIDISTANT CYLINDRICAL (E-STAGGER)
-  !!             (KGDS(1)=205) ROTATED EQUIDISTANT CYLINDRICAL (B-STAGGER)
-  !!           WHERE KGDS COULD BE EITHER INPUT KGDSI OR OUTPUT KGDSO.
-  !!           AS AN ADDED BONUS THE NUMBER OF OUTPUT GRID POINTS
-  !!           AND THEIR LATITUDES AND LONGITUDES ARE ALSO RETURNED.
-  !!           ON THE OTHER HAND, THE OUTPUT CAN BE A SET OF STATION POINTS
-  !!           IF KGDSO(1)<0, IN WHICH CASE THE NUMBER OF POINTS
-  !!           AND THEIR LATITUDES AND LONGITUDES MUST BE INPUT.
-  !!           OUTPUT BITMAPS WILL NOT BE CREATED.
-  !!        
-  !! PROGRAM HISTORY LOG:
-  !! -  96-04-10  IREDELL
-  !! - 2001-06-18  IREDELL  IMPROVE DETECTION OF SPECIAL FAST TRANSFORM
-  !! - 2015-01-27  GAYNO    REPLACE CALLS TO GDSWIZ WITH NEW MERGED
-  !!                      VERSION OF GDSWZD.
-  !!
-  !! @param IPOPT    - INTEGER (20) INTERPOLATION OPTIONS
-  !!                IPOPT(1)=0 FOR TRIANGULAR, IPOPT(1)=1 FOR RHOMBOIDAL;
-  !!                IPOPT(2) IS TRUNCATION NUMBER
-  !!                (DEFAULTS TO SENSIBLE IF IPOPT(2)=-1).
-  !! @param KGDSI    - INTEGER (200) INPUT GDS PARAMETERS AS DECODED BY W3FI63
-  !! @param KGDSO    - INTEGER (200) OUTPUT GDS PARAMETERS
-  !!                (KGDSO(1)<0 IMPLIES RANDOM STATION POINTS)
-  !! @param MI       - INTEGER SKIP NUMBER BETWEEN INPUT GRID FIELDS IF KM>1
-  !!                OR DIMENSION OF INPUT GRID FIELDS IF KM=1
-  !! @param MO       - INTEGER SKIP NUMBER BETWEEN OUTPUT GRID FIELDS IF KM>1
-  !!                OR DIMENSION OF OUTPUT GRID FIELDS IF KM=1
-  !! @param KM       - INTEGER NUMBER OF FIELDS TO INTERPOLATE
-  !! @param IBI      - INTEGER (KM) INPUT BITMAP FLAGS (MUST BE ALL 0)
-  !! @param LI       - LOGICAL*1 (MI,KM) INPUT BITMAPS (IF SOME IBI(K)=1)
-  !! @param GI       - REAL (MI,KM) INPUT FIELDS TO INTERPOLATE
-  !! @param[out] NO       - INTEGER NUMBER OF OUTPUT POINTS (ONLY IF KGDSO(1)<0)
-  !! @param[out] RLAT     - REAL (NO) OUTPUT LATITUDES IN DEGREES (IF KGDSO(1)<0)
-  !! @param[out] RLON     - REAL (NO) OUTPUT LONGITUDES IN DEGREES (IF KGDSO(1)<0)
-  !! @param[out] IBO      - INTEGER (KM) OUTPUT BITMAP FLAGS
-  !! @param[out] LO       - LOGICAL*1 (MO,KM) OUTPUT BITMAPS (ALWAYS OUTPUT)
-  !! @param[out] GO       - REAL (MO,KM) OUTPUT FIELDS INTERPOLATED
-  !! @param[out] IRET     - INTEGER RETURN CODE
-  !!                0    SUCCESSFUL INTERPOLATION
-  !!                2    UNRECOGNIZED INPUT GRID OR NO GRID OVERLAP
-  !!                3    UNRECOGNIZED OUTPUT GRID
-  !!                41   INVALID NONGLOBAL INPUT GRID
-  !!                42   INVALID SPECTRAL METHOD PARAMETERS
-  !!
-  !! SUBPROGRAMS CALLED:
-  !! -  GDSWZD       GRID DESCRIPTION SECTION WIZARD
-  !! -  SPTRUN       SPECTRALLY TRUNCATE GRIDDED SCALAR FIELDS
-  !! -  SPTRUNS      SPECTRALLY INTERPOLATE SCALARS TO POLAR STEREO.
-  !! -  SPTRUNM      SPECTRALLY INTERPOLATE SCALARS TO MERCATOR
-  !! -  SPTRUNG      SPECTRALLY INTERPOLATE SCALARS TO STATIONS
-  !!
-  SUBROUTINE POLATES4_grib1(IPOPT,KGDSI,KGDSO,MI,MO,KM,IBI,GI, &
+  !> Interpolate scalar fields (spectral).
+  !>
+  !> This subprogram performs spectral interpolation from any grid to
+  !> any grid for scalar fields.  It requires that the input fields be
+  !> uniformly global.
+  !>
+  !> Options allow choices between triangular shape (ipopt(1)=0) and
+  !> rhomboidal shape (ipopt(1)=1) which has no default; a second
+  !> option is the truncation (ipopt(2)) which defaults to a sensible
+  !> truncation for the input grid (if opt(2)=-1).
+  !>
+  !> @note If the output grid is not found in a special list, then the
+  !> transform back to grid is not very fast.  This special list
+  !> contains global cylindrical grids, polar stereographic grids
+  !> centered at the pole and mercator grids.
+  !>
+  !> Only horizontal interpolation is performed. The grids are defined
+  !> by their grid description sections (passed in integer form as
+  !> decoded by subprogram w3fi63).
+  !>
+  !> The current code recognizes the following projections:
+  !> - (kgds(1)=000) equidistant cylindrical
+  !> - (kgds(1)=001) mercator cylindrical
+  !> - (kgds(1)=003) lambert conformal conical
+  !> - (kgds(1)=004) gaussian cylindrical (spectral native)
+  !> - (kgds(1)=005) polar stereographic azimuthal
+  !> - (kgds(1)=203) rotated equidistant cylindrical (e-stagger)
+  !> - (kgds(1)=205) rotated equidistant cylindrical (b-stagger)
+  !>
+  !> Where kgds could be either input kgdsi or output kgdso.  As an
+  !> added bonus the number of output grid points and their latitudes
+  !> and longitudes are also returned.  On the other hand, the output
+  !> can be a set of station points if kgdso(1)<0, in which case the
+  !> number of points and their latitudes and longitudes must be
+  !> input. Output bitmaps will not be created.
+  !>        
+  !> ### Program History Log
+  !> Date | Programmer | Comments
+  !> -----|------------|---------
+  !> 96-04-10 | Iredell | Initial
+  !> 2001-06-18 | Iredell | improve detection of special fast transform
+  !> 2015-01-27 | Gayno | replace calls to gdswiz() with new merged version of gdswzd().
+  !>
+  !> @param[in] ipopt (20) interpolation options ipopt(1)=0 for
+  !> triangular, ipopt(1)=1 for rhomboidal; ipopt(2) is truncation
+  !> number (defaults to sensible if ipopt(2)=-1).
+  !> @param[in] kgdsi (200) input gds parameters as decoded by w3fi63
+  !> @param[in] kgdso (200) output gds parameters (kgdso(1)<0 implies random station points)
+  !> @param[in] mi skip number between input grid fields if km>1 or
+  !> dimension of input grid fields if km=1
+  !> @param[in] mo skip number between output grid fields if km>1 or
+  !> dimension of output grid fields if km=1
+  !> @param[in] km number of fields to interpolate
+  !> @param[in] ibi (km) input bitmap flags (must be all 0)
+  !> @param[in] gi  (mi,km) input fields to interpolate
+  !> @param[out] no  number of output points (only if kgdso(1)<0)
+  !> @param[out] rlat (no) output latitudes in degrees (if kgdso(1)<0)
+  !> @param[out] rlon (no) output longitudes in degrees (if kgdso(1)<0)
+  !> @param[out] ibo (km) output bitmap flags
+  !> @param[out] lo (mo,km) output bitmaps (always output)
+  !> @param[out] go (mo,km) output fields interpolated
+  !> @param[out] iret return code
+  !> - 0 successful interpolation
+  !> - 2 unrecognized input grid or no grid overlap
+  !> - 3 unrecognized output grid
+  !> - 41 invalid nonglobal input grid
+  !> - 42 invalid spectral method parameters
+  !>
+  !> @author Iredell @date 96-04-10
+  suBROUTINE POLATES4_grib1(IPOPT,KGDSI,KGDSO,MI,MO,KM,IBI,GI, &
        NO,RLAT,RLON,IBO,LO,GO,IRET)
     INTEGER,          INTENT(IN   ) :: IPOPT(20), KGDSI(200)
     INTEGER,          INTENT(IN   ) :: KGDSO(200), MI, MO
@@ -752,155 +759,119 @@ contains
   END SUBROUTINE POLATES4_GRIB1
 
 
+  !> Interpolate vector fields (spectral).
+  !>
+  !> This subprogram performs spectral interpolation from any grid to
+  !> any grid for vector fields. It requires that the input fields be
+  !> uniformly global. Options allow choices between triangular shape
+  !> (ipopt(1)=0) and rhomboidal shape (ipopt(1)=1) which has no
+  !> default; a second option is the truncation (ipopt(2)) which
+  !> defaults to a sensible truncation for the input grid (if
+  !> opt(2)=-1).
+  !>
+  !> @note If the output grid is not found in a special list, then the
+  !> transform back to grid is not very fast.  This special list
+  !> contains global cylindrical grids, polar stereographic grids
+  !> centered at the pole and mercator grids. Only horizontal
+  !> interpolation is performed.
+  !>
+  !> The input and output grids are defined by their grib 2 grid
+  !> definition template as decoded by the ncep g2 library. The code
+  !> recognizes the following projections, where "igdtnumi/o" is the
+  !> grib 2 grid defintion template number for the input and output
+  !> grids, respectively:
+  !> - (igdtnumi/o=00) equidistant cylindrical
+  !> - (igdtnumo  =01) rotated equidistant cylindrical. "e" and non-"e" staggered
+  !> - (igdtnumo  =10) mercator cylindrical
+  !> - (igdtnumo  =20) polar stereographic azimuthal
+  !> - (igdtnumo  =30) lambert conformal conical
+  !> - (igdtnumi/o=40) gaussian cylindrical
+  !>
+  !> The input and output vectors are rotated so that they are either
+  !> resolved relative to the defined grid in the direction of
+  !> increasing x and y coordinates or resolved relative to easterly
+  !> and northerly directions, as designated by their respective grid
+  !> description sections.
+  !>
+  !> As an added bonus the number of output grid points and their
+  !> latitudes and longitudes are also returned along with their
+  !> vector rotation parameters.  On the other hand, the output can be
+  !> a set of station points if igdtnumo<0, in which case the number
+  !> of points and their latitudes and longitudes must be input along
+  !> with their vector rotation parameters.
+  !>
+  !> Output bitmaps will only be created when the output grid extends
+  !> outside of the domain of the input grid.  the output field is set
+  !> to 0 where the output bitmap is off.
+  !>        
+  !> ### Program History Log
+  !> Date | Programmer | Comments
+  !> -----|------------|---------
+  !> 96-04-10 | iredell | initial
+  !> 2001-06-18 | iredell | improve detection of special fast transform
+  !> 2015-01-27 | gayno | replace calls to gdswiz() with new merged routine gdswzd().
+  !> 2015-07-13 | gayno | convert to grib 2. replace grib 1 kgds arrays with grib 2 grid definition template arrays.
+  !>
+  !> @param[in] ipopt (20) interpolation options ipopt(1)=0 for
+  !> triangular, ipopt(1)=1 for rhomboidal; ipopt(2) is truncation
+  !> number (defaults to sensible if ipopt(2)=-1).
+  !> @param[in] igdtnumi grid definition template number - input
+  !> grid. Corresponds to the gfld%igdtnum component of the ncep g2
+  !> library gridmod data structure:
+  !> - 00 equidistant cylindrical
+  !> - 01 rotated equidistant cylindrical.  "e" and non-"e" staggered
+  !> - 10 mercator cyclindrical
+  !> - 20 polar stereographic azimuthal
+  !> - 30 lambert conformal conical
+  !> - 40 gaussian equidistant cyclindrical
+  !> @param[in] igdtmpli (igdtleni) grid definition template array - input
+  !> grid. corresponds to the gfld%igdtmpl component of the ncep g2
+  !> library gridmod data structure (section 3 info).  see comments in
+  !> routine ipolatev for complete definition.
+  !> @param[in] igdtleni number of elements of the grid definition
+  !> template array - input grid.  corresponds to the gfld%igdtlen
+  !> component of the ncep g2 library gridmod data structure.
+  !> @param[in] igdtnumo grid definition template number - output
+  !> grid. Corresponds to the gfld%igdtnum component of the ncep g2
+  !> library gridmod data structure. igdtnumo<0 means interpolate to
+  !> random station points. Otherwise, same definition as "igdtnumi".
+  !> @param[in] igdtmplo (igdtleno) grid definition template array -
+  !> output grid. corresponds to the gfld%igdtmpl component of the
+  !> ncep g2 library gridmod data structure (section 3 info).  see
+  !> comments in routine ipolatev() for complete definition.
+  !> @param[in] igdtleno number of elements of the grid definition
+  !> template array - output grid. Corresponds to the gfld%igdtlen
+  !> component of the ncep g2 library gridmod data structure.
+  !> @param[in] mi skip number between input grid fields if km>1 or
+  !> dimension of input grid fields if km=1.
+  !> @param[in] mo skip number between output grid fields if km>1 or
+  !> dimension of output grid fields if km=1.
+  !> @param[in] km number of fields to interpolate
+  !> @param[in] ibi (km) input bitmap flags (must be all 0)
+  !> @param[in] ui (mi,km) input u-component fields to interpolate
+  !> @param[in] vi (mi,km) input v-component fields to interpolate
+  !> @param[out] no number of output points (only if igdtnumo>=0)
+  !> @param[inout] rlat (mo) output latitudes in degrees (if igdtnumo<0)
+  !> @param[inout] rlon (mo) output longitudes in degrees (if igdtnumo<0)
+  !> @param[inout] crot (mo) vector rotation cosines (if igdtnumo<0)
+  !> @param[inout] srot (mo) vector rotation sines (if igdtnumo<0)
+  !> (ugrid=crot*uearth-srot*vearth; vgrid=srot*uearth+crot*vearth)
+  !> @param[out] ibo (km) output bitmap flags
+  !> @param[out] lo (mo,km) output bitmaps (always output)
+  !> @param[out] uo (mo,km) output u-component fields interpolated
+  !> @param[out] vo (mo,km) output v-component fields interpolated
+  !> @param[out] iret return code
+  !> - 0 successful interpolation
+  !> - 2 unrecognized input grid or no grid overlap
+  !> - 3 unrecognized output grid
+  !> - 41 invalid nonglobal input grid
+  !> - 42 invalid spectral method parameters
+  !>
+  !> @author IREDELL @date 96-04-10
   SUBROUTINE POLATEV4_grib2(IPOPT,IGDTNUMI,IGDTMPLI,IGDTLENI, &
        IGDTNUMO,IGDTMPLO,IGDTLENO, &
        MI,MO,KM,IBI,UI,VI, &
        NO,RLAT,RLON,CROT,SROT,IBO,LO,UO,VO,IRET)
-    !$$$  SUBPROGRAM DOCUMENTATION BLOCK
-    !
-    ! SUBPROGRAM:  POLATEV4   INTERPOLATE VECTOR FIELDS (SPECTRAL)
-    !   PRGMMR: IREDELL       ORG: W/NMC23       DATE: 96-04-10
-    !
-    ! ABSTRACT: THIS SUBPROGRAM PERFORMS SPECTRAL INTERPOLATION
-    !           FROM ANY GRID TO ANY GRID FOR VECTOR FIELDS.
-    !           IT REQUIRES THAT THE INPUT FIELDS BE UNIFORMLY GLOBAL.
-    !           OPTIONS ALLOW CHOICES BETWEEN TRIANGULAR SHAPE (IPOPT(1)=0)
-    !           AND RHOMBOIDAL SHAPE (IPOPT(1)=1) WHICH HAS NO DEFAULT;
-    !           A SECOND OPTION IS THE TRUNCATION (IPOPT(2)) WHICH DEFAULTS 
-    !           TO A SENSIBLE TRUNCATION FOR THE INPUT GRID (IF OPT(2)=-1).
-    !           NOTE THAT IF THE OUTPUT GRID IS NOT FOUND IN A SPECIAL LIST,
-    !           THEN THE TRANSFORM BACK TO GRID IS NOT VERY FAST.
-    !           THIS SPECIAL LIST CONTAINS GLOBAL CYLINDRICAL GRIDS,
-    !           POLAR STEREOGRAPHIC GRIDS CENTERED AT THE POLE
-    !           AND MERCATOR GRIDS. ONLY HORIZONTAL INTERPOLATION
-    !           IS PERFORMED.
-    !
-    !           THE INPUT AND OUTPUT GRIDS ARE DEFINED BY THEIR GRIB 2 GRID
-    !           DEFINITION TEMPLATE AS DECODED BY THE NCEP G2 LIBRARY. THE
-    !           CODE RECOGNIZES THE FOLLOWING PROJECTIONS, WHERE
-    !           "IGDTNUMI/O" IS THE GRIB 2 GRID DEFINTION TEMPLATE NUMBER
-    !           FOR THE INPUT AND OUTPUT GRIDS, RESPECTIVELY:
-    !             (IGDTNUMI/O=00) EQUIDISTANT CYLINDRICAL
-    !             (IGDTNUMO  =01) ROTATED EQUIDISTANT CYLINDRICAL. "E" AND
-    !                             NON-"E" STAGGERED
-    !             (IGDTNUMO  =10) MERCATOR CYLINDRICAL
-    !             (IGDTNUMO  =20) POLAR STEREOGRAPHIC AZIMUTHAL
-    !             (IGDTNUMO  =30) LAMBERT CONFORMAL CONICAL
-    !             (IGDTNUMI/O=40) GAUSSIAN CYLINDRICAL
-    !
-    !           THE INPUT AND OUTPUT VECTORS ARE ROTATED SO THAT THEY ARE
-    !           EITHER RESOLVED RELATIVE TO THE DEFINED GRID
-    !           IN THE DIRECTION OF INCREASING X AND Y COORDINATES
-    !           OR RESOLVED RELATIVE TO EASTERLY AND NORTHERLY DIRECTIONS,
-    !           AS DESIGNATED BY THEIR RESPECTIVE GRID DESCRIPTION SECTIONS.
-    !
-    !           AS AN ADDED BONUS THE NUMBER OF OUTPUT GRID POINTS
-    !           AND THEIR LATITUDES AND LONGITUDES ARE ALSO RETURNED
-    !           ALONG WITH THEIR VECTOR ROTATION PARAMETERS.
-    !           ON THE OTHER HAND, THE OUTPUT CAN BE A SET OF STATION POINTS
-    !           IF IGDTNUMO<0, IN WHICH CASE THE NUMBER OF POINTS
-    !           AND THEIR LATITUDES AND LONGITUDES MUST BE INPUT 
-    !           ALONG WITH THEIR VECTOR ROTATION PARAMETERS.
-    !
-    !           OUTPUT BITMAPS WILL ONLY BE CREATED WHEN THE OUTPUT GRID
-    !           EXTENDS OUTSIDE OF THE DOMAIN OF THE INPUT GRID.
-    !           THE OUTPUT FIELD IS SET TO 0 WHERE THE OUTPUT BITMAP IS OFF.
-    !        
-    ! PROGRAM HISTORY LOG:
-    !   96-04-10  IREDELL
-    ! 2001-06-18  IREDELL  IMPROVE DETECTION OF SPECIAL FAST TRANSFORM
-    ! 2015-01-27  GAYNO    REPLACE CALLS TO GDSWIZ WITH NEW MERGED
-    !                      ROUTINE GDSWZD.
-    ! 2015-07-13  GAYNO    CONVERT TO GRIB 2. REPLACE GRIB 1 KGDS ARRAYS
-    !                      WITH GRIB 2 GRID DEFINITION TEMPLATE ARRAYS.
-    !
-    ! USAGE:    CALL POLATEV4(IPOPT,IGDTNUMI,IGDTMPLI,IGDTLENI, &
-    !                         IGDTNUMO,IGDTMPLO,IGDTLENO, &
-    !                         MI,MO,KM,IBI,LI,UI,VI, &
-    !                         NO,RLAT,RLON,CROT,SROT,IBO,LO,UO,VO,IRET)
-    !
-    !   INPUT ARGUMENT LIST:
-    !     IPOPT    - INTEGER (20) INTERPOLATION OPTIONS
-    !                IPOPT(1)=0 FOR TRIANGULAR, IPOPT(1)=1 FOR RHOMBOIDAL;
-    !                IPOPT(2) IS TRUNCATION NUMBER
-    !                (DEFAULTS TO SENSIBLE IF IPOPT(2)=-1).
-    !     IGDTNUMI - INTEGER GRID DEFINITION TEMPLATE NUMBER - INPUT GRID.
-    !                CORRESPONDS TO THE GFLD%IGDTNUM COMPONENT OF THE
-    !                NCEP G2 LIBRARY GRIDMOD DATA STRUCTURE:
-    !                  00 - EQUIDISTANT CYLINDRICAL
-    !                  01 - ROTATED EQUIDISTANT CYLINDRICAL.  "E"
-    !                       AND NON-"E" STAGGERED
-    !                  10 - MERCATOR CYCLINDRICAL
-    !                  20 - POLAR STEREOGRAPHIC AZIMUTHAL
-    !                  30 - LAMBERT CONFORMAL CONICAL
-    !                  40 - GAUSSIAN EQUIDISTANT CYCLINDRICAL
-    !     IGDTMPLI - INTEGER (IGDTLENI) GRID DEFINITION TEMPLATE ARRAY -
-    !                INPUT GRID. CORRESPONDS TO THE GFLD%IGDTMPL COMPONENT
-    !                OF THE NCEP G2 LIBRARY GRIDMOD DATA STRUCTURE
-    !                (SECTION 3 INFO).  SEE COMMENTS IN ROUTINE
-    !                IPOLATEV FOR COMPLETE DEFINITION.
-    !     IGDTLENI - INTEGER NUMBER OF ELEMENTS OF THE GRID DEFINITION
-    !                TEMPLATE ARRAY - INPUT GRID.  CORRESPONDS TO THE GFLD%IGDTLEN
-    !                COMPONENT OF THE NCEP G2 LIBRARY GRIDMOD DATA STRUCTURE.
-    !     IGDTNUMO - INTEGER GRID DEFINITION TEMPLATE NUMBER - OUTPUT GRID.
-    !                CORRESPONDS TO THE GFLD%IGDTNUM COMPONENT OF THE
-    !                NCEP G2 LIBRARY GRIDMOD DATA STRUCTURE. IGDTNUMO<0
-    !                MEANS INTERPOLATE TO RANDOM STATION POINTS.
-    !                OTHERWISE, SAME DEFINITION AS "IGDTNUMI".
-    !     IGDTMPLO - INTEGER (IGDTLENO) GRID DEFINITION TEMPLATE ARRAY -
-    !                OUTPUT GRID. CORRESPONDS TO THE GFLD%IGDTMPL COMPONENT
-    !                OF THE NCEP G2 LIBRARY GRIDMOD DATA STRUCTURE
-    !                (SECTION 3 INFO).  SEE COMMENTS IN ROUTINE
-    !                IPOLATEV FOR COMPLETE DEFINITION.
-    !     IGDTLENO - INTEGER NUMBER OF ELEMENTS OF THE GRID DEFINITION
-    !                TEMPLATE ARRAY - OUTPUT GRID.  CORRESPONDS TO THE GFLD%IGDTLEN
-    !                COMPONENT OF THE NCEP G2 LIBRARY GRIDMOD DATA STRUCTURE.
-    !     MI       - INTEGER SKIP NUMBER BETWEEN INPUT GRID FIELDS IF KM>1
-    !                OR DIMENSION OF INPUT GRID FIELDS IF KM=1
-    !     MO       - INTEGER SKIP NUMBER BETWEEN OUTPUT GRID FIELDS IF KM>1
-    !                OR DIMENSION OF OUTPUT GRID FIELDS IF KM=1
-    !     KM       - INTEGER NUMBER OF FIELDS TO INTERPOLATE
-    !     IBI      - INTEGER (KM) INPUT BITMAP FLAGS (MUST BE ALL 0)
-    !     UI       - REAL (MI,KM) INPUT U-COMPONENT FIELDS TO INTERPOLATE
-    !     VI       - REAL (MI,KM) INPUT V-COMPONENT FIELDS TO INTERPOLATE
-    !     RLAT     - REAL (MO) OUTPUT LATITUDES IN DEGREES (IF IGDTNUMO<0)
-    !     RLON     - REAL (MO) OUTPUT LONGITUDES IN DEGREES (IF IGDTNUMO<0)
-    !     CROT     - REAL (MO) VECTOR ROTATION COSINES (IF IGDTNUMO<0)
-    !     SROT     - REAL (MO) VECTOR ROTATION SINES (IF IGDTNUMO<0)
-    !                (UGRID=CROT*UEARTH-SROT*VEARTH;
-    !                 VGRID=SROT*UEARTH+CROT*VEARTH)
-    !
-    !   OUTPUT ARGUMENT LIST:
-    !     NO       - INTEGER NUMBER OF OUTPUT POINTS (ONLY IF IGDTNUMO>=0)
-    !     RLAT     - REAL (MO) OUTPUT LATITUDES IN DEGREES (IF IGDTNUMO>=0)
-    !     RLON     - REAL (MO) OUTPUT LONGITUDES IN DEGREES (IF IGDTNUMO>=0)
-    !     CROT     - REAL (MO) VECTOR ROTATION COSINES (IF IGDTNUMO>=0)
-    !     SROT     - REAL (MO) VECTOR ROTATION SINES (IF IGDTNUMO>=0)
-    !                (UGRID=CROT*UEARTH-SROT*VEARTH;
-    !                 VGRID=SROT*UEARTH+CROT*VEARTH)
-    !     IBO      - INTEGER (KM) OUTPUT BITMAP FLAGS
-    !     LO       - LOGICAL*1 (MO,KM) OUTPUT BITMAPS (ALWAYS OUTPUT)
-    !     UO       - REAL (MO,KM) OUTPUT U-COMPONENT FIELDS INTERPOLATED
-    !     VO       - REAL (MO,KM) OUTPUT V-COMPONENT FIELDS INTERPOLATED
-    !     IRET     - INTEGER RETURN CODE
-    !                0    SUCCESSFUL INTERPOLATION
-    !                2    UNRECOGNIZED INPUT GRID OR NO GRID OVERLAP
-    !                3    UNRECOGNIZED OUTPUT GRID
-    !                41   INVALID NONGLOBAL INPUT GRID
-    !                42   INVALID SPECTRAL METHOD PARAMETERS
-    !
-    ! SUBPROGRAMS CALLED:
-    !   EARTH_RADIUS DETERMINE SIZE/SHAPE OF EARTH
-    !   GDSWZD       GRID DESCRIPTION SECTION WIZARD
-    !   SPTRUNV      SPECTRALLY TRUNCATE GRIDDED VECTOR FIELDS
-    !   SPTRUNSV     SPECTRALLY INTERPOLATE VECTORS TO POLAR STEREO.
-    !   SPTRUNMV     SPECTRALLY INTERPOLATE VECTORS TO MERCATOR
-    !   SPTRUNGV     SPECTRALLY INTERPOLATE VECTORS TO STATIONS
-    !
-    ! ATTRIBUTES:
-    !   LANGUAGE: FORTRAN 90
-    !
-    !$$$
     INTEGER,          INTENT(IN   ) :: IPOPT(20), IBI(KM)
     INTEGER,          INTENT(IN   ) :: KM, MI, MO
     INTEGER,          INTENT(  OUT) :: IRET, IBO(KM), NO
@@ -1147,97 +1118,90 @@ contains
     ! - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   END SUBROUTINE POLATEV4_GRIB2
 
-  !> @file
-  !! INTERPOLATE VECTOR FIELDS (SPECTRAL)
-  !! @author IREDELL @date 96-04-10
-  !
-  !> THIS SUBPROGRAM PERFORMS SPECTRAL INTERPOLATION
-  !!           FROM ANY GRID TO ANY GRID FOR VECTOR FIELDS.
-  !!           IT REQUIRES THAT THE INPUT FIELDS BE UNIFORMLY GLOBAL.
-  !!           OPTIONS ALLOW CHOICES BETWEEN TRIANGULAR SHAPE (IPOPT(1)=0)
-  !!           AND RHOMBOIDAL SHAPE (IPOPT(1)=1) WHICH HAS NO DEFAULT;
-  !!           A SECOND OPTION IS THE TRUNCATION (IPOPT(2)) WHICH DEFAULTS 
-  !!           TO A SENSIBLE TRUNCATION FOR THE INPUT GRID (IF OPT(2)=-1).
-  !!           NOTE THAT IF THE OUTPUT GRID IS NOT FOUND IN A SPECIAL LIST,
-  !!           THEN THE TRANSFORM BACK TO GRID IS NOT VERY FAST.
-  !!           THIS SPECIAL LIST CONTAINS GLOBAL CYLINDRICAL GRIDS,
-  !!           POLAR STEREOGRAPHIC GRIDS CENTERED AT THE POLE
-  !!           AND MERCATOR GRIDS.
-  !!           ONLY HORIZONTAL INTERPOLATION IS PERFORMED.
-  !!           THE GRIDS ARE DEFINED BY THEIR GRID DESCRIPTION SECTIONS
-  !!           (PASSED IN INTEGER FORM AS DECODED BY SUBPROGRAM W3FI63).
-  !!           THE CURRENT CODE RECOGNIZES THE FOLLOWING PROJECTIONS:
-  !!             (KGDS(1)=000) EQUIDISTANT CYLINDRICAL
-  !!             (KGDS(1)=001) MERCATOR CYLINDRICAL
-  !!             (KGDS(1)=003) LAMBERT CONFORMAL CONICAL
-  !!             (KGDS(1)=004) GAUSSIAN CYLINDRICAL (SPECTRAL NATIVE)
-  !!             (KGDS(1)=005) POLAR STEREOGRAPHIC AZIMUTHAL
-  !!             (KGDS(1)=203) ROTATED EQUIDISTANT CYLINDRICAL (E-STAGGER)
-  !!             (KGDS(1)=205) ROTATED EQUIDISTANT CYLINDRICAL (B-STAGGER)
-  !!           WHERE KGDS COULD BE EITHER INPUT KGDSI OR OUTPUT KGDSO.
-  !!           THE INPUT AND OUTPUT VECTORS ARE ROTATED SO THAT THEY ARE
-  !!           EITHER RESOLVED RELATIVE TO THE DEFINED GRID
-  !!           IN THE DIRECTION OF INCREASING X AND Y COORDINATES
-  !!           OR RESOLVED RELATIVE TO EASTERLY AND NORTHERLY DIRECTIONS,
-  !!           AS DESIGNATED BY THEIR RESPECTIVE GRID DESCRIPTION SECTIONS.
-  !!           AS AN ADDED BONUS THE NUMBER OF OUTPUT GRID POINTS
-  !!           AND THEIR LATITUDES AND LONGITUDES ARE ALSO RETURNED
-  !!           ALONG WITH THEIR VECTOR ROTATION PARAMETERS.
-  !!           ON THE OTHER HAND, THE OUTPUT CAN BE A SET OF STATION POINTS
-  !!           IF KGDSO(1)<0, IN WHICH CASE THE NUMBER OF POINTS
-  !!           AND THEIR LATITUDES AND LONGITUDES MUST BE INPUT 
-  !!           ALONG WITH THEIR VECTOR ROTATION PARAMETERS.
-  !!           OUTPUT BITMAPS WILL ONLY BE CREATED WHEN THE OUTPUT GRID
-  !!           EXTENDS OUTSIDE OF THE DOMAIN OF THE INPUT GRID.
-  !!           THE OUTPUT FIELD IS SET TO 0 WHERE THE OUTPUT BITMAP IS OFF.
-  !!        
-  !! PROGRAM HISTORY LOG:
-  !! -  96-04-10  IREDELL
-  !! - 2001-06-18  IREDELL  IMPROVE DETECTION OF SPECIAL FAST TRANSFORM
-  !! - 2015-01-27  GAYNO    REPLACE CALLS TO GDSWIZ WITH NEW MERGED
-  !!                      ROUTINE GDSWZD.
-  !!
-  !! @param IPOPT    - INTEGER (20) INTERPOLATION OPTIONS
-  !!                IPOPT(1)=0 FOR TRIANGULAR, IPOPT(1)=1 FOR RHOMBOIDAL;
-  !!                IPOPT(2) IS TRUNCATION NUMBER
-  !!                (DEFAULTS TO SENSIBLE IF IPOPT(2)=-1).
-  !! @param KGDSI    - INTEGER (200) INPUT GDS PARAMETERS AS DECODED BY W3FI63
-  !! @param KGDSO    - INTEGER (200) OUTPUT GDS PARAMETERS
-  !!                (KGDSO(1)<0 IMPLIES RANDOM STATION POINTS)
-  !! @param MI       - INTEGER SKIP NUMBER BETWEEN INPUT GRID FIELDS IF KM>1
-  !!                OR DIMENSION OF INPUT GRID FIELDS IF KM=1
-  !! @param MO       - INTEGER SKIP NUMBER BETWEEN OUTPUT GRID FIELDS IF KM>1
-  !!                OR DIMENSION OF OUTPUT GRID FIELDS IF KM=1
-  !! @param KM       - INTEGER NUMBER OF FIELDS TO INTERPOLATE
-  !! @param IBI      - INTEGER (KM) INPUT BITMAP FLAGS (MUST BE ALL 0)
-  !! @param LI       - LOGICAL*1 (MI,KM) INPUT BITMAPS (IF SOME IBI(K)=1)
-  !! @param UI       - REAL (MI,KM) INPUT U-COMPONENT FIELDS TO INTERPOLATE
-  !! @param VI       - REAL (MI,KM) INPUT V-COMPONENT FIELDS TO INTERPOLATE
-  !! @param[out] NO       - INTEGER NUMBER OF OUTPUT POINTS (ONLY IF KGDSO(1)<0)
-  !! @param[out] RLAT     - REAL (NO) OUTPUT LATITUDES IN DEGREES (IF KGDSO(1)<0)
-  !! @param[out] RLON     - REAL (NO) OUTPUT LONGITUDES IN DEGREES (IF KGDSO(1)<0)
-  !! @param[out] CROT     - REAL (NO) VECTOR ROTATION COSINES (IF KGDSO(1)<0)
-  !! @param[out] SROT     - REAL (NO) VECTOR ROTATION SINES (IF KGDSO(1)<0)
-  !!                (UGRID=CROT*UEARTH-SROT*VEARTH;
-  !!                 VGRID=SROT*UEARTH+CROT*VEARTH)
-  !! @param[out] IBO      - INTEGER (KM) OUTPUT BITMAP FLAGS
-  !! @param[out] LO       - LOGICAL*1 (MO,KM) OUTPUT BITMAPS (ALWAYS OUTPUT)
-  !! @param[out] UO       - REAL (MO,KM) OUTPUT U-COMPONENT FIELDS INTERPOLATED
-  !! @param[out] VO       - REAL (MO,KM) OUTPUT V-COMPONENT FIELDS INTERPOLATED
-  !! @param[out] IRET     - INTEGER RETURN CODE
-  !!                0    SUCCESSFUL INTERPOLATION
-  !!                2    UNRECOGNIZED INPUT GRID OR NO GRID OVERLAP
-  !!                3    UNRECOGNIZED OUTPUT GRID
-  !!                41   INVALID NONGLOBAL INPUT GRID
-  !!                42   INVALID SPECTRAL METHOD PARAMETERS
-  !!
-  !! SUBPROGRAMS CALLED:
-  !! -  GDSWZD       GRID DESCRIPTION SECTION WIZARD
-  !! -  SPTRUNV      SPECTRALLY TRUNCATE GRIDDED VECTOR FIELDS
-  !! -  SPTRUNSV     SPECTRALLY INTERPOLATE VECTORS TO POLAR STEREO.
-  !! -  SPTRUNMV     SPECTRALLY INTERPOLATE VECTORS TO MERCATOR
-  !! -  SPTRUNGV     SPECTRALLY INTERPOLATE VECTORS TO STATIONS
-  !!
+  !> Interpolate vector fields (spectral).
+  !>
+  !> This subprogram performs spectral interpolation from any grid to
+  !> any grid for vector fields. It requires that the input fields be
+  !> uniformly global. Options allow choices between triangular shape
+  !> (ipopt(1)=0) and rhomboidal shape (ipopt(1)=1) which has no
+  !> default; a second option is the truncation (ipopt(2)) which
+  !> defaults to a sensible truncation for the input grid (if
+  !> opt(2)=-1).
+  !>
+  !> @note If the output grid is not found in a special list, then the
+  !> transform back to grid is not very fast.  This special list
+  !> contains global cylindrical grids, polar stereographic grids
+  !> centered at the pole and mercator grids.
+  !>
+  !> Only horizontal interpolation is performed. The grids are defined
+  !> by their grid description sections (passed in integer form as
+  !> decoded by subprogram w3fi63).
+  !>
+  !> The current code recognizes the following projections:
+  !> - (KGDS(1)=000) EQUIDISTANT CYLINDRICAL
+  !> - (KGDS(1)=001) MERCATOR CYLINDRICAL
+  !> - (KGDS(1)=003) LAMBERT CONFORMAL CONICAL
+  !> - (KGDS(1)=004) GAUSSIAN CYLINDRICAL (SPECTRAL NATIVE)
+  !> - (KGDS(1)=005) POLAR STEREOGRAPHIC AZIMUTHAL
+  !> - (KGDS(1)=203) ROTATED EQUIDISTANT CYLINDRICAL (E-STAGGER)
+  !> - (KGDS(1)=205) ROTATED EQUIDISTANT CYLINDRICAL (B-STAGGER)
+  !>
+  !> Where kgds could be either input kgdsi or output kgdso.
+  !>
+  !> The input and output vectors are rotated so that they are either
+  !> resolved relative to the defined grid in the direction of
+  !> increasing x and y coordinates or resolved relative to easterly
+  !> and northerly directions, as designated by their respective grid
+  !> description sections. As an added bonus the number of output grid
+  !> points and their latitudes and longitudes are also returned along
+  !> with their vector rotation parameters. On the other hand, the
+  !> output can be a set of station points if kgdso(1)<0, in which
+  !> case the number of points and their latitudes and longitudes must
+  !> be input along with their vector rotation parameters.
+  !>
+  !> Output bitmaps will only be created when the output grid extends
+  !> outside of the domain of the input grid. The output field is set
+  !> to 0 where the output bitmap is off.
+  !>        
+  !> ### Program History Log
+  !> Date | Programmer | Comments
+  !> -----|------------|---------
+  !> 96-04-10 | iredell | initial.
+  !> 2001-06-18 | iredell |  improve detection of special fast transform
+  !> 2015-01-27 | gayno | replace calls to gdswiz() with new merged routine gdswzd().
+  !>
+  !> @param[in] ipopt (20) interpolation options ipopt(1)=0 for
+  !> triangular, ipopt(1)=1 for rhomboidal; ipopt(2) is truncation
+  !> number (defaults to sensible if ipopt(2)=-1).
+  !> @param[in] kgdsi (200) input gds parameters as decoded by w3fi63.
+  !> @param[in] kgdso (200) output gds parameters (kgdso(1)<0 implies
+  !> random station points).
+  !> @param[in] mi skip number between input grid fields if km>1 or
+  !> dimension of input grid fields if km=1.
+  !> @param[in] mo skip number between output grid fields if km>1 or
+  !> dimension of output grid fields if km=1.
+  !> @param[in] km number of fields to interpolate
+  !> @param[in] ibi (km) input bitmap flags (must be all 0)
+  !> @param[in] ui (mi,km) input u-component fields to interpolate
+  !> @param[in] vi (mi,km) input v-component fields to interpolate
+  !> @param[out] no number of output points (only if kgdso(1)<0)
+  !> @param[out] rlat (no) output latitudes in degrees (if kgdso(1)<0)
+  !> @param[out] rlon (no) output longitudes in degrees (if kgdso(1)<0)
+  !> @param[out] crot (no) vector rotation cosines (if kgdso(1)<0)
+  !> @param[out] srot (no) vector rotation sines (if kgdso(1)<0)
+  !> (ugrid=crot*uearth-srot*vearth; vgrid=srot*uearth+crot*vearth)
+  !> @param[out] ibo (km) output bitmap flags
+  !> @param[out] lo (mo,km) output bitmaps (always output)
+  !> @param[out] uo (mo,km) output u-component fields interpolated
+  !> @param[out] vo (mo,km) output v-component fields interpolated
+  !> @param[out] iret return code
+  !> - 0 successful interpolation
+  !> - 2 unrecognized input grid or no grid overlap
+  !> - 3 unrecognized output grid
+  !> - 41 invalid nonglobal input grid
+  !> - 42 invalid spectral method parameters
+  !>
+  !> @author IREDELL @date 96-04-10
   SUBROUTINE POLATEV4_grib1(IPOPT,KGDSI,KGDSO,MI,MO,KM,IBI,UI,VI, &
        NO,RLAT,RLON,CROT,SROT,IBO,LO,UO,VO,IRET)
     INTEGER,          INTENT(IN   ) :: IPOPT(20), IBI(KM)
@@ -1465,9 +1429,5 @@ contains
           ENDDO
        ENDDO
     ENDIF
-    ! - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   END SUBROUTINE POLATEV4_GRIB1
-
-
-
 end module spectral_interp_mod

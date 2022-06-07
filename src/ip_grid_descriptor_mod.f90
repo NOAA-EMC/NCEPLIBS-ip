@@ -81,7 +81,7 @@ contains
   !> Initialize grib-2 descriptor from integer grid definition template (GDT).
   !! @param[in] gdt_num Grib-2 grid number.
   !! @param[in] gdt_len Lenght of the grid definition template.
-  !! @param[in] gds Grib-2 grid definition template.
+  !! @param[in] gdt_tmpl Grib-2 grid definition template.
   !!
   !! @return Initialized Grib-2 descriptor.
   !!

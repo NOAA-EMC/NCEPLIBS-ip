@@ -491,7 +491,7 @@ contains
   !! @param[in] km    Number of fields to interpolate.
   !! @param[in] ibi   Input bitmap flags.
   !! @param[in] li    Input bitmaps (if respective ibi(k)=1).
-  !! @para[in] gi    Input fields to interpolate.
+  !! @param[in] gi    Input fields to interpolate.
   !! @param[out] no Number of output points (only if kgdso(1)<0).
   !! @param[out] rlat Output latitudes in degrees (if kgdso(1)<0).
   !! @param[out] rlon Output longitudes in degrees (if kgdso(1)<0).

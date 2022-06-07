@@ -1,3 +1,22 @@
+!> @file
+!> @brief Interpolate scalar fields (neighbor).
+!> @author Mark Iredell @date 96-04-10
+
+!> @brief Interpolate scalar fields (neighbor).
+!>
+!> ### Program History Log
+!> Date | Programmer | Comments
+!> -----|------------|---------
+!> 96-04-10 | Iredell | initial
+!> 1999-04-08 | Iredell | split ijkgds into two pieces
+!> 2001-06-18 | Iredell | include spiral search option
+!> 2006-01-04 | Gayno | minor bug fix
+!> 2007-10-30 | Iredell | save weights and thread for performance
+!> 2012-06-26 | Gayno | fix out-of-bounds error. see nceplibs ticket #9.
+!> 2015-01-27 | Gayno | replace calls to gdswiz() with new merged version of gdswzd().
+!> 2015-07-13 | Gayno | replace grib 1 kgds arrays with grib 2 grid definition template arrays.
+!>
+!> @author Mark Iredell @date 96-04-10
 module neighbor_interp_mod
   use gdswzd_mod
   use polfix_mod
@@ -14,135 +33,69 @@ module neighbor_interp_mod
 
 contains
 
+  !> Interpolate scalar fields (neighbor).
+  !>
+  !> This subprogram performs neighbor interpolation from any grid to
+  !> any grid for scalar fields.
+  !>
+  !> Options allow choosing the width of the grid square (ipopt(1)) to
+  !> search for valid data, which defaults to 1 (if ipopt(1)=-1). Odd
+  !> width squares are centered on the nearest input grid point; even
+  !> width squares are centered on the nearest four input grid points.
+  !> Squares are searched for valid data in a spiral pattern starting
+  !> from the center. No searching is done where the output grid is
+  !> outside the input grid. Only horizontal interpolation is
+  !> performed.
+  !>
+  !> The code recognizes the following projections, where "igdtnumi/o"
+  !> is the grib 2 grid defintion template number for the input and
+  !> output grids, respectively:
+  !> - (igdtnumi/o=00) equidistant cylindrical
+  !> - (igdtnumi/o=01) rotated equidistant cylindrical. "e" and non-"e" staggered
+  !> - (igdtnumi/o=10) mercator cylindrical
+  !> - (igdtnumi/o=20) polar stereographic azimuthal
+  !> - (igdtnumi/o=30) lambert conformal conical
+  !> - (igdtnumi/o=40) gaussian cylindrical
+  !>
+  !> As an added bonus the number of output grid points and their
+  !> latitudes and longitudes are also returned. On the other hand,
+  !> the output can be a set of station points if igdtnumo<0, in which
+  !> case the number of points and their latitudes and longitudes must
+  !> be input.
+  !>
+  !> Input bitmaps will be interpolated to output bitmaps.
+  !>
+  !> Output bitmaps will also be created when the output grid extends
+  !> outside of the domain of the input grid. The output field is set
+  !> to 0 where the output bitmap is off.
+  !>        
+  !> @param[in] ipopt (20) interpolation options ipopt(1) is width of
+  !> square to examine in spiral search (defaults to 1 if ipopt(1)=-1)
+  !> @param[in] grid_in ???
+  !> @param[in] grid_out ???
+  !> @param[in] mi skip number between input grid fields if km>1 or
+  !> dimension of input grid fields if km=1.
+  !> @param[in] mo skip number between output grid fields if km>1 or
+  !> dimension of output grid fields if km=1
+  !> @param[in] km number of fields to interpolate
+  !> @param[in] ibi (km) input bitmap flags
+  !> @param[in] li (mi,km) input bitmaps (if some ibi(k)=1)
+  !> @param[in] gi (mi,km) input fields to interpolate
+  !> @param[inout] no number of output points (only if igdtnumo<0)
+  !> @param[inout] rlat (no) output latitudes in degrees (if igdtnumo<0)
+  !> @param[inout] rlon (no) output longitudes in degrees (if igdtnumo<0)
+  !> @param[out] ibo (km) output bitmap flags
+  !> @param[out] lo (mo,km) output bitmaps (always output)
+  !> @param[out] go (mo,km) output fields interpolated
+  !> @param[out] iret return code
+  !> - 0    successful interpolation
+  !> - 2    unrecognized input grid or no grid overlap
+  !> - 3    unrecognized output grid
+  !>
+  !> @author Mark Iredell @date 96-04-10  
   SUBROUTINE interpolate_neighbor_scalar(IPOPT,grid_in,grid_out, &
        MI,MO,KM,IBI,LI,GI,  &
        NO,RLAT,RLON,IBO,LO,GO,IRET)
-    !$$$  SUBPROGRAM DOCUMENTATION BLOCK
-    !
-    ! SUBPROGRAM:  POLATES2   INTERPOLATE SCALAR FIELDS (NEIGHBOR)
-    !   PRGMMR: IREDELL       ORG: W/NMC23       DATE: 96-04-10
-    !
-    ! ABSTRACT: THIS SUBPROGRAM PERFORMS NEIGHBOR INTERPOLATION
-    !           FROM ANY GRID TO ANY GRID FOR SCALAR FIELDS.
-    !           OPTIONS ALLOW CHOOSING THE WIDTH OF THE GRID SQUARE
-    !           (IPOPT(1)) TO SEARCH FOR VALID DATA, WHICH DEFAULTS TO 1
-    !           (IF IPOPT(1)=-1).  ODD WIDTH SQUARES ARE CENTERED ON
-    !           THE NEAREST INPUT GRID POINT; EVEN WIDTH SQUARES ARE
-    !           CENTERED ON THE NEAREST FOUR INPUT GRID POINTS.
-    !           SQUARES ARE SEARCHED FOR VALID DATA IN A SPIRAL PATTERN
-    !           STARTING FROM THE CENTER.  NO SEARCHING IS DONE WHERE
-    !           THE OUTPUT GRID IS OUTSIDE THE INPUT GRID.
-    !           ONLY HORIZONTAL INTERPOLATION IS PERFORMED.
-    !           THE CODE RECOGNIZES THE FOLLOWING PROJECTIONS, WHERE
-    !           "IGDTNUMI/O" IS THE GRIB 2 GRID DEFINTION TEMPLATE NUMBER
-    !           FOR THE INPUT AND OUTPUT GRIDS, RESPECTIVELY:
-    !             (IGDTNUMI/O=00) EQUIDISTANT CYLINDRICAL
-    !             (IGDTNUMI/O=01) ROTATED EQUIDISTANT CYLINDRICAL. "E" AND
-    !                             NON-"E" STAGGERED
-    !             (IGDTNUMI/O=10) MERCATOR CYLINDRICAL
-    !             (IGDTNUMI/O=20) POLAR STEREOGRAPHIC AZIMUTHAL
-    !             (IGDTNUMI/O=30) LAMBERT CONFORMAL CONICAL
-    !             (IGDTNUMI/O=40) GAUSSIAN CYLINDRICAL
-    !           AS AN ADDED BONUS THE NUMBER OF OUTPUT GRID POINTS
-    !           AND THEIR LATITUDES AND LONGITUDES ARE ALSO RETURNED.
-    !           ON THE OTHER HAND, THE OUTPUT CAN BE A SET OF STATION POINTS
-    !           IF IGDTNUMO<0, IN WHICH CASE THE NUMBER OF POINTS
-    !           AND THEIR LATITUDES AND LONGITUDES MUST BE INPUT.
-    !           INPUT BITMAPS WILL BE INTERPOLATED TO OUTPUT BITMAPS.
-    !           OUTPUT BITMAPS WILL ALSO BE CREATED WHEN THE OUTPUT GRID
-    !           EXTENDS OUTSIDE OF THE DOMAIN OF THE INPUT GRID.
-    !           THE OUTPUT FIELD IS SET TO 0 WHERE THE OUTPUT BITMAP IS OFF.
-    !        
-    ! PROGRAM HISTORY LOG:
-    !   96-04-10  IREDELL
-    ! 1999-04-08  IREDELL  SPLIT IJKGDS INTO TWO PIECES
-    ! 2001-06-18  IREDELL  INCLUDE SPIRAL SEARCH OPTION
-    ! 2006-01-04  GAYNO    MINOR BUG FIX
-    ! 2007-10-30  IREDELL  SAVE WEIGHTS AND THREAD FOR PERFORMANCE
-    ! 2012-06-26  GAYNO    FIX OUT-OF-BOUNDS ERROR. SEE NCEPLIBS
-    !                      TICKET #9.
-    ! 2015-01-27  GAYNO    REPLACE CALLS TO GDSWIZ WITH NEW MERGED
-    !                      VERSION OF GDSWZD.
-    ! 2015-07-13  GAYNO    CONVERT TO GRIB 2. REPLACE GRIB 1 KGDS ARRAYS
-    !                      WITH GRIB 2 GRID DEFINITION TEMPLATE ARRAYS.
-    !
-    ! USAGE:    CALL POLATES2(IPOPT,IGDTNUMI,IGDTMPLI,IGDTLENI, &
-    !                         IGDTNUMO,IGDTMPLO,IGDTLENO, &
-    !                         MI,MO,KM,IBI,LI,GI,  &
-    !                         NO,RLAT,RLON,IBO,LO,GO,IRET)
-    !
-    !   INPUT ARGUMENT LIST:
-    !     IPOPT    - INTEGER (20) INTERPOLATION OPTIONS
-    !                IPOPT(1) IS WIDTH OF SQUARE TO EXAMINE IN SPIRAL SEARCH
-    !                (DEFAULTS TO 1 IF IPOPT(1)=-1)
-    !     IGDTNUMI - INTEGER GRID DEFINITION TEMPLATE NUMBER - INPUT GRID.
-    !                CORRESPONDS TO THE GFLD%IGDTNUM COMPONENT OF THE
-    !                NCEP G2 LIBRARY GRIDMOD DATA STRUCTURE:
-    !                  00 - EQUIDISTANT CYLINDRICAL
-    !                  01 - ROTATED EQUIDISTANT CYLINDRICAL.  "E"
-    !                       AND NON-"E" STAGGERED
-    !                  10 - MERCATOR CYCLINDRICAL
-    !                  20 - POLAR STEREOGRAPHIC AZIMUTHAL
-    !                  30 - LAMBERT CONFORMAL CONICAL
-    !                  40 - GAUSSIAN EQUIDISTANT CYCLINDRICAL
-    !     IGDTMPLI - INTEGER (IGDTLENI) GRID DEFINITION TEMPLATE ARRAY -
-    !                INPUT GRID. CORRESPONDS TO THE GFLD%IGDTMPL COMPONENT
-    !                OF THE NCEP G2 LIBRARY GRIDMOD DATA STRUCTURE
-    !                (SECTION 3 INFO).  SEE COMMENTS IN ROUTINE
-    !                IPOLATES FOR COMPLETE DEFINITION.
-    !     IGDTLENI - INTEGER NUMBER OF ELEMENTS OF THE GRID DEFINITION
-    !                TEMPLATE ARRAY - INPUT GRID.  CORRESPONDS TO THE GFLD%IGDTLEN
-    !                COMPONENT OF THE NCEP G2 LIBRARY GRIDMOD DATA STRUCTURE.
-    !     IGDTNUMO - INTEGER GRID DEFINITION TEMPLATE NUMBER - OUTPUT GRID.
-    !                CORRESPONDS TO THE GFLD%IGDTNUM COMPONENT OF THE
-    !                NCEP G2 LIBRARY GRIDMOD DATA STRUCTURE.  IGDTNUMO<0
-    !                MEANS INTERPOLATE TO RANDOM STATION POINTS.
-    !                OTHERWISE, SAME DEFINITION AS "IGDTNUMI".
-    !     IGDTMPLO - INTEGER (IGDTLENO) GRID DEFINITION TEMPLATE ARRAY -
-    !                OUTPUT GRID. CORRESPONDS TO THE GFLD%IGDTMPL COMPONENT
-    !                OF THE NCEP G2 LIBRARY GRIDMOD DATA STRUCTURE.
-    !                (SECTION 3 INFO).  SEE COMMENTS IN ROUTINE
-    !                IPOLATES FOR COMPLETE DEFINITION.
-    !     IGDTLENO - INTEGER NUMBER OF ELEMENTS OF THE GRID DEFINITION
-    !                TEMPLATE ARRAY - OUTPUT GRID.  CORRESPONDS TO THE GFLD%IGDTLEN
-    !                COMPONENT OF THE NCEP G2 LIBRARY GRIDMOD DATA STRUCTURE.
-    !     MI       - INTEGER SKIP NUMBER BETWEEN INPUT GRID FIELDS IF KM>1
-    !                OR DIMENSION OF INPUT GRID FIELDS IF KM=1
-    !     MO       - INTEGER SKIP NUMBER BETWEEN OUTPUT GRID FIELDS IF KM>1
-    !                OR DIMENSION OF OUTPUT GRID FIELDS IF KM=1
-    !     KM       - INTEGER NUMBER OF FIELDS TO INTERPOLATE
-    !     IBI      - INTEGER (KM) INPUT BITMAP FLAGS
-    !     LI       - LOGICAL*1 (MI,KM) INPUT BITMAPS (IF SOME IBI(K)=1)
-    !     GI       - REAL (MI,KM) INPUT FIELDS TO INTERPOLATE
-    !     NO       - INTEGER NUMBER OF OUTPUT POINTS (ONLY IF IGDTNUMO<0)
-    !     RLAT     - REAL (NO) OUTPUT LATITUDES IN DEGREES (IF IGDTNUMO<0)
-    !     RLON     - REAL (NO) OUTPUT LONGITUDES IN DEGREES (IF IGDTNUMO<0)
-    !
-    !   OUTPUT ARGUMENT LIST:
-    !     NO       - INTEGER NUMBER OF OUTPUT POINTS (ONLY IF IGDTNUMO>=0)
-    !     RLAT     - REAL (MO) OUTPUT LATITUDES IN DEGREES (IF IGDTNUMO>=0)
-    !     RLON     - REAL (MO) OUTPUT LONGITUDES IN DEGREES (IF IGDTNUMO>=0)
-    !     IBO      - INTEGER (KM) OUTPUT BITMAP FLAGS
-    !     LO       - LOGICAL*1 (MO,KM) OUTPUT BITMAPS (ALWAYS OUTPUT)
-    !     GO       - REAL (MO,KM) OUTPUT FIELDS INTERPOLATED
-    !     IRET     - INTEGER RETURN CODE
-    !                0    SUCCESSFUL INTERPOLATION
-    !                2    UNRECOGNIZED INPUT GRID OR NO GRID OVERLAP
-    !                3    UNRECOGNIZED OUTPUT GRID
-    !
-    ! SUBPROGRAMS CALLED:
-    !   GDSWZD       GRID DESCRIPTION SECTION WIZARD
-    !   IJKGDS0      SET UP PARAMETERS FOR IJKGDS1
-    !   IJKGDS1      RETURN FIELD POSITION FOR A GIVEN GRID POINT
-    !   POLFIXS      MAKE MULTIPLE POLE SCALAR VALUES CONSISTENT
-    !   CHECK_GRIDS2 DETERMINE IF INPUT OR OUTPUT GRIDS HAVE CHANGED
-    !                BETWEEN CALLS TO THIS ROUTINE.
-    !
-    ! ATTRIBUTES:
-    !   LANGUAGE: FORTRAN 90
-    !
-    !$$$
-    !
     class(ip_grid), intent(in) :: grid_in, grid_out
     INTEGER,               INTENT(IN   ) :: IPOPT(20)
     INTEGER,               INTENT(IN   ) :: MI,MO,KM
@@ -318,155 +271,84 @@ contains
     ! - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   END SUBROUTINE interpolate_neighbor_scalar
 
+  !> Interpolate vector fields (neighbor).
+  !>
+  !> This subprogram performs neighbor interpolation
+  !> from any grid to any grid for vector fields.
+  !>
+  !> Options allow choosing the width of the grid square (ipopt(1)) to
+  !> search for valid data, which defaults to 1 (IF IPOPT(1)=-1). Odd
+  !> width squares are centered on the nearest input grid point; even
+  !> width squares are centered on the nearest four input grid points.
+  !>
+  !> Squares are searched for valid data in a spiral pattern starting
+  !> from the center. no searching is done where the output grid is
+  !> outside the input grid. Only horizontal interpolation is
+  !> performed.
+  !>
+  !> The input and output grids are defined by their grib 2 grid
+  !> definition template as decoded by the ncep g2 library.
+  !>
+  !> The code recognizes the following projections, where "igdtnumi/o"
+  !> is the grib 2 grid defintion template number for the input and
+  !> output grids, respectively:
+  !> - (igdtnumi/o=00) equidistant cylindrical
+  !> - (igdtnumi/o=01) rotated equidistant cylindrical. "e" and non-"e" staggered
+  !> - (igdtnumi/o=10) mercator cylindrical
+  !> - (igdtnumi/o=20) polar stereographic azimuthal
+  !> - (igdtnumi/o=30) lambert conformal conical
+  !> - (igdtnumi/o=40) gaussian cylindrical
+  !>
+  !> The input and output vectors are rotated so that they are either
+  !> resolved relative to the defined grid in the direction of
+  !> increasing x and y coordinates or resolved relative to easterly
+  !> and northerly directions, as designated by their respective grid
+  !> definition sections.
+  !>
+  !> As an added bonus the number of output grid points and their
+  !> latitudes and longitudes are also returned along with their
+  !> vector rotation parameters. On the other hand, the output can be
+  !> a set of station points if igdtnumo<0, in which case the number
+  !> of points and their latitudes and longitudes must be input along
+  !> with their vector rotation parameters.
+  !>
+  !> Input bitmaps will be interpolated to output bitmaps. output
+  !> bitmaps will also be created when the output grid extends outside
+  !> of the domain of the input grid. The output field is set to 0
+  !> where the output bitmap is off.
+  !>        
+  !> @param[in] ipopt (20) interpolation options ipopt(1) is width of
+  !> square to examine in spiral search (defaults to 1 if ipopt(1)=-1)
+  !> @param[in] grid_in ???
+  !> @param[in] grid_out ???
+  !> @param[in] mi skip number between input grid fields if km>1 or
+  !> dimension of input grid fields if km=1
+  !> @param[in] mo skip number between output grid fields if km>1 or
+  !> dimension of output grid fields if km=1
+  !> @param[in] km number of fields to interpolate
+  !> @param[in] ibi (km) input bitmap flags
+  !> @param[in] li (mi,km) input bitmaps (if some ibi(k)=1)
+  !> @param[in] ui (mi,km) input u-component fields to interpolate
+  !> @param[in] vi (mi,km) input v-component fields to interpolate
+  !> @param[inout] no number of output points (only if igdtnumo>=0)
+  !> @param[inout] rlat (mo) output latitudes in degrees (if igdtnumo<0)
+  !> @param[inout] rlon (mo) output longitudes in degrees (if igdtnumo<0)
+  !> @param[inout] crot (mo) vector rotation cosines (if igdtnumo<0)
+  !> @param[inout] srot (mo) vector rotation sines (if igdtnumo<0)
+  !> (ugrid=crot*uearth-srot*vearth; vgrid=srot*uearth+crot*vearth)
+  !> @param[out] ibo (km) output bitmap flags
+  !> @param[out] lo (mo,km) output bitmaps (always output)
+  !> @param[out] uo (mo,km) output u-component fields interpolated
+  !> @param[out] vo (mo,km) output v-component fields interpolated
+  !> @param[out] iret return code
+  !> - 0    successful interpolation
+  !> - 2    unrecognized input grid or no grid overlap
+  !> - 3    unrecognized output grid
+  !>
+  !> @author Mark Iredell @date 96-04-10
   SUBROUTINE interpolate_neighbor_vector(IPOPT,grid_in,grid_out, &
        MI,MO,KM,IBI,LI,UI,VI, &
        NO,RLAT,RLON,CROT,SROT,IBO,LO,UO,VO,IRET)
-    !$$$  SUBPROGRAM DOCUMENTATION BLOCK
-    !
-    ! SUBPROGRAM:  POLATEV2   INTERPOLATE VECTOR FIELDS (NEIGHBOR)
-    !   PRGMMR: IREDELL       ORG: W/NMC23       DATE: 96-04-10
-    !
-    ! ABSTRACT: THIS SUBPROGRAM PERFORMS NEIGHBOR INTERPOLATION
-    !           FROM ANY GRID TO ANY GRID FOR VECTOR FIELDS.
-    !           OPTIONS ALLOW CHOOSING THE WIDTH OF THE GRID SQUARE
-    !           (IPOPT(1)) TO SEARCH FOR VALID DATA, WHICH DEFAULTS TO 1
-    !           (IF IPOPT(1)=-1).  ODD WIDTH SQUARES ARE CENTERED ON
-    !           THE NEAREST INPUT GRID POINT; EVEN WIDTH SQUARES ARE
-    !           CENTERED ON THE NEAREST FOUR INPUT GRID POINTS.
-    !           SQUARES ARE SEARCHED FOR VALID DATA IN A SPIRAL PATTERN
-    !           STARTING FROM THE CENTER.  NO SEARCHING IS DONE WHERE
-    !           THE OUTPUT GRID IS OUTSIDE THE INPUT GRID.
-    !           ONLY HORIZONTAL INTERPOLATION IS PERFORMED.
-    !
-    !           THE INPUT AND OUTPUT GRIDS ARE DEFINED BY THEIR GRIB 2 GRID
-    !           DEFINITION TEMPLATE AS DECODED BY THE NCEP G2 LIBRARY.  THE
-    !           CODE RECOGNIZES THE FOLLOWING PROJECTIONS, WHERE
-    !           "IGDTNUMI/O" IS THE GRIB 2 GRID DEFINTION TEMPLATE NUMBER
-    !           FOR THE INPUT AND OUTPUT GRIDS, RESPECTIVELY:
-    !             (IGDTNUMI/O=00) EQUIDISTANT CYLINDRICAL
-    !             (IGDTNUMI/O=01) ROTATED EQUIDISTANT CYLINDRICAL. "E" AND
-    !                             NON-"E" STAGGERED
-    !             (IGDTNUMI/O=10) MERCATOR CYLINDRICAL
-    !             (IGDTNUMI/O=20) POLAR STEREOGRAPHIC AZIMUTHAL
-    !             (IGDTNUMI/O=30) LAMBERT CONFORMAL CONICAL
-    !             (IGDTNUMI/O=40) GAUSSIAN CYLINDRICAL
-    !
-    !           THE INPUT AND OUTPUT VECTORS ARE ROTATED SO THAT THEY ARE
-    !           EITHER RESOLVED RELATIVE TO THE DEFINED GRID
-    !           IN THE DIRECTION OF INCREASING X AND Y COORDINATES
-    !           OR RESOLVED RELATIVE TO EASTERLY AND NORTHERLY DIRECTIONS,
-    !           AS DESIGNATED BY THEIR RESPECTIVE GRID DEFINITION SECTIONS.
-    !
-    !           AS AN ADDED BONUS THE NUMBER OF OUTPUT GRID POINTS
-    !           AND THEIR LATITUDES AND LONGITUDES ARE ALSO RETURNED
-    !           ALONG WITH THEIR VECTOR ROTATION PARAMETERS.
-    !           ON THE OTHER HAND, THE OUTPUT CAN BE A SET OF STATION POINTS
-    !           IF IGDTNUMO<0, IN WHICH CASE THE NUMBER OF POINTS
-    !           AND THEIR LATITUDES AND LONGITUDES MUST BE INPUT 
-    !           ALONG WITH THEIR VECTOR ROTATION PARAMETERS.
-    !
-    !           INPUT BITMAPS WILL BE INTERPOLATED TO OUTPUT BITMAPS.
-    !           OUTPUT BITMAPS WILL ALSO BE CREATED WHEN THE OUTPUT GRID
-    !           EXTENDS OUTSIDE OF THE DOMAIN OF THE INPUT GRID.
-    !           THE OUTPUT FIELD IS SET TO 0 WHERE THE OUTPUT BITMAP IS OFF.
-    !        
-    ! PROGRAM HISTORY LOG:
-    !   96-04-10  IREDELL
-    ! 1999-04-08  IREDELL  SPLIT IJKGDS INTO TWO PIECES
-    ! 2001-06-18  IREDELL  INCLUDE SPIRAL SEARCH OPTION
-    ! 2002-01-17  IREDELL  SAVE DATA FROM LAST CALL FOR OPTIMIZATION
-    ! 2006-01-04  GAYNO    MINOR BUG FIX
-    ! 2007-10-30  IREDELL  SAVE WEIGHTS AND THREAD FOR PERFORMANCE
-    ! 2012-06-26  GAYNO    FIX OUT-OF-BOUNDS ERROR.  SEE NCEPLIBS
-    !                      TICKET #9.
-    ! 2015-01-27  GAYNO    REPLACE CALLS TO GDSWIZ WITH NEW MERGED
-    !                      ROUTINE GDSWZD.
-    ! 2015-07-13  GAYNO    CONVERT TO GRIB 2. REPLACE GRIB 1 KGDS ARRAYS
-    !                      WITH GRIB 2 GRID DEFINITION TEMPLATE ARRAYS.
-    !
-    ! USAGE:    CALL POLATEV2(IPOPT,IGDTNUMI,IGDTMPLI,IGDTLENI, &
-    !                         IGDTNUMO,IGDTMPLO,IGDTLENO, &
-    !                         MI,MO,KM,IBI,LI,UI,VI, &
-    !                         NO,RLAT,RLON,CROT,SROT,IBO,LO,UO,VO,IRET)
-    !
-    !   INPUT ARGUMENT LIST:
-    !     IPOPT    - INTEGER (20) INTERPOLATION OPTIONS
-    !                IPOPT(1) IS WIDTH OF SQUARE TO EXAMINE IN SPIRAL SEARCH
-    !                (DEFAULTS TO 1 IF IPOPT(1)=-1)
-    !     IGDTNUMI - INTEGER GRID DEFINITION TEMPLATE NUMBER - INPUT GRID.
-    !                CORRESPONDS TO THE GFLD%IGDTNUM COMPONENT OF THE
-    !                NCEP G2 LIBRARY GRIDMOD DATA STRUCTURE:
-    !                  00 - EQUIDISTANT CYLINDRICAL
-    !                  01 - ROTATED EQUIDISTANT CYLINDRICAL.  "E"
-    !                       AND NON-"E" STAGGERED
-    !                  10 - MERCATOR CYCLINDRICAL
-    !                  20 - POLAR STEREOGRAPHIC AZIMUTHAL
-    !                  30 - LAMBERT CONFORMAL CONICAL
-    !                  40 - GAUSSIAN EQUIDISTANT CYCLINDRICAL
-    !     IGDTMPLI - INTEGER (IGDTLENI) GRID DEFINITION TEMPLATE ARRAY -
-    !                INPUT GRID. CORRESPONDS TO THE GFLD%IGDTMPL COMPONENT
-    !                OF THE NCEP G2 LIBRARY GRIDMOD DATA STRUCTURE
-    !                (SECTION 3 INFO).  SEE COMMENTS IN ROUTINE
-    !                IPOLATEV FOR COMPLETE DEFINITION.
-    !     IGDTLENI - INTEGER NUMBER OF ELEMENTS OF THE GRID DEFINITION
-    !                TEMPLATE ARRAY - INPUT GRID.  CORRESPONDS TO THE GFLD%IGDTLEN
-    !                COMPONENT OF THE NCEP G2 LIBRARY GRIDMOD DATA STRUCTURE.
-    !     IGDTNUMO - INTEGER GRID DEFINITION TEMPLATE NUMBER - OUTPUT GRID.
-    !                CORRESPONDS TO THE GFLD%IGDTNUM COMPONENT OF THE
-    !                NCEP G2 LIBRARY GRIDMOD DATA STRUCTURE. IGDTNUMO<0
-    !                MEANS INTERPOLATE TO RANDOM STATION POINTS.
-    !                OTHERWISE, SAME DEFINITION AS "IGDTNUMI".
-    !     IGDTMPLO - INTEGER (IGDTLENO) GRID DEFINITION TEMPLATE ARRAY -
-    !                OUTPUT GRID. CORRESPONDS TO THE GFLD%IGDTMPL COMPONENT
-    !                OF THE NCEP G2 LIBRARY GRIDMOD DATA STRUCTURE.
-    !                (SECTION 3 INFO).  SEE COMMENTS IN ROUTINE
-    !                IPOLATEV FOR COMPLETE DEFINITION.
-    !     IGDTLENO - INTEGER NUMBER OF ELEMENTS OF THE GRID DEFINITION
-    !                TEMPLATE ARRAY - OUTPUT GRID.  CORRESPONDS TO THE GFLD%IGDTLEN
-    !                COMPONENT OF THE NCEP G2 LIBRARY GRIDMOD DATA STRUCTURE.
-    !     MI       - INTEGER SKIP NUMBER BETWEEN INPUT GRID FIELDS IF KM>1
-    !                OR DIMENSION OF INPUT GRID FIELDS IF KM=1
-    !     MO       - INTEGER SKIP NUMBER BETWEEN OUTPUT GRID FIELDS IF KM>1
-    !                OR DIMENSION OF OUTPUT GRID FIELDS IF KM=1
-    !     KM       - INTEGER NUMBER OF FIELDS TO INTERPOLATE
-    !     IBI      - INTEGER (KM) INPUT BITMAP FLAGS
-    !     LI       - LOGICAL*1 (MI,KM) INPUT BITMAPS (IF SOME IBI(K)=1)
-    !     UI       - REAL (MI,KM) INPUT U-COMPONENT FIELDS TO INTERPOLATE
-    !     VI       - REAL (MI,KM) INPUT V-COMPONENT FIELDS TO INTERPOLATE
-    !     RLAT     - REAL (MO) OUTPUT LATITUDES IN DEGREES (IF IGDTNUMO<0)
-    !     RLON     - REAL (MO) OUTPUT LONGITUDES IN DEGREES (IF IGDTNUMO<0)
-    !     CROT     - REAL (MO) VECTOR ROTATION COSINES (IF IGDTNUMO<0)
-    !     SROT     - REAL (MO) VECTOR ROTATION SINES (IF IGDTNUMO<0)
-    !                (UGRID=CROT*UEARTH-SROT*VEARTH;
-    !                 VGRID=SROT*UEARTH+CROT*VEARTH)
-    !
-    !   OUTPUT ARGUMENT LIST:
-    !     NO       - INTEGER NUMBER OF OUTPUT POINTS (ONLY IF IGDTNUMO>=0)
-    !     RLAT     - REAL (MO) OUTPUT LATITUDES IN DEGREES (IF IGDTNUMO>=0)
-    !     RLON     - REAL (MO) OUTPUT LONGITUDES IN DEGREES (IF IGDTNUMO>=0)
-    !     CROT     - REAL (NO) VECTOR ROTATION COSINES (IF IGDTNUMO>=0)
-    !     SROT     - REAL (NO) VECTOR ROTATION SINES (IF IGDTNUMO>=0)
-    !                (UGRID=CROT*UEARTH-SROT*VEARTH;
-    !                 VGRID=SROT*UEARTH+CROT*VEARTH)
-    !     IBO      - INTEGER (KM) OUTPUT BITMAP FLAGS
-    !     LO       - LOGICAL*1 (MO,KM) OUTPUT BITMAPS (ALWAYS OUTPUT)
-    !     UO       - REAL (MO,KM) OUTPUT U-COMPONENT FIELDS INTERPOLATED
-    !     VO       - REAL (MO,KM) OUTPUT V-COMPONENT FIELDS INTERPOLATED
-    !     IRET     - INTEGER RETURN CODE
-    !                0    SUCCESSFUL INTERPOLATION
-    !                2    UNRECOGNIZED INPUT GRID OR NO GRID OVERLAP
-    !                3    UNRECOGNIZED OUTPUT GRID
-    !
-    ! SUBPROGRAMS CALLED:
-    !   CHECK_GRIDS2V CHECK IF INPUT OR OUTPUT GRIDS HAVE CHANGED
-    !   GDSWZD        GRID DESCRIPTION SECTION WIZARD
-    !   MOVECT        MOVE A VECTOR ALONG A GREAT CIRCLE
-    !   POLFIXV       MAKE MULTIPLE POLE VECTOR VALUES CONSISTENT
-    !
-    ! ATTRIBUTES:
-    !   LANGUAGE: FORTRAN 90
-    !
-    !$$$
 
     class(ip_grid), intent(in) :: grid_in, grid_out
     INTEGER,            INTENT(IN   ) :: IPOPT(20)

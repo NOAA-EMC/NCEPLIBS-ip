@@ -1,10 +1,13 @@
 !> @file
-!! @brief Abstract ip_grid type
+!! @brief Abstract ip_grid type.
 !!
 !! @author Kyle Gerheiser
 !! @date July 2021
 
-!> Abstract ip_grid type
+!> Abstract ip_grid type.
+!!
+!! @author Kyle Gerheiser
+!! @date July 2021
 module ip_grid_mod
   use ip_grid_descriptor_mod
   implicit none
@@ -72,6 +75,7 @@ module ip_grid_mod
      procedure(gdswzd_interface), deferred :: gdswzd
      !> Field position for a given grid point.
      procedure :: field_pos
+     !> Init subprogram.
      generic :: init => init_grib1, init_grib2
   end type ip_grid
 
@@ -91,12 +95,26 @@ module ip_grid_mod
        REAL, OPTIONAL,   INTENT(  OUT) :: YLON(NPTS),YLAT(NPTS),AREA(NPTS)
      end subroutine gdswzd_interface
 
+     !> Init GRIB1 interface.
+     !!
+     !! @param[inout] self ???
+     !! @param[in] g1_desc ???
+     !!
+     !! @author Kyle Gerheiser
+     !! @date July 2021
      subroutine init_grib1_interface(self, g1_desc)
        import
        class(ip_grid), intent(inout) :: self
        type(grib1_descriptor), intent(in) :: g1_desc
      end subroutine init_grib1_interface
 
+     !> Init GRIB2 interface.
+     !!
+     !! @param[inout] self ???
+     !! @param[in] g2_desc ???
+     !!
+     !! @author Kyle Gerheiser
+     !! @date July 2021
      subroutine init_grib2_interface(self, g2_desc)
        import
        class(ip_grid), intent(inout) :: self
