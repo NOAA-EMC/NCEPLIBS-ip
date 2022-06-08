@@ -46,7 +46,7 @@ module ip_grid_mod
   !! @author Kyle Gerheiser
   !! @date July 2021
   type, abstract :: ip_grid
-     class(ip_grid_descriptor), allocatable :: descriptor
+     class(ip_grid_descriptor), allocatable :: descriptor !< Descriptor.
      
      integer :: im !< Number of x points
      integer :: jm !< Number of y points
@@ -73,9 +73,10 @@ module ip_grid_mod
      procedure(init_grib2_interface), deferred :: init_grib2
      !> Coordinate transformations for the grid.
      procedure(gdswzd_interface), deferred :: gdswzd
-     !> Field position for a given grid point.
+     !> Field position for a given grid point. @return Integer
+     !> position in grib field to locate grid point.
      procedure :: field_pos
-     !> Init subprogram.
+     !> Init subprogram. @return N/A
      generic :: init => init_grib1, init_grib2
   end type ip_grid
 
