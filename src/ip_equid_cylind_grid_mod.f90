@@ -19,12 +19,17 @@ module ip_equid_cylind_grid_mod
   public :: ip_equid_cylind_grid
 
   type, extends(ip_grid) :: ip_equid_cylind_grid
-     real :: hi, rlat1, rlon1, rlat2, rlon2
-     real :: dlat, dlon
+     real :: hi !< ???
+     real :: rlat1 !< ???
+     real :: rlon1 !< ???
+     real :: rlat2 !< ???
+     real :: rlon2 !< ???
+     real :: dlat !< ???
+     real :: dlon !< ???
    contains
-     procedure :: init_grib1
-     procedure :: init_grib2
-     procedure :: gdswzd => gdswzd_equid_cylind !< See gdswzd_equid_cylind().
+     procedure :: init_grib1 !< Init GRIB1. @return N/A
+     procedure :: init_grib2 !< Init GRIB2. @return N/A
+     procedure :: gdswzd => gdswzd_equid_cylind !< See gdswzd_equid_cylind(). @return N/A
   end type ip_equid_cylind_grid
 
   REAL :: DLAT !< Grid resolution in degrees n/s direction.
