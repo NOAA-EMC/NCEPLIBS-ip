@@ -1,8 +1,7 @@
 !> @file
 !! @brief Abstract ip_grid type.
 !!
-!! @author Kyle Gerheiser
-!! @date July 2021
+!! @author Kyle Gerheiser @date July 2021
 
 !> Abstract ip_grid type.
 !!
@@ -28,7 +27,10 @@ module ip_grid_mod
   integer, public, parameter :: GAUSSIAN_GRID_ID_GRIB2 = 40 !< Integer grid number for Gaussian grid in grib2
 
   private
-  public :: ip_grid, gdswzd_interface, operator(==)
+  public :: ip_grid
+  !> Interface to gdswzd().  
+  public :: gdswzd_interface
+  public :: operator(==)
 
   !> Abstract grid that holds fields and methods common to all grids.
   !! ip_grid is meant to be subclassed when implementing a new grid.
@@ -67,11 +69,11 @@ module ip_grid_mod
      real :: rerth !< Radius of the Earth.
      real :: eccen_squared !< Eccentricity of the Earth squared (e^2)
    contains
-     !> Initializer for grib1 input descriptor.
+     !> Initializer for grib1 input descriptor. @return N/A
      procedure(init_grib1_interface), deferred :: init_grib1
-     !> Initializer for grib2 input descriptor.
+     !> Initializer for grib2 input descriptor. @return N/A
      procedure(init_grib2_interface), deferred :: init_grib2
-     !> Coordinate transformations for the grid.
+     !> Coordinate transformations for the grid. @return N/A
      procedure(gdswzd_interface), deferred :: gdswzd
      !> Field position for a given grid point. @return Integer
      !> position in grib field to locate grid point.
@@ -81,6 +83,26 @@ module ip_grid_mod
   end type ip_grid
 
   abstract interface
+     !> Interface to gdswzd().
+     !>
+     !> @param[in] self ???
+     !> @param[in] iopt ???
+     !> @param[in] npts ???
+     !> @param[in] fill ???
+     !> @param[in] xpts ???
+     !> @param[in] ypts ???
+     !> @param[in] rlon ???
+     !> @param[in] rlat ???
+     !> @param[in] nret ???
+     !> @param[in] crot ???
+     !> @param[in] srot ???
+     !> @param[in] xlon ???
+     !> @param[in] xlat ???
+     !> @param[in] ylon ???
+     !> @param[in] ylat ???
+     !> @param[in] area ???
+     !>
+     !> @author Kyle Gerheiser @date July 2021
      subroutine gdswzd_interface(self, iopt, npts, fill, xpts, ypts, rlon, rlat, nret, crot, srot, &
           xlon, xlat, ylon, ylat, area)
        import
@@ -124,6 +146,8 @@ module ip_grid_mod
 
   end interface
 
+  !> Check equality.
+  !> @author Kyle Gerheiser @date July 2021
   interface operator (==)
      module procedure is_same_grid
   end interface operator (==)
