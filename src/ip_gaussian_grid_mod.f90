@@ -18,12 +18,21 @@ module ip_gaussian_grid_mod
   public :: ip_gaussian_grid
 
   type, extends(ip_grid) :: ip_gaussian_grid
-     integer :: jh
-     real :: dlon, rlat1, rlon1, rlon2, hi
-     integer :: jg, jscan
+     integer :: jh !< ???
+     real :: dlon !< ???
+     real :: rlat1 !< ???
+     real :: rlon1 !< ???
+     real :: rlon2 !< ???
+     real :: hi !< ???
+     integer :: jg !< ???
+     integer :: jscan !< ???
    contains
+     !> Initializes a gaussian grid given a grib1_descriptor object. @return N/A
      procedure :: init_grib1
+     !> Initializes a gaussian grid given a grib2_descriptor object. @return N/A
      procedure :: init_grib2
+     !> Calculates Earth coordinates (iopt = 1) or grid coorindates (iopt = -1)
+     !> for Gaussian grids. @return N/A
      procedure :: gdswzd => gdswzd_gaussian
   end type ip_gaussian_grid
 
@@ -37,7 +46,7 @@ module ip_gaussian_grid_mod
 contains
 
   !> Initializes a gaussian grid given a grib1_descriptor object.
-  !! 
+  !!
   !! @param[inout] self The grid to initialize
   !! @param[in] g1_desc A grib1_descriptor
   !!
@@ -347,7 +356,7 @@ contains
     IF (ALLOCATED(YLAT_ROW)) DEALLOCATE(YLAT_ROW)
 
   END SUBROUTINE GDSWZD_GAUSSIAN
-  
+
   !> Error handler.
   !>
   !> Upon an error, this subprogram assigns a "fill" value to the
@@ -410,7 +419,7 @@ SUBROUTINE GAUSSIAN_ERROR(IOPT,FILL,RLAT,RLON,XPTS,YPTS,NPTS)
     SROT=0.0
 
   END SUBROUTINE GAUSSIAN_VECT_ROT
-  
+
   !> Computes the map jacobians for a gaussian cylindrical grid.
   !!
   !! @param[in] ypts y-index of grid point.
