@@ -1,0 +1,46 @@
+name: MacOS Build
+on: [push, pull_request]
+
+jobs:
+  macOS-build:
+    runs-on: macos-latest
+    env:
+      FC: gfortran-9
+      CC: gcc-9
+
+    steps:
+      
+    - name: checkout-sp
+      uses: actions/checkout@v2
+      with:
+        repository: NOAA-EMC/NCEPLIBS-sp
+        path: sp
+        ref: v2.3.3
+
+    - name: build-sp
+      run: |
+        cd sp
+        mkdir build
+        cd build
+        cmake .. -DCMAKE_INSTALL_PREFIX=~/sp
+        make -j2
+        make install
+
+    - name: checkout
+      uses: actions/checkout@v2
+      with: 
+        path: ip
+
+    - name: build
+      run: |
+        cd ip
+        mkdir build 
+        cd build
+        cmake .. -DENABLE_TESTS=ON -DOPENMP=ON -DCMAKE_PREFIX_PATH="~/"
+        make -j2
+    
+    - name: test
+      run: |
+        ulimit -s unlimited
+        cd $GITHUB_WORKSPACE/ip/build
+        ctest --output-on-failure
