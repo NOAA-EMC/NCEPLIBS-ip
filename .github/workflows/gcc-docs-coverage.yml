@@ -42,7 +42,7 @@ jobs:
         path: ip
         submodules: true
 
-    - name: build with openMP ${{ matrix.openmp }}
+    - name: build
       run: |
         cd ip
         mkdir build 
