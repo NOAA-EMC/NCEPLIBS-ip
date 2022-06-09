@@ -1,207 +1,177 @@
+!> @file
+!> @brief C wrapper for routine gdswzd().
+!> @author JOVIC @date 2016-04-10
+
+!> @brief Module that contains C wrapper for routine gdswzd().
+!> @author JOVIC @date 2016-04-10
 module gdswzd_c_mod
   use gdswzd_mod
   implicit none
 
 contains
 
+  !> C wrapper for routine gdswzd.
+  !>
+  !> Use this routine to call 'gdswzd' from a C or C++ program. Takes
+  !> advantage of the fortran/c interoperability standard.
+  !>
+  !> ### Program History Log
+  !> Date | Programmer | Comments
+  !> -----|------------|---------
+  !> 2016-04-10 | Jovic | initial version.
+  !> 2016-04-26 | G. Gayno | update for grib 2
+  !>
+  !> ### Example: Mixed precsion iplib call
+  !>
+  !> @code
+  !>  include "iplib.h"
+  !>
+  !>  int *igdtmpl;
+  !>  int igdtnum, igdtlen, iopt, npts, nret;
+  !>  double fill;
+  !>  double *xpts, *ypts, *rlon, *rlat;
+  !>  double *crot, *srot, *xlon, *xlat, *ylon, *ylat, *area;
+  !>
+  !>  gdswzd(igdtnum, igdtmpl, igdtlen, iopt, npts,
+  !>         fill, xpts, ypts, rlon, rlat,
+  !>         &nret, crot, srot, xlon,
+  !>         xlat, ylon, ylat, area);
+  !> @endcode
+  !>
+  !> @param[in] igdtnum grid definition template number. Corresponds
+  !> to the gfld%igdtnum component of the ncep g2 library gridmod data
+  !> structure.
+  !> - 00 equidistant cylindrical
+  !> - 01 rotated equidistant cylindrical. "e" and non-"e" staggered
+  !> - 10 mercator cyclindrical
+  !> - 20 polar stereographic azimuthal
+  !> - 30 lambert conformal conical
+  !> - 40 gaussian equidistant cyclindrical
+  !> @param[in] igdtmpl (igdtlen) grid definition template array.
+  !> corresponds to the gfld%igdtmpl component of the ncep g2 library
+  !> gridmod data structure for section three.
+  !> all projections:
+  !> - 1 shape of earth, octet 15
+  !> - 2 scale factor of spherical earth radius, octet 16
+  !> - 3 scaled value of radius of spherical earth, octets 17-20
+  !> - 4 scale factor of major axis of elliptical earth, octet 21
+  !> - 5 scaled value of major axis of elliptical earth, octets 22-25
+  !> - 6 scale factor of minor axis of elliptical earth, octet 26
+  !> - 7 scaled value of minor axis of elliptical earth, octets 27-30
+  !> equidistant cyclindrical:
+  !> - 8 number of points along a parallel, octs 31-34
+  !> - 9 number of points along a meridian, octs 35-38
+  !> - 10 basic angle of initial production domain, octets 39-42.
+  !> - 11 subdivisions of basic angle, octets 43-46
+  !> - 12 latitude of first grid point, octets 47-50
+  !> - 13 longitude of first grid point, octets 51-54
+  !> - 14 resolution and component flags, octet 55
+  !> - 15 latitude of last grid point, octets 56-59
+  !> - 16 longitude of last grid point, octets 60-63
+  !> - 17 i-direction increment, octets 64-67
+  !> - 18 j-direction increment, octets 68-71
+  !> - 19 scanning mode, octet 72
+  !> mercator cyclindrical:
+  !> - 8  number of points along a parallel, octs 31-34
+  !> - 9  number of points along a meridian, octs 35-38
+  !> - 10 latitude of first point, octets 39-42
+  !> - 11 longitude of first point, octets 43-46
+  !> - 12 resolution and component flags, octet 47
+  !> - 13 tangent latitude, octets 48-51
+  !> - 14 latitude of last point, octets 52-55
+  !> - 15 longitude of last point, octets 56-59
+  !> - 16 scanning mode flags, octet 60
+  !> - 17 orientation of grid, octets 61-64
+  !> - 18 longitudinal grid length, octets 65-68
+  !> - 19 latitudinal grid length, octets 69-72
+  !> Lambert conformal conical:
+  !> - 8  number of points along x-axis, octs 31-34
+  !> - 9  number of points along y-axis, octs 35-38
+  !> - 10 latitude of first point, octets 39-42
+  !> - 11 longitude of first point, octets 43-46
+  !> - 12 resolution of component flag, octet 47
+  !> - 13 latitude where grid lengths specified, octets 48-51
+  !> - 14 longitude of meridian that is parallel to y-axis, octets 52-55
+  !> - 15 x-direction grid length, octets 56-59
+  !> - 16 y-direction grid length, octets 60-63
+  !> - 17 projection center flag, octet 64
+  !> - 18 scanning mode, octet 65
+  !> - 19 first tangent latitude from pole, octets 66-69
+  !> - 20 second tangent latitude from pole, octets 70-73
+  !> - 21 latitude of south pole of projection, octets 74-77
+  !> - 22 longitude of south pole of projection, octets 78-81
+  !> gaussian cylindrical:
+  !> - 8  number of points along a parallel, octs 31-34
+  !> - 9  number of points along a meridian, octs 35-38
+  !> - 10 basic angle of initial production domain, octets 39-42
+  !> - 11 subdivisions of basic angle, octets 43-46
+  !> - 12 latitude of first grid point, octets 47-50
+  !> - 13 longitude of first grid point, octets 51-54
+  !> - 14 resolution and component flags, octet 55
+  !> - 15 latitude of last grid point, octets 56-59
+  !> - 16 longitude of last grid point, octets 60-63
+  !> - 17 i-direction increment, octets 64-67
+  !> - 18 number of parallels between pole and equator, octets 68-71
+  !> - 19 scanning mode, octet 72
+  !> polar stereographic azimuthal:
+  !> - 8  number of points along x-axis, octets 31-34
+  !> - 9  number of points along y-axis, octets 35-38
+  !> - 10 latitude of first grid point, octets 39-42
+  !> - 11 longitude of first grid point, octets 43-46
+  !> - 12 resolution and component flags, octet 47
+  !> - 13 true latitude, octets 48-51
+  !> - 14 orientation longitude, octets 52-55
+  !> - 15 x-direction grid length, octets 56-59
+  !> - 16 y-direction grid length, octets 60-63
+  !> - 17 projection center flag, octet 64
+  !> - 18 scanning mode flags, octet 65
+  !> rotated equidistant cyclindrical:
+  !> - 8  number of points along a parallel, octs 31-34
+  !> - 9  number of points along a meridian, octs 35-38
+  !> - 10 basic angle of initial production domain, octets 39-42
+  !> - 11 subdivisions of basic angle, octets 43-46
+  !> - 12 latitude of first grid point, octets 47-50
+  !> - 13 longitude of first grid point, octets 51-54
+  !> - 14 resolution and component flags, octet 55
+  !> - 15 latitude of last grid point, octets 56-59
+  !> - 16 longitude of last grid point, octets 60-63
+  !> - 17 i-direction increment, octets 64-67
+  !> - 18 j-direction increment, octets 68-71
+  !> - 19 scanning mode, octet 72
+  !> - 20 latitude of southern pole of projection, octets 73-76
+  !> - 21 longitude of southern pole of projection, octets 77-80
+  !> - 22 angle of rotation of projection, octs 81-84
+  !> @param[in] igdtlen number of elements of the grid definition
+  !> template array. Corresponds to the gfld%igdtlen component of the
+  !> ncep g2 library gridmod data structure.
+  !> @param[in] iopt option flag
+  !> - 0 to compute earth coords of all the grid points
+  !> - 1 to compute earth coords of selected grid coords
+  !> - -1 to compute grid coords of selected earth coords
+  !> @param[in] npts integer maximum number of coordinates
+  !> @param[in] fill real fill value to set invalid output data (must
+  !> be impossible value; suggested value: -9999.)
+  !> @param[inout] xpts real (npts) grid x point coordinates if iopt>0
+  !> @param[inout] ypts real (npts) grid y point coordinates if iopt>0
+  !> @param[inout] rlon real (npts) earth longitudes in degrees e if
+  !> iopt<0 (acceptable range: -360. to 360.)
+  !> @param[inout] rlat real (npts) earth latitudes in degrees n if
+  !> iopt<0 (acceptable range: -90. to 90.)
+  !> @param[out] nret number of valid points computed (-1 if
+  !> projection unrecognized)
+  !> @param[out] crot (npts) clockwise vector rotation cosines
+  !> @param[out] srot (npts) clockwise vector rotation sines
+  !> (ugrid=crot*uearth-srot*vearth, vgrid=srot*uearth+crot*vearth)
+  !> @param[out] xlon (npts) dx/dlon in 1/degrees
+  !> @param[out] xlat (npts) dx/dlat in 1/degrees
+  !> @param[out] ylon (npts) dy/dlon in 1/degrees
+  !> @param[out] ylat (npts) dy/dlat in 1/degrees
+  !> @param[out] AREA (npts) area weights in m**2 (Proportional to the
+  !>
+  !> @author JOVIC @date 2016-04-10
   SUBROUTINE GDSWZD_C(IGDTNUM,IGDTMPL,IGDTLEN,IOPT,NPTS,FILL, &
        XPTS,YPTS,RLON,RLAT,NRET,CROT,SROT, &
        XLON,XLAT,YLON,YLAT,AREA) BIND(C, NAME='gdswzd')
-    !$$$  SUBPROGRAM DOCUMENTATION BLOCK
-    !
-    ! SUBPROGRAM:  GDSWZD_C     'C' WRAPPER FOR ROUTINE GDSWZD
-    !   PRGMMR: JOVIC         ORG: W/NMC23       DATE: 2016-04-10
-    !
-    ! ABSTRACT:  USE THIS ROUTINE TO CALL 'GDSWZD' FROM A 'C' OR 'C++' PROGRAM.
-    !            TAKES ADVANTAGE OF THE FORTRAN/C INTEROPERABILITY STANDARD.
-    !
-    ! PROGRAM HISTORY LOG:
-    ! 2016-04-10  JOVIC   INITIAL VERSION. 
-    ! 2016-04-26  GAYNO   UPDATE FOR GRIB 2
-    !
-    ! USAGE:    
-    !
-    !  EXAMPLE: MIXED PRECSION IPLIB CALL
-    !
-    !  include "iplib.h"
-    !
-    !  int *igdtmpl;
-    !  int igdtnum, igdtlen, iopt, npts, nret;
-    !  double fill;
-    !  double *xpts, *ypts, *rlon, *rlat;
-    !  double *crot, *srot, *xlon, *xlat, *ylon, *ylat, *area;
-    !
-    !  gdswzd(igdtnum, igdtmpl, igdtlen, iopt, npts,
-    !         fill, xpts, ypts, rlon, rlat,
-    !         &nret, crot, srot, xlon,
-    !         xlat, ylon, ylat, area);
-    !
-    !  INPUT ARGUMENT LIST:
-    !     IGDTNUM  - INTEGER GRID DEFINITION TEMPLATE NUMBER.
-    !                CORRESPONDS TO THE GFLD%IGDTNUM COMPONENT OF THE
-    !                NCEP G2 LIBRARY GRIDMOD DATA STRUCTURE.
-    !                  00 - EQUIDISTANT CYLINDRICAL
-    !                  01 - ROTATED EQUIDISTANT CYLINDRICAL.  "E"
-    !                       AND NON-"E" STAGGERED
-    !                  10 - MERCATOR CYCLINDRICAL
-    !                  20 - POLAR STEREOGRAPHIC AZIMUTHAL
-    !                  30 - LAMBERT CONFORMAL CONICAL
-    !                  40 - GAUSSIAN EQUIDISTANT CYCLINDRICAL
-    !     IGDTMPL  - INTEGER (IGDTLEN) GRID DEFINITION TEMPLATE ARRAY.
-    !                CORRESPONDS TO THE GFLD%IGDTMPL COMPONENT OF THE
-    !                NCEP G2 LIBRARY GRIDMOD DATA STRUCTURE FOR
-    !                SECTION THREE.
-    !                ALL PROJECTIONS:
-    !                 (1):  SHAPE OF EARTH, OCTET 15
-    !                 (2):  SCALE FACTOR OF SPHERICAL EARTH RADIUS,
-    !                       OCTET 16
-    !                 (3):  SCALED VALUE OF RADIUS OF SPHERICAL EARTH,
-    !                       OCTETS 17-20
-    !                 (4):  SCALE FACTOR OF MAJOR AXIS OF ELLIPTICAL EARTH,
-    !                       OCTET 21
-    !                 (5):  SCALED VALUE OF MAJOR AXIS OF ELLIPTICAL EARTH,
-    !                       OCTETS 22-25
-    !                 (6):  SCALE FACTOR OF MINOR AXIS OF ELLIPTICAL EARTH,
-    !                       OCTET 26
-    !                 (7):  SCALED VALUE OF MINOR AXIS OF ELLIPTICAL EARTH,
-    !                       OCTETS 27-30
-    !                EQUIDISTANT CYCLINDRICAL:
-    !                 (8):  NUMBER OF POINTS ALONG A PARALLEL, OCTS 31-34
-    !                 (9):  NUMBER OF POINTS ALONG A MERIDIAN, OCTS 35-38
-    !                 (10): BASIC ANGLE OF INITIAL PRODUCTION DOMAIN,
-    !                       OCTETS 39-42.
-    !                 (11): SUBDIVISIONS OF BASIC ANGLE, OCTETS 43-46
-    !                 (12): LATITUDE OF FIRST GRID POINT, OCTETS 47-50
-    !                 (13): LONGITUDE OF FIRST GRID POINT, OCTETS 51-54
-    !                 (14): RESOLUTION AND COMPONENT FLAGS, OCTET 55
-    !                 (15): LATITUDE OF LAST GRID POINT, OCTETS 56-59
-    !                 (16): LONGITUDE OF LAST GRID POINT, OCTETS 60-63
-    !                 (17): I-DIRECTION INCREMENT, OCTETS 64-67
-    !                 (18): J-DIRECTION INCREMENT, OCTETS 68-71
-    !                 (19): SCANNING MODE, OCTET 72
-    !                MERCATOR CYCLINDRICAL:
-    !                 (8):  NUMBER OF POINTS ALONG A PARALLEL, OCTS 31-34
-    !                 (9):  NUMBER OF POINTS ALONG A MERIDIAN, OCTS 35-38
-    !                 (10): LATITUDE OF FIRST POINT, OCTETS 39-42
-    !                 (11): LONGITUDE OF FIRST POINT, OCTETS 43-46
-    !                 (12): RESOLUTION AND COMPONENT FLAGS, OCTET 47
-    !                 (13): TANGENT LATITUDE, OCTETS 48-51
-    !                 (14): LATITUDE OF LAST POINT, OCTETS 52-55
-    !                 (15): LONGITUDE OF LAST POINT, OCTETS 56-59
-    !                 (16): SCANNING MODE FLAGS, OCTET 60
-    !                 (17): ORIENTATION OF GRID, OCTETS 61-64
-    !                 (18): LONGITUDINAL GRID LENGTH, OCTETS 65-68
-    !                 (19): LATITUDINAL GRID LENGTH, OCTETS 69-72
-    !                LAMBERT CONFORMAL CONICAL:
-    !                 (8):  NUMBER OF POINTS ALONG X-AXIS, OCTS 31-34
-    !                 (9):  NUMBER OF POINTS ALONG Y-AXIS, OCTS 35-38
-    !                 (10): LATITUDE OF FIRST POINT, OCTETS 39-42
-    !                 (11): LONGITUDE OF FIRST POINT, OCTETS 43-46
-    !                 (12): RESOLUTION OF COMPONENT FLAG, OCTET 47
-    !                 (13): LATITUDE WHERE GRID LENGTHS SPECIFIED,
-    !                       OCTETS 48-51
-    !                 (14): LONGITUDE OF MERIDIAN THAT IS PARALLEL TO
-    !                       Y-AXIS, OCTETS 52-55
-    !                 (15): X-DIRECTION GRID LENGTH, OCTETS 56-59
-    !                 (16): Y-DIRECTION GRID LENGTH, OCTETS 60-63
-    !                 (17): PROJECTION CENTER FLAG, OCTET 64
-    !                 (18): SCANNING MODE, OCTET 65
-    !                 (19): FIRST TANGENT LATITUDE FROM POLE, OCTETS 66-69
-    !                 (20): SECOND TANGENT LATITUDE FROM POLE, OCTETS 70-73
-    !                 (21): LATITUDE OF SOUTH POLE OF PROJECTION,
-    !                       OCTETS 74-77
-    !                 (22): LONGITUDE OF SOUTH POLE OF PROJECTION,
-    !                       OCTETS 78-81
-    !                GAUSSIAN CYLINDRICAL:
-    !                 (8):  NUMBER OF POINTS ALONG A PARALLEL, OCTS 31-34
-    !                 (9):  NUMBER OF POINTS ALONG A MERIDIAN, OCTS 35-38
-    !                 (10): BASIC ANGLE OF INITIAL PRODUCTION DOMAIN,
-    !                       OCTETS 39-42
-    !                 (11): SUBDIVISIONS OF BASIC ANGLE, OCTETS 43-46
-    !                 (12): LATITUDE OF FIRST GRID POINT, OCTETS 47-50
-    !                 (13): LONGITUDE OF FIRST GRID POINT, OCTETS 51-54
-    !                 (14): RESOLUTION AND COMPONENT FLAGS, OCTET 55
-    !                 (15): LATITUDE OF LAST GRID POINT, OCTETS 56-59
-    !                 (16): LONGITUDE OF LAST GRID POINT, OCTETS 60-63
-    !                 (17): I-DIRECTION INCREMENT, OCTETS 64-67
-    !                 (18): NUMBER OF PARALLELS BETWEEN POLE AND EQUATOR,
-    !                       OCTETS 68-71
-    !                 (19): SCANNING MODE, OCTET 72
-    !                POLAR STEREOGRAPHIC AZIMUTHAL:
-    !                 (8):  NUMBER OF POINTS ALONG X-AXIS, OCTETS 31-34
-    !                 (9):  NUMBER OF POINTS ALONG Y-AXIS, OCTETS 35-38
-    !                 (10): LATITUDE OF FIRST GRID POINT, OCTETS 39-42
-    !                 (11): LONGITUDE OF FIRST GRID POINT, OCTETS 43-46
-    !                 (12): RESOLUTION AND COMPONENT FLAGS, OCTET 47
-    !                 (13): TRUE LATITUDE, OCTETS 48-51
-    !                 (14): ORIENTATION LONGITUDE, OCTETS 52-55
-    !                 (15): X-DIRECTION GRID LENGTH, OCTETS 56-59
-    !                 (16): Y-DIRECTION GRID LENGTH, OCTETS 60-63
-    !                 (17): PROJECTION CENTER FLAG, OCTET 64
-    !                 (18): SCANNING MODE FLAGS, OCTET 65
-    !                ROTATED EQUIDISTANT CYCLINDRICAL:
-    !                 (8):  NUMBER OF POINTS ALONG A PARALLEL, OCTS 31-34
-    !                 (9):  NUMBER OF POINTS ALONG A MERIDIAN, OCTS 35-38
-    !                 (10): BASIC ANGLE OF INITIAL PRODUCTION DOMAIN,
-    !                       OCTETS 39-42
-    !                 (11): SUBDIVISIONS OF BASIC ANGLE, OCTETS 43-46
-    !                 (12): LATITUDE OF FIRST GRID POINT, OCTETS 47-50
-    !                 (13): LONGITUDE OF FIRST GRID POINT, OCTETS 51-54
-    !                 (14): RESOLUTION AND COMPONENT FLAGS, OCTET 55
-    !                 (15): LATITUDE OF LAST GRID POINT, OCTETS 56-59
-    !                 (16): LONGITUDE OF LAST GRID POINT, OCTETS 60-63
-    !                 (17): I-DIRECTION INCREMENT, OCTETS 64-67
-    !                 (18): J-DIRECTION INCREMENT, OCTETS 68-71
-    !                 (19): SCANNING MODE, OCTET 72
-    !                 (20): LATITUDE OF SOUTHERN POLE OF PROJECTION,
-    !                       OCTETS 73-76
-    !                 (21): LONGITUDE OF SOUTHERN POLE OF PROJECTION,
-    !                       OCTETS 77-80
-    !                 (22): ANGLE OF ROTATION OF PROJECTION, OCTS 81-84
-    !     IGDTLEN  - INTEGER NUMBER OF ELEMENTS OF THE GRID DEFINITION
-    !                TEMPLATE ARRAY.  CORRESPONDS TO THE GFLD%IGDTLEN
-    !                COMPONENT OF THE NCEP G2 LIBRARY GRIDMOD DATA STRUCTURE.
-    !     IOPT     - INTEGER OPTION FLAG
-    !                ( 0 TO COMPUTE EARTH COORDS OF ALL THE GRID POINTS)
-    !                (+1 TO COMPUTE EARTH COORDS OF SELECTED GRID COORDS)
-    !                (-1 TO COMPUTE GRID COORDS OF SELECTED EARTH COORDS)
-    !     NPTS     - INTEGER MAXIMUM NUMBER OF COORDINATES
-    !     FILL     - REAL FILL VALUE TO SET INVALID OUTPUT DATA
-    !                (MUST BE IMPOSSIBLE VALUE; SUGGESTED VALUE: -9999.)
-    !     XPTS     - REAL (NPTS) GRID X POINT COORDINATES IF IOPT>0
-    !     YPTS     - REAL (NPTS) GRID Y POINT COORDINATES IF IOPT>0
-    !     RLON     - REAL (NPTS) EARTH LONGITUDES IN DEGREES E IF IOPT<0
-    !                (ACCEPTABLE RANGE: -360. TO 360.)
-    !     RLAT     - REAL (NPTS) EARTH LATITUDES IN DEGREES N IF IOPT<0
-    !                (ACCEPTABLE RANGE: -90. TO 90.)
-    !
-    !  OUTPUT ARGUMENT LIST:
-    !     XPTS     - REAL (NPTS) GRID X POINT COORDINATES IF IOPT<=0
-    !     YPTS     - REAL (NPTS) GRID Y POINT COORDINATES IF IOPT<=0
-    !     RLON     - REAL (NPTS) EARTH LONGITUDES IN DEGREES E IF IOPT>=0
-    !     RLAT     - REAL (NPTS) EARTH LATITUDES IN DEGREES N IF IOPT>=0
-    !     NRET     - INTEGER NUMBER OF VALID POINTS COMPUTED
-    !                (-1 IF PROJECTION UNRECOGNIZED)
-    !     CROT     - REAL (NPTS) CLOCKWISE VECTOR ROTATION COSINES
-    !     SROT     - REAL (NPTS) CLOCKWISE VECTOR ROTATION SINES
-    !                (UGRID=CROT*UEARTH-SROT*VEARTH;
-    !                 VGRID=SROT*UEARTH+CROT*VEARTH)
-    !     XLON     - REAL (NPTS) DX/DLON IN 1/DEGREES
-    !     XLAT     - REAL (NPTS) DX/DLAT IN 1/DEGREES
-    !     YLON     - REAL (NPTS) DY/DLON IN 1/DEGREES
-    !     YLAT     - REAL (NPTS) DY/DLAT IN 1/DEGREES
-    !     AREA     - REAL (NPTS) AREA WEIGHTS IN M**2
-    !                (PROPORTIONAL TO THE SQUARE OF THE MAP FACTOR
-    !                 IN THE CASE OF CONFORMAL PROJECTIONS)
-    !
-    ! SUBPROGRAMS CALLED:
-    !   GDSWZD     GDS WIZARD
-    !
-    ! ATTRIBUTES:
-    !   LANGUAGE: FORTRAN 90
-    !
-    !$$$
-    !
     USE, INTRINSIC :: ISO_C_BINDING
 
     USE GDSWZD_MOD
@@ -238,60 +208,53 @@ contains
 
   END SUBROUTINE GDSWZD_C
 
-
-  !> @file
-  !! 'C' WRAPPER FOR ROUTINE GDSWZD
-  !!  @author JOVIC @date 2016-04-10
-  !
-  !> USE THIS ROUTINE TO CALL 'GDSWZD' FROM A 'C' OR 'C++' PROGRAM.
-!!! TAKES ADVANTAGE OF THE FORTRAN/C INTEROPERABILITY STANDARD.
-  !!
-  !!  EXAMPLE: MIXED PRECSION IPLIB CALL
-  !!@code
-  !!  include "iplib.h"
-  !!
-  !!  int kgds[200];
-  !!  int iopt, npts, nret;
-  !!  double fill;
-  !!  double *xpts, *ypts, *rlon, *rlat;
-  !!  double *crot, *srot, *xlon, *xlat, *ylon, *ylat, *area;
-  !!
-  !!  gdswzd(kgds, iopt, npts, fill,
-  !!         xpts, ypts, rlon, rlat,
-  !!         &nret, crot, srot, xlon,
-  !!         xlat, ylon, ylat, area);
-  !! @endcode
-  !!
-  !! @param KGDS - INTEGER (200) GDS PARAMETERS AS DECODED BY W3FI63
-  !! @param IOPT - INTEGER OPTION FLAG
-  !!                ( 0 TO COMPUTE EARTH COORDS OF ALL THE GRID POINTS)
-  !!                (+1 TO COMPUTE EARTH COORDS OF SELECTED GRID COORDS)
-  !!                (-1 TO COMPUTE GRID COORDS OF SELECTED EARTH COORDS)
-  !! @param NPTS - INTEGER MAXIMUM NUMBER OF COORDINATES
-  !! @param FILL - REAL FILL VALUE TO SET INVALID OUTPUT DATA
-  !!                (MUST BE IMPOSSIBLE VALUE; SUGGESTED VALUE: -9999.)
-  !! @param XPTS - REAL (NPTS) GRID X POINT COORDINATES IF IOPT>0
-  !! @param YPTS - REAL (NPTS) GRID Y POINT COORDINATES IF IOPT>0
-  !! @param[out] RLON - REAL (NPTS) EARTH LONGITUDES IN DEGREES E IF IOPT<0
-  !!                (ACCEPTABLE RANGE: -360. TO 360.)
-  !! @param[out] RLAT - REAL (NPTS) EARTH LATITUDES IN DEGREES N IF IOPT<0
-  !!                (ACCEPTABLE RANGE: -90. TO 90.)
-  !! @param[out] NRET - INTEGER NUMBER OF VALID POINTS COMPUTED
-  !!                (-1 IF PROJECTION UNRECOGNIZED)
-  !! @param[out] CROT - REAL (NPTS) CLOCKWISE VECTOR ROTATION COSINES
-  !! @param[out] SROT - REAL (NPTS) CLOCKWISE VECTOR ROTATION SINES
-  !!                (UGRID=CROT*UEARTH-SROT*VEARTH;
-  !!                 VGRID=SROT*UEARTH+CROT*VEARTH)
-  !! @param[out] XLON - REAL (NPTS) DX/DLON IN 1/DEGREES
-  !! @param[out] XLAT - REAL (NPTS) DX/DLAT IN 1/DEGREES
-  !! @param[out] YLON - REAL (NPTS) DY/DLON IN 1/DEGREES
-  !! @param[out] YLAT - REAL (NPTS) DY/DLAT IN 1/DEGREES
-  !! @param[out] AREA - REAL (NPTS) AREA WEIGHTS IN M**2
-  !!                (PROPORTIONAL TO THE SQUARE OF THE MAP FACTOR
-  !!                 IN THE CASE OF CONFORMAL PROJECTIONS)
-  !!
-  !! SUBPROGRAMS CALLED:
-  !!   GDSWZD     GDS WIZARD
+  !> C wrapper for routine gdswzd.
+  !> Use this routine to call 'gdswzd' from a C or C++ program.
+  !> Takes advantage of the fortran/c interoperability standard.
+  !>
+  !> ### Example: mixed precsion iplib call
+  !>@code
+  !>  include "iplib.h"
+  !>
+  !>  int kgds[200];
+  !>  int iopt, npts, nret;
+  !>  double fill;
+  !>  double *xpts, *ypts, *rlon, *rlat;
+  !>  double *crot, *srot, *xlon, *xlat, *ylon, *ylat, *area;
+  !>
+  !>  gdswzd(kgds, iopt, npts, fill,
+  !>         xpts, ypts, rlon, rlat,
+  !>         &nret, crot, srot, xlon,
+  !>         xlat, ylon, ylat, area);
+  !> @endcode
+  !>
+  !> @param kgds (200) gds parameters as decoded by w3fi63
+  !> @param iopt option flag
+  !> - 0 to compute earth coords of all the grid points
+  !> - 1 to compute earth coords of selected grid coords
+  !> - -1 to compute grid coords of selected earth coords
+  !> @param npts maximum number of coordinates
+  !> @param fill fill value to set invalid output data (must be
+  !> impossible value; suggested value: -9999.)
+  !> @param xpts (npts) grid x point coordinates if iopt>0
+  !> @param ypts (npts) grid y point coordinates if iopt>0
+  !> @param[out] rlon (npts) earth longitudes in degrees e if iopt<0
+  !> (acceptable range: -360. to 360.)
+  !> @param[out] rlat (npts) earth latitudes in degrees n if iopt<0
+  !> (acceptable range: -90. to 90.)
+  !> @param[out] nret number of valid points computed (-1 if
+  !> projection unrecognized)
+  !> @param[out] crot (npts) clockwise vector rotation cosines
+  !> @param[out] srot (npts) clockwise vector rotation sines
+  !> (ugrid=crot*uearth-srot*vearth; vgrid=srot*uearth+crot*vearth)
+  !> @param[out] xlon (npts) dx/dlon in 1/degrees
+  !> @param[out] xlat (npts) dx/dlat in 1/degrees
+  !> @param[out] ylon (npts) dy/dlon in 1/degrees
+  !> @param[out] ylat (npts) dy/dlat in 1/degrees
+  !> @param[out] area (npts) area weights in m**2 (proportional to the
+  !> square of the map factor in the case of conformal projections.)
+  !>
+  !>  @author JOVIC @date 2016-04-10
   SUBROUTINE GDSWZD_C_grib1(KGDS,IOPT,NPTS,FILL,XPTS,YPTS,RLON,RLAT,NRET, &
        CROT,SROT,XLON,XLAT,YLON,YLAT,AREA) BIND(C, NAME='gdswzd_grib1')
     USE, INTRINSIC :: ISO_C_BINDING

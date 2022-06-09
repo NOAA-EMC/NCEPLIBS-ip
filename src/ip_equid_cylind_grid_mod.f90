@@ -1,9 +1,11 @@
 !> @file
-!! @brief Equidistant cylindrical grib decoder and grid coordinate transformations.
+!! @brief Equidistant cylindrical grib decoder and grid coordinate
+!! transformations.
 !! @author Mark Iredell, George Gayno, Kyle Gerheiser
 !! @date July 2021
 
-!> Equidistant cylindrical grib decoder and grid coordinate transformations.
+!> Equidistant cylindrical grib decoder and grid coordinate
+!> transformations.
 !!
 !! @author George Gayno, Mark Iredell, Kyle Gerheiser
 !! @date July 2021
@@ -17,17 +19,22 @@ module ip_equid_cylind_grid_mod
   public :: ip_equid_cylind_grid
 
   type, extends(ip_grid) :: ip_equid_cylind_grid
-     real :: hi, rlat1, rlon1, rlat2, rlon2
-     real :: dlat, dlon
+     real :: hi !< ???
+     real :: rlat1 !< ???
+     real :: rlon1 !< ???
+     real :: rlat2 !< ???
+     real :: rlon2 !< ???
+     real :: dlat !< ???
+     real :: dlon !< ???
    contains
-     procedure :: init_grib1
-     procedure :: init_grib2
-     procedure :: gdswzd => gdswzd_equid_cylind
+     procedure :: init_grib1 !< Init GRIB1. @return N/A
+     procedure :: init_grib2 !< Init GRIB2. @return N/A
+     procedure :: gdswzd => gdswzd_equid_cylind !< See gdswzd_equid_cylind(). @return N/A
   end type ip_equid_cylind_grid
 
-  REAL                    :: DLAT ! GRID RESOLUTION IN DEGREES N/S DIRECTION
-  REAL                    :: DLON ! GRID RESOLUTION IN DEGREES E/W DIRECTION
-  REAL                    :: RERTH
+  REAL :: DLAT !< Grid resolution in degrees n/s direction.
+  REAL :: DLON !< Grid resolution in degrees e/w direction.
+  REAL :: RERTH !< Radius of the Earth.
 
 contains
 
@@ -87,7 +94,6 @@ contains
     end associate
 
   end subroutine init_grib1
-
   
   !> Initializes an equidistant cylindrical grid given a grib2_descriptor object.
   !! @param[inout] self The grid to initialize
@@ -144,7 +150,6 @@ contains
 
     end associate
   end subroutine init_grib2
-
 
   !> Calculates Earth coordinates (iopt = 1) or grid coorindates (iopt = -1)
   !! for equidistant cylindrical grids.
@@ -300,40 +305,31 @@ contains
        ENDDO
        !$OMP END PARALLEL DO
     ENDIF
-    ! - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   END SUBROUTINE GDSWZD_EQUID_CYLIND
-  ! - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
+  !> Error handler.
+  !>
+  !> Upon an error, this subprogram assigns a "fill" value to the
+  !> output fields.
+  !>
+  !> ### Program History Log
+  !> Date | Programmer | Comments
+  !> -----|------------|---------
+  !> 2015-07-13 | Gayno | initial version
+  !>
+  !> @param[in] iopt option flag
+  !> - 1 to compute earth coords of selected grid coords
+  !> - -1 to compute grid coords of selected earth coords
+  !> @param[in] fill fill value to set invalid output data (must be
+  !> impossible value; suggested value: -9999.)
+  !> @param[out] rlat     - real (npts) earth latitudes in degrees n if iopt<0
+  !> @param[out] rlon     - real (npts) earth longitudes in degrees e if iopt<0
+  !> @param[out] xpts     - real (npts) grid x point coordinates if iopt>0
+  !> @param[out] ypts     - real (npts) grid y point coordinates if iopt>0
+  !> @param[in] npts maximum number of coordinates
+  !>
+  !> @author George Gayno @date 2015-07-13
   SUBROUTINE EQUID_CYLIND_ERROR(IOPT,FILL,RLAT,RLON,XPTS,YPTS,NPTS)
-    !$$$  SUBPROGRAM DOCUMENTATION BLOCK
-    !
-    ! SUBPROGRAM:  EQUID_CYLIND_ERROR   ERROR HANDLER
-    !   PRGMMR: GAYNO       ORG: W/NMC23       DATE: 2015-07-13
-    !
-    ! ABSTRACT: UPON AN ERROR, THIS SUBPROGRAM ASSIGNS
-    !           A "FILL" VALUE TO THE OUTPUT FIELDS.
-    !
-    ! PROGRAM HISTORY LOG:
-    ! 2015-07-13  GAYNO     INITIAL VERSION
-    !
-    ! USAGE:    CALL EQUID_CYLIND_ERROR(IOPT,FILL,RLAT,RLON,XPTS,YPTS,NPTS)
-    !
-    !   INPUT ARGUMENT LIST:
-    !     IOPT     - INTEGER OPTION FLAG
-    !                (+1 TO COMPUTE EARTH COORDS OF SELECTED GRID COORDS)
-    !                (-1 TO COMPUTE GRID COORDS OF SELECTED EARTH COORDS)
-    !     NPTS     - INTEGER MAXIMUM NUMBER OF COORDINATES
-    !     FILL     - REAL FILL VALUE TO SET INVALID OUTPUT DATA
-    !                (MUST BE IMPOSSIBLE VALUE; SUGGESTED VALUE: -9999.)
-    !   OUTPUT ARGUMENT LIST:
-    !     RLON     - REAL (NPTS) EARTH LONGITUDES IN DEGREES E IF IOPT<0
-    !     RLAT     - REAL (NPTS) EARTH LATITUDES IN DEGREES N IF IOPT<0
-    !     XPTS     - REAL (NPTS) GRID X POINT COORDINATES IF IOPT>0
-    !     YPTS     - REAL (NPTS) GRID Y POINT COORDINATES IF IOPT>0
-    !
-    ! ATTRIBUTES:
-    !   LANGUAGE: FORTRAN 90
-    !
-    !$$$
     IMPLICIT NONE
     !
     INTEGER, INTENT(IN   ) :: IOPT, NPTS
@@ -350,7 +346,6 @@ contains
        XPTS=FILL
        YPTS=FILL
     ENDIF
-    ! - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   END SUBROUTINE EQUID_CYLIND_ERROR
 
   !> Computes the vector rotation sines and
@@ -360,8 +355,8 @@ contains
   !! @param[out] srot Clockwise vector rotation sines.
   !!
   !! @note
-  !! ugrid=crot*uearth-srot*vearth;
-  !! vgrid=srot*uearth+crot*vearth)
+  !! - ugrid=crot*uearth-srot*vearth;
+  !! - vgrid=srot*uearth+crot*vearth
   !!
   !! @author George Gayno
   !! @date July 2021
@@ -377,7 +372,6 @@ contains
 
   !> Computes the map jacobians for a equidistant cylindrical grid.
   !!
-  !! @param[in] ypts y-index of grid point.
   !! @param[out] xlon dx/dlon in 1/degrees.
   !! @param[out] xlat dx/dlat in 1/degrees.
   !! @param[out] ylon dy/dlon in 1/degrees.

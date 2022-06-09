@@ -14,7 +14,7 @@
 !! @date July 2021
 module ip_grid_descriptor_mod
   implicit none
-  
+
   private
 
   public :: ip_grid_descriptor
@@ -26,8 +26,9 @@ module ip_grid_descriptor_mod
   !> Abstract descriptor object which represents a grib1 or grib2 descriptor.
   !! @date July 2021
   type, abstract :: ip_grid_descriptor
-     integer :: grid_num !< Integer representing the grid type (see *_GRID_ID_GRIB1/2 in ip_grid_mod). 
+     integer :: grid_num !< Integer representing the grid type (see *_GRID_ID_GRIB1/2 in ip_grid_mod).
    contains
+     !> Test whether two grid descriptors are the same. @return N/A
      procedure :: is_same_grid
   end type ip_grid_descriptor
 
@@ -37,7 +38,8 @@ module ip_grid_descriptor_mod
   type, extends(ip_grid_descriptor) :: grib1_descriptor
      integer :: gds(200) !< Grib-1 grib descriptor section (GDS)
    contains
-     procedure :: is_same_grid_grib1 
+     !> Test whether two grid descriptors are the same. @return N/A
+     procedure :: is_same_grid_grib1
   end type grib1_descriptor
 
   !> Grib-2 descriptor containing a grib2 GDT represented by an integer array
@@ -47,6 +49,7 @@ module ip_grid_descriptor_mod
      integer :: gdt_len !< Length of the template.
      integer, allocatable :: gdt_tmpl(:) !< Grib-2 grid definition template.
    contains
+     !> Test whether two grid descriptors are the same. @return N/A
      procedure :: is_same_grid_grib2
   end type grib2_descriptor
 
@@ -58,7 +61,7 @@ module ip_grid_descriptor_mod
      module procedure init_grib1_descriptor
      module procedure init_grib2_descriptor
   end interface init_descriptor
-  
+
 contains
 
   !> Initialize grib-1 descriptor from integer grid definition section (GDS).
@@ -81,7 +84,7 @@ contains
   !> Initialize grib-2 descriptor from integer grid definition template (GDT).
   !! @param[in] gdt_num Grib-2 grid number.
   !! @param[in] gdt_len Lenght of the grid definition template.
-  !! @param[in] gds Grib-2 grid definition template.
+  !! @param[in] gdt_tmpl Grib-2 grid definition template.
   !!
   !! @return Initialized Grib-2 descriptor.
   !!
@@ -98,10 +101,10 @@ contains
     desc%gdt_tmpl = gdt_tmpl
 
     !call desc%decode_template()
-    
+
   end function init_grib2_descriptor
 
-  !> Test whether two grid descriptors are the same
+  !> Test whether two grid descriptors are the same.
   !! @param[in] grid1 An ip_grid_descriptor.
   !! @param[in] grid2 Another ip_grid_descriptor.
   !!
@@ -189,7 +192,7 @@ contains
   !   ! for rotated grids nscan is set = 3, but in other places it's not, so use this special value
   !   ! just for field_position routine
   !   nscan_field_pos = -1
-    
+
   !   im = self%gds(2)
   !   jm = self%gds(3)
   !   iwrap = 0
@@ -197,7 +200,7 @@ contains
   !   jwrap2 = 0
   !   nscan = mod(self%gds(11) / 32, 2)
   !   kscan = 0
-    
+
   !   select case(self%gds(1))
   !   case(0)
   !      rlon1=self%gds(5)*1.e-3
@@ -270,7 +273,7 @@ contains
   !   self%jwrap1 = jwrap1
   !   self%jwrap2 = jwrap2
   !   self%nscan = nscan
-    
+
   !   if (nscan_field_pos == -1) then
   !      ! just use regular value of nscan
   !      self%nscan_field_pos = nscan
@@ -278,14 +281,14 @@ contains
   !      ! nscan = 3 for rotated grids and is set to 3 for use in field_position
   !      self%nscan_field_pos = nscan_field_pos
   !   end if
-    
+
   !   self%kscan = kscan
 
   ! end subroutine decode_template_grib1
 
   ! subroutine decode_template_grib2(self)
   !   type(grib2_descriptor), intent(inout) :: self
-    
+
   !   integer                            :: im, jm, iwrap, jg
   !   integer                            :: i_offset_odd, i_offset_even
   !   integer                            :: iscan, kscan, nscan, nscan_field_pos
@@ -523,6 +526,5 @@ contains
   !      error stop
   !   end select
   ! end subroutine earth_radius
-  
 
 end module ip_grid_descriptor_mod

@@ -1,9 +1,9 @@
 !> @file
-!! @brief Gaussian grid coordinate transformations
+!! @brief Gaussian grid coordinate transformations.
 !! @author Mark Iredell, George Gayno, Kyle Gerheiser
 !! @date July 2021
 
-!> Gaussian grid coordinate transformations
+!> @brief Gaussian grid coordinate transformations.
 !!
 !! @author George Gayno, Mark Iredell, Kyle Gerheiser
 !! @date July 2021
@@ -18,24 +18,35 @@ module ip_gaussian_grid_mod
   public :: ip_gaussian_grid
 
   type, extends(ip_grid) :: ip_gaussian_grid
-     integer :: jh
-     real :: dlon, rlat1, rlon1, rlon2, hi
-     integer :: jg, jscan
+     integer :: jh !< ???
+     real :: dlon !< ???
+     real :: rlat1 !< ???
+     real :: rlon1 !< ???
+     real :: rlon2 !< ???
+     real :: hi !< ???
+     integer :: jg !< ???
+     integer :: jscan !< ???
    contains
+     !> Initializes a gaussian grid given a grib1_descriptor object. @return N/A
      procedure :: init_grib1
+     !> Initializes a gaussian grid given a grib2_descriptor object. @return N/A
      procedure :: init_grib2
+     !> Calculates Earth coordinates (iopt = 1) or grid coorindates (iopt = -1)
+     !> for Gaussian grids. @return N/A
      procedure :: gdswzd => gdswzd_gaussian
   end type ip_gaussian_grid
 
-  INTEGER                        :: J1, JH
-  REAL,            ALLOCATABLE   :: BLAT(:)
-  REAL                           :: DLON, RERTH
-  REAL,            ALLOCATABLE   :: YLAT_ROW(:)
+  INTEGER :: J1 !< ???
+  INTEGER :: JH !< ???
+  REAL, ALLOCATABLE :: BLAT(:) !< ???
+  REAL :: DLON !< ???
+  REAL :: RERTH !< ???
+  REAL, ALLOCATABLE :: YLAT_ROW(:) !< ???
 
 contains
 
   !> Initializes a gaussian grid given a grib1_descriptor object.
-  !! 
+  !!
   !! @param[inout] self The grid to initialize
   !! @param[in] g1_desc A grib1_descriptor
   !!
@@ -203,7 +214,7 @@ contains
     REAL                           :: HI, RLATA, RLATB, RLAT1, RLON1, RLON2
     REAL                           :: XMAX, XMIN, YMAX, YMIN, YPTSA, YPTSB
     REAL                           :: WB
-    ! - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
     IF(PRESENT(CROT)) CROT=FILL
     IF(PRESENT(SROT)) SROT=FILL
     IF(PRESENT(XLON)) XLON=FILL
@@ -211,7 +222,6 @@ contains
     IF(PRESENT(YLON)) YLON=FILL
     IF(PRESENT(YLAT)) YLAT=FILL
     IF(PRESENT(AREA)) AREA=FILL
-    ! - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
     IF(PRESENT(CROT).AND.PRESENT(SROT))THEN
        LROT=.TRUE.
@@ -285,7 +295,7 @@ contains
     YMIN=0.5
     YMAX=JM+0.5
     NRET=0
-    ! - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
     !  TRANSLATE GRID COORDINATES TO EARTH COORDINATES
     IF(IOPT.EQ.0.OR.IOPT.EQ.1) THEN
        !$OMP PARALLEL DO PRIVATE(N,J,WB,RLATA,RLATB) REDUCTION(+:NRET) SCHEDULE(STATIC)
@@ -309,7 +319,7 @@ contains
           ENDIF
        ENDDO
        !$OMP END PARALLEL DO
-       !- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
        !  TRANSLATE EARTH COORDINATES TO GRID COORDINATES
     ELSEIF(IOPT.EQ.-1) THEN
        !$OMP PARALLEL DO PRIVATE(N,JA,YPTSA, YPTSB, WB) REDUCTION(+:NRET) SCHEDULE(STATIC)
@@ -344,41 +354,32 @@ contains
     ENDIF
     DEALLOCATE(ALAT, BLAT)
     IF (ALLOCATED(YLAT_ROW)) DEALLOCATE(YLAT_ROW)
-    ! - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
   END SUBROUTINE GDSWZD_GAUSSIAN
-  
-  ! - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-  SUBROUTINE GAUSSIAN_ERROR(IOPT,FILL,RLAT,RLON,XPTS,YPTS,NPTS)
-    !$$$  SUBPROGRAM DOCUMENTATION BLOCK
-    !
-    ! SUBPROGRAM:  GAUSSIAN_ERROR   ERROR HANDLER
-    !   PRGMMR: GAYNO       ORG: W/NMC23       DATE: 2015-07-13
-    !
-    ! ABSTRACT: UPON AN ERROR, THIS SUBPROGRAM ASSIGNS
-    !           A "FILL" VALUE TO THE OUTPUT FIELDS.
-    !
-    ! PROGRAM HISTORY LOG:
-    ! 2015-07-13  GAYNO     INITIAL VERSION
-    !
-    ! USAGE:    CALL GAUSSIAN_ERROR(IOPT,FILL,RLAT,RLON,XPTS,YPTS,NPTS)
-    !
-    !   INPUT ARGUMENT LIST:
-    !     IOPT     - INTEGER OPTION FLAG
-    !                (+1 TO COMPUTE EARTH COORDS OF SELECTED GRID COORDS)
-    !                (-1 TO COMPUTE GRID COORDS OF SELECTED EARTH COORDS)
-    !     NPTS     - INTEGER MAXIMUM NUMBER OF COORDINATES
-    !     FILL     - REAL FILL VALUE TO SET INVALID OUTPUT DATA
-    !                (MUST BE IMPOSSIBLE VALUE; SUGGESTED VALUE: -9999.)
-    !   OUTPUT ARGUMENT LIST:
-    !     RLON     - REAL (NPTS) EARTH LONGITUDES IN DEGREES E IF IOPT<0
-    !     RLAT     - REAL (NPTS) EARTH LATITUDES IN DEGREES N IF IOPT<0
-    !     XPTS     - REAL (NPTS) GRID X POINT COORDINATES IF IOPT>0
-    !     YPTS     - REAL (NPTS) GRID Y POINT COORDINATES IF IOPT>0
-    !
-    ! ATTRIBUTES:
-    !   LANGUAGE: FORTRAN 90
-    !
-    !$$$
+
+  !> Error handler.
+  !>
+  !> Upon an error, this subprogram assigns a "fill" value to the
+  !> output fields.
+  !>
+  !> ### Program History Log
+  !> Date | Programmer | Comments
+  !> -----|------------|---------
+  !> 2015-07-13 | GAYNO | Initial version
+  !>
+  !> @param[in] iopt option flag
+  !> - 1 to compute earth coords of selected grid coords
+  !> - -1 to compute grid coords of selected earth coords
+  !> @param[in] fill fill value to set invalid output data (must be
+  !> impossible value; suggested value: -9999.)
+  !> @param[out] rlat (npts) earth latitudes in degrees n if iopt<0
+  !> @param[out] rlon (npts) earth longitudes in degrees e if iopt<0
+  !> @param[out] xpts (npts) grid x point coordinates if iopt>0
+  !> @param[out] ypts (npts) grid y point coordinates if iopt>0
+  !> @param[in] npts maximum number of coordinates
+  !>
+  !> @author GAYNO @date 2015-07-13
+SUBROUTINE GAUSSIAN_ERROR(IOPT,FILL,RLAT,RLON,XPTS,YPTS,NPTS)
     IMPLICIT NONE
     !
     INTEGER, INTENT(IN   ) :: IOPT, NPTS
@@ -386,7 +387,7 @@ contains
     REAL,    INTENT(IN   ) :: FILL
     REAL,    INTENT(  OUT) :: RLAT(NPTS),RLON(NPTS)
     REAL,    INTENT(  OUT) :: XPTS(NPTS),YPTS(NPTS)
-    ! - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
     IF(IOPT>=0) THEN
        RLON=FILL
        RLAT=FILL
@@ -395,7 +396,6 @@ contains
        XPTS=FILL
        YPTS=FILL
     ENDIF
-    ! - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   END SUBROUTINE GAUSSIAN_ERROR
 
   !> Computes the vector rotation sines and cosines for a gaussian
@@ -420,7 +420,6 @@ contains
 
   END SUBROUTINE GAUSSIAN_VECT_ROT
 
-  
   !> Computes the map jacobians for a gaussian cylindrical grid.
   !!
   !! @param[in] ypts y-index of grid point.
@@ -469,7 +468,5 @@ contains
     AREA=RERTH**2*WLAT*DLON/DPR
 
   END SUBROUTINE GAUSSIAN_GRID_AREA
-
-
 end module ip_gaussian_grid_mod
 

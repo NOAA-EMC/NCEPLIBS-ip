@@ -43,9 +43,7 @@ MODULE GDSWZD_MOD
      module procedure gdswzd_grid
   END INTERFACE GDSWZD
 
-
 CONTAINS
-
 
   !> Returns one of the following for a grid object:
   !! - iopt=0 Grid and earth coordinates of all grid points.
@@ -94,7 +92,6 @@ CONTAINS
   !! ugrid=crot*uearth-srot*vearth;
   !! vgrid=srot*uearth+crot*vearth)
   !!
-  !! @param[out] xlon dx/dlon in 1/degrees
   !! @param[out] xlon dx/dlat in 1/degrees
   !! @param[out] xlat dy/dlon in 1/degrees
   !! @param[out] ylon dy/dlon in 1/degrees
@@ -260,7 +257,6 @@ CONTAINS
   !! ugrid=crot*uearth-srot*vearth;
   !! vgrid=srot*uearth+crot*vearth)
   !!
-  !! @param[out] xlon dx/dlon in 1/degrees
   !! @param[out] xlon dx/dlat in 1/degrees
   !! @param[out] xlat dy/dlon in 1/degrees
   !! @param[out] ylon dy/dlon in 1/degrees
@@ -442,7 +438,6 @@ CONTAINS
   !! ugrid=crot*uearth-srot*vearth;
   !! vgrid=srot*uearth+crot*vearth)
   !!
-  !! @param[out] xlon dx/dlon in 1/degrees
   !! @param[out] xlon dx/dlat in 1/degrees
   !! @param[out] xlat dy/dlon in 1/degrees
   !! @param[out] ylon dy/dlon in 1/degrees
@@ -649,7 +644,6 @@ CONTAINS
   !! ugrid=crot*uearth-srot*vearth;
   !! vgrid=srot*uearth+crot*vearth)
   !!
-  !! @param[out] xlon dx/dlon in 1/degrees
   !! @param[out] xlon dx/dlat in 1/degrees
   !! @param[out] xlat dy/dlon in 1/degrees
   !! @param[out] ylon dy/dlon in 1/degrees
@@ -743,7 +737,6 @@ CONTAINS
   !! ugrid=crot*uearth-srot*vearth;
   !! vgrid=srot*uearth+crot*vearth)
   !!
-  !! @param[out] xlon dx/dlon in 1/degrees
   !! @param[out] xlon dx/dlat in 1/degrees
   !! @param[out] xlat dy/dlon in 1/degrees
   !! @param[out] ylon dy/dlon in 1/degrees
@@ -836,7 +829,6 @@ CONTAINS
   !! ugrid=crot*uearth-srot*vearth;
   !! vgrid=srot*uearth+crot*vearth)
   !!
-  !! @param[out] xlon dx/dlon in 1/degrees
   !! @param[out] xlon dx/dlat in 1/degrees
   !! @param[out] xlat dy/dlon in 1/degrees
   !! @param[out] ylon dy/dlon in 1/degrees
