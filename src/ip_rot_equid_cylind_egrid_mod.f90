@@ -23,13 +23,19 @@ module ip_rot_equid_cylind_egrid_mod
   integer, parameter :: kd = real64 !< ???
 
   type, extends(ip_grid) :: ip_rot_equid_cylind_egrid
-     real(kd) :: rlon0, rlon1, rlat1, clat0, slat0
-     real(kd) :: dlats, dlons, hi
-     integer :: irot
+     real(kd) :: rlon0 !< ???
+     real(kd) :: rlon1 !< ???
+     real(kd) :: rlat1 !< ???
+     real(kd) :: clat0 !< ???
+     real(kd) :: slat0 !< ???
+     real(kd) :: dlats !< ???
+     real(kd) :: dlons !< ???
+     real(kd) :: hi !< ???
+     integer :: irot !< ???
    contains
-     procedure :: init_grib1
-     procedure :: init_grib2
-     procedure :: gdswzd => gdswzd_rot_equid_cylind_egrid
+     procedure :: init_grib1 !< ??? @return N/A
+     procedure :: init_grib2 !< ??? @return N/A
+     procedure :: gdswzd => gdswzd_rot_equid_cylind_egrid !< ??? @return N/A
   end type ip_rot_equid_cylind_egrid
 
   INTEGER :: IROT !< ???

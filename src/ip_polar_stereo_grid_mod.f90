@@ -1,3 +1,11 @@
+!> @file
+!> @brief GDS wizard for polar stereographic azimuthal.
+!>
+!> @author Iredell @date 96-04-10
+
+!> @brief GDS wizard for polar stereographic azimuthal.
+!>
+!> @author Iredell @date 96-04-10
 module ip_polar_stereo_grid_mod
   use ip_grid_descriptor_mod
   use ip_grid_mod
@@ -9,22 +17,38 @@ module ip_polar_stereo_grid_mod
   public :: ip_polar_stereo_grid
 
   type, extends(ip_grid) :: ip_polar_stereo_grid
-     logical :: elliptical
-     real :: rlat1, rlon1, orient, h, dxs, dys, slatr
-     integer :: irot
+     logical :: elliptical !< ???
+     real :: rlat1 !< ???
+     real :: rlon1 !< ???
+     real :: orient !< ???
+     real :: h !< ???
+     real :: dxs !< ???
+     real :: dys !< ???
+     real :: slatr !< ???
+     integer :: irot !< ???
    contains
-     procedure :: init_grib1
-     procedure :: init_grib2
-     procedure :: gdswzd => gdswzd_polar_stereo
+     procedure :: init_grib1 !< ??? @return N/A
+     procedure :: init_grib2 !< ??? @return N/A
+     procedure :: gdswzd => gdswzd_polar_stereo !< ??? @return N/A
   end type ip_polar_stereo_grid
 
-  INTEGER                         :: IROT
-
-  REAL                            :: DE2, DXS, DYS
-  REAL                            :: E2, RERTH , H, ORIENT
+  INTEGER :: IROT !< ???
+  REAL :: DE2 !< ???
+  REAL :: DXS !< ???
+  REAL :: DYS !< ???
+  REAL :: E2 !< ???
+  REAL :: RERTH !< ???
+  REAL :: H !< ???
+  REAL :: ORIENT !< ???
 
 CONTAINS
 
+  !> Init GRIB1.
+  !>
+  !> @param[inout] self ???
+  !> @param[in] g1_desc ???
+  !>
+  !> @author Iredell @date 96-04-10  
   subroutine init_grib1(self, g1_desc)
     class(ip_polar_stereo_grid), intent(inout) :: self
     type(grib1_descriptor), intent(in) :: g1_desc
@@ -36,7 +60,7 @@ CONTAINS
 
     associate(kgds => g1_desc%gds)
       self%ELLIPTICAL=MOD(KGDS(6)/64,2).EQ.1
-      
+
       if (.not. self%elliptical) then
          self%rerth = 6.3712E6
          self%eccen_squared = 0d0
@@ -47,7 +71,7 @@ CONTAINS
 
       self%IM=KGDS(2)
       self%JM=KGDS(3)
-      
+
       self%RLAT1=KGDS(4)*1.E-3
       self%RLON1=KGDS(5)*1.E-3
 
@@ -83,6 +107,12 @@ CONTAINS
 
   end subroutine init_grib1
 
+  !> Init GRIB2.
+  !>
+  !> @param[inout] self ???
+  !> @param[in] g2_desc ???
+  !>
+  !> @author Iredell @date 96-04-10  
   subroutine init_grib2(self, g2_desc)
     class(ip_polar_stereo_grid), intent(inout) :: self
     type(grib2_descriptor), intent(in) :: g2_desc
@@ -131,126 +161,72 @@ CONTAINS
     end associate
   end subroutine init_grib2
 
-
+  !> GDS wizard for polar stereographic azimuthal
+  !>
+  !> This subprogram decodes the grib 2 grid definition template
+  !> (passed in integer form as decoded by the ncep g2 library) and
+  !> returns one of the following:
+  !> - (iopt=+1) earth coordinates of selected grid coordinates
+  !> - (iopt=-1) grid coordinates of selected earth coordinates
+  !>
+  !> Works for polar stereographic azimuthal projections.
+  !>
+  !> If the selected coordinates are more than one gridpoint beyond
+  !> the the edges of the grid domain, then the relevant output
+  !> elements are set to fill values.
+  !>
+  !> The actual number of valid points computed is returned too.
+  !>
+  !> Optionally, the vector rotations, map jacobians, and grid box
+  !> areas may be returned as well. Routine works for both spherical
+  !> and elliptical earths with the exception of the map jacobians and
+  !> grid box areas, which are only computed for spherical earths.
+  !>
+  !> To compute the vector rotations, the optional arguments 'srot'
+  !> and 'crot' must be present. To compute the map jacobians, the
+  !> optional arguments 'xlon', 'xlat', 'ylon', 'ylat' must be
+  !> present.  to compute the grid box areas, the optional argument
+  !> 'area' must be present.
+  !>
+  !> ### Program History Log
+  !> Date | Programmer | Comments
+  !> -----|------------|---------
+  !> 96-04-10 | iredell | Initial
+  !> 97-10-20 | iredell | include map options
+  !> 09-05-13 | gayno | ensure area always positive
+  !> 2015-01-21 | gayno | merger of gdswiz05 and gdswzd05. make crot,sort,xlon,xlat,ylon,ylat and area optional arguments. make part of a module. move vector rotation, map jacobian and grid box area computations to separate subroutines. include option for elliptical earths.
+  !> 2015-07-13 | gayno | convert to grib 2. replace grib 1 kgds array with grib 2 grid definition template array. rename routine.
+  !> 2018-07-20 | wesley | add threading.
+  !>
+  !> @param[in] self ???
+  !> @param[in] iopt option flag
+  !> - 1 to compute earth coords of selected grid coords
+  !> - -1 to compute grid coords of selected earth coords
+  !> @param[in] npts maximum number of coordinates
+  !> @param[in] fill fill value to set invalid output data
+  !> (must be impossible value; suggested value: -9999.)
+  !> @param[inout] xpts (npts) grid x point coordinates if iopt>0
+  !> @param[inout] ypts (npts) grid y point coordinates if iopt>0
+  !> @param[inout] rlon (npts) earth longitudes in degrees e if iopt<0
+  !> (acceptable range: -360. to 360.)
+  !> @param[inout] rlat (npts) earth latitudes in degrees n if iopt<0
+  !> (acceptable range: -90. to 90.)
+  !> @param[out] nret number of valid points computed
+  !> @param[out] crot optional (npts) clockwise vector rotation cosines
+  !> @param[out] srot optional (npts) clockwise vector rotation sines
+  !> (ugrid=crot*uearth-srot*vearth;
+  !> vgrid=srot*uearth+crot*vearth)
+  !> @param[out] xlon optional (npts) dx/dlon in 1/degrees
+  !> @param[out] xlat optional (npts) dx/dlat in 1/degrees
+  !> @param[out] ylon optional (npts) dy/dlon in 1/degrees
+  !> @param[out] ylat optional (npts) dy/dlat in 1/degrees
+  !> @param[out] area optional (npts) area weights in m**2
+  !> (proportional to the square of the map factor)
+  !>
+  !> @author Iredell @date 96-04-10
   SUBROUTINE GDSWZD_POLAR_STEREO(self,IOPT,NPTS, &
        FILL,XPTS,YPTS,RLON,RLAT,NRET, &
        CROT,SROT,XLON,XLAT,YLON,YLAT,AREA)
-    !$$$  SUBPROGRAM DOCUMENTATION BLOCK
-    !
-    ! SUBPROGRAM:  GDSWZD_POLAR_STEREO   GDS WIZARD FOR POLAR STEREOGRAPHIC 
-    !                                    AZIMUTHAL
-    !   PRGMMR: IREDELL       ORG: W/NMC23       DATE: 96-04-10
-    !
-    ! ABSTRACT: THIS SUBPROGRAM DECODES THE GRIB 2 GRID DEFINITION
-    !           TEMPLATE (PASSED IN INTEGER FORM AS DECODED BY THE
-    !           NCEP G2 LIBRARY) AND RETURNS ONE OF THE FOLLOWING:
-    !             (IOPT=+1) EARTH COORDINATES OF SELECTED GRID COORDINATES
-    !             (IOPT=-1) GRID COORDINATES OF SELECTED EARTH COORDINATES
-    !           WORKS FOR POLAR STEREOGRAPHIC AZIMUTHAL PROJECTIONS.
-    !           IF THE SELECTED COORDINATES ARE MORE THAN ONE GRIDPOINT
-    !           BEYOND THE THE EDGES OF THE GRID DOMAIN, THEN THE RELEVANT
-    !           OUTPUT ELEMENTS ARE SET TO FILL VALUES.
-    !           THE ACTUAL NUMBER OF VALID POINTS COMPUTED IS RETURNED TOO.
-    !           OPTIONALLY, THE VECTOR ROTATIONS, MAP JACOBIANS, AND
-    !           GRID BOX AREAS MAY BE RETURNED AS WELL.  ROUTINE WORKS
-    !           FOR BOTH SPHERICAL AND ELLIPTICAL EARTHS WITH THE
-    !           EXCEPTION OF THE MAP JACOBIANS AND GRID BOX AREAS, WHICH
-    !           ARE ONLY COMPUTED FOR SPHERICAL EARTHS.  TO COMPUTE
-    !           THE VECTOR ROTATIONS, THE OPTIONAL ARGUMENTS 'SROT' AND 'CROT'
-    !           MUST BE PRESENT.  TO COMPUTE THE MAP JACOBIANS, THE
-    !           OPTIONAL ARGUMENTS 'XLON', 'XLAT', 'YLON', 'YLAT' MUST BE PRESENT.
-    !           TO COMPUTE THE GRID BOX AREAS, THE OPTIONAL ARGUMENT
-    !           'AREA' MUST BE PRESENT.
-    !
-    ! PROGRAM HISTORY LOG:
-    !   96-04-10  IREDELL
-    !   97-10-20  IREDELL  INCLUDE MAP OPTIONS
-    !   09-05-13  GAYNO    ENSURE AREA ALWAYS POSITIVE
-    ! 2015-01-21  GAYNO    MERGER OF GDSWIZ05 AND GDSWZD05.  MAKE
-    !                      CROT,SORT,XLON,XLAT,YLON,YLAT AND AREA
-    !                      OPTIONAL ARGUMENTS.  MAKE PART OF A MODULE.
-    !                      MOVE VECTOR ROTATION, MAP JACOBIAN AND GRID
-    !                      BOX AREA COMPUTATIONS TO SEPARATE SUBROUTINES.
-    !                      INCLUDE OPTION FOR ELLIPTICAL EARTHS.
-    ! 2015-07-13  GAYNO    CONVERT TO GRIB 2. REPLACE GRIB 1 KGDS ARRAY
-    !                      WITH GRIB 2 GRID DEFINITION TEMPLATE ARRAY.
-    !                      RENAME ROUTINE AS "GDSWZD_POLAR_STEREO".
-    ! 2018-07-20  WESLEY   ADD THREADING.
-    !
-    ! USAGE:   CALL GDSWZD_POLAR_STEREO(IGDTNUM,IGDTMPL,IGDTLEN,IOPT,NPTS,
-    !    &                              FILL,XPTS,YPTS,RLON,RLAT,NRET,
-    !    &                              CROT,SROT,XLON,XLAT,YLON,YLAT,AREA)
-    !
-    !   INPUT ARGUMENT LIST:
-    !     IGDTNUM  - INTEGER GRID DEFINITION TEMPLATE NUMBER.
-    !                CORRESPONDS TO THE GFLD%IGDTNUM COMPONENT OF THE
-    !                NCEP G2 LIBRARY GRIDMOD DATA STRUCTURE.
-    !                MUST BE "20" FOR POLAR STEREOGRAPHIC GRIDS.
-    !     IGDTMPL  - INTEGER (IGDTLEN) GRID DEFINITION TEMPLATE ARRAY.
-    !                CORRESPONDS TO THE GFLD%IGDTMPL COMPONENT OF THE
-    !                NCEP G2 LIBRARY GRIDMOD DATA STRUCTURE FOR SECTION
-    !                THREE:
-    !                 (1):  SHAPE OF EARTH, OCTET 15
-    !                 (2):  SCALE FACTOR OF SPHERICAL EARTH RADIUS,
-    !                       OCTET 16
-    !                 (3):  SCALED VALUE OF RADIUS OF SPHERICAL EARTH,
-    !                       OCTETS 17-20
-    !                 (4):  SCALE FACTOR OF MAJOR AXIS OF ELLIPTICAL EARTH,
-    !                       OCTET 21
-    !                 (5):  SCALED VALUE OF MAJOR AXIS OF ELLIPTICAL EARTH,
-    !                       OCTETS 22-25
-    !                 (6):  SCALE FACTOR OF MINOR AXIS OF ELLIPTICAL EARTH,
-    !                       OCTET 26
-    !                 (7):  SCALED VALUE OF MINOR AXIS OF ELLIPTICAL EARTH,
-    !                       OCTETS 27-30
-    !                 (8):  NUMBER OF POINTS ALONG X-AXIS, OCTETS 31-34
-    !                 (9):  NUMBER OF POINTS ALONG Y-AXIS, OCTETS 35-38
-    !                 (10): LATITUDE OF FIRST GRID POINT, OCTETS 39-42
-    !                 (11): LONGITUDE OF FIRST GRID POINT, OCTETS 43-46
-    !                 (12): RESOLUTION AND COMPONENT FLAGS, OCTET 47
-    !                 (13): TRUE LATITUDE, OCTETS 48-51
-    !                 (14): ORIENTATION LONGITUDE, OCTETS 52-55
-    !                 (15): X-DIRECTION GRID LENGTH, OCTETS 56-59
-    !                 (16): Y-DIRECTION GRID LENGTH, OCTETS 60-63
-    !                 (17): PROJECTION CENTER FLAG, OCTET 64
-    !                 (18): SCANNING MODE FLAGS, OCTET 65
-    !     IGDTLEN  - INTEGER NUMBER OF ELEMENTS (18) OF THE GRID DEFINITION
-    !                TEMPLATE ARRAY.  CORRESPONDS TO THE GFLD%IGDTLEN
-    !                COMPONENT OF THE NCEP G2 LIBRARY GRIDMOD DATA STRUCTURE.
-    !     IOPT     - INTEGER OPTION FLAG
-    !                (+1 TO COMPUTE EARTH COORDS OF SELECTED GRID COORDS)
-    !                (-1 TO COMPUTE GRID COORDS OF SELECTED EARTH COORDS)
-    !     NPTS     - INTEGER MAXIMUM NUMBER OF COORDINATES
-    !     FILL     - REAL FILL VALUE TO SET INVALID OUTPUT DATA
-    !                (MUST BE IMPOSSIBLE VALUE; SUGGESTED VALUE: -9999.)
-    !     XPTS     - REAL (NPTS) GRID X POINT COORDINATES IF IOPT>0
-    !     YPTS     - REAL (NPTS) GRID Y POINT COORDINATES IF IOPT>0
-    !     RLON     - REAL (NPTS) EARTH LONGITUDES IN DEGREES E IF IOPT<0
-    !                (ACCEPTABLE RANGE: -360. TO 360.)
-    !     RLAT     - REAL (NPTS) EARTH LATITUDES IN DEGREES N IF IOPT<0
-    !                (ACCEPTABLE RANGE: -90. TO 90.)
-    !
-    !   OUTPUT ARGUMENT LIST:
-    !     XPTS     - REAL (NPTS) GRID X POINT COORDINATES IF IOPT<0
-    !     YPTS     - REAL (NPTS) GRID Y POINT COORDINATES IF IOPT<0
-    !     RLON     - REAL (NPTS) EARTH LONGITUDES IN DEGREES E IF IOPT>0
-    !     RLAT     - REAL (NPTS) EARTH LATITUDES IN DEGREES N IF IOPT>0
-    !     NRET     - INTEGER NUMBER OF VALID POINTS COMPUTED
-    !     CROT     - REAL, OPTIONAL (NPTS) CLOCKWISE VECTOR ROTATION COSINES
-    !     SROT     - REAL, OPTIONAL (NPTS) CLOCKWISE VECTOR ROTATION SINES
-    !                (UGRID=CROT*UEARTH-SROT*VEARTH;
-    !                 VGRID=SROT*UEARTH+CROT*VEARTH)
-    !     XLON     - REAL, OPTIONAL (NPTS) DX/DLON IN 1/DEGREES
-    !     XLAT     - REAL, OPTIONAL (NPTS) DX/DLAT IN 1/DEGREES
-    !     YLON     - REAL, OPTIONAL (NPTS) DY/DLON IN 1/DEGREES
-    !     YLAT     - REAL, OPTIONAL (NPTS) DY/DLAT IN 1/DEGREES
-    !     AREA     - REAL, OPTIONAL (NPTS) AREA WEIGHTS IN M**2
-    !                (PROPORTIONAL TO THE SQUARE OF THE MAP FACTOR)
-    !
-    ! ATTRIBUTES:
-    !   LANGUAGE: FORTRAN 90
-    !
-    !$$$
     IMPLICIT NONE
     !
 
@@ -471,38 +447,25 @@ CONTAINS
     ENDIF
     ! - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   END SUBROUTINE GDSWZD_POLAR_STEREO
-  ! - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-  SUBROUTINE POLAR_STEREO_ERROR(IOPT,FILL,RLAT,RLON,XPTS,YPTS,NPTS)
-    !$$$  SUBPROGRAM DOCUMENTATION BLOCK
-    !
-    ! SUBPROGRAM:  POLAR_STEREO_ERROR    ERROR HANDLER
-    !   PRGMMR: GAYNO       ORG: W/NMC23       DATE: 2015-07-13
-    !
-    ! ABSTRACT: UPON AN ERROR, THIS SUBPROGRAM ASSIGNS
-    !           A "FILL" VALUE TO THE OUTPUT FIELDS.
 
-    ! PROGRAM HISTORY LOG:
-    ! 2015-07-13  GAYNO     INITIAL VERSION
-    !
-    ! USAGE:    CALL POLAR_STEREO_ERROR(IOPT,FILL,RLAT,RLON,XPTS,YPTS,NPTS)
-    !
-    !   INPUT ARGUMENT LIST:
-    !     IOPT     - INTEGER OPTION FLAG
-    !                (+1 TO COMPUTE EARTH COORDS OF SELECTED GRID COORDS)
-    !                (-1 TO COMPUTE GRID COORDS OF SELECTED EARTH COORDS)
-    !     NPTS     - INTEGER MAXIMUM NUMBER OF COORDINATES
-    !     FILL     - REAL FILL VALUE TO SET INVALID OUTPUT DATA
-    !                (MUST BE IMPOSSIBLE VALUE; SUGGESTED VALUE: -9999.)
-    !   OUTPUT ARGUMENT LIST:
-    !     RLON     - REAL (NPTS) EARTH LONGITUDES IN DEGREES E IF IOPT<0
-    !     RLAT     - REAL (NPTS) EARTH LATITUDES IN DEGREES N IF IOPT<0
-    !     XPTS     - REAL (NPTS) GRID X POINT COORDINATES IF IOPT>0
-    !     YPTS     - REAL (NPTS) GRID Y POINT COORDINATES IF IOPT>0
-    !
-    ! ATTRIBUTES:
-    !   LANGUAGE: FORTRAN 90
-    !
-    !$$$
+  !> Error handler.
+  !>
+  !> Upon an error, this subprogram assigns a fill value to the output
+  !> fields.
+  !>
+  !> @param[in] iopt option flag
+  !> - 1 to compute earth coords of selected grid coords
+  !> - -1 to compute grid coords of selected earth coords
+  !> @param[in] fill fill value to set invalid output data
+  !> (must be impossible value; suggested value: -9999.)
+  !> @param[out] rlat (npts) earth latitudes in degrees n if iopt<0
+  !> @param[out] rlon (npts) earth longitudes in degrees e if iopt<0
+  !> @param[out] xpts (npts) grid x point coordinates if iopt>0
+  !> @param[out] ypts (npts) grid y point coordinates if iopt>0
+  !> @param[in] npts maximum number of coordinates
+  !>
+  !> @author Gayno @date 2015-07-13
+  SUBROUTINE POLAR_STEREO_ERROR(IOPT,FILL,RLAT,RLON,XPTS,YPTS,NPTS)
     IMPLICIT NONE
     !
     INTEGER, INTENT(IN   ) :: IOPT, NPTS
@@ -521,38 +484,27 @@ CONTAINS
     ENDIF
     ! - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   END SUBROUTINE POLAR_STEREO_ERROR
-  !
+
+  !> Vector rotation fields for polar stereographic grids.
+  !>
+  !>
+  !> This subprogram computes the vector rotation sines and
+  !> cosines for a polar stereographic azimuthal grid.
+  !>
+  !> ### Program History Log
+  !> Date | Programmer | Comments
+  !> -----|------------|---------
+  !> 2015-01-21 | gayno | initial version
+  !> 2015-09-17 | gayno | rename as "polar_stereo_vect_rot"
+  !>
+  !> @param[in] rlon grid point longitude in degrees (real)
+  !> @param[in] crot clockwise vector rotation cosines (real)
+  !> @param[in] srot clockwise vector rotation sines (real)
+  !> (ugrid=crot*uearth-srot*vearth;
+  !> vgrid=srot*uearth+crot*vearth)
+  !>
+  !> @author Gayno @date 2015-01-21
   SUBROUTINE POLAR_STEREO_VECT_ROT(RLON, CROT, SROT)
-    !$$$  SUBPROGRAM DOCUMENTATION BLOCK
-    !
-    ! SUBPROGRAM:  POLAR_STEREO_VECT_ROT   VECTOR ROTATION FIELDS FOR
-    !                                      POLAR STEREOGRAPHIC GRIDS.
-    !
-    !   PRGMMR: GAYNO     ORG: W/NMC23       DATE: 2015-01-21
-    !
-    ! ABSTRACT: THIS SUBPROGRAM COMPUTES THE VECTOR ROTATION SINES AND
-    !           COSINES FOR A POLAR STEREOGRAPHIC AZIMUTHAL GRID.
-    !
-    ! PROGRAM HISTORY LOG:
-    ! 2015-01-21  GAYNO    INITIAL VERSION
-    ! 2015-09-17  GAYNO    RENAME AS "POLAR_STEREO_VECT_ROT"
-    !
-    ! USAGE:    CALL POLAR_STEREO_VECT_ROT(RLON,CROT,SROT)
-    !
-    !   INPUT ARGUMENT LIST:
-    !     RLON     - GRID POINT LONGITUDE IN DEGREES (REAL)
-    !
-    !   OUTPUT ARGUMENT LIST:
-    !     CROT     - CLOCKWISE VECTOR ROTATION COSINES (REAL)
-    !     SROT     - CLOCKWISE VECTOR ROTATION SINES (REAL)
-    !                (UGRID=CROT*UEARTH-SROT*VEARTH;
-    !                 VGRID=SROT*UEARTH+CROT*VEARTH)
-    !
-    ! ATTRIBUTES:
-    !   LANGUAGE: FORTRAN 90
-    !
-    !$$$
-    !
     IMPLICIT NONE
 
     REAL,             INTENT(IN   ) :: RLON
@@ -567,42 +519,30 @@ CONTAINS
     ENDIF
 
   END SUBROUTINE POLAR_STEREO_VECT_ROT
-  !
+
+  !> Map jacobians for polar stereographic grids.
+  !>
+  !> This subprogram computes the map jacobians for
+  !> a polar stereographic azimuthal grid (spherical
+  !> earth).
+  !>
+  !> ### Program History Log
+  !> Date | Programmer | Comments
+  !> -----|------------|---------
+  !> 2015-01-21 | gayno | initial version
+  !> 2015-09-17 | gayno | rename as "polar_stereo_map_jacob"
+  !> 2018-07-20 | wesley | pass in dr2 for threading.
+  !>
+  !> @param[in] rlon longitude in degrees (real)
+  !> @param[in] rlat latitude in degrees (real)
+  !> @param[in] dr2 squared distance from pole (real)
+  !> @param[out] xlon dx/dlon in 1/degrees (real)
+  !> @param[out] xlat dx/dlat in 1/degrees (real)
+  !> @param[out] ylon dy/dlon in 1/degrees (real)
+  !> @param[out] ylat dy/dlat in 1/degrees (real)
+  !>
+  !> @author Gayno @date 2015-01-21
   SUBROUTINE POLAR_STEREO_MAP_JACOB(RLON,RLAT,DR2,XLON,XLAT,YLON,YLAT)
-    !$$$  SUBPROGRAM DOCUMENTATION BLOCK
-    !
-    ! SUBPROGRAM:  POLAR_STEREO_MAP_JACOB  MAP JACOBIANS FOR
-    !                                      POLAR STEREOGRAPHIC GRIDS.
-    !
-    !   PRGMMR: GAYNO     ORG: W/NMC23       DATE: 2015-01-21
-    !
-    ! ABSTRACT: THIS SUBPROGRAM COMPUTES THE MAP JACOBIANS FOR
-    !           A POLAR STEREOGRAPHIC AZIMUTHAL GRID (SPHERICAL
-    !           EARTH).
-    !
-    ! PROGRAM HISTORY LOG:
-    ! 2015-01-21  GAYNO    INITIAL VERSION
-    ! 2015-09-17  GAYNO    RENAME AS "POLAR_STEREO_MAP_JACOB"
-    ! 2018-07-20  WESLEY   PASS IN DR2 FOR THREADING.
-    !
-    ! USAGE:  CALL POLAR_STEREO_MAP_JACOB(RLON,RLAT,DR2,XLON,XLAT,YLON,YLAT)
-    !
-    !   INPUT ARGUMENT LIST:
-    !     RLON     - LONGITUDE IN DEGREES (REAL)
-    !     RLAT     - LATITUDE IN DEGREES (REAL)
-    !     DR2      - SQUARED DISTANCE FROM POLE (REAL)
-    !
-    !   OUTPUT ARGUMENT LIST:
-    !     XLON     - DX/DLON IN 1/DEGREES (REAL)
-    !     XLAT     - DX/DLAT IN 1/DEGREES (REAL)
-    !     YLON     - DY/DLON IN 1/DEGREES (REAL)
-    !     YLAT     - DY/DLAT IN 1/DEGREES (REAL)
-    !
-    ! ATTRIBUTES:
-    !   LANGUAGE: FORTRAN 90
-    !
-    !$$$
-    !
     IMPLICIT NONE
 
     REAL,             INTENT(IN   ) :: RLON, RLAT, DR2
@@ -626,38 +566,26 @@ CONTAINS
     ENDIF
 
   END SUBROUTINE POLAR_STEREO_MAP_JACOB
-  !
+
+  !> Grid box area for polar stereographic grids.
+  !>
+  !> This subprogram computes the grid box area for
+  !> a polar stereographic azimuthal grid (spherical
+  !> earth).
+  !>
+  !> ### Program History Log
+  !> Date | Programmer | Comments
+  !> -----|------------|---------
+  !> 2015-01-21 | gayno | initial version
+  !> 2015-09-17 | gayno | rename as "polar_stereo_grid_area".
+  !> 2018-07-20 | wesley | pass in dr2 for threading.
+  !>
+  !> @param[in] rlat latitude of grid point in degrees (real)
+  !> @param[in] dr2 squared distance from pole (real)
+  !> @param[out] area area weights in m**2 (real)
+  !>
+  !> @author Gayno @date 2015-01-21
   SUBROUTINE POLAR_STEREO_GRID_AREA(RLAT, DR2, AREA)
-    !$$$  SUBPROGRAM DOCUMENTATION BLOCK
-    !
-    ! SUBPROGRAM:  POLAR_STEREO_GRID_AREA  GRID BOX AREA FOR
-    !                                      POLAR STEREOGRAPHIC GRIDS
-    !
-    !   PRGMMR: GAYNO     ORG: W/NMC23       DATE: 2015-01-21
-    !
-    ! ABSTRACT: THIS SUBPROGRAM COMPUTES THE GRID BOX AREA FOR
-    !           A POLAR STEREOGRAPHIC AZIMUTHAL GRID (SPHERICAL
-    !           EARTH).
-    !
-    ! PROGRAM HISTORY LOG:
-    ! 2015-01-21  GAYNO    INITIAL VERSION
-    ! 2015-09-17  GAYNO    RENAME AS "POLAR_STEREO_GRID_AREA".
-    ! 2018-07-20  WESLEY   PASS IN DR2 FOR THREADING.
-    !
-    ! USAGE:  CALL POLAR_STEREO_GRID_AREA(RLAT,DR2,AREA)
-    !
-    !   INPUT ARGUMENT LIST:
-    !     RLAT     - LATITUDE OF GRID POINT IN DEGREES (REAL)
-    !     DR2      - SQUARED DISTANCE FROM POLE (REAL)
-    !
-    !   OUTPUT ARGUMENT LIST:
-    !     AREA     - AREA WEIGHTS IN M**2 (REAL)
-    !
-    ! ATTRIBUTES:
-    !   LANGUAGE: FORTRAN 90
-    !
-    !$$$
-    !
     IMPLICIT NONE
 
     REAL,             INTENT(IN   ) :: RLAT, DR2
@@ -674,6 +602,4 @@ CONTAINS
 
   END SUBROUTINE POLAR_STEREO_GRID_AREA
 
-
 end module ip_polar_stereo_grid_mod
-
