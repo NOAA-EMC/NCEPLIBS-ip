@@ -83,25 +83,34 @@ module ip_grid_mod
 
   abstract interface
 
-     !> @fn ip_grid_mod::gdswzd_interface::gdswzd_interface(self, iopt, npts, fill, xpts, ypts, rlon, rlat, nret, crot, srot, xlon, xlat, ylon, ylat, area)
+     !> @fn ip_grid_mod::gdswzd_interface::gdswzd_interface(self,
+     !> iopt, npts, fill, xpts, ypts, rlon, rlat, nret, crot, srot,
+     !> xlon, xlat, ylon, ylat, area)
      !> Interface to gdswzd().
      !>
      !> @param[in] self ???
-     !> @param[in] iopt ???
-     !> @param[in] npts ???
-     !> @param[in] fill ???
-     !> @param[in] xpts ???
-     !> @param[in] ypts ???
-     !> @param[in] rlon ???
-     !> @param[in] rlat ???
-     !> @param[in] nret ???
-     !> @param[in] crot ???
-     !> @param[in] srot ???
-     !> @param[in] xlon ???
-     !> @param[in] xlat ???
-     !> @param[in] ylon ???
-     !> @param[in] ylat ???
-     !> @param[in] area ???
+     !> @param[in] iopt option flag
+     !> - 1 to compute earth coords of selected grid coords
+     !> - -1 to compute grid coords of selected earth coords
+     !> @param[in] npts maximum number of coordinates
+     !> @param[in] fill fill value to set invalid output data (must be
+     !> impossible value; suggested value: -9999.)
+     !> @param[inout] xpts (npts) grid x point coordinates if iopt>0
+     !> @param[inout] ypts (npts) grid y point coordinates if iopt>0
+     !> @param[inout] rlon (npts) earth longitudes in degrees e if iopt<0
+     !> (acceptable range: -360. to 360.)
+     !> @param[inout] rlat (npts) earth latitudes in degrees n if iopt<0
+     !> (acceptable range: -90. to 90.)
+     !> @param[out] nret number of valid points computed
+     !> @param[out] crot optional (npts) clockwise vector rotation cosines
+     !> @param[out] srot optional (npts) clockwise vector rotation sines
+     !> (ugrid=crot*uearth-srot*vearth; vgrid=srot*uearth+crot*vearth)
+     !> @param[out] xlon optional (npts) dx/dlon in 1/degrees
+     !> @param[out] xlat optional (npts) dx/dlat in 1/degrees
+     !> @param[out] ylon optional (npts) dy/dlon in 1/degrees
+     !> @param[out] ylat optional (npts) dy/dlat in 1/degrees
+     !> @param[out] area optional (npts) area weights in m**2
+     !> (proportional to the square of the map factor)
      !>
      !> @author Kyle Gerheiser @date July 2021
      subroutine gdswzd_interface(self, iopt, npts, fill, xpts, ypts, rlon, rlat, nret, crot, srot, &
