@@ -17,9 +17,12 @@ module ip_station_points_grid_mod
 
   type, extends(ip_grid) :: ip_station_points_grid
    contains
-     procedure :: init_grib1 !< Init grib1 @return N/A
-     procedure :: init_grib2 !< Init grib2 @return N/A
-     procedure :: gdswzd => GDSWZD_station_points !< gsdwzd() @return N/A
+     !> Init grib1. @return N/A     
+     procedure :: init_grib1 
+     !> Init grib2. @return N/A     
+     procedure :: init_grib2
+     !> gsdwzd(). @return N/A     
+     procedure :: gdswzd => GDSWZD_station_points 
   end type ip_station_points_grid
 
 contains

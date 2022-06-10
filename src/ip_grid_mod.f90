@@ -28,7 +28,6 @@ module ip_grid_mod
 
   private
   public :: ip_grid
-  !> Interface to gdswzd().  
   public :: gdswzd_interface
   public :: operator(==)
 
@@ -83,6 +82,8 @@ module ip_grid_mod
   end type ip_grid
 
   abstract interface
+
+     !> @fn ip_grid_mod::gdswzd_interface::gdswzd_interface(self, iopt, npts, fill, xpts, ypts, rlon, rlat, nret, crot, srot, xlon, xlat, ylon, ylat, area)
      !> Interface to gdswzd().
      !>
      !> @param[in] self ???
@@ -118,26 +119,28 @@ module ip_grid_mod
        REAL, OPTIONAL,   INTENT(  OUT) :: YLON(NPTS),YLAT(NPTS),AREA(NPTS)
      end subroutine gdswzd_interface
 
+     !> @fn ip_grid_mod::init_grib1_interface::init_grib1_interface(self, g1_desc)
      !> Init GRIB1 interface.
-     !!
-     !! @param[inout] self ???
-     !! @param[in] g1_desc ???
-     !!
-     !! @author Kyle Gerheiser
-     !! @date July 2021
+     !>
+     !> @param[inout] self ip_grid_mod object.
+     !> @param[in] g1_desc GRIB1 descriptor.
+     !>
+     !> @author Kyle Gerheiser
+     !> @date July 2021
      subroutine init_grib1_interface(self, g1_desc)
        import
        class(ip_grid), intent(inout) :: self
        type(grib1_descriptor), intent(in) :: g1_desc
      end subroutine init_grib1_interface
 
+     !> @fn ip_grid_mod::init_grib2_interface::init_grib2_interface(self, g2_desc)
      !> Init GRIB2 interface.
-     !!
-     !! @param[inout] self ???
-     !! @param[in] g2_desc ???
-     !!
-     !! @author Kyle Gerheiser
-     !! @date July 2021
+     !>
+     !> @param[inout] self ip_grid_mod object.
+     !> @param[in] g2_desc GRIB2 descriptor.
+     !>
+     !> @author Kyle Gerheiser
+     !> @date July 2021
      subroutine init_grib2_interface(self, g2_desc)
        import
        class(ip_grid), intent(inout) :: self
@@ -156,29 +159,29 @@ module ip_grid_mod
 contains
 
   !> Compares two grids.
-  !!
-  !! @param[in] grid1 An ip_grid
-  !! @param[in] grid2 Another ip_grid
-  !!
-  !! @return True if the grids are the same, false if not.
-  !!
-  !! @author Kyle Gerheiser
-  !! @date July 2021
+  !>
+  !> @param[in] grid1 An ip_grid
+  !> @param[in] grid2 Another ip_grid
+  !>
+  !> @return True if the grids are the same, false if not.
+  !>
+  !> @author Kyle Gerheiser
+  !> @date July 2021
   logical function is_same_grid(grid1, grid2)
     class(ip_grid), intent(in) :: grid1, grid2
     is_same_grid = grid1%descriptor == grid2%descriptor
   end function is_same_grid
 
   !> Returns the field position for a given grid point.
-  !!
-  !! @param[in] self
-  !! @param[in] i 
-  !! @param[in] j
-  !!
-  !! @return Integer position in grib field to locate grid point.
-  !!
-  !! @author Mark Iredell, George Gayno, Kyle Gerheiser
-  !! @date April 1996
+  !>
+  !> @param[in] self
+  !> @param[in] i 
+  !> @param[in] j
+  !>
+  !> @return Integer position in grib field to locate grid point.
+  !>
+  !> @author Mark Iredell, George Gayno, Kyle Gerheiser
+  !> @date April 1996
   function field_pos(self, i, j)
     class(ip_grid), intent(in) :: self
     integer, intent(in) :: i, j

@@ -184,28 +184,28 @@ contains
   !> 2015-07-13 | gayno | Convert to grib 2. Replace grib 1 kgds array with grib 2 grid definition template array. Rename routine.
   !> 2018-07-20 | wesley | add threads.
   !>
-  !> param[in] self ???
-  !> param[in] iopt option flag
+  !> @param[in] self ip_lambert_conf_grid object.
+  !> @param[in] iopt option flag
   !> - 1 to compute earth coords of selected grid coords
   !> - -1 to compute grid coords of selected earth coords
-  !> param[in] npts maximum number of coordinates
-  !> param[in] fill fill value to set invalid output data (must be
+  !> @param[in] npts maximum number of coordinates
+  !> @param[in] fill fill value to set invalid output data (must be
   !> impossible value; suggested value: -9999.)
-  !> param[inout] xpts (npts) grid x point coordinates if iopt>0
-  !> param[inout] ypts (npts) grid y point coordinates if iopt>0
-  !> param[inout] rlon (npts) earth longitudes in degrees e if iopt<0
+  !> @param[inout] xpts (npts) grid x point coordinates if iopt>0
+  !> @param[inout] ypts (npts) grid y point coordinates if iopt>0
+  !> @param[inout] rlon (npts) earth longitudes in degrees e if iopt<0
   !> (acceptable range: -360. to 360.)
-  !> param[inout] rlat (npts) earth latitudes in degrees n if iopt<0
+  !> @param[inout] rlat (npts) earth latitudes in degrees n if iopt<0
   !> (acceptable range: -90. to 90.)
-  !> param[out] nret number of valid points computed
-  !> param[out] crot, optional (npts) clockwise vector rotation cosines
-  !> param[out] srot, optional (npts) clockwise vector rotation sines
+  !> @param[out] nret number of valid points computed
+  !> @param[out] crot optional (npts) clockwise vector rotation cosines
+  !> @param[out] srot optional (npts) clockwise vector rotation sines
   !> (ugrid=crot*uearth-srot*vearth; vgrid=srot*uearth+crot*vearth)
-  !> param[out] xlon, optional (npts) dx/dlon in 1/degrees
-  !> param[out] xlat, optional (npts) dx/dlat in 1/degrees
-  !> param[out] ylon, optional (npts) dy/dlon in 1/degrees
-  !> param[out] ylat, optional (npts) dy/dlat in 1/degrees
-  !> param[out] area, optional (npts) area weights in m**2
+  !> @param[out] xlon optional (npts) dx/dlon in 1/degrees
+  !> @param[out] xlat optional (npts) dx/dlat in 1/degrees
+  !> @param[out] ylon optional (npts) dy/dlon in 1/degrees
+  !> @param[out] ylat optional (npts) dy/dlat in 1/degrees
+  !> @param[out] area optional (npts) area weights in m**2
   !> (proportional to the square of the map factor)
   !>
   !> @author Iredell @date 96-04-10  
