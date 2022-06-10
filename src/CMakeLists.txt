@@ -47,7 +47,10 @@ foreach(kind ${kinds})
     target_link_libraries(${lib_name} PUBLIC OpenMP::OpenMP_Fortran)
   endif()
 
-  target_link_libraries(${lib_name} PUBLIC sp::sp_${kind})
+  # If NCEPLIBS-sp is enabled, link the sp library.
+  if (ENABLE_SP)
+    target_link_libraries(${lib_name} PUBLIC sp::sp_${kind})
+  endif()
   
   target_include_directories(${lib_name}
     PUBLIC $<BUILD_INTERFACE:${module_dir}>

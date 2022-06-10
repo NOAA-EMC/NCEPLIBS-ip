@@ -2,6 +2,7 @@
 #
 # Mark Potts, Kyle Gerheiser
 
+# Create a directory for test data.
 execute_process(COMMAND cmake -E create_symlink
   "${CMAKE_CURRENT_SOURCE_DIR}/data"
   "${CMAKE_CURRENT_BINARY_DIR}/data" # New name
@@ -17,7 +18,6 @@ endif()
 if(${CMAKE_Fortran_COMPILER_ID} MATCHES "^(GNU)$" AND ${CMAKE_Fortran_COMPILER_VERSION} VERSION_GREATER_EQUAL 10)
   set(CMAKE_Fortran_FLAGS "${CMAKE_Fortran_FLAGS} -w -fallow-argument-mismatch -fallow-invalid-boz")
 endif()
-
 
 # grib-2 tests
 add_library(test_library_grib2 input_data_mod_grib2.f90 interp_mod_grib2.f90)
