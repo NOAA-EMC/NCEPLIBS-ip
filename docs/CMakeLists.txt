@@ -1,4 +1,6 @@
-# This is the CMake file for building the docs directory of NCEPLIBS-ip
+# This is the CMake file for building the docs directory of NCEPLIBS-ip.
+#
+# Kyle Gerheiser, Ed Hartnett
 IF(ENABLE_DOCS)
 
   # Create doxyfile.

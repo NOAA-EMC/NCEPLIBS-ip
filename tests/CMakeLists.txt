@@ -1,3 +1,6 @@
+# This is the CMake file for the test directory of NCEPLIBS-ip.
+#
+# Mark Potts, Kyle Gerheiser
 
 execute_process(COMMAND cmake -E create_symlink
   "${CMAKE_CURRENT_SOURCE_DIR}/data"
