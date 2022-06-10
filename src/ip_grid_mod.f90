@@ -28,7 +28,6 @@ module ip_grid_mod
 
   private
   public :: ip_grid
-  !> Interface to gdswzd().  
   public :: gdswzd_interface
   public :: operator(==)
 
@@ -83,24 +82,35 @@ module ip_grid_mod
   end type ip_grid
 
   abstract interface
+
+     !> @fn ip_grid_mod::gdswzd_interface::gdswzd_interface(self,
+     !> iopt, npts, fill, xpts, ypts, rlon, rlat, nret, crot, srot,
+     !> xlon, xlat, ylon, ylat, area)
      !> Interface to gdswzd().
      !>
-     !> @param[in] self ???
-     !> @param[in] iopt ???
-     !> @param[in] npts ???
-     !> @param[in] fill ???
-     !> @param[in] xpts ???
-     !> @param[in] ypts ???
-     !> @param[in] rlon ???
-     !> @param[in] rlat ???
-     !> @param[in] nret ???
-     !> @param[in] crot ???
-     !> @param[in] srot ???
-     !> @param[in] xlon ???
-     !> @param[in] xlat ???
-     !> @param[in] ylon ???
-     !> @param[in] ylat ???
-     !> @param[in] area ???
+     !> @param[in] self ip_grid_mod object.
+     !> @param[in] iopt option flag
+     !> - 1 to compute earth coords of selected grid coords
+     !> - -1 to compute grid coords of selected earth coords
+     !> @param[in] npts maximum number of coordinates
+     !> @param[in] fill fill value to set invalid output data (must be
+     !> impossible value; suggested value: -9999.)
+     !> @param[inout] xpts (npts) grid x point coordinates if iopt>0
+     !> @param[inout] ypts (npts) grid y point coordinates if iopt>0
+     !> @param[inout] rlon (npts) earth longitudes in degrees e if iopt<0
+     !> (acceptable range: -360. to 360.)
+     !> @param[inout] rlat (npts) earth latitudes in degrees n if iopt<0
+     !> (acceptable range: -90. to 90.)
+     !> @param[out] nret number of valid points computed
+     !> @param[out] crot optional (npts) clockwise vector rotation cosines
+     !> @param[out] srot optional (npts) clockwise vector rotation sines
+     !> (ugrid=crot*uearth-srot*vearth; vgrid=srot*uearth+crot*vearth)
+     !> @param[out] xlon optional (npts) dx/dlon in 1/degrees
+     !> @param[out] xlat optional (npts) dx/dlat in 1/degrees
+     !> @param[out] ylon optional (npts) dy/dlon in 1/degrees
+     !> @param[out] ylat optional (npts) dy/dlat in 1/degrees
+     !> @param[out] area optional (npts) area weights in m**2
+     !> (proportional to the square of the map factor)
      !>
      !> @author Kyle Gerheiser @date July 2021
      subroutine gdswzd_interface(self, iopt, npts, fill, xpts, ypts, rlon, rlat, nret, crot, srot, &
@@ -118,26 +128,28 @@ module ip_grid_mod
        REAL, OPTIONAL,   INTENT(  OUT) :: YLON(NPTS),YLAT(NPTS),AREA(NPTS)
      end subroutine gdswzd_interface
 
+     !> @fn ip_grid_mod::init_grib1_interface::init_grib1_interface(self, g1_desc)
      !> Init GRIB1 interface.
-     !!
-     !! @param[inout] self ???
-     !! @param[in] g1_desc ???
-     !!
-     !! @author Kyle Gerheiser
-     !! @date July 2021
+     !>
+     !> @param[inout] self ip_grid_mod object.
+     !> @param[in] g1_desc GRIB1 descriptor.
+     !>
+     !> @author Kyle Gerheiser
+     !> @date July 2021
      subroutine init_grib1_interface(self, g1_desc)
        import
        class(ip_grid), intent(inout) :: self
        type(grib1_descriptor), intent(in) :: g1_desc
      end subroutine init_grib1_interface
 
+     !> @fn ip_grid_mod::init_grib2_interface::init_grib2_interface(self, g2_desc)
      !> Init GRIB2 interface.
-     !!
-     !! @param[inout] self ???
-     !! @param[in] g2_desc ???
-     !!
-     !! @author Kyle Gerheiser
-     !! @date July 2021
+     !>
+     !> @param[inout] self ip_grid_mod object.
+     !> @param[in] g2_desc GRIB2 descriptor.
+     !>
+     !> @author Kyle Gerheiser
+     !> @date July 2021
      subroutine init_grib2_interface(self, g2_desc)
        import
        class(ip_grid), intent(inout) :: self
@@ -156,29 +168,29 @@ module ip_grid_mod
 contains
 
   !> Compares two grids.
-  !!
-  !! @param[in] grid1 An ip_grid
-  !! @param[in] grid2 Another ip_grid
-  !!
-  !! @return True if the grids are the same, false if not.
-  !!
-  !! @author Kyle Gerheiser
-  !! @date July 2021
+  !>
+  !> @param[in] grid1 An ip_grid
+  !> @param[in] grid2 Another ip_grid
+  !>
+  !> @return True if the grids are the same, false if not.
+  !>
+  !> @author Kyle Gerheiser
+  !> @date July 2021
   logical function is_same_grid(grid1, grid2)
     class(ip_grid), intent(in) :: grid1, grid2
     is_same_grid = grid1%descriptor == grid2%descriptor
   end function is_same_grid
 
   !> Returns the field position for a given grid point.
-  !!
-  !! @param[in] self
-  !! @param[in] i 
-  !! @param[in] j
-  !!
-  !! @return Integer position in grib field to locate grid point.
-  !!
-  !! @author Mark Iredell, George Gayno, Kyle Gerheiser
-  !! @date April 1996
+  !>
+  !> @param[in] self
+  !> @param[in] i 
+  !> @param[in] j
+  !>
+  !> @return Integer position in grib field to locate grid point.
+  !>
+  !> @author Mark Iredell, George Gayno, Kyle Gerheiser
+  !> @date April 1996
   function field_pos(self, i, j)
     class(ip_grid), intent(in) :: self
     integer, intent(in) :: i, j

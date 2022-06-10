@@ -1,119 +1,86 @@
- SUBROUTINE IPXWAFS3(IDIR, NUMPTS_THIN, NUMPTS_FULL, KM, NUM_OPT, OPT_PTS, &
+!> @file
+!> @brief Expand or contract wafs grids.
+!> @author Trojan @date 7-7-13
+
+!> Expand or contract wafs grids.
+!>
+!> This subprogram transforms between the thinned wafs grids used for
+!> transmitting to the aviation community and their full expansion as
+!> used for general interpolation and graphics. The thinned wafs grids
+!> are latitude-longitude grids where the number of points in each row
+!> decrease toward the pole. This information is stored in the grib 2
+!> grid definition template (section 3) starting at octet 73.
+!>
+!> The full grid counterparts have an equal number of points per row.
+!>
+!> The transform between the full and thinned wafs wafs grid is done
+!> by linear interpolation and is not reversible. This routine works
+!> with bitmapped data.
+!>
+!> ### Program History Log
+!> Date | Programmer | Comments
+!> -----|------------|---------
+!> 07-07-13 | Trojan | initial version based on ipxwafs2
+!> 2015-jul | gayno | convert to grib 2
+!>
+!> @param[in] idir integer transform option
+!> - 1 to expand thinned fields to full fields
+!> - -1 to contract full fields to thinned fields
+!> @param[in] numpts_thin integer number of grid points - thinned
+!> grid. Must be 3447.
+!> @param[in] numpts_full integer number of grid points - full
+!> grid. Must be 5329.
+!> @param[in] km integer number of fields to transform
+!> @param[in] num_opt integer number of values to describe the thinned
+!> grid.  must be 73.  dimension of array opt_pts.
+!> @param[inout] opt_pts integer (num_opt) number of grid points per row -
+!> thinned grid - if idir=+1
+!> @param[in] igdtlen integer grid defintion template array length.
+!> must be 19 for lat/lon grids. corresponds to the gfld%igdtlen
+!> component of the ncep g2 library gridmod data structure.  same for
+!> thin and full grids which are both lat/lon.
+!> @param[in] igdtmpl_thin integer (igdtlen) grid definition template
+!> array - thinned grid - if idir=+1. corresponds to the gfld%igdtmpl
+!> component of the ncep g2 library gridmod data structure (section 3
+!> info):
+!> - 1 shape of earth, octet 15
+!> - 2 scale factor of spherical earth radius, octet 16
+!> - 3 scaled value of radius of spherical earth, octets 17-20
+!> - 4 scale factor of major axis of elliptical earth, octet 21
+!> - 5 scaled value of major axis of elliptical earth, octets 22-25
+!> - 6 scale factor of minor axis of elliptical earth, octet 26
+!> - 7 scaled value of minor axis of elliptical earth, octets 27-30
+!> - 8 set to missing for thinned grid., octs 31-34
+!> - 9 number of points along a meridian, octs 35-38
+!> - 10 basic angle of initial production domain, octets 39-42.
+!> - 11 subdivisions of basic angle, octets 43-46
+!> - 12 latitude of first grid point, octets 47-50
+!> - 13 longitude of first grid point, octets 51-54
+!> - 14 resolution and component flags, octet 55
+!> - 15 latitude of last grid point, octets 56-59
+!> - 16 longitude of last grid point, octets 60-63
+!> - 17 set to missing for thinned grid, octets 64-67
+!> - 18 j-direction increment, octets 68-71
+!> - 19 scanning mode, octet 72
+!> @param[inout] data_thin real (numpts_thin,km) thinned grid fields if idir=+1
+!> @param[inout] ib_thin integer (km) bitmap flags thinned grid - if idir=+1
+!> @param[inout] bitmap_thin logical (numpts_thin,km) bitmap fields thin grid - if idir=+1
+!> @param[inout] igdtmpl_full integer (igdtlen) grid definition template
+!> array - full grid - if idir=-1. corresponds to the gfld%igdtmpl
+!> component of the ncep g2 library gridmod data structure. same as
+!> igdtmpl_thin except: (8): number of points along a parallel, octs
+!> 31-34 (17): i-direction increment, octets 64-67
+!> @param[inout] data_full real (numpts_full,km) full grid fields if idir=-1
+!> @param[inout] ib_full integer (km) bitmap flags full grid - if idir=-1
+!> @param[inout] bitmap_full logical (numpts_full,km) bitmap fields full grid - if idir=-1
+!> @param[out] iret integer return code
+!>  - 0 successful transformation
+!>  - 1 improper grid specification
+!>
+!> @author Trojan @date 7-7-13
+SUBROUTINE IPXWAFS3(IDIR, NUMPTS_THIN, NUMPTS_FULL, KM, NUM_OPT, OPT_PTS, &
                     IGDTLEN, IGDTMPL_THIN, DATA_THIN, IB_THIN, BITMAP_THIN,  &
                     IGDTMPL_FULL, DATA_FULL, IB_FULL, BITMAP_FULL, IRET)
-!$$$  SUBPROGRAM DOCUMENTATION BLOCK
-!
-! SUBPROGRAM:  IPXWAFS3   EXPAND OR CONTRACT WAFS GRIDS
-!   PRGMMR: IREDELL       ORG: W/NMC23       DATE: 96-04-10
-!
-! ABSTRACT: THIS SUBPROGRAM TRANSFORMS BETWEEN THE THINNED WAFS GRIDS
-!           USED FOR TRANSMITTING TO THE AVIATION COMMUNITY
-!           AND THEIR FULL EXPANSION AS USED FOR GENERAL INTERPOLATION
-!           AND GRAPHICS.  THE THINNED WAFS GRIDS ARE LATITUDE-LONGITUDE
-!           GRIDS WHERE THE NUMBER OF POINTS IN EACH ROW DECREASE
-!           TOWARD THE POLE.  THIS INFORMATION IS STORED
-!           IN THE GRIB 2 GRID DEFINITION TEMPLATE (SECTION 3) 
-!           STARTING AT OCTET 73. THE FULL GRID COUNTERPARTS
-!           HAVE AN EQUAL NUMBER OF POINTS PER ROW.
-!           THE TRANSFORM BETWEEN THE FULL AND THINNED WAFS
-!           GRID IS DONE BY NEAREST NEIGHBOR AND IS
-!           NOT REVERSIBLE.  THIS ROUTINE WORKS WITH
-!           BITMAPPED DATA.
-!
-! PROGRAM HISTORY LOG:
-!   07-07-13  TROJAN   - INITIAL VERSION BASED ON IPXWAFS2
-!   2015-JUL  GAYNO    - CONVERT TO GRIB 2
-!
-! USAGE:   CALL IPXWAFS3(IDIR, NUMPTS_THIN, NUMPTS_FULL, KM, NUM_OPT, OPT_PTS, &
-!                   IGDTLEN, IGDTMPL_THIN, DATA_THIN, IB_THIN, BITMAP_THIN,  &
-!                   IGDTMPL_FULL, DATA_FULL, IB_FULL, BITMAP_FULL, IRET)
-!
-!   INPUT ARGUMENT LIST:
-!     IDIR         - INTEGER TRANSFORM OPTION
-!                   (+1 TO EXPAND THINNED FIELDS TO FULL FIELDS)
-!                   (-1 TO CONTRACT FULL FIELDS TO THINNED FIELDS)
-!     NUMPTS_THIN  - INTEGER NUMBER OF GRID POINTS - THINNED GRID.  MUST BE
-!                    3447.
-!     NUMPTS_FULL  - INTEGER NUMBER OF GRID POINTS - FULL GRID. MUST
-!                    BE 5329.
-!     KM           - INTEGER NUMBER OF FIELDS TO TRANSFORM
-!     NUM_OPT      - INTEGER NUMBER OF VALUES TO DESCRIBE THE THINNED
-!                    GRID.  MUST BE 73.  DIMENSION OF ARRAY OPT_PTS.
-!     OPT_PTS      - INTEGER (NUM_OPT) NUMBER OF GRID POINTS PER ROW -
-!                    THINNED GRID - IF IDIR=+1
-!     IGDTLEN      - INTEGER GRID DEFINTION TEMPLATE ARRAY LENGTH.  MUST BE
-!                    19 FOR LAT/LON GRIDS. CORRESPONDS TO THE GFLD%IGDTLEN
-!                    COMPONENT OF THE NCEP G2 LIBRARY GRIDMOD DATA STRUCTURE.
-!                    SAME FOR THIN AND FULL GRIDS WHICH ARE BOTH LAT/LON.
-!     IGDTMPL_THIN - INTEGER (IGDTLEN) GRID DEFINITION TEMPLATE ARRAY -
-!                    THINNED GRID - IF IDIR=+1. CORRESPONDS TO THE
-!                    GFLD%IGDTMPL COMPONENT OF THE NCEP G2 LIBRARY
-!                    GRIDMOD DATA STRUCTURE (SECTION 3 INFO):
-!                    (1):  SHAPE OF EARTH, OCTET 15
-!                    (2):  SCALE FACTOR OF SPHERICAL EARTH RADIUS,
-!                          OCTET 16
-!                    (3):  SCALED VALUE OF RADIUS OF SPHERICAL EARTH,
-!                          OCTETS 17-20
-!                    (4):  SCALE FACTOR OF MAJOR AXIS OF ELLIPTICAL EARTH,
-!                          OCTET 21
-!                    (5):  SCALED VALUE OF MAJOR AXIS OF ELLIPTICAL EARTH,
-!                          OCTETS 22-25
-!                    (6):  SCALE FACTOR OF MINOR AXIS OF ELLIPTICAL EARTH,
-!                          OCTET 26
-!                    (7):  SCALED VALUE OF MINOR AXIS OF ELLIPTICAL EARTH,
-!                          OCTETS 27-30
-!                    (8):  SET TO MISSING FOR THINNED GRID., OCTS 31-34
-!                    (9):  NUMBER OF POINTS ALONG A MERIDIAN, OCTS 35-38
-!                    (10): BASIC ANGLE OF INITIAL PRODUCTION DOMAIN,
-!                          OCTETS 39-42.
-!                    (11): SUBDIVISIONS OF BASIC ANGLE, OCTETS 43-46
-!                    (12): LATITUDE OF FIRST GRID POINT, OCTETS 47-50
-!                    (13): LONGITUDE OF FIRST GRID POINT, OCTETS 51-54
-!                    (14): RESOLUTION AND COMPONENT FLAGS, OCTET 55
-!                    (15): LATITUDE OF LAST GRID POINT, OCTETS 56-59
-!                    (16): LONGITUDE OF LAST GRID POINT, OCTETS 60-63
-!                    (17): SET TO MISSING FOR THINNED GRID, OCTETS 64-67
-!                    (18): J-DIRECTION INCREMENT, OCTETS 68-71
-!                    (19): SCANNING MODE, OCTET 72
-!     DATA_THIN    - REAL (NUMPTS_THIN,KM) THINNED GRID FIELDS IF IDIR=+1
-!     IB_THIN      - INTEGER (KM) BITMAP FLAGS THINNED GRID - IF IDIR=+1
-!     BITMAP_THIN  - LOGICAL (NUMPTS_THIN,KM) BITMAP FIELDS THIN GRID - IF IDIR=+1
-!     IGDTMPL_FULL - INTEGER (IGDTLEN) GRID DEFINITION TEMPLATE ARRAY -
-!                    FULL GRID - IF IDIR=-1. CORRESPONDS TO THE
-!                    GFLD%IGDTMPL COMPONENT OF THE NCEP G2 LIBRARY
-!                    GRIDMOD DATA STRUCTURE. SAME AS IGDTMPL_THIN
-!                    EXCEPT:
-!                    (8):  NUMBER OF POINTS ALONG A PARALLEL, OCTS 31-34
-!                    (17): I-DIRECTION INCREMENT, OCTETS 64-67
-!     DATA_FULL    - REAL (NUMPTS_FULL,KM) FULL GRID FIELDS IF IDIR=-1
-!     IB_FULL      - INTEGER (KM) BITMAP FLAGS FULL GRID - IF IDIR=-1
-!     BITMAP_FULL  - LOGICAL (NUMPTS_FULL,KM) BITMAP FIELDS FULL GRID - IF IDIR=-1
-!
-!   OUTPUT ARGUMENT LIST:
-!     OPT_PTS      - INTEGER (NUM_OPT) NUMBER OF GRID POINTS PER ROW -
-!                    THINNED GRID - IF IDIR=-1
-!     IGDTMPL_THIN - INTEGER (IGDTLEN) GRID DEFINITION TEMPLATE ARRAY -
-!                    THINNED GRID - IF IDIR=-1. CORRESPONDS TO THE
-!                    GFLD%IGDTMPL COMPONENT OF THE NCEP G2 LIBRARY
-!                    GRIDMOD DATA STRUCTURE.  DEFINED ABOVE.
-!     DATA_THIN    - REAL (NUMPTS_THIN,KM) THINNED GRID FIELDS IF IDIR=-1
-!     IB_THIN      - INTEGER (KM) BITMAP FLAGS THINNED GRID - IF IDIR=-1
-!     BITMAP_THIN  - LOGICAL (NUMPTS_THIN,KM) BITMAP FIELDS THIN GRID - IF IDIR=-1
-!     IGDTMPL_FULL - INTEGER (IGDTLEN) GRID DEFINITION TEMPLATE ARRAY -
-!                    FULL GRID - IF IDIR=+1. CORRESPONDS TO THE
-!                    GFLD%IGDTMPL COMPONENT OF THE NCEP G2 LIBRARY
-!                    GRIDMOD DATA STRUCTURE.  DEFINED ABOVE.
-!     DATA_FULL    - REAL (NUMPTS_FULL,KM) FULL GRID FIELDS IF IDIR=+1
-!     IB_FULL      - INTEGER (KM) BITMAP FLAGS FULL GRID - IF IDIR=+1
-!     BITMAP_FULL  - LOGICAL (NUMPTS_FULL,KM) BITMAP FIELDS FULL GRID - IF IDIR=+1
-!     IRET         - INTEGER RETURN CODE
-!                     0    SUCCESSFUL TRANSFORMATION
-!                     1    IMPROPER GRID SPECIFICATION
-!
-! ATTRIBUTES:
-!   LANGUAGE: FORTRAN 90
-!
-!$$$
  IMPLICIT NONE
 !
  INTEGER,               INTENT(IN   ) :: NUM_OPT

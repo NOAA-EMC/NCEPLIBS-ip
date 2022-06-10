@@ -1,3 +1,9 @@
+!> @file
+!> @brief Determine earth radius and shape.
+!> @author Kyle Gerheiser @date 2021-07-21
+
+!> @brief Determine earth radius and shape.
+!> @author Gayno, Kyle Gerheiser
 module earth_radius_mod
   implicit none
 
@@ -6,57 +12,32 @@ module earth_radius_mod
 
 contains
 
+  !> Determine earth radius and shape.
+  !>
+  !> Determine the radius and shape of the earth from
+  !> the grib 2 grid definition template array - section 3.
+  !>
+  !> @param[in] igdtmpl integer (igdtlen) grid definition template
+  !> array. Corresponds to the gfld%igdtmpl component of the ncep g2
+  !> library gridmod data structure. For all map projections recognized
+  !> by iplib, the entries use by this routine are:
+  !> - 1 shape of earth, section 3, octet 15 
+  !> - 2 scale factor of spherical earth radius, octet 16
+  !> - 3 scaled value of radius of spherical earth, octets 17-20
+  !> - 4 scale factor of major axis of elliptical earth, octet 21
+  !> - 5 scaled value of major axis of elliptical earth, octets 22-25
+  !> - 6 scale factor of minor axis of elliptical earth, octet 26
+  !> - 7 scaled value of minor axis of elliptical earth, octets 27-30
+  !> @param[in] igdtlen integer number of elements of the grid
+  !> definition template array. Corresponds to the gfld%igdtlen
+  !> component of the ncep g2 library gridmod data structure.
+  !> @param[out] radius real earth radius in meters. For ellipitical
+  !> earths, this is the semi major axis. See "map projectsions - a
+  !> working manual" by Snyder (1987) for details.
+  !> @param[out] eccen_squared real earth eccentricity squared
+  !>
+  !> @author Gayno @date 2015-07-14
   SUBROUTINE EARTH_RADIUS(IGDTMPL, IGDTLEN, RADIUS, ECCEN_SQUARED)
-    !$$$  SUBPROGRAM DOCUMENTATION BLOCK
-    !
-    ! SUBPROGRAM:  EARTH_RADIUS   DETERMINE EARTH RADIUS AND SHAPE
-    !   PRGMMR: GAYNO    ORG: W/NMC23     DATE: 2015-07-14
-    !
-    ! ABSTRACT: DETERMINE THE RADIUS AND SHAPE OF THE EARTH FROM
-    !   THE GRIB 2 GRID DEFINITION TEMPLATE ARRAY - SECTION 3
-    !
-    ! PROGRAM HISTORY LOG:
-    ! 2015-07-14  GAYNO
-    !
-    ! USAGE:   CALL EARTH_RADIUS(IGDTMPL, IGDTLEN, &
-    !                            RADIUS, ECCEN_SQUARED)
-    !
-    !   INPUT ARGUMENT LIST:
-    !     IGDTMPL  - INTEGER (IGDTLEN) GRID DEFINITION TEMPLATE ARRAY.
-    !                CORRESPONDS TO THE GFLD%IGDTMPL COMPONENT
-    !                OF THE NCEP G2 LIBRARY GRIDMOD DATA STRUCTURE.
-    !                FOR ALL MAP PROJECTIONS RECOGNIZED BY IPLIB,
-    !                THE ENTRIES USE BY THIS ROUTINE ARE:
-    !                 (1) - SHAPE OF EARTH, SECTION 3, OCTET 15
-    !                 (2) - SCALE FACTOR OF SPHERICAL EARTH RADIUS,
-    !                       OCTET 16
-    !                 (3) - SCALED VALUE OF RADIUS OF SPHERICAL EARTH,
-    !                       OCTETS 17-20
-    !                 (4) - SCALE FACTOR OF MAJOR AXIS OF ELLIPTICAL EARTH,
-    !                       OCTET 21
-    !                 (5) - SCALED VALUE OF MAJOR AXIS OF ELLIPTICAL EARTH,
-    !                       OCTETS 22-25
-    !                 (6) - SCALE FACTOR OF MINOR AXIS OF ELLIPTICAL EARTH,
-    !                       OCTET 26
-    !                 (7) - SCALED VALUE OF MINOR AXIS OF ELLIPTICAL EARTH,
-    !                       OCTETS 27-30
-    !     IGDTLEN  - INTEGER NUMBER OF ELEMENTS OF THE GRID DEFINITION
-    !                TEMPLATE ARRAY.  CORRESPONDS TO THE GFLD%IGDTLEN
-    !                COMPONENT OF THE NCEP G2 LIBRARY GRIDMOD
-    !                DATA STRUCTURE.
-    !
-    !   OUTPUT ARGUMENT LIST:
-    !     RADIUS        - REAL EARTH RADIUS IN METERS.
-    !                     FOR ELLIPITICAL EARTHS, THIS IS THE
-    !                     SEMI MAJOR AXIS.  SEE "MAP PROJECTSIONS -
-    !                     A WORKING MANUAL" BY SNYDER (1987)
-    !                     FOR DETAILS.
-    !     ECCEN_SQUARED - REAL EARTH ECCENTRICITY SQUARED
-    !
-    ! ATTRIBUTES:
-    !   LANGUAGE: FORTRAN 90
-    !
-    !$$$
     IMPLICIT NONE
     !
     INTEGER,                INTENT(IN   ) :: IGDTLEN

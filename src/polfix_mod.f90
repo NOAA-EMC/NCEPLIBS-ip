@@ -1,3 +1,9 @@
+!> @file
+!> @brief Make multiple pole scalar values consistent.
+!> @author Kyle Gerheiser @date 2021-07-21
+
+!> @brief Make multiple pole scalar values consistent.
+!> @author Iredell, Kyle Gerheiser
 module polfix_mod
   implicit none
 
@@ -6,37 +12,21 @@ module polfix_mod
 
 contains
 
+  !> Make multiple pole scalar values consistent.
+  !>
+  !> This subprogram averages multiple pole scalar values
+  !> on a latitude/longitude grid. Bitmaps may be averaged too.
+  !>        
+  !> @param[in] nm integer number of grid points
+  !> @param[in] nx integer leading dimension of fields
+  !> @param[in] km integer number of fields
+  !> @param[in] rlat real (no) latitudes in degrees
+  !> @param[in] ib integer (km) bitmap flags
+  !> @param[out] lo logical*1 (nx,km) bitmaps (if some ib(k)=1)
+  !> @param[out] go real (nx,km) fields
+  !>
+  !> @author Iredell @date 96-04-10
   SUBROUTINE POLFIXS(NM,NX,KM,RLAT,IB,LO,GO)
-    !$$$  SUBPROGRAM DOCUMENTATION BLOCK
-    !
-    ! SUBPROGRAM:  POLFIXS    MAKE MULTIPLE POLE SCALAR VALUES CONSISTENT
-    !   PRGMMR: IREDELL       ORG: W/NMC23       DATE: 96-04-10
-    !
-    ! ABSTRACT: THIS SUBPROGRAM AVERAGES MULTIPLE POLE SCALAR VALUES
-    !           ON A LATITUDE/LONGITUDE GRID.  BITMAPS MAY BE AVERAGED TOO.
-    !        
-    ! PROGRAM HISTORY LOG:
-    !   96-04-10  IREDELL
-    !
-    ! USAGE:    CALL POLFIXS(NM,NX,KM,RLAT,IB,LO,GO)
-    !
-    !   INPUT ARGUMENT LIST:
-    !     NO       - INTEGER NUMBER OF GRID POINTS
-    !     NX       - INTEGER LEADING DIMENSION OF FIELDS
-    !     KM       - INTEGER NUMBER OF FIELDS
-    !     RLAT     - REAL (NO) LATITUDES IN DEGREES
-    !     IB       - INTEGER (KM) BITMAP FLAGS
-    !     LO       - LOGICAL*1 (NX,KM) BITMAPS (IF SOME IB(K)=1)
-    !     GO       - REAL (NX,KM) FIELDS
-    !
-    !   OUTPUT ARGUMENT LIST:
-    !     LO       - LOGICAL*1 (NX,KM) BITMAPS (IF SOME IB(K)=1)
-    !     GO       - REAL (NX,KM) FIELDS
-    !
-    ! ATTRIBUTES:
-    !   LANGUAGE: FORTRAN 90
-    !
-    !$$$
     IMPLICIT NONE
     !
     INTEGER,    INTENT(IN   ) :: NM, NX, KM
@@ -114,42 +104,24 @@ contains
     ! - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   END SUBROUTINE POLFIXS
 
-
+  !> Make multiple pole vector values consistent,
+  !>
+  !> This subprogram averages multiple pole vector values on a
+  !> latitude/longitude grid. Bitmaps may be averaged too. Vectors
+  !> are rotated with respect to their longitude.
+  !>        
+  !> @param[in] nm integer number of grid points
+  !> @param[in] nx integer leading dimension of fields
+  !> @param[in] km integer number of fields
+  !> @param[in] rlat real (nm) latitudes in degrees
+  !> @param[in] rlon real (nm) longitudes in degrees
+  !> @param[in] ib integer (km) bitmap flags
+  !> @param[inout] lo logical*1 (nx,km) bitmaps (if some ib(k)=1)
+  !> @param[inout] uo real (nx,km) u-winds
+  !> @param[inout] vo real (nx,km) v-winds
+  !>
+  !> @author Iredell @date 96-04-10
   SUBROUTINE POLFIXV(NM,NX,KM,RLAT,RLON,IB,LO,UO,VO)
-    !$$$  SUBPROGRAM DOCUMENTATION BLOCK
-    !
-    ! SUBPROGRAM:  POLFIXV    MAKE MULTIPLE POLE VECTOR VALUES CONSISTENT
-    !   PRGMMR: IREDELL       ORG: W/NMC23       DATE: 96-04-10
-    !
-    ! ABSTRACT: THIS SUBPROGRAM AVERAGES MULTIPLE POLE VECTOR VALUES
-    !           ON A LATITUDE/LONGITUDE GRID.  BITMAPS MAY BE AVERAGED TOO.
-    !           VECTORS ARE ROTATED WITH RESPECT TO THEIR LONGITUDE.
-    !        
-    ! PROGRAM HISTORY LOG:
-    !   96-04-10  IREDELL
-    !
-    ! USAGE:    CALL POLFIXV(NM,NX,KM,RLAT,RLON,IB,LO,UO,VO)
-    !
-    !   INPUT ARGUMENT LIST:
-    !     NM       - INTEGER NUMBER OF GRID POINTS
-    !     NX       - INTEGER LEADING DIMENSION OF FIELDS
-    !     KM       - INTEGER NUMBER OF FIELDS
-    !     RLAT     - REAL (NM) LATITUDES IN DEGREES
-    !     RLON     - REAL (NM) LONGITUDES IN DEGREES
-    !     IB       - INTEGER (KM) BITMAP FLAGS
-    !     LO       - LOGICAL*1 (NX,KM) BITMAPS (IF SOME IB(K)=1)
-    !     UO       - REAL (NX,KM) U-WINDS
-    !     VO       - REAL (NX,KM) V-WINDS
-    !
-    !   OUTPUT ARGUMENT LIST:
-    !     LO       - LOGICAL*1 (NX,KM) BITMAPS (IF SOME IB(K)=1)
-    !     UO       - REAL (NX,KM) U-WINDS
-    !     VO       - REAL (NX,KM) V-WINDS
-    !
-    ! ATTRIBUTES:
-    !   LANGUAGE: FORTRAN 90
-    !
-    !$$$
     IMPLICIT NONE
     !
     INTEGER,      INTENT(IN   ) :: IB(KM), NM, NX, KM
