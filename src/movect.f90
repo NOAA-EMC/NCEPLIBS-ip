@@ -1,37 +1,29 @@
+!> @file
+!> @brief Move a vector along a great circle.
+!> @author Iredell @date 96-04-10
+
+!> ABSTRACT: THIS SUBPROGRAM PROVIDES THE ROTATION PARAMETERS
+!>           TO MOVE A VECTOR ALONG A GREAT CIRCLE FROM ONE
+!>           POSITION TO ANOTHER WHILE CONSERVING ITS ORIENTATION
+!>           WITH RESPECT TO THE GREAT CIRCLE.  THESE ROTATION
+!>           PARAMETERS ARE USEFUL FOR VECTOR INTERPOLATION.
+!>        
+!> ### Program History Log
+!> Date | Programmer | Comments
+!> -----|------------|---------
+!> 96-04-10 | Iredell | Initial
+!> 1999-04-08 | Iredell | generalize precision
+!>
+!> @param[in] flat real latitude in degrees from which to move the vector.
+!> @param[in] flon real longitude in degrees from which to move the vector.
+!> @param[in] tlat real latitude in degrees to which to move the vector.
+!> @param[in] tlon real longitude in degrees to which to move the vector.
+!> @param[out] crot real clockwise vector rotation cosine.
+!> @param[out] srot real clockwise vector rotation sine.
+!> (uto=crot*ufrom-srot*vfrom; vto=srot*ufrom+crot*vfrom)
+!>
+!> @author Iredell @date 96-04-10
  SUBROUTINE MOVECT(FLAT,FLON,TLAT,TLON,CROT,SROT)
-!$$$  SUBPROGRAM DOCUMENTATION BLOCK
-!
-! SUBPROGRAM:  MOVECT     MOVE A VECTOR ALONG A GREAT CIRCLE
-!   PRGMMR: IREDELL       ORG: W/NMC23       DATE: 96-04-10
-!
-! ABSTRACT: THIS SUBPROGRAM PROVIDES THE ROTATION PARAMETERS
-!           TO MOVE A VECTOR ALONG A GREAT CIRCLE FROM ONE
-!           POSITION TO ANOTHER WHILE CONSERVING ITS ORIENTATION
-!           WITH RESPECT TO THE GREAT CIRCLE.  THESE ROTATION
-!           PARAMETERS ARE USEFUL FOR VECTOR INTERPOLATION.
-!        
-! PROGRAM HISTORY LOG:
-!   96-04-10  IREDELL
-! 1999-04-08  IREDELL  GENERALIZE PRECISION
-!
-! USAGE:    CALL MOVECT(FLAT,FLON,TLAT,TLON,CROT,SROT)
-!
-!   INPUT ARGUMENT LIST:
-!     FLAT     - REAL LATITUDE IN DEGREES FROM WHICH TO MOVE THE VECTOR
-!     FLON     - REAL LONGITUDE IN DEGREES FROM WHICH TO MOVE THE VECTOR
-!     TLAT     - REAL LATITUDE IN DEGREES TO WHICH TO MOVE THE VECTOR
-!     TLON     - REAL LONGITUDE IN DEGREES TO WHICH TO MOVE THE VECTOR
-!
-!   OUTPUT ARGUMENT LIST:
-!     CROT     - REAL CLOCKWISE VECTOR ROTATION COSINE
-!     SROT     - REAL CLOCKWISE VECTOR ROTATION SINE
-!                (UTO=CROT*UFROM-SROT*VFROM;
-!                 VTO=SROT*UFROM+CROT*VFROM)
-!
-! ATTRIBUTES:
-!   LANGUAGE: FORTRAN 90
-!
-!$$$
  IMPLICIT NONE
 !
  INTEGER,         PARAMETER     :: KD=SELECTED_REAL_KIND(15,45)

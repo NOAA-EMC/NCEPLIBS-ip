@@ -1,6 +1,6 @@
 !> @file
 !> @brief Expand or contract eta grids.
-! @author Iredell @date 96-04-10
+!> @author Iredell @date 96-04-10
 
 !> Expand or contract eta grids.
 !>
