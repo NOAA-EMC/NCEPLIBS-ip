@@ -1,105 +1,88 @@
+!> @file
+!> @brief Expand or contract eta grids.
+! @author Iredell @date 96-04-10
+
+!> Expand or contract eta grids.
+!>
+!> This subprogram transforms between the staggered eta grids as used
+!> in the eta model and for native grid transmission and their full
+!> expansion as used for general interpolation and graphics. The eta
+!> grids are rotated latitude-longitude grids staggered as defined by
+!> the arakawa e-grid, that is with mass data points alternating with
+!> wind data points.
+!>
+!> ### Program History Log
+!> Date | Programmer | Comments
+!> -----|------------|---------
+!> 96-04-10 | Iredell | Initial
+!> 2015-07-14 | Gayno | Make grib 2 compliant. Replace 4-pt interpolation with call to ipolates.
+!>
+!> @param[in] idir integer transform option.
+!> - 0 to expand staggered fields to full fields
+!> - -1 to contract full mass fields to staggered fields
+!> - -2 to contract full wind fields to staggered fields
+!> @param[in] igdtnumi integer grid definition template number - input
+!> grid. Corresponds to the gfld%igdtnum component of the ncep g2
+!> library gridmod data structure. Must be = 1 (for a rotated lat/lon
+!> grid.)
+!> @param[in] igdtlen integer number of elements of the grid
+!> definition template array - same for input and output grids (=22)
+!> which are both rotated lat/lon grids.  corresponds to the
+!> gfld%igdtlen component of the ncep g2 library gridmod data
+!> structure.
+
+!> @param[in] igdtmpli integer (igdtlen) grid definition template
+!> array - input grid. Corresponds to the gfld%igdtmpl component of
+!> the ncep g2 library gridmod data structure (section 3 info):
+
+!> - 1 shape of earth, octet 15
+!> - 2 scale factor of spherical earth radius, octet 16
+!> - 3 scaled value of radius of spherical earth, octets 17-20
+!> - 4 scale factor of major axis of elliptical earth, octet 21
+!> - 5 scaled value of major axis of elliptical earth, octets 22-25
+!> - 6 scale factor of minor axis of elliptical earth, octet 26
+!> - 7 scaled value of minor axis of elliptical earth, octets 27-30
+!> - 8 number of points along a parallel, octs 31-34
+!> - 9 number of points along a meridian, octs 35-38
+!> - 10 basic angle of initial production domain, octets 39-42
+!> - 11 subdivisions of basic angle, octets 43-46
+!> - 12 latitude of first grid point, octets 47-50
+!> - 13 longitude of first grid point, octets 51-54
+!> - 14 resolution and component flags, octet 55
+!> - 15 latitude of last grid point, octets 56-59
+!> - 16 longitude of last grid point, octets 60-63
+!> - 17 i-direction increment, octets 64-67
+!> - 18 j-direction increment, octets 68-71
+!> - 19 scanning mode, octet 72
+!> - 20 latitude of southern pole of projection, octets 73-76
+!> - 21 longitude of southern pole of projection, octets 77-80
+!> - 22 angle of rotation of projection, octs 81-84
+!> @param[in] npts_input integer number points input grid
+!> @param[in] bitmap_input logical (npts_input) input grid bitmap
+!> @param[in] data_input real (npts_input) input grid data
+!> @param[out] igdtnumo integer grid definition template number -
+!> output grid. Corresponds to the gfld%igdtnum component of the ncep
+!> g2 library gridmod data structure. Same as igdtnumi (=1 for a
+!> rotated lat/lon grid).
+!> @param[out] igdtmplo integer (igdtlen) grid definition template
+!> array - output grid. Corresponds to the gfld%igdtmpl component of
+!> the ncep g2 library gridmod data structure. Array definitions same
+!> as "igdtmpli".
+!> @param[out] npts_output integer number points output grid. the
+!> j-dimension of the input and output grids are the same. When going
+!> from a staggered to a full grid the i-dimension increases to
+!> idim*2-1. When going from full to staggered the i-dimension
+!> decreases to (idim+1)/2.
+!>  @param[out] bitmap_output logical (npts_outut) output grid bitmap
+!>  @param[out] data_output real (npts_output) output grid data
+!> @param[out] iret integer return code
+!> - 0 successful transformation
+!> - non-0 invalid grid specs or problem in ipolates().
+!>
+! @author Iredell @date 96-04-10
  SUBROUTINE IPXETAS(IDIR, IGDTNUMI, IGDTLEN, IGDTMPLI, NPTS_INPUT,  &
                     BITMAP_INPUT, DATA_INPUT, IGDTNUMO, IGDTMPLO, &
                     NPTS_OUTPUT, BITMAP_OUTPUT, DATA_OUTPUT, IRET)
-!$$$  SUBPROGRAM DOCUMENTATION BLOCK
-!
-! SUBPROGRAM:  IPXETAS    EXPAND OR CONTRACT ETA GRIDS
-!   PRGMMR: IREDELL       ORG: W/NMC23       DATE: 96-04-10
-!
-! ABSTRACT: THIS SUBPROGRAM TRANSFORMS BETWEEN THE STAGGERED ETA GRIDS
-!           AS USED IN THE ETA MODEL AND FOR NATIVE GRID TRANSMISSION
-!           AND THEIR FULL EXPANSION AS USED FOR GENERAL INTERPOLATION
-!           AND GRAPHICS.  THE ETA GRIDS ARE ROTATED LATITUDE-LONGITUDE
-!           GRIDS STAGGERED AS DEFINED BY THE ARAKAWA E-GRID, THAT IS
-!           WITH MASS DATA POINTS ALTERNATING WITH WIND DATA POINTS.
-!
-! PROGRAM HISTORY LOG:
-!   96-04-10  IREDELL
-! 2015-07-14  GAYNO    MAKE GRIB 2 COMPLIANT.  REPLACE 4-PT
-!                      INTERPOLATION WITH CALL TO IPOLATES.
-!
-! USAGE:    CALL IPXETAS(IDIR, IGDTNUMI, IGDTLEN, IGDTMPLI, NPTS_INPUT,  &
-!                   BITMAP_INPUT, DATA_INPUT, IGDTNUMO, IGDTMPLO, &
-!                   NPTS_OUTPUT, BITMAP_OUTPUT, DATA_OUTPUT, IRET)
-!
-!   INPUT ARGUMENT LIST:
-!     IDIR         - INTEGER TRANSFORM OPTION
-!                   ( 0 TO EXPAND STAGGERED FIELDS TO FULL FIELDS)
-!                   (-1 TO CONTRACT FULL MASS FIELDS TO STAGGERED FIELDS)
-!                   (-2 TO CONTRACT FULL WIND FIELDS TO STAGGERED FIELDS)
-!     IGDTNUMI     - INTEGER GRID DEFINITION TEMPLATE NUMBER - INPUT GRID.
-!                    CORRESPONDS TO THE GFLD%IGDTNUM COMPONENT OF THE
-!                    NCEP G2 LIBRARY GRIDMOD DATA STRUCTURE.  MUST
-!                    BE = 1 (FOR A ROTATED LAT/LON GRID.)
-!     IGDTLEN      - INTEGER NUMBER OF ELEMENTS OF THE GRID DEFINITION
-!                    TEMPLATE ARRAY - SAME FOR INPUT AND OUTPUT GRIDS
-!                    (=22) WHICH ARE BOTH ROTATED LAT/LON GRIDS. 
-!                    CORRESPONDS TO THE GFLD%IGDTLEN COMPONENT
-!                    OF THE NCEP G2 LIBRARY GRIDMOD DATA STRUCTURE.
-!     IGDTMPLI     - INTEGER (IGDTLEN) GRID DEFINITION TEMPLATE ARRAY -
-!                    INPUT GRID. CORRESPONDS TO THE GFLD%IGDTMPL COMPONENT
-!                    OF THE NCEP G2 LIBRARY GRIDMOD DATA STRUCTURE
-!                    (SECTION 3 INFO):
-!                    (1):  SHAPE OF EARTH, OCTET 15
-!                    (2):  SCALE FACTOR OF SPHERICAL EARTH RADIUS,
-!                          OCTET 16
-!                    (3):  SCALED VALUE OF RADIUS OF SPHERICAL EARTH,
-!                          OCTETS 17-20
-!                    (4):  SCALE FACTOR OF MAJOR AXIS OF ELLIPTICAL EARTH,
-!                          OCTET 21
-!                    (5):  SCALED VALUE OF MAJOR AXIS OF ELLIPTICAL EARTH,
-!                          OCTETS 22-25
-!                    (6):  SCALE FACTOR OF MINOR AXIS OF ELLIPTICAL EARTH,
-!                          OCTET 26
-!                    (7):  SCALED VALUE OF MINOR AXIS OF ELLIPTICAL EARTH,
-!                          OCTETS 27-30
-!                    (8):  NUMBER OF POINTS ALONG A PARALLEL, OCTS 31-34
-!                    (9):  NUMBER OF POINTS ALONG A MERIDIAN, OCTS 35-38
-!                    (10): BASIC ANGLE OF INITIAL PRODUCTION DOMAIN,
-!                          OCTETS 39-42
-!                    (11): SUBDIVISIONS OF BASIC ANGLE, OCTETS 43-46
-!                    (12): LATITUDE OF FIRST GRID POINT, OCTETS 47-50
-!                    (13): LONGITUDE OF FIRST GRID POINT, OCTETS 51-54
-!                    (14): RESOLUTION AND COMPONENT FLAGS, OCTET 55
-!                    (15): LATITUDE OF LAST GRID POINT, OCTETS 56-59
-!                    (16): LONGITUDE OF LAST GRID POINT, OCTETS 60-63
-!                    (17): I-DIRECTION INCREMENT, OCTETS 64-67
-!                    (18): J-DIRECTION INCREMENT, OCTETS 68-71
-!                    (19): SCANNING MODE, OCTET 72
-!                    (20): LATITUDE OF SOUTHERN POLE OF PROJECTION,
-!                          OCTETS 73-76
-!                    (21): LONGITUDE OF SOUTHERN POLE OF PROJECTION,
-!                          OCTETS 77-80
-!                    (22): ANGLE OF ROTATION OF PROJECTION, OCTS 81-84
-!     NPTS_INPUT   - INTEGER NUMBER POINTS INPUT GRID
-!     BITMAP_INPUT - LOGICAL (NPTS_INPUT) INPUT GRID BITMAP
-!     DATA_INPUT   - REAL (NPTS_INPUT) INPUT GRID DATA
-!     NPTS_OUTPUT  - INTEGER NUMBER POINTS OUTPUT GRID. THE J-DIMENSION
-!                    OF THE INPUT AND OUTPUT GRIDS ARE THE SAME. 
-!                    WHEN GOING FROM A STAGGERED TO A FULL GRID THE
-!                    I-DIMENSION INCREASES TO IDIM*2-1.  WHEN GOING
-!                    FROM FULL TO STAGGERED THE I-DIMENSION DECREASES
-!                    TO (IDIM+1)/2.
-!
-!   OUTPUT ARGUMENT LIST:
-!     IGDTNUMO      - INTEGER GRID DEFINITION TEMPLATE NUMBER - OUTPUT GRID.
-!                     CORRESPONDS TO THE GFLD%IGDTNUM COMPONENT OF THE
-!                     NCEP G2 LIBRARY GRIDMOD DATA STRUCTURE.
-!                     SAME AS IGDTNUMI (=1 FOR A ROTATED LAT/LON GRID).
-!     IGDTMPLO      - INTEGER (IGDTLEN) GRID DEFINITION TEMPLATE ARRAY -
-!                     OUTPUT GRID. CORRESPONDS TO THE GFLD%IGDTMPL COMPONENT
-!                     OF THE NCEP G2 LIBRARY GRIDMOD DATA STRUCTURE.
-!                     ARRAY DEFINITIONS SAME AS "IGDTMPLI"
-!     BITMAP_OUTPUT - LOGICAL (NPTS_OUTUT) OUTPUT GRID BITMAP
-!     DATA_OUTPUT   - REAL (NPTS_OUTPUT) OUTPUT GRID DATA
-!     IRET          - INTEGER RETURN CODE
-!                     0     SUCCESSFUL TRANSFORMATION
-!                     NON-0 INVALID GRID SPECS OR PROBLEM IN IPOLATES
-!
-! ATTRIBUTES:
-!   LANGUAGE: FORTRAN 90
-!
-!$$$
  IMPLICIT NONE
 !
  INTEGER,         INTENT(IN   )    :: IDIR
