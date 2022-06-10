@@ -37,6 +37,7 @@ endif()
 # If the user wants to use the NCEPLIBS-sp library, find it.
 if (ENABLE_SP)
   find_package(sp 2.3.0 REQUIRED)
+  SET(ENABLE_SP ON CACHE BOOL "")
 endif()
 
 # If doxygen documentation we enabled, build it. This must come before

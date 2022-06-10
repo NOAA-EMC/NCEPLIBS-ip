@@ -63,8 +63,10 @@ contains
        allocate(ip_mercator_grid::grid)
     case(LAMBERT_CONF_GRID_ID_GRIB1)
        allocate(ip_lambert_conf_grid::grid)
+#ifdef ENABLE_SP
     case(GAUSSIAN_GRID_ID_GRIB1)
        allocate(ip_gaussian_grid::grid)
+#endif
     case(POLAR_STEREO_GRID_ID_GRIB1)
        allocate(ip_polar_stereo_grid::grid)
     case(ROT_EQUID_CYLIND_E_GRID_ID_GRIB1)
@@ -111,8 +113,10 @@ contains
        allocate(ip_polar_stereo_grid::grid)
     case(LAMBERT_CONF_GRID_ID_GRIB2)
        allocate(ip_lambert_conf_grid::grid)
+#ifdef ENABLE_SP
     case(GAUSSIAN_GRID_ID_GRIB2)
        allocate(ip_gaussian_grid::grid)
+#endif
     case default
        print *, "gdt_num: ", g2_desc%gdt_num, " not recognized"
        error stop

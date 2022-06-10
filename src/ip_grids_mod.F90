@@ -1,7 +1,9 @@
 module ip_grids_mod
   ! Re-export the individual grids
   use ip_equid_cylind_grid_mod
+#ifdef ENABLE_SP
   use ip_gaussian_grid_mod
+#endif
   use ip_lambert_conf_grid_mod
   use ip_polar_stereo_grid_mod
   use ip_rot_equid_cylind_grid_mod

@@ -9,7 +9,9 @@ module ip_interpolators_mod
   use bicubic_interp_mod
   use budget_interp_mod
   use neighbor_interp_mod
+#ifdef USE_SP
   use spectral_interp_mod
+#endif
   use neighbor_budget_interp_mod
   implicit none
 
