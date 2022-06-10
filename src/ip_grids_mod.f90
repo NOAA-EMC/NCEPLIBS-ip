@@ -1,5 +1,10 @@
+!> @file
+!> @brief Re-export the individual grids.
+!> @author Kyle Gerheiser @date 7/21/21
+
+!> @brief Re-export the individual grids.
+!> @author Kyle Gerheiser @date 7/21/21
 module ip_grids_mod
-  ! Re-export the individual grids
   use ip_equid_cylind_grid_mod
   use ip_gaussian_grid_mod
   use ip_lambert_conf_grid_mod
