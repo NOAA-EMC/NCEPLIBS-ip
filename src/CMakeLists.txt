@@ -1,3 +1,6 @@
+# This is the CMake file for the src directory of NCEPLIBS-ip.
+#
+# Mark Potts, Kyle Gerheiser
 set(fortran_src
   earth_radius.f90 gdswzd_c.F90 gdswzd_mod.f90 ip2lib_4.h
   ip2lib_8.h ip2lib_d.h ipolates.f90 ipolatev.f90 ipxetas.f90 ipxwafs.f90 ipxwafs2.f90
