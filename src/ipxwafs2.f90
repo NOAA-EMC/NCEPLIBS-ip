@@ -25,8 +25,8 @@
 !> 2015-jul  gayno      - convert to grib 2
 !>
 !> @param[in] idir integer transform option
-!>                   (+1 to expand thinned fields to full fields)
-!>                   (-1 to contract full fields to thinned fields)
+!> - 1 to expand thinned fields to full fields
+!> - -1 to contract full fields to thinned fields
 !> @param[in] numpts_thin integer number of grid points - thinned
 !> grid. Must be 3447.
 !> @param[in] numpts_full integer number of grid points - full
@@ -34,7 +34,7 @@
 !> @param[in] km integer number of fields to transform
 !> @param[in] num_opt integer number of values to describe the thinned
 !> grid.  must be 73.  dimension of array opt_pts.
-!> @param[in] opt_pts integer (num_opt) number of grid points per row -
+!> @param[inout] opt_pts integer (num_opt) number of grid points per row -
 !> thinned grid - if idir=+1
 !> @param[in] igdtlen integer grid defintion template array length.
 !> must be 19 for lat/lon grids. corresponds to the gfld%igdtlen
@@ -63,18 +63,18 @@
 !> - 17 set to missing for thinned grid, octets 64-67
 !> - 18 j-direction increment, octets 68-71
 !> - 19 scanning mode, octet 72
-!> @param[in] data_thin real (numpts_thin,km) thinned grid fields if idir=+1
-!> @param[in] ib_thin integer (km) bitmap flags thinned grid - if idir=+1
-!> @param[in] bitmap_thin logical (numpts_thin,km) bitmap fields thin grid - if idir=+1
-!> @param[in] igdtmpl_full integer (igdtlen) grid definition template
+!> @param[inout] data_thin real (numpts_thin,km) thinned grid fields if idir=+1
+!> @param[inout] ib_thin integer (km) bitmap flags thinned grid - if idir=+1
+!> @param[inout] bitmap_thin logical (numpts_thin,km) bitmap fields thin grid - if idir=+1
+!> @param[inout] igdtmpl_full integer (igdtlen) grid definition template
 !> array - full grid - if idir=-1. corresponds to the gfld%igdtmpl
 !> component of the ncep g2 library gridmod data structure. same as
 !> igdtmpl_thin except: (8): number of points along a parallel, octs
 !> 31-34 (17): i-direction increment, octets 64-67
-!> @param[in] data_full real (numpts_full,km) full grid fields if idir=-1
-!> @param[in] ib_full integer (km) bitmap flags full grid - if idir=-1
-!> @param[in] bitmap_full logical (numpts_full,km) bitmap fields full grid - if idir=-1
-!> @param[in] iret integer return code
+!> @param[inout] data_full real (numpts_full,km) full grid fields if idir=-1
+!> @param[inout] ib_full integer (km) bitmap flags full grid - if idir=-1
+!> @param[inout] bitmap_full logical (numpts_full,km) bitmap fields full grid - if idir=-1
+!> @param[out] iret integer return code
 !>  - 0 successful transformation
 !>  - 1 improper grid specification
 !>
