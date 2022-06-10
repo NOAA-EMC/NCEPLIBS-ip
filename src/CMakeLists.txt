@@ -1,17 +1,25 @@
 # This is the CMake file for the src directory of NCEPLIBS-ip.
 #
-# Mark Potts, Kyle Gerheiser
+# Mark Potts, Kyle Gerheiser, Ed Hartnett
+
+# These fortran files are always included in the library.
 set(fortran_src
   earth_radius.f90 gdswzd_c.F90 gdswzd_mod.f90 ip2lib_4.h
   ip2lib_8.h ip2lib_d.h ipolates.f90 ipolatev.f90 ipxetas.f90 ipxwafs.f90 ipxwafs2.f90
   ipxwafs3.f90 movect.f90 bilinear_interp_mod.f90 bicubic_interp_mod.f90 neighbor_interp_mod.f90
   budget_interp_mod.f90 spectral_interp_mod.f90 neighbor_budget_interp_mod.f90
-  ip_mod.f90 ip_grid_descriptor_mod.f90 ip_grid_mod.f90 ip_station_points_grid_mod.f90 ip_gaussian_grid_mod.f90
+  ip_mod.f90 ip_grid_descriptor_mod.f90 ip_grid_mod.f90 ip_station_points_grid_mod.f90 
   ip_equid_cylind_grid_mod.f90 ip_lambert_conf_grid_mod.f90 ip_mercator_grid_mod.f90 ip_polar_stereo_grid_mod.f90
   ip_rot_equid_cylind_egrid_mod.f90 ip_rot_equid_cylind_grid_mod.f90 constants_mod.f90 ip_grids_mod.f90 ip_grid_factory_mod.f90
   ip_interpolators_mod.f90 earth_radius_mod.f90 polfix_mod.f90
   )
 
+# Don't use these source files unless the sp library is enabled.
+if (ENABLE_SP)
+  list (APPEND fortran_src ip_gaussian_grid_mod.f90)
+endif()
+
+# Set flags for different compilers.
 if(CMAKE_Fortran_COMPILER_ID MATCHES "^(Intel)$")
   set(CMAKE_Fortran_FLAGS "-g -traceback -warn all -auto -convert big_endian -assume byterecl -fp-model strict -fpp ${CMAKE_Fortran_FLAGS}")
   set(CMAKE_Fortran_FLAGS_DEBUG "-O0 -check all -warn all")
@@ -24,6 +32,7 @@ elseif(CMAKE_Fortran_COMPILER_ID MATCHES "^(GNU)$")
   set(fortran_8_flags "-fdefault-integer-8 -fdefault-real-8")
 endif()
 
+# Handle the 3 different library builds.
 set(kinds "4" "8" "d")
 foreach(kind ${kinds})
   set(lib_name ${PROJECT_NAME}_${kind})
