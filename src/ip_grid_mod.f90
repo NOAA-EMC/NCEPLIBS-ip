@@ -88,7 +88,7 @@ module ip_grid_mod
      !> xlon, xlat, ylon, ylat, area)
      !> Interface to gdswzd().
      !>
-     !> @param[in] self ???
+     !> @param[in] self ip_grid_mod object.
      !> @param[in] iopt option flag
      !> - 1 to compute earth coords of selected grid coords
      !> - -1 to compute grid coords of selected earth coords
