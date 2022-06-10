@@ -48,7 +48,7 @@ jobs:
         cd ip
         mkdir build 
         cd build
-        cmake .. -DENABLE_DOCS=No -DCMAKE_PREFIX_PATH="~/" -DENABLE_SP=${{ matrix.sp }}-DOPENMP=${{ matrix.openmp }} -DCMAKE_Fortran_FLAGS="-g -fprofile-abs-path -fprofile-arcs -ftest-coverage -O0" -DCMAKE_C_FLAGS="-g -fprofile-abs-path -fprofile-arcs -ftest-coverage -O0"
+        cmake .. -DENABLE_DOCS=No -DCMAKE_PREFIX_PATH="~/" -DENABLE_SP=${{ matrix.sp }} -DOPENMP=${{ matrix.openmp }} -DCMAKE_Fortran_FLAGS="-g -fprofile-abs-path -fprofile-arcs -ftest-coverage -O0" -DCMAKE_C_FLAGS="-g -fprofile-abs-path -fprofile-arcs -ftest-coverage -O0"
         make -j2
     
     - name: test
