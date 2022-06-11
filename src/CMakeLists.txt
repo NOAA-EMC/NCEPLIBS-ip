@@ -5,7 +5,7 @@
 # These fortran files are always included in the library.
 set(fortran_src
   earth_radius.f90 gdswzd_c.F90 gdswzd_mod.f90 ip2lib_4.h
-  ip2lib_8.h ip2lib_d.h ipolates.f90 ipolatev.f90 ipxetas.f90 ipxwafs.f90 ipxwafs2.f90
+  ip2lib_8.h ip2lib_d.h ipolates.F90 ipolatev.f90 ipxetas.f90 ipxwafs.f90 ipxwafs2.f90
   ipxwafs3.f90 movect.f90 bilinear_interp_mod.f90 bicubic_interp_mod.f90 neighbor_interp_mod.f90
   budget_interp_mod.f90 neighbor_budget_interp_mod.f90
   ip_mod.f90 ip_grid_descriptor_mod.f90 ip_grid_mod.f90 ip_station_points_grid_mod.f90 
