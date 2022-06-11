@@ -2,14 +2,14 @@
 #
 # Mark Potts, Kyle Gerheiser
 set(fortran_src
-  earth_radius.f90 gdswzd_c.F90 gdswzd_mod.f90 ip2lib_4.h
-  ip2lib_8.h ip2lib_d.h ipolates.f90 ipolatev.f90 ipxetas.f90 ipxwafs.f90 ipxwafs2.f90
-  ipxwafs3.f90 movect.f90 bilinear_interp_mod.f90 bicubic_interp_mod.f90 neighbor_interp_mod.f90
-  budget_interp_mod.f90 spectral_interp_mod.f90 neighbor_budget_interp_mod.f90
-  ip_mod.f90 ip_grid_descriptor_mod.f90 ip_grid_mod.f90 ip_station_points_grid_mod.f90 ip_gaussian_grid_mod.f90
-  ip_equid_cylind_grid_mod.f90 ip_lambert_conf_grid_mod.f90 ip_mercator_grid_mod.f90 ip_polar_stereo_grid_mod.f90
-  ip_rot_equid_cylind_egrid_mod.f90 ip_rot_equid_cylind_grid_mod.f90 constants_mod.f90 ip_grids_mod.f90 ip_grid_factory_mod.f90
-  ip_interpolators_mod.f90 earth_radius_mod.f90 polfix_mod.f90
+  earth_radius.F90 gdswzd_c.F90 gdswzd_mod.F90 ip2lib_4.h
+  ip2lib_8.h ip2lib_d.h ipolates.F90 ipolatev.F90 ipxetas.F90 ipxwafs.F90 ipxwafs2.F90
+  ipxwafs3.F90 movect.F90 bilinear_interp_mod.F90 bicubic_interp_mod.F90 neighbor_interp_mod.F90
+  budget_interp_mod.F90 spectral_interp_mod.F90 neighbor_budget_interp_mod.F90
+  ip_mod.F90 ip_grid_descriptor_mod.F90 ip_grid_mod.F90 ip_station_points_grid_mod.F90 ip_gaussian_grid_mod.F90
+  ip_equid_cylind_grid_mod.F90 ip_lambert_conf_grid_mod.F90 ip_mercator_grid_mod.F90 ip_polar_stereo_grid_mod.F90
+  ip_rot_equid_cylind_egrid_mod.F90 ip_rot_equid_cylind_grid_mod.F90 constants_mod.F90 ip_grids_mod.F90 ip_grid_factory_mod.F90
+  ip_interpolators_mod.F90 earth_radius_mod.F90 polfix_mod.F90
   )
 
 if(CMAKE_Fortran_COMPILER_ID MATCHES "^(Intel)$")
