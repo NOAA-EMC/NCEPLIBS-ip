@@ -5,6 +5,9 @@
 
 !> @brief GDS wizard for mercator cylindrical.
 !>
+!> Octet numbers refer to [GRIB2 - GRID DEFINITION TEMPLATE 3.10 -
+!> Mercator](https://www.nco.ncep.noaa.gov/pmb/docs/grib2/grib2_doc/grib2_temp3-10.shtml).
+!>
 !> @author Iredell @date 96-04-10
 module ip_mercator_grid_mod
   use ip_grid_descriptor_mod
@@ -38,8 +41,8 @@ CONTAINS
 
   !> Init GRIB1.
   !>
-  !> @param[inout] self ???
-  !> @param[in] g1_desc ???
+  !> @param[inout] self ip_mercator_grid object.
+  !> @param[in] g1_desc GRIB1 descriptor.
   !>
   !> @author Iredell @date 96-04-10  
   subroutine init_grib1(self, g1_desc)
@@ -86,8 +89,8 @@ CONTAINS
 
   !> Init GRIB2.
   !>
-  !> @param[inout] self ???
-  !> @param[in] g2_desc ???
+  !> @param[inout] self ip_mercator_grid object.
+  !> @param[in] g2_desc GRIB2 descriptor.
   !>
   !> @author Iredell @date 96-04-10  
   subroutine init_grib2(self, g2_desc)
