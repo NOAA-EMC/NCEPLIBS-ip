@@ -13,6 +13,7 @@ project(
   
 include(GNUInstallDirs)
 
+# Handle build options.
 option(ENABLE_DOCS "Enable generation of doxygen-based documentation." OFF)
 option(OPENMP "use OpenMP threading" OFF)
 
@@ -21,10 +22,13 @@ if(NOT CMAKE_BUILD_TYPE MATCHES "^(Debug|Release|RelWithDebInfo|MinSizeRel)$")
   set(CMAKE_BUILD_TYPE "Release" CACHE STRING "Choose the type of build." FORCE)
   set_property(CACHE CMAKE_BUILD_TYPE PROPERTY STRINGS "Debug" "Release" "MinSizeRel" "RelWithDebInfo")
 endif()
+
+# We only have valid options for the 4,8,d builds with these compilers.
 if(NOT CMAKE_Fortran_COMPILER_ID MATCHES "^(Intel|GNU)$")
   message(WARNING "Compiler not officially supported: ${CMAKE_Fortran_COMPILER_ID}")
 endif()
 
+# If the user wants to use OpenMP, find it.
 if(OPENMP)
   find_package(OpenMP REQUIRED COMPONENTS Fortran)
 endif()
@@ -40,8 +44,10 @@ if(ENABLE_DOCS)
   add_subdirectory(docs)  
 endif()
 
+# Build the library.
 add_subdirectory(src)
 
+# Build and run tests.
 include(CTest)
 if(BUILD_TESTING)
     add_subdirectory(tests)

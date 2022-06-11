@@ -1,6 +1,8 @@
 # This is the CMake file for the src directory of NCEPLIBS-ip.
 #
 # Mark Potts, Kyle Gerheiser
+
+# These fortran files are always included in the library.
 set(fortran_src
   earth_radius.F90 gdswzd_c.F90 gdswzd_mod.F90 ip2lib_4.h
   ip2lib_8.h ip2lib_d.h ipolates.F90 ipolatev.F90 ipxetas.F90 ipxwafs.F90 ipxwafs2.F90
@@ -12,6 +14,7 @@ set(fortran_src
   ip_interpolators_mod.F90 earth_radius_mod.F90 polfix_mod.F90
   )
 
+# Set flags for different compilers.
 if(CMAKE_Fortran_COMPILER_ID MATCHES "^(Intel)$")
   set(CMAKE_Fortran_FLAGS "-g -traceback -warn all -auto -convert big_endian -assume byterecl -fp-model strict -fpp ${CMAKE_Fortran_FLAGS}")
   set(CMAKE_Fortran_FLAGS_DEBUG "-O0 -check all -warn all")
@@ -24,6 +27,7 @@ elseif(CMAKE_Fortran_COMPILER_ID MATCHES "^(GNU)$")
   set(fortran_8_flags "-fdefault-integer-8 -fdefault-real-8")
 endif()
 
+# Handle the 3 different library builds.
 set(kinds "4" "8" "d")
 foreach(kind ${kinds})
   set(lib_name ${PROJECT_NAME}_${kind})
