@@ -1,8 +1,8 @@
 !> @file
-!> @brief Expand or contract eta grids.
+!> @brief Expand or contract eta grids using linear interpolation.
 !> @author Iredell @date 96-04-10
 
-!> Expand or contract eta grids.
+!> Expand or contract eta grids using linear interpolation.
 !>
 !> This subprogram transforms between the staggered eta grids as used
 !> in the eta model and for native grid transmission and their full
@@ -10,6 +10,12 @@
 !> grids are rotated latitude-longitude grids staggered as defined by
 !> the arakawa e-grid, that is with mass data points alternating with
 !> wind data points.
+!>
+!> This is similar to:
+!> - ipxwafs2() which uses linear interpolation and accounts for
+!> - bitmapped data.
+!> - ipxwafs2() which uses neighbor interpolation and accounts for
+!> - bitmapped data.
 !>
 !> ### Program History Log
 !> Date | Programmer | Comments

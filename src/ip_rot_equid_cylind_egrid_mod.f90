@@ -33,9 +33,9 @@ module ip_rot_equid_cylind_egrid_mod
      real(kd) :: hi !< ???
      integer :: irot !< ???
    contains
-     procedure :: init_grib1 !< ??? @return N/A
-     procedure :: init_grib2 !< ??? @return N/A
-     procedure :: gdswzd => gdswzd_rot_equid_cylind_egrid !< ??? @return N/A
+     procedure :: init_grib1 !< Initialize with GRIB1 descriptor. @return N/A
+     procedure :: init_grib2 !< Initialize with GRIB2 descriptor @return N/A
+     procedure :: gdswzd => gdswzd_rot_equid_cylind_egrid !< gdswzd() @return N/A
   end type ip_rot_equid_cylind_egrid
 
   INTEGER :: IROT !< ???

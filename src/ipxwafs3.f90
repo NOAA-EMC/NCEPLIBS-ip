@@ -1,8 +1,10 @@
 !> @file
-!> @brief Expand or contract wafs grids.
+!> @brief Expand or contract wafs grids using neighbor interpolation
+!> and accout for bitmapped data.
 !> @author Trojan @date 7-7-13
 
-!> Expand or contract wafs grids.
+!> Expand or contract wafs grids using neighbor interpolation
+!> and accout for bitmapped data.
 !>
 !> This subprogram transforms between the thinned wafs grids used for
 !> transmitting to the aviation community and their full expansion as
@@ -16,6 +18,11 @@
 !> The transform between the full and thinned wafs wafs grid is done
 !> by linear interpolation and is not reversible. This routine works
 !> with bitmapped data.
+!>
+!> This subroutine is similar to:
+!> - ipxwafs() which uses linear interpolation.
+!> - ipxwafs2() which uses linear interpolation and accounts for
+!> - bitmapped data.
 !>
 !> ### Program History Log
 !> Date | Programmer | Comments
