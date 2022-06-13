@@ -5,6 +5,9 @@
 
 !> @brief GDS wizard for mercator cylindrical.
 !>
+!> Octet numbers refer to [GRIB2 - GRID DEFINITION TEMPLATE 3.10 -
+!> Mercator](https://www.nco.ncep.noaa.gov/pmb/docs/grib2/grib2_doc/grib2_temp3-10.shtml).
+!>
 !> @author Iredell @date 96-04-10
 module ip_mercator_grid_mod
   use ip_grid_descriptor_mod
@@ -17,17 +20,17 @@ module ip_mercator_grid_mod
   public :: ip_mercator_grid
 
   type, extends(ip_grid) :: ip_mercator_grid
-     real :: rlat1 !< ???
-     real :: rlon1 !< ???
-     real :: rlon2 !< ???
-     real :: rlati !< ???
-     real :: hi !< ???
-     real :: dlon !< ???
-     real :: dphi !< ???
+     real :: rlat1 !< Latitude of first grid point. Section 3, octets 39-42.
+     real :: rlon1 !< Longitude of first grid point. Section 3, octets 43-46.
+     real :: rlon2 !< Longitude of last grid point. Section 3, octets 56-59.
+     real :: rlati !< Latitude at which the Mercator projection intersects the Earth. Section 3, octets 48-51.
+     real :: hi !< Scan mode in the 'i' direction. Section 3, octet 60.
+     real :: dlon !< Longitudinal direction grid length. Section 3, octets 65-68.
+     real :: dphi !< Latitudinal direction grid length. Section 3, octets 69-72.
    contains
-     procedure :: init_grib1 !< ??? @return N/A
-     procedure :: init_grib2 !< ??? @return N/A
-     procedure :: gdswzd => gdswzd_mercator !< ??? @return N/A
+     procedure :: init_grib1 !< Init GRIB1. @return N/A
+     procedure :: init_grib2 !< Init GRIB2. @return N/A
+     procedure :: gdswzd => gdswzd_mercator !< gdswzd() @return N/A
   end type ip_mercator_grid
 
   REAL :: DLON !< ???
@@ -38,8 +41,8 @@ CONTAINS
 
   !> Init GRIB1.
   !>
-  !> @param[inout] self ???
-  !> @param[in] g1_desc ???
+  !> @param[inout] self ip_mercator_grid object.
+  !> @param[in] g1_desc GRIB1 descriptor.
   !>
   !> @author Iredell @date 96-04-10  
   subroutine init_grib1(self, g1_desc)
@@ -86,8 +89,8 @@ CONTAINS
 
   !> Init GRIB2.
   !>
-  !> @param[inout] self ???
-  !> @param[in] g2_desc ???
+  !> @param[inout] self ip_mercator_grid object.
+  !> @param[in] g2_desc GRIB2 descriptor.
   !>
   !> @author Iredell @date 96-04-10  
   subroutine init_grib2(self, g2_desc)
