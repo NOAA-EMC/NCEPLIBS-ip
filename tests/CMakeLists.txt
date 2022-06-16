@@ -20,12 +20,12 @@ endif()
 
 
 # grib-2 tests
-add_library(test_library_grib2 input_data_mod_grib2.f90 interp_mod_grib2.f90)
+add_library(test_library_grib2 input_data_mod_grib2.F90 interp_mod_grib2.F90)
 target_link_libraries(test_library_grib2 PUBLIC ip::ip_d)
 
 add_executable(test_gdswzd_grib2 test_gdswzd_grib2.c)
-add_executable(test_scalar_grib2 test_scalar_grib2.f90)
-add_executable(test_vector_grib2 test_vector_grib2.f90)
+add_executable(test_scalar_grib2 test_scalar_grib2.F90)
+add_executable(test_vector_grib2 test_vector_grib2.F90)
 
 target_link_libraries(test_gdswzd_grib2 PRIVATE test_library_grib2)
 target_link_libraries(test_scalar_grib2 PRIVATE test_library_grib2)
@@ -53,12 +53,12 @@ add_test(test_rotatedE_budget_vector_grib2 test_vector_grib2 203 3)
 
 
 # grib-1 tests
-add_library(test_library_grib1 input_data_mod_grib1.f90 interp_mod_grib1.f90)
+add_library(test_library_grib1 input_data_mod_grib1.F90 interp_mod_grib1.F90)
 target_link_libraries(test_library_grib1 PUBLIC ip::ip_d)
 
 add_executable(test_gdswzd_grib1 test_gdswzd_grib1.c)
-add_executable(test_scalar_grib1 test_scalar_grib1.f90)
-add_executable(test_vector_grib1 test_vector_grib1.f90)
+add_executable(test_scalar_grib1 test_scalar_grib1.F90)
+add_executable(test_vector_grib1 test_vector_grib1.F90)
 
 target_link_libraries(test_scalar_grib1 PRIVATE test_library_grib1)
 target_link_libraries(test_vector_grib1 PRIVATE test_library_grib1)
