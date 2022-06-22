@@ -1,28 +1,34 @@
 @mainpage
-# Documentation of the general interpolation library - iplib
 
 ## Introduction
 
-The NCEP general interpolation library (ip2lib) contains Fortran 90 subprograms
-to be used for interpolating between nearly all grids used at NCEP.
-The library is particularly efficient when interpolating many fields at one time.
+The NCEP general interpolation library (NCEPLIBS-ip) contains Fortran
+90 subprograms to be used for interpolating between nearly all grids
+used at NCEP. The library is particularly efficient when interpolating
+many fields at one time.
 
-There are currently six interpolation methods available in the library:
-bilinear, bicubic, neighbor, budget, spectral and neighbor-budget.
+## Interpolation
 
-Some of the methods have interpolation sub-options. A few methods
-have restrictions on the type of input or output grids.
+There are currently six interpolation methods available in the
+library: bilinear, bicubic, neighbor, budget, spectral and
+neighbor-budget.
+
+Some of the methods have interpolation sub-options. A few methods have
+restrictions on the type of input or output grids.
+
 Also, several methods can perform interpolation on fields with bitmaps
 (i.e. some points on the input grid may be undefined). In this case,
 the bitmap is interpolated to the output grid. Only valid input points
-are used to interpolate to valid output points. An output bitmap will also be
-created to locate invalid data where the output grid extends outside the domain
-of the input grid. 
+are used to interpolate to valid output points. An output bitmap will
+also be created to locate invalid data where the output grid extends
+outside the domain of the input grid.
 
-The driver routine for interpolating scalars is ipolates, while the routine
+The driver routine for interpolating scalars is ipolates(), while the routine
 for interpolating vectors is ipolatev. The interpolation method is chosen
 via the first argument of these routines (variable IP). Sub-options are
 set via the IPOPT array.
+
+### Bilinear Interpolation
 
 Bilinear interpolation is chosen by setting IP=0. This method has two 
 sub-options. (1) The percent of valid input data required to make output
@@ -31,12 +37,19 @@ a spiral search may be performed. The spiral search is only
 an option for scalar data. The bilinear method also has no restrictions
 and can interpolate with bitmaps.
 
-Bicubic interpolation is chosen by setting IP=1. This method has two sub-options,
-(1) A monotonic constraint option for straight bicubic or
-for constraining the output value to be within the range of the four
-surrounding input values. (2) The percent of valid input data
-required to make output data, which defaults to 50%. Note: the bicubic method
-cannot interpolate data with bitmaps.
+### Bicubic Interpolation
+
+Bicubic interpolation is chosen by setting IP=1. This method has two
+sub-options:
+
+1. A monotonic constraint option for straight bicubic or for
+constraining the output value to be within the range of the four
+surrounding input values.
+2. The percent of valid input data required to make output data, which
+defaults to 50%. Note: the bicubic method cannot interpolate data with
+bitmaps.
+
+### Neighbor Interpolation
 
 Neighbor interpolation is chosen by setting IP=2. Neighbor interpolation
 means that the output value is set to the nearest input value. It would be
@@ -45,14 +58,20 @@ This method has one sub-option: If valid input data is not found near an
 an output point, a spiral search is optionally performed. The neighbor
 method has no restrictions and can interpolate with bitmaps.
 
+### Budget interpolation
+
 Budget interpolation is chosen by setting IP=3. Budget interpolation
-means a low-order interpolation method that quasi-conserves area averages.
-It would be appropriate for interpolating budget fields such as precipitation.
-This method assumes that the field really represents box averages where each
-box extends halfway to its neighboring grid point in each direction.
-The method actually averages bilinearly interpolated values in a square array
-of points distributed within each output grid box. This method can
-interpolate data with bitmaps. There are several sub-options:
+means a low-order interpolation method that quasi-conserves area
+averages. It would be appropriate for interpolating budget fields
+such as precipitation.
+
+This method assumes that the field really represents box averages
+where each box extends halfway to its neighboring grid point in each
+direction. The method actually averages bilinearly interpolated
+values in a square array of points distributed within each output grid
+box. This method can interpolate data with bitmaps. There are several
+sub-options:
+
 -  (1) The number of points in the radius of the square array may be set.
    The default is 2, meaning that 25 sample points will be averaged
    for each output value. 
@@ -67,20 +86,25 @@ interpolate data with bitmaps. There are several sub-options:
    a spiral search may be invoked to search for the nearest valid data.
    search square (scalar interpolation only). 
 
-Spectral interpolation is chosen by setting IP=4. This method has two sub-options,
-to (1) set the spectral shape (triangular or rhomboidal) and (2) set the 
-spectral truncation. The input grid must be a global cylindrical grid
-(either Gaussian or equidistant). This method cannot interpolate data
-with bitmaps. Unless the output grid is a global cylindrical
-grid, a polar stereographic grid centered at the pole, or a Mercator grid,
-this method can be quite expensive.
+### Spectral Interpolation
+
+Spectral interpolation is chosen by setting IP=4. This method has two
+sub-options, to (1) set the spectral shape (triangular or rhomboidal)
+and (2) set the spectral truncation. The input grid must be a global
+cylindrical grid (either Gaussian or equidistant). This method cannot
+interpolate data with bitmaps. Unless the output grid is a global
+cylindrical grid, a polar stereographic grid centered at the pole, or
+a Mercator grid, this method can be quite expensive.
+
+### Neighbor-Budget Interpolation
 
 Neighbor-budget interpolation is chosen by setting IP=6. This method
 computes weighted averages of neighbor points arranged in a square box
 centered around each output grid point and stretching nearly halfway
-to each of the neighboring grid points. The main difference with 
-the budget interpolation (IP=3) is neighbor vs bilinear interpolation
-of the square box of points. There are the following sub-options:
+to each of the neighboring grid points. The main difference with the
+budget interpolation (IP=3) is neighbor vs bilinear interpolation of
+the square box of points. There are the following sub-options:
+
 -  (1) The number of points in the radius of the square array may be set.
    The default is 2, meaning that 25 sample points will be averaged
    for each output value. 
@@ -89,20 +113,27 @@ of the square box of points. There are the following sub-options:
 -  (3) The percent of valid input data required to make output data is
    adjustable. The default is 50%.
 
-The library can handle two-dimensional vector fields as well as scalar fields.
-The input and output vectors are rotated if necessary so that they are
-either resolved relative to their defined grid in the direction of
-increasing x and y coordinates or resolved relative to eastward and northward
-directions on the earth. The rotation is determined by the grid definitions.
-Vectors are generally interpolated (by all methods but spectral interpolation)
-by moving the relevant input vectors along a great circle to the output point,
-keeping their orientations with respect to the great circle constant, before
-independently interpolating the respective components. This ensures that vector
-interpolation will be consistent over the whole globe including the poles.
+## Vectors and Scalars
 
-The input and output grids are defined by their respective GRIB2 grid definition
-template and template number as decoced by the NCEP G2 library. There
-are six map projections recognized by the library:
+The library can handle two-dimensional vector fields as well as scalar
+fields.  The input and output vectors are rotated if necessary so that
+they are either resolved relative to their defined grid in the
+direction of increasing x and y coordinates or resolved relative to
+eastward and northward directions on the earth. The rotation is
+determined by the grid definitions.
+
+Vectors are generally interpolated (by all methods but spectral
+interpolation) by moving the relevant input vectors along a great
+circle to the output point, keeping their orientations with respect to
+the great circle constant, before independently interpolating the
+respective components. This ensures that vector interpolation will be
+consistent over the whole globe including the poles.
+
+## Grids
+
+The input and output grids are defined by their respective GRIB2 grid
+definition template and template number as decoced by the NCEP G2
+library. There are six map projections recognized by the library:
 
 Grid def. template #    | Map projection
 --------------------    | ---------------------------------
@@ -114,83 +145,87 @@ Grid def. template #    | Map projection
        40               | Gaussian equidistant cyclindrical
 
 If the output grid definition template number is negative, then the
-output data may be just a set of station points. In this case, the user must pass
-the number of points to be output along with their latitudes and longitudes.
-For vector interpolation, the vector rotations parameters must also be passed.
-On the other hand, for non-negative output data representation types,
-the number of output grid points and their latitudes and longitudes
-(and the vector rotation parameters for vector interpolation) are all
-returned by the interpolation subprograms.
+output data may be just a set of station points. In this case, the
+user must pass the number of points to be output along with their
+latitudes and longitudes. For vector interpolation, the vector
+rotations parameters must also be passed. On the other hand, for
+non-negative output data representation types, the number of output
+grid points and their latitudes and longitudes (and the vector
+rotation parameters for vector interpolation) are all returned by the
+interpolation subprograms.
 
-If an output equidistant cylindrical grid contains multiple pole points, then
-the pole points are forced to be self-consistent. That is, scalar fields
-are obliged to be constant at the pole and vector components are obliged
-to exhibit a wavenumber one variation at the pole.
+If an output equidistant cylindrical grid contains multiple pole
+points, then the pole points are forced to be self-consistent. That
+is, scalar fields are obliged to be constant at the pole and vector
+components are obliged to exhibit a wavenumber one variation at the
+pole.
 
-Generally, only regular grids can be interpolated in this library. However,
-the thinned WAFS grids may be expanded to a regular grid (or vice versa)
-using subprograms ipxwafs/2/3. Eta data (with Arakawa "E" staggering)
-on the "H" or "V" grid may be expanded to a filled regular grid (or vice versa)
-using subprogram ipxetas.
+Generally, only regular grids can be interpolated in this
+library. However, the thinned WAFS grids may be expanded to a regular
+grid (or vice versa) using subprograms ipxwafs/2/3. Eta data (with
+Arakawa "E" staggering) on the "H" or "V" grid may be expanded to a
+filled regular grid (or vice versa) using subprogram ipxetas.
 
-The return code issued by an interpolation subprogram determines whether
-it ran successfully or how it failed. Check nonzero return codes
-against the docblock of the respective subprogram.
+## Return Codes
 
-Developers are encouraged to create additional interpolation methods or
-to create additional map projection "wizards" for ip2lib.
+The return code issued by an interpolation subprogram determines
+whether it ran successfully or how it failed. Check nonzero return
+codes against the docblock of the respective subprogram.
 
-Questions may be directed to: NCEP.List.EMC.nceplibs.Developers@noaa.gov
+Developers are encouraged to create additional interpolation methods
+or to create additional map projection "wizards" for ip2lib.
 
 ## Entry point list
 
-Scalar field interpolation subprograms
+Scalar field interpolation subprograms:
 
-   Name       |Function
-   ----       |------------------------------------------------------------------
-   IPOLATES   |IREDELL'S POLATE FOR SCALAR FIELDS
-   POLATES0   |INTERPOLATE SCALAR FIELDS (BILINEAR)
-   POLATES1   |INTERPOLATE SCALAR FIELDS (BICUBIC)
-   POLATES2   |INTERPOLATE SCALAR FIELDS (NEIGHBOR)
-   POLATES3   |INTERPOLATE SCALAR FIELDS (BUDGET)
-   POLATES4   |INTERPOLATE SCALAR FIELDS (SPECTRAL)
-   POLATES6   |INTERPOLATE SCALAR FIELDS (NEIGHBOR-BUDGET)
-   POLFIXS    |MAKE MULTIPLE POLE SCALAR VALUES CONSISTENT
+Name | Function
+---- |---------
+ipolates() | Iredell's polate for scalar fields
+polates0() | interpolate scalar fields (bilinear)
+polates1() | interpolate scalar fields (bicubic)
+polates2() | interpolate scalar fields (neighbor)
+polates3() | interpolate scalar fields (budget)
+polates4() | interpolate scalar fields (spectral)
+polates6() | interpolate scalar fields (neighbor-budget)
+polfixs() | make multiple pole scalar values consistent
 
-Vector field interpolation subprograms
+Vector field interpolation subprograms:
 
-   Name       |Function
-   ----       |------------------------------------------------------------------
-   IPOLATEV   |IREDELL'S POLATE FOR VECTOR FIELDS
-   POLATEV0   |INTERPOLATE VECTOR FIELDS (BILINEAR)
-   POLATEV1   |INTERPOLATE VECTOR FIELDS (BICUBIC)
-   POLATEV2   |INTERPOLATE VECTOR FIELDS (NEIGHBOR)
-   POLATEV3   |INTERPOLATE VECTOR FIELDS (BUDGET)
-   POLATEV4   |INTERPOLATE VECTOR FIELDS (SPECTRAL)
-   POLATEV6   |INTERPOLATE VECTOR FIELDS (NEIGHBOR-BUDGET)
-   MOVECT     |MOVE A VECTOR ALONG A GREAT CIRCLE
-   POLFIXV    |MAKE MULTIPLE POLE VECTOR VALUES CONSISTENT
+Name | Function
+---- | --------
+ipolatev() | iredell's polate for vector fields
+polatev0() | interpolate vector fields (bilinear)
+polatev1() | interpolate vector fields (bicubic)
+polatev2() | interpolate vector fields (neighbor)
+polatev3() | interpolate vector fields (budget)
+polatev4() | interpolate vector fields (spectral)
+polatev6() | interpolate vector fields (neighbor-budget)
+movect() | move a vector along a great circle
+polfixv()| make multiple pole vector values consistent
 
-Grid description section decoders
+Grid description section decoders:
 
-   Name       |Function
-   ----       |------------------------------------------------------------------
-   GDSWZD                          |GRID DESCRIPTION SECTION WIZARD
-   GDSWZD_C                        |'C' WRAPPER FOR CALLING GDSWZD
-   GDSWZD_EQUID_CYLIND             |GDS WIZARD FOR EQUIDISTANT CYCLINDRICAL
-   GDSWZD_MERCATOR                 |GDS WIZARD FOR MERCATOR CYCLINDRICAL
-   GDSWZD_LAMBERT_CONF             |GDS WIZARD FOR LAMBERT CONFORMAL CONICAL
-   GDSWZD_GAUSSIAN                 |GDS WIZARD FOR GAUSSIAN CYCLINDRICAL
-   GDSWZD_POLAR_STEREO             |GDS WIZARD FOR POLAR STEREOGRAPHIC
-   GDSWZD_ROT_EQUID_CYLIND_EGRID   |GDS WIZARD FOR ROTATED EQUIDISTANT CYCLINDRICAL "E" STAGGER.
-   GDSWZD_ROT_EQUID_CYLIND         |GDS WIZARD FOR ROTATED EQUIDISTANT CYCLINDRICAL NON "E" STAGGER.
-   IJKGDS0/1                       |RETURN FIELD POSITION FOR A GIVEN GRID POINT
+Name | Function
+---- | --------
+gdswzd() | grid description section (GDS) wizard
+gdswzd_c() | C wrapper for calling gdswzd
+gdswzd_equid_cylind() | GDS wizard for equidistant cyclindrical
+gdswzd_mercator() | GDS wizard for mercator cyclindrical
+gdswzd_lambert_conf() | GDS wizard for lambert conformal conical
+gdswzd_gaussian() | GDS wizard for gaussian cyclindrical
+gdswzd_polar_stereo() | GDS wizard for polar stereographic
+gdswzd_rot_equid_cylind_egrid() | GDS wizard for rotated equidistant cyclindrical "e" stagger.
+gdswzd_rot_equid_cylind() | GDS wizard for rotated equidistant cyclindrical non "e" stagger.
+ijkgds0/1 | return field position for a given grid point
    
-Transform subprograms for special irregular grids
+Transform subprograms for special irregular grids:
 
-   Name       |Function
-   ----       |------------------------------------------------------------------
-   IPXWAFS/2/3 |  EXPAND OR CONTRACT WAFS GRIDS
+Name | Function
+---- | --------
+ipxwafs() |  expand or contract wafs grids
+ipxwafs2() |  expand or contract wafs grids
+ipxwafs3() |  expand or contract wafs grids
 
 ## How to invoke ip2lib: examples
 
