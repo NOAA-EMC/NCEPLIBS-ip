@@ -1,11 +1,16 @@
 !> @file
 !! @brief Equidistant cylindrical grib decoder and grid coordinate
 !! transformations.
+!!
 !! @author Mark Iredell, George Gayno, Kyle Gerheiser
 !! @date July 2021
 
 !> Equidistant cylindrical grib decoder and grid coordinate
-!> transformations.
+!! transformations.
+!!
+!! Octet numbers refer to [GRIB2 - GRID DEFINITION TEMPLATE 3.0
+!! Latitude/Longitude or equidistant cylindrical, or Plate
+!! Carree](https://www.nco.ncep.noaa.gov/pmb/docs/grib2/grib2_doc/grib2_temp3-0.shtml).
 !!
 !! @author George Gayno, Mark Iredell, Kyle Gerheiser
 !! @date July 2021
@@ -19,7 +24,7 @@ module ip_equid_cylind_grid_mod
   public :: ip_equid_cylind_grid
 
   type, extends(ip_grid) :: ip_equid_cylind_grid
-     real :: hi !< ???
+     real :: hi !< ???  
      real :: rlat1 !< ???
      real :: rlon1 !< ???
      real :: rlat2 !< ???
