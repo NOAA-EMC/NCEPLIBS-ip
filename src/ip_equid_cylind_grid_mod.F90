@@ -1,11 +1,16 @@
 !> @file
 !! @brief Equidistant cylindrical grib decoder and grid coordinate
 !! transformations.
+!!
 !! @author Mark Iredell, George Gayno, Kyle Gerheiser
 !! @date July 2021
 
 !> Equidistant cylindrical grib decoder and grid coordinate
-!> transformations.
+!! transformations.
+!!
+!! Octet numbers refer to [GRIB2 - GRID DEFINITION TEMPLATE 3.0
+!! Latitude/Longitude or equidistant cylindrical, or Plate
+!! Carree](https://www.nco.ncep.noaa.gov/pmb/docs/grib2/grib2_doc/grib2_temp3-0.shtml).
 !!
 !! @author George Gayno, Mark Iredell, Kyle Gerheiser
 !! @date July 2021
@@ -19,13 +24,13 @@ module ip_equid_cylind_grid_mod
   public :: ip_equid_cylind_grid
 
   type, extends(ip_grid) :: ip_equid_cylind_grid
-     real :: hi !< ???
-     real :: rlat1 !< ???
-     real :: rlon1 !< ???
-     real :: rlat2 !< ???
-     real :: rlon2 !< ???
-     real :: dlat !< ???
-     real :: dlon !< ???
+     real :: hi !< Scan mode in the 'i' direction. GRIB2, Section 3, octet 72.
+     real :: rlat1 !< Latitude of first grid point. GRIB2, Section 3, octets 47-50.
+     real :: rlon1 !< Longitude of first grid point. GRIB2, Section 3, octets 51-54.
+     real :: rlat2 !< Latitude of last grid point. GRIB2, Section 3, octets 56-59.
+     real :: rlon2 !< Longitude of last grid point. GRIB2, Section 3, octets 60-63.
+     real :: dlat !< Di — i direction increment. GRIB2, Section 3, octets 64-67.
+     real :: dlon !< Dj — j direction increment. GRIB2, Section 3, octets 68-71.
    contains
      procedure :: init_grib1 !< Init GRIB1. @return N/A
      procedure :: init_grib2 !< Init GRIB2. @return N/A
