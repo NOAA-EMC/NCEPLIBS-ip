@@ -1,9 +1,10 @@
 !> @file
-!! @brief Top-level driver for scalar interpolation routine ipolates.
+!! @brief Top-level driver for scalar interpolation routine ipolates().
 !! @author Mark Iredell, Kyle Gerheiser
 
-!> Top-level driver for scalar interpolation interpolation routine ipolates.
-!! Ipolates is overloaded with interfaces for grib1 and grib2 descriptors
+!> @brief Top-level driver for scalar interpolation interpolation routine ipolates().
+!! ipolates() is overloaded with interfaces for grib1 and grib2
+!! descriptors.
 !!
 !! @author George Gayno, Mark Iredell, Kyle Gerheiser
 module ipolates_mod
@@ -25,8 +26,11 @@ module ipolates_mod
 
 contains
 
-  !> @brief Interpolates scalar fields between grids given ip_grid objects.
-  !! @details Calls the specific interpolation routines on the generic ip_grids created from a grib1/grib2 descriptor.
+  !> Interpolates scalar fields between grids given ip_grid objects.
+  !!
+  !! Calls the specific interpolation routines on the generic ip_grids
+  !! created from a grib1/grib2 descriptor.
+  !!
   !! @param[in]  ip Interpolation method.
   !! @param[in]  ipopt Interpolation options.
   !! @param[in]  grid_in Input grid.
@@ -51,6 +55,8 @@ contains
   !! - 1x Invalid bicubic method parameters.
   !! - 3x Invalid budget method parameters.
   !! - 4x Invalid spectral method parameters.
+  !!
+  !! @author Mark Iredell, Kyle Gerheiser
   subroutine ipolates_grid(ip, ipopt, grid_in, grid_out, mi, mo, km,&
        & ibi, li, gi, no, rlat, rlon, ibo, lo, go, iret)
     class(ip_grid), intent(in) :: grid_in, grid_out
@@ -183,11 +189,10 @@ contains
 
   END SUBROUTINE IPOLATES_grib1_single_field
 
-
-  !> @brief This subprogram interpolates scalar field from any grid
+  !> This subprogram interpolates scalar field from any grid
   !! to any grid given a grib1 Grid Descriptor Section.
   !!
-  !! @details Only horizontal interpolation is performed.
+  !! Only horizontal interpolation is performed.
   !! The following interpolation methods are possible:
   !! - (ip=0) bilinear
   !! - (ip=1) bicubic
@@ -267,6 +272,8 @@ contains
   !! - 1x Invalid bicubic method parameters.
   !! - 3x Invalid budget method parameters.
   !! - 4x Invalid spectral method parameters.
+  !!
+  !! @author Mark Iredell, Kyle Gerheiser
   subroutine ipolates_grib1(ip,ipopt,kgdsi,kgdso,mi,mo,km,ibi,li,gi, &
        no,rlat,rlon,ibo,lo,go,iret) bind(c)
     !
@@ -297,11 +304,12 @@ contains
 
   END SUBROUTINE IPOLATES_grib1
   
-
-  !> @brief This subprogram interpolates scalar field from any grid to any grid given a grib2 descriptor.
-  !! @details Wrapper for ipolates_grid which converts a grib1 descriptor into an ip_grid_descriptor,
-  !! which is used to create an ip_grid.
-  !! Only horizontal interpolation is performed.
+  !> This subprogram interpolates scalar field from any grid to any
+  !! grid given a grib2 descriptor.
+  !!
+  !! Wrapper for ipolates_grid which converts a grib1 descriptor into
+  !! an ip_grid_descriptor, which is used to create an ip_grid. Only
+  !! horizontal interpolation is performed.
   !!
   !! The following interpolation methods are possible:
   !! - (ip=0) bilinear
@@ -546,6 +554,7 @@ contains
   !!   SPECTRAL| 4 | 0,-1         | 11.36
   !!   N-BUDGET| 6 | -1,-1        | 0.18
   !!
+  !! @author Mark Iredell, Kyle Gerheiser
   SUBROUTINE IPOLATES_grib2(IP,IPOPT,IGDTNUMI,IGDTMPLI,IGDTLENI, &
        IGDTNUMO,IGDTMPLO,IGDTLENO, &
        MI,MO,KM,IBI,LI,GI, &
@@ -578,8 +587,6 @@ contains
     CALL ipolates_grid(ip,IPOPT,grid_in,grid_out,MI,MO,KM,IBI,LI,GI,NO,RLAT,RLON,IBO,LO,GO,IRET)
 
   END SUBROUTINE IPOLATES_GRIB2
-
-
 
 end module ipolates_mod
 
