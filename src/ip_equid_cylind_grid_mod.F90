@@ -24,11 +24,11 @@ module ip_equid_cylind_grid_mod
   public :: ip_equid_cylind_grid
 
   type, extends(ip_grid) :: ip_equid_cylind_grid
-     real :: hi !< ???  
-     real :: rlat1 !< ???
-     real :: rlon1 !< ???
-     real :: rlat2 !< ???
-     real :: rlon2 !< ???
+     real :: hi !< Scan mode in the 'i' direction. GRIB2, Section 3, octet 72.
+     real :: rlat1 !< Latitude of first grid point. GRIB2, Section 3, octets 47-50.
+     real :: rlon1 !< Longitude of first grid point. GRIB2, Section 3, octets 51-54.
+     real :: rlat2 !< Latitude of last grid point. GRIB2, Section 3, octets 56-59.
+     real :: rlon2 !< Longitude of last grid point. GRIB2, Section 3, octets 60-63.
      real :: dlat !< ???
      real :: dlon !< ???
    contains
