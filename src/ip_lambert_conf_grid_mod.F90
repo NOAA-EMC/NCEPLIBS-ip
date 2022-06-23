@@ -24,13 +24,13 @@ module ip_lambert_conf_grid_mod
   type, extends(ip_grid) :: ip_lambert_conf_grid
      real :: rlat1 !< La1― latitude of first grid point. GRIB2, Section 3.30, octet 39-42.
      real :: rlon1 !< Lo1― longitude of first grid point. GRIB2, Section 3.30, octet 43-46.
-     real :: rlati1 !< ???
-     real :: rlati2 !< ???
-     real :: orient !< ???
-     real :: dxs !< ???
-     real :: dys !< ???
-     real :: h !< ???
-     integer :: irot !< ???
+     real :: rlati1 !< First latitude from the pole at which the secant cone cuts the sphere. GRIB2, Section 3, octets 66-69.
+     real :: rlati2 !< Second latitude from the pole at which the scant cone cuts the sphere. GRIB2, Section 3, octets 70-73.
+     real :: orient !<  Longitude of meridian parallel to y-axis along which latitude increases at the latitude increases. GRIB2, Section 3, octets 52-55.
+     real :: dxs !< x-direction grid length adjusted for scan mode. GRIB2, Section 3, octets 56-59.
+     real :: dys !< y-direction grid length adjusted for scan model. GRIB2, Section 3, octets 60-63.
+     real :: h !< Hemisphere flag. 1-NH, minus 1-SH.
+     integer :: irot !< vector rotation flag. When "1", vectors are grid relative. When "0", vectors are earth relative. GRIB2, Section 3, octet 55.
    contains
      !> Init GRIB1. @return N/A
      procedure :: init_grib1
