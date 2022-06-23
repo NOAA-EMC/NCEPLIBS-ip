@@ -3,8 +3,13 @@
 !>
 !> @author Iredell @date 96-04-10
 
-!> @brief GDS wizard for lambert conformal conical.
-!>
+!> @brief Lambert conformal grib decoder and grid coordinate
+!! transformations.
+!!
+!! Octet numbers refer to [GRIB2 - GRID DEFINITION TEMPLATE 3.30
+!! Lambert
+!! conformal](https://www.nco.ncep.noaa.gov/pmb/docs/grib2/grib2_doc/grib2_temp3-30.shtml).
+!!
 !> @author Iredell @date 96-04-10
 module ip_lambert_conf_grid_mod
   use ip_grid_descriptor_mod
@@ -17,8 +22,8 @@ module ip_lambert_conf_grid_mod
   public :: ip_lambert_conf_grid
 
   type, extends(ip_grid) :: ip_lambert_conf_grid
-     real :: rlat1 !< ???
-     real :: rlon1 !< ???
+     real :: rlat1 !< La1― latitude of first grid point. GRIB2, Section 3.30, octet 39-42.
+     real :: rlon1 !< Lo1― longitude of first grid point. GRIB2, Section 3.30, octet 43-46.
      real :: rlati1 !< ???
      real :: rlati2 !< ???
      real :: orient !< ???
