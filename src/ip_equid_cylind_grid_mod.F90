@@ -29,8 +29,8 @@ module ip_equid_cylind_grid_mod
      real :: rlon1 !< Longitude of first grid point. GRIB2, Section 3, octets 51-54.
      real :: rlat2 !< Latitude of last grid point. GRIB2, Section 3, octets 56-59.
      real :: rlon2 !< Longitude of last grid point. GRIB2, Section 3, octets 60-63.
-     real :: dlat !< ???
-     real :: dlon !< ???
+     real :: dlat !< Di — i direction increment. GRIB2, Section 3, octets 64-67.
+     real :: dlon !< Dj — j direction increment. GRIB2, Section 3, octets 68-71.
    contains
      procedure :: init_grib1 !< Init GRIB1. @return N/A
      procedure :: init_grib2 !< Init GRIB2. @return N/A
