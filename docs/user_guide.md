@@ -217,7 +217,7 @@ gdswzd_gaussian() | GDS wizard for gaussian cyclindrical
 gdswzd_polar_stereo() | GDS wizard for polar stereographic
 gdswzd_rot_equid_cylind_egrid() | GDS wizard for rotated equidistant cyclindrical "e" stagger.
 gdswzd_rot_equid_cylind() | GDS wizard for rotated equidistant cyclindrical non "e" stagger.
-ijkgds0/1 | return field position for a given grid point
+field_pos() | return field position for a given grid point
    
 Transform subprograms for special irregular grids:
 
