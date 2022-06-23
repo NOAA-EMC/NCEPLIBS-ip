@@ -27,9 +27,9 @@
 !> ### Program History Log
 !> Date | Programmer | Comments
 !> -----|------------|---------
-!> 96-04-10  iredell    - initial version
-!> 99-01-25  gilbert    - changed bitmap fields from logical to logical*1
-!> 2015-jul  gayno      - convert to grib 2
+!> 96-04-10 | iredell | initial version
+!> 99-01-25 | gilbert | changed bitmap fields from logical to logical*1
+!> 2015-jul | gayno | convert to grib 2
 !>
 !> @param[in] idir integer transform option
 !> - 1 to expand thinned fields to full fields
