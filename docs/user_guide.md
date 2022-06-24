@@ -181,7 +181,7 @@ Scalar field interpolation subprograms:
 
 Name | Function
 ---- |---------
-ipolates() | Iredell's polate for scalar fields
+[ipolates()](@ref ipolates_mod) | Iredell's polate for scalar fields
 polates0() | interpolate scalar fields (bilinear)
 polates1() | interpolate scalar fields (bicubic)
 polates2() | interpolate scalar fields (neighbor)
