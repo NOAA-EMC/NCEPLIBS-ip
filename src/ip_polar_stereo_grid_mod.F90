@@ -118,7 +118,7 @@ CONTAINS
   !! object.
   !!
   !! @param[inout] self The grid to initialize
-  !! @param[in] g1_desc A grib1_descriptor
+  !! @param[in] g2_desc A grib2_descriptor
   !!
   !! @author Iredell @date 96-04-10  
   subroutine init_grib2(self, g2_desc)
