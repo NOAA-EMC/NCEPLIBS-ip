@@ -3,8 +3,13 @@
 !>
 !> @author Iredell @date 96-04-10
 
-!> @brief GDS wizard for lambert conformal conical.
-!>
+!> @brief Lambert conformal grib decoder and grid coordinate
+!! transformations.
+!!
+!! Octet numbers refer to [GRIB2 - GRID DEFINITION TEMPLATE 3.30
+!! Lambert
+!! conformal](https://www.nco.ncep.noaa.gov/pmb/docs/grib2/grib2_doc/grib2_temp3-30.shtml).
+!!
 !> @author Iredell @date 96-04-10
 module ip_lambert_conf_grid_mod
   use ip_grid_descriptor_mod
@@ -17,15 +22,15 @@ module ip_lambert_conf_grid_mod
   public :: ip_lambert_conf_grid
 
   type, extends(ip_grid) :: ip_lambert_conf_grid
-     real :: rlat1 !< ???
-     real :: rlon1 !< ???
-     real :: rlati1 !< ???
-     real :: rlati2 !< ???
-     real :: orient !< ???
-     real :: dxs !< ???
-     real :: dys !< ???
-     real :: h !< ???
-     integer :: irot !< ???
+     real :: rlat1 !< La1― latitude of first grid point. GRIB2, Section 3.30, octet 39-42.
+     real :: rlon1 !< Lo1― longitude of first grid point. GRIB2, Section 3.30, octet 43-46.
+     real :: rlati1 !< First latitude from the pole at which the secant cone cuts the sphere. GRIB2, Section 3, octets 66-69.
+     real :: rlati2 !< Second latitude from the pole at which the scant cone cuts the sphere. GRIB2, Section 3, octets 70-73.
+     real :: orient !<  Longitude of meridian parallel to y-axis along which latitude increases at the latitude increases. GRIB2, Section 3, octets 52-55.
+     real :: dxs !< x-direction grid length adjusted for scan mode. GRIB2, Section 3, octets 56-59.
+     real :: dys !< y-direction grid length adjusted for scan model. GRIB2, Section 3, octets 60-63.
+     real :: h !< Hemisphere flag. 1-NH, minus 1-SH.
+     integer :: irot !< vector rotation flag. When "1", vectors are grid relative. When "0", vectors are earth relative. GRIB2, Section 3, octet 55.
    contains
      !> Init GRIB1. @return N/A
      procedure :: init_grib1
@@ -35,21 +40,21 @@ module ip_lambert_conf_grid_mod
      procedure :: gdswzd => gdswzd_lambert_conf
   end type ip_lambert_conf_grid
 
-  INTEGER :: IROT !< ???
-  REAL :: AN !< ???
-  REAL :: DXS !< ???
-  REAL :: DYS !< ???
-  REAL :: H !< ???
-  REAL :: RERTH !< ???
+  INTEGER :: IROT !< vector rotation flag. When "1", vectors are grid relative. When "0", vectors are earth relative. GRIB2, Section 3, octet 55.
+  REAL :: AN !< Cone factor
+  REAL :: DXS !< x-direction grid length adjusted for scan mode. GRIB2, Section 3, octets 56-59.
+  REAL :: DYS !< y-direction grid length adjusted for scan model. GRIB2, Section 3, octets 60-63.
+  REAL :: H !<  Hemisphere flag. 1-NH, minus 1-SH.
+  REAL :: RERTH !< Radius of the earth. GRIB2, Section 3, octets 15-30.
 
 contains
 
-  !> Init GRIB1.
-  !>
-  !> @param[inout] self ???
-  !> @param[in] g1_desc ???
-  !>
-  !> @author Iredell @date 96-04-10  
+  !> Initializes a Lambert Conformal grid given a grib1_descriptor object.
+  !!
+  !! @param[inout] self The grid to initialize
+  !! @param[in] g1_desc A grib1_descriptor
+  !!
+  !! @author Iredell @date 96-04-10  
   subroutine init_grib1(self, g1_desc)
     class(ip_lambert_conf_grid), intent(inout) :: self
     type(grib1_descriptor), intent(in) :: g1_desc
@@ -96,12 +101,12 @@ contains
 
   end subroutine init_grib1
 
-  !> Init GRIB2.
-  !>
-  !> @param[inout] self ???
-  !> @param[in] g2_desc ???
-  !>
-  !> @author Iredell @date 96-04-10  
+  !> Initializes a Lambert Conformal grid given a grib2_descriptor object.
+  !!
+  !! @param[inout] self The grid to initialize
+  !! @param[in] g2_desc A grib2_descriptor
+  !!
+  !! @author Iredell @date 96-04-10  
   subroutine init_grib2(self, g2_desc)
     class(ip_lambert_conf_grid), intent(inout) :: self
     type(grib2_descriptor), intent(in) :: g2_desc

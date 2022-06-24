@@ -35,17 +35,20 @@ module ip_grid_mod
   !! ip_grid is meant to be subclassed when implementing a new grid.
   !!
   !! There are three methods that must be implemented:
-  !! - init_grib1
-  !! - init_grib2
-  !! - gdswzd
+  !! - init_grib1()
+  !! - init_grib2()
+  !! - gdswzd()
   !!
   !! The init methods are responsible for setting up the grid
-  !! using grib1/grib2 descriptors.
+  !! using GRIB1/GRIB2 descriptors.
   !!
-  !! Gdswzd performs transformations to/from Earth coordinates and grid coordinates.
+  !! gdswzd() performs transformations to and from Earth coordinates
+  !! and grid coordinates.
   !!
-  !! @author Kyle Gerheiser
-  !! @date July 2021
+  !! A good reference for all the map projection equations used by
+  !! NCEPLIBS-ip can be found here: https://doi.org/10.3133/pp1395.
+  !!
+  !! @author Kyle Gerheiser @date July 2021
   type, abstract :: ip_grid
      class(ip_grid_descriptor), allocatable :: descriptor !< Descriptor.
      
@@ -54,11 +57,11 @@ module ip_grid_mod
      integer :: nm !< Total number of points
 
      !> @param Scanning mode.
-     !! 0 if x first then y;
-     !! 1 if y first then x;
-     !! 3 if staggered diagonal like projection 203.
+     !! - 0 if x first then y;
+     !! - 1 if y first then x;
+     !! - 3 if staggered diagonal like projection 203.
      integer :: nscan 
-     integer :: kscan !< Mass/wind flag for staggered diagonal (0 if mass; 1 if wind)
+     integer :: kscan !< Mass/wind flag for staggered diagonal (0 if mass; 1 if wind).
 
      integer :: nscan_field_pos !< nscan for field_pos routine. Can be different than nscan due to differences in grib/grib2.
      
@@ -66,7 +69,7 @@ module ip_grid_mod
      integer :: jwrap1 !< y wraparound lower pivot point (0 if no wraparound).
      integer :: jwrap2 !< y wraparound upper pivot point (0 if no wraparound).
      real :: rerth !< Radius of the Earth.
-     real :: eccen_squared !< Eccentricity of the Earth squared (e^2)
+     real :: eccen_squared !< Eccentricity of the Earth squared (e^2).
    contains
      !> Initializer for grib1 input descriptor. @return N/A
      procedure(init_grib1_interface), deferred :: init_grib1

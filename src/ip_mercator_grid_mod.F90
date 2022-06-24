@@ -166,7 +166,7 @@ CONTAINS
   !> 2015-07-13 | gayno | convert to grib 2. replace grib 1 kgds array with grib 2 grid definition template array. Rename.
   !> 2018-07-20 | wesley | add threads.
   !>
-  !> @param[in] self ???
+  !> @param[in] self grid descriptor.
   !> @param[in] iopt option flag
   !> - 1 to compute earth coords of selected grid coords
   !> - -1 to compute grid coords of selected earth coords

@@ -1,17 +1,17 @@
 !> @file
-!! Uses derived type grid descriptor objects to abstract away
-!! the raw Grib-1 and Grib-2 grid definitions.
+!! @brief Users derived type grid descriptor objects to abstract away
+!! the raw GRIB1 and GRIB2 grid definitions.
 !! @author Kyle Gerheiser
 
-!> Uses derived type grid descriptor objects to abstract away
-!! the raw Grib-1 and Grib-2 grid definitions.
+!> @brief Users derived type grid descriptor objects to abstract away
+!! the raw GRIB1 and GRIB2 grid definitions.
 !!
-!! An abstract ip_grid_descriptor class is subclassed by the
-!! Grib-1 and Grib-2 descriptor types which contain the raw integer
-!! grib arrays. A comparison operator to test whether two grid
-!! descriptors are the same is also included.
-!! @author Kyle Gerheiser
-!! @date July 2021
+!! An abstract ip_grid_descriptor class is subclassed by the GRIB1 and
+!! GRIB2 descriptor types which contain the raw integer grib arrays. A
+!! comparison operator to test whether two grid descriptors are the
+!! same is also included.
+!!
+!! @author Kyle Gerheiser @date July 2021
 module ip_grid_descriptor_mod
   implicit none
 
