@@ -45,6 +45,9 @@ module ip_grid_mod
   !! gdswzd() performs transformations to and from Earth coordinates
   !! and grid coordinates.
   !!
+  !! A good reference for all the map projection equations used by
+  !! NCEPLIBS-ip can be found here: https://doi.org/10.3133/pp1395.
+  !!
   !! @author Kyle Gerheiser @date July 2021
   type, abstract :: ip_grid
      class(ip_grid_descriptor), allocatable :: descriptor !< Descriptor.

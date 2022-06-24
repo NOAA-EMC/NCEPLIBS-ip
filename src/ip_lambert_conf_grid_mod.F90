@@ -40,21 +40,21 @@ module ip_lambert_conf_grid_mod
      procedure :: gdswzd => gdswzd_lambert_conf
   end type ip_lambert_conf_grid
 
-  INTEGER :: IROT !< ???
-  REAL :: AN !< ???
-  REAL :: DXS !< ???
-  REAL :: DYS !< ???
-  REAL :: H !< ???
-  REAL :: RERTH !< ???
+  INTEGER :: IROT !< vector rotation flag. When "1", vectors are grid relative. When "0", vectors are earth relative. GRIB2, Section 3, octet 55.
+  REAL :: AN !< Cone factor
+  REAL :: DXS !< x-direction grid length adjusted for scan mode. GRIB2, Section 3, octets 56-59.
+  REAL :: DYS !< y-direction grid length adjusted for scan model. GRIB2, Section 3, octets 60-63.
+  REAL :: H !<  Hemisphere flag. 1-NH, minus 1-SH.
+  REAL :: RERTH !< Radius of the earth. GRIB2, Section 3, octets 15-30.
 
 contains
 
-  !> Init GRIB1.
-  !>
-  !> @param[inout] self ???
-  !> @param[in] g1_desc ???
-  !>
-  !> @author Iredell @date 96-04-10  
+  !> Initializes a Lambert Conformal grid given a grib1_descriptor object.
+  !!
+  !! @param[inout] self The grid to initialize
+  !! @param[in] g1_desc A grib1_descriptor
+  !!
+  !! @author Iredell @date 96-04-10  
   subroutine init_grib1(self, g1_desc)
     class(ip_lambert_conf_grid), intent(inout) :: self
     type(grib1_descriptor), intent(in) :: g1_desc
@@ -101,12 +101,12 @@ contains
 
   end subroutine init_grib1
 
-  !> Init GRIB2.
-  !>
-  !> @param[inout] self ???
-  !> @param[in] g2_desc ???
-  !>
-  !> @author Iredell @date 96-04-10  
+  !> Initializes a Lambert Conformal grid given a grib2_descriptor object.
+  !!
+  !! @param[inout] self The grid to initialize
+  !! @param[in] g2_desc A grib2_descriptor
+  !!
+  !! @author Iredell @date 96-04-10  
   subroutine init_grib2(self, g2_desc)
     class(ip_lambert_conf_grid), intent(inout) :: self
     type(grib2_descriptor), intent(in) :: g2_desc
