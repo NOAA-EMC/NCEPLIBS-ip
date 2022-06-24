@@ -5,6 +5,10 @@
 
 !> @brief GDS wizard for polar stereographic azimuthal.
 !>
+!> Octet numbers refer to [GRIB2 - GRID DEFINITION TEMPLATE 3.20 Polar
+!> stereographic
+!> projection](https://www.nco.ncep.noaa.gov/pmb/docs/grib2/grib2_doc/grib2_temp3-20.shtml).
+!>
 !> @author Iredell @date 96-04-10
 module ip_polar_stereo_grid_mod
   use ip_grid_descriptor_mod
@@ -27,9 +31,11 @@ module ip_polar_stereo_grid_mod
      real :: slatr !< ???
      integer :: irot !< ???
    contains
-     procedure :: init_grib1 !< ??? @return N/A
-     procedure :: init_grib2 !< ??? @return N/A
-     procedure :: gdswzd => gdswzd_polar_stereo !< ??? @return N/A
+     procedure :: init_grib1 !< Initializes a grid given a grib1_descriptor object. @return N/A
+     procedure :: init_grib2 !< Initializes a grid given a grib2_descriptor object. @return N/A
+     !> Calculates Earth coordinates (iopt = 1) or grid coorindates
+     !> (iopt = -1). @return N/A
+     procedure :: gdswzd => gdswzd_polar_stereo
   end type ip_polar_stereo_grid
 
   INTEGER :: IROT !< ???
@@ -43,12 +49,13 @@ module ip_polar_stereo_grid_mod
 
 CONTAINS
 
-  !> Init GRIB1.
-  !>
-  !> @param[inout] self ???
-  !> @param[in] g1_desc ???
-  !>
-  !> @author Iredell @date 96-04-10  
+  !> Initializes a polar stereographic grid given a grib1_descriptor
+  !! object.
+  !!
+  !! @param[inout] self The grid to initialize
+  !! @param[in] g1_desc A grib1_descriptor
+  !!
+  !! @author Iredell @date 96-04-10  
   subroutine init_grib1(self, g1_desc)
     class(ip_polar_stereo_grid), intent(inout) :: self
     type(grib1_descriptor), intent(in) :: g1_desc
@@ -107,12 +114,13 @@ CONTAINS
 
   end subroutine init_grib1
 
-  !> Init GRIB2.
-  !>
-  !> @param[inout] self ???
-  !> @param[in] g2_desc ???
-  !>
-  !> @author Iredell @date 96-04-10  
+  !> Initializes a polar stereographic grid given a grib2_descriptor
+  !! object.
+  !!
+  !! @param[inout] self The grid to initialize
+  !! @param[in] g1_desc A grib1_descriptor
+  !!
+  !! @author Iredell @date 96-04-10  
   subroutine init_grib2(self, g2_desc)
     class(ip_polar_stereo_grid), intent(inout) :: self
     type(grib2_descriptor), intent(in) :: g2_desc
