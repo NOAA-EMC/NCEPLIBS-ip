@@ -5,6 +5,10 @@
 
 !> @brief Gaussian grid coordinate transformations.
 !!
+!! Octet numbers refer to [GRIB2 - GRID DEFINITION TEMPLATE 3.40
+!! Gaussian
+!! Latitude/Longitude](https://www.nco.ncep.noaa.gov/pmb/docs/grib2/grib2_doc/grib2_temp3-40.shtml).
+!!
 !! @author George Gayno, Mark Iredell, Kyle Gerheiser
 !! @date July 2021
 module ip_gaussian_grid_mod
