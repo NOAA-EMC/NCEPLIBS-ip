@@ -10,6 +10,7 @@ module spectral_interp_mod
   use ip_grid_mod
   use ip_grid_descriptor_mod
   use ip_grid_factory_mod
+  use earth_radius_mod
   implicit none
 
   private
