@@ -23,13 +23,13 @@ module ip_gaussian_grid_mod
 
   type, extends(ip_grid) :: ip_gaussian_grid
      integer :: jh !< ???
-     real :: dlon !< ???
-     real :: rlat1 !< ???
-     real :: rlon1 !< ???
-     real :: rlon2 !< ???
+     real :: dlon !< "i"-direction increment. GRIB2 Section 3, octets 64-67.
+     real :: rlat1 !<  Latitude of first grid point. GRIB2 Section 3, octets 47-50.
+     real :: rlon1 !< Longitude of first grid point. GRIB2 Section 3, octets 51-54.
+     real :: rlon2 !< Longitude of last grid point. GRIB2 Section 3, octets 60-63.
      real :: hi !< ???
-     integer :: jg !< ???
-     integer :: jscan !< ???
+     integer :: jg !< Number of parallels between the equator and pole times 2. GRIB2 Section 3, octets 68-71.
+     integer :: jscan !< Scanning mode in the 'j' direction. GRIB2 Section 3, octet 72.
    contains
      !> Initializes a gaussian grid given a grib1_descriptor object. @return N/A
      procedure :: init_grib1
@@ -40,12 +40,12 @@ module ip_gaussian_grid_mod
      procedure :: gdswzd => gdswzd_gaussian
   end type ip_gaussian_grid
 
-  INTEGER :: J1 !< ???
-  INTEGER :: JH !< ???
-  REAL, ALLOCATABLE :: BLAT(:) !< ???
+  INTEGER :: J1 !< 'j' index of first grid point within the global array of latitudes.
+  INTEGER :: JH !< Scan mode flag in 'j' direction. When '1' points scan from N to S. When "-1" points scan from S to N.
+  REAL, ALLOCATABLE :: BLAT(:) !< Gaussian latitude for each parallel.
   REAL :: DLON !< ???
-  REAL :: RERTH !< ???
-  REAL, ALLOCATABLE :: YLAT_ROW(:) !< ???
+  REAL :: RERTH !< Radius of the earth. GRIB2 Section 3, octets 15-30.
+  REAL, ALLOCATABLE :: YLAT_ROW(:) !< dy/dlat for each row in 1/degrees.
 
 contains
 
