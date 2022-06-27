@@ -50,12 +50,12 @@ module ip_gaussian_grid_mod
 contains
 
   !> Initializes a gaussian grid given a grib1_descriptor object.
-  !!
-  !! @param[inout] self The grid to initialize
-  !! @param[in] g1_desc A grib1_descriptor
-  !!
-  !! @author Kyle Gerheiser
-  !! @date July 2021
+  !>
+  !> @param[inout] self The grid to initialize
+  !> @param[in] g1_desc A grib1_descriptor
+  !>
+  !> @author Kyle Gerheiser
+  !> @date July 2021
   subroutine init_grib1(self, g1_desc)
     class(ip_gaussian_grid), intent(inout) :: self
     type(grib1_descriptor), intent(in) :: g1_desc
