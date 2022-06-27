@@ -4,7 +4,7 @@
 !! @author Mark Iredell, George Gayno, Kyle Gerheiser
 !! @date July 2021
 
-!> Routines for creating an ip_grid given a Grib descriptor.
+!> @brief Routines for creating an ip_grid given a Grib descriptor.
 !!
 !! @author George Gayno, Mark Iredell, Kyle Gerheiser
 !! @date July 2021

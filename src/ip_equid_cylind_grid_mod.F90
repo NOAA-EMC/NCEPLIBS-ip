@@ -5,7 +5,7 @@
 !! @author Mark Iredell, George Gayno, Kyle Gerheiser
 !! @date July 2021
 
-!> Equidistant cylindrical grib decoder and grid coordinate
+!> @brief Equidistant cylindrical grib decoder and grid coordinate
 !! transformations.
 !!
 !! Octet numbers refer to [GRIB2 - GRID DEFINITION TEMPLATE 3.0
