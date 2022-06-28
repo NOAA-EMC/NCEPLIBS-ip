@@ -177,30 +177,19 @@ or to create additional map projection "wizards" for ip2lib.
 
 ## Entry point list
 
-Scalar field interpolation subprograms:
+Scalar and vecotr field interpolation subprograms can be found in the
+relevant module documentation:
 
 Name | Function
 ---- |---------
-ipolates() | Iredell's polate for scalar fields
-polates0() | interpolate scalar fields (bilinear)
-polates1() | interpolate scalar fields (bicubic)
-polates2() | interpolate scalar fields (neighbor)
-polates3() | interpolate scalar fields (budget)
-polates4() | interpolate scalar fields (spectral)
-polates6() | interpolate scalar fields (neighbor-budget)
+ipolates_mod | Iredell's polate
+bilinear_interp_mod | bilinear interpolation
+bicubic_interp_mod | bicubic interpolation
+neighbor_interp_mod | neighbor interpolation
+budget_interp_mod | budget interpolation
+spectral_interp_mod | spectral interpolation
+neighbor_budget_interp_mod | neighbor-budget interpolation
 polfixs() | make multiple pole scalar values consistent
-
-Vector field interpolation subprograms:
-
-Name | Function
----- | --------
-ipolatev() | iredell's polate for vector fields
-polatev0() | interpolate vector fields (bilinear)
-polatev1() | interpolate vector fields (bicubic)
-polatev2() | interpolate vector fields (neighbor)
-polatev3() | interpolate vector fields (budget)
-polatev4() | interpolate vector fields (spectral)
-polatev6() | interpolate vector fields (neighbor-budget)
 movect() | move a vector along a great circle
 polfixv()| make multiple pole vector values consistent
 

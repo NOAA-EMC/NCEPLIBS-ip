@@ -17,20 +17,21 @@ module ip_station_points_grid_mod
 
   type, extends(ip_grid) :: ip_station_points_grid
    contains
-     !> Init grib1. @return N/A     
+     !> Initializes a gaussian grid given a grib1_descriptor object. @return N/A
      procedure :: init_grib1 
-     !> Init grib2. @return N/A     
+     !> Initializes a gaussian grid given a grib2_descriptor object. @return N/A
      procedure :: init_grib2
-     !> gsdwzd(). @return N/A     
+     !> Calculates Earth coordinates (iopt = 1) or grid coorindates (iopt = -1)
+     !> for IP Station Point grids. @return N/A
      procedure :: gdswzd => GDSWZD_station_points 
   end type ip_station_points_grid
 
 contains
 
-  !> Init GRIB1.
+  !> Initializes an IP Station grid given a grib1_descriptor object.
   !>
-  !> @param[inout] self ???
-  !> @param[in] g1_desc ???
+  !> @param[inout] self The grid to initialize
+  !> @param[in] g1_desc A grib1_descriptor
   !>
   !> @author Iredell @date 96-04-10
   subroutine init_grib1(self, g1_desc)
@@ -38,10 +39,10 @@ contains
     type(grib1_descriptor), intent(in) :: g1_desc
   end subroutine init_grib1
 
-  !> Init GRIB2.
+  !> Initializes an IP Station grid given a grib2_descriptor object.
   !>
-  !> @param[inout] self ???
-  !> @param[in] g2_desc ???
+  !> @param[inout] self The grid to initialize
+  !> @param[in] g2_desc A grib2_descriptor
   !>
   !> @author Iredell @date 96-04-10
   subroutine init_grib2(self, g2_desc)

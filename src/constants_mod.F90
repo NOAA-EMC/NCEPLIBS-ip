@@ -3,7 +3,7 @@
 !! @author Kyle Gerheiser, George Gayno
 !! @date July 2021
 
-!> Module containing common constants.
+!> @brief Module containing common constants.
 !!
 !! @author Kyle Gerheiser, George Gayno
 module constants_mod

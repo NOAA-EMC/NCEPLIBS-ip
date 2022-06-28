@@ -1,11 +1,14 @@
 !> @file
-!! @brief Rotated equidistant cylindrical grib decoder and grid
+!! @brief Rotated equidistant cylindrical GRIB decoder and grid
 !! coordinate transformations.
 !! @author Mark Iredell, George Gayno, Kyle Gerheiser
 !! @date July 2021
 
-!> Rotated equidistant cylindrical grib decoder and grid coordinate
-!> transformations.
+!> Rotated equidistant cylindrical GRIB decoder and grid coordinate
+!! transformations.
+!!
+!! Octet numbers refer to [GRIB2 - GRID DEFINITION TEMPLATE 3.1 Rotate
+!! Latitude/Longitude](https://www.nco.ncep.noaa.gov/pmb/docs/grib2/grib2_doc/grib2_temp3-1.shtml).
 !!
 !! @author George Gayno, Mark Iredell, Kyle Gerheiser
 !! @date July 2021
