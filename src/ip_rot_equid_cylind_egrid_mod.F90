@@ -1,17 +1,25 @@
 !> @file
-!! @brief Rotated equidistant cylindrical GRIB decoder and grid
-!! coordinate transformations.
-!! @author Mark Iredell, George Gayno, Kyle Gerheiser
-!! @date July 2021
+!> @brief Rotated equidistant cylindrical GRIB decoder and grid
+!> coordinate transformations for Arakawa grid E.
+!>
+!> @author Mark Iredell, George Gayno, Kyle Gerheiser
+!> @date July 2021
 
 !> Rotated equidistant cylindrical GRIB decoder and grid coordinate
-!! transformations.
-!!
-!! Octet numbers refer to [GRIB2 - GRID DEFINITION TEMPLATE 3.1 Rotate
-!! Latitude/Longitude](https://www.nco.ncep.noaa.gov/pmb/docs/grib2/grib2_doc/grib2_temp3-1.shtml).
-!!
-!! @author George Gayno, Mark Iredell, Kyle Gerheiser
-!! @date July 2021
+!> transformations for Arakawa grid E.
+!>
+!> The E stagger is a bit odd because the 'wind' points shift by
+!> half a grid box in each row. That makes the logic tricky. So the
+!> routine does its computations by rotating the grid by 45 degrees.
+!>
+!> See more info about [Awakawa
+!> grids](https://en.wikipedia.org/wiki/Arakawa_grids).
+!>
+!> Octet numbers refer to [GRIB2 - GRID DEFINITION TEMPLATE 3.1 Rotate
+!> Latitude/Longitude](https://www.nco.ncep.noaa.gov/pmb/docs/grib2/grib2_doc/grib2_temp3-1.shtml).
+!>
+!> @author George Gayno, Mark Iredell, Kyle Gerheiser
+!> @date July 2021
 module ip_rot_equid_cylind_egrid_mod
   use iso_fortran_env, only: real64
   use ip_grid_descriptor_mod
@@ -58,12 +66,12 @@ module ip_rot_equid_cylind_egrid_mod
 contains
 
   !> Initializes a rotated equidistant cylindrical grid given a grib1_descriptor object.
-  !! 
-  !! @param[inout] self The grid to initialize
-  !! @param[in] g1_desc A grib1_descriptor
-  !!
-  !! @author Kyle Gerheiser
-  !! @date July 2021
+  !> 
+  !> @param[inout] self The grid to initialize
+  !> @param[in] g1_desc A grib1_descriptor
+  !>
+  !> @author Kyle Gerheiser
+  !> @date July 2021
   subroutine init_grib1(self, g1_desc)
     class(ip_rot_equid_cylind_egrid), intent(inout) :: self
     type(grib1_descriptor), intent(in) :: g1_desc
@@ -136,11 +144,11 @@ contains
 
 
   !> Initializes a rotated equidistant cylindrical grid given a grib2_descriptor object.
-  !! @param[inout] self The grid to initialize
-  !! @param[in] g2_desc A grib2_descriptor
-  !!
-  !! @author Kyle Gerheiser
-  !! @date July 2021
+  !> @param[inout] self The grid to initialize
+  !> @param[in] g2_desc A grib2_descriptor
+  !>
+  !> @author Kyle Gerheiser
+  !> @date July 2021
   subroutine init_grib2(self, g2_desc)
     class(ip_rot_equid_cylind_egrid), intent(inout) :: self
     type(grib2_descriptor), intent(in) :: g2_desc
@@ -199,52 +207,52 @@ contains
 
 
   !> Calculates Earth coordinates (iopt = 1) or grid coorindates (iopt = -1)
-  !! for rotated equidistant cylindrical grids.
-  !!
-  !! Works for e-staggered rotated equidistant cylindrical projections.
-  !! The scan mode determines whether this is an "h" or "v" grid.
-  !!
-  !! If the selected coordinates are more than one gridpoint
-  !! beyond the the edges of the grid domain, then the relevant
-  !! output elements are set to fill values.
-  !!
-  !! The actual number of valid points computed is returned too.
-  !! Optionally, the vector rotations, the map jacobians and
-  !! the grid box areas may be returned as well.
-  !!
-  !! To compute the vector rotations, the optional arguments 'srot' and 'crot'
-  !! must be present.
-  !!
-  !! To compute the map jacobians, the optional arguments
-  !! 'xlon', 'xlat', 'ylon', 'ylat' must be present.
-  !!
-  !! To compute the grid box areas, the optional argument
-  !! 'area' must be present.
-  !!
-  !! @param[in] self The grid object gdswzd was called on.
-  !! @param[in] iopt option flag
-  !!            - +1 to compute earth coords of selected grid coords.
-  !!            - -1 o compute grid coords of selected earth coords.
-  !! @param[in] npts Maximum number of coordinates.
-  !! @param[in] fill Fill value to set invalid output data.
-  !!            Must be impossible value; suggested value: -9999.
-  !! @param[inout] xpts Grid x point coordinates if iopt>0.
-  !! @param[inout] ypts Grid y point coordinates if iopt>0.
-  !! @param[inout] rlon Earth longitudes in degrees e if iopt<0
-  !!                   (Acceptable range: -360. to 360.)
-  !! @param[inout] rlat Earth latitudes in degrees n if iopt<0
-  !!                (Acceptable range: -90. to 90.)
-  !! @param[out] nret Number of valid points computed.
-  !! @param[out] crot Optional clockwise vector rotation cosines.
-  !! @param[out] srot Optional clockwise vector rotation sines.
-  !! @param[out] xlon Optional dx/dlon in 1/degrees.
-  !! @param[out] xlat Optional dx/dlat in 1/degrees.
-  !! @param[out] ylon Optional dy/dlon in 1/degrees.
-  !! @param[out] ylat Optional dy/dlat in 1/degrees.
-  !! @param[out] area Optional area weights in m**2.
-  !!
-  !! @author Mark Iredell, George Gayno, Kyle Gerheiser
-  !! @date Jan 2015
+  !> for rotated equidistant cylindrical grids.
+  !>
+  !> Works for e-staggered rotated equidistant cylindrical projections.
+  !> The scan mode determines whether this is an "h" or "v" grid.
+  !>
+  !> If the selected coordinates are more than one gridpoint
+  !> beyond the the edges of the grid domain, then the relevant
+  !> output elements are set to fill values.
+  !>
+  !> The actual number of valid points computed is returned too.
+  !> Optionally, the vector rotations, the map jacobians and
+  !> the grid box areas may be returned as well.
+  !>
+  !> To compute the vector rotations, the optional arguments 'srot' and 'crot'
+  !> must be present.
+  !>
+  !> To compute the map jacobians, the optional arguments
+  !> 'xlon', 'xlat', 'ylon', 'ylat' must be present.
+  !>
+  !> To compute the grid box areas, the optional argument
+  !> 'area' must be present.
+  !>
+  !> @param[in] self The grid object gdswzd was called on.
+  !> @param[in] iopt option flag
+  !>            - +1 to compute earth coords of selected grid coords.
+  !>            - -1 o compute grid coords of selected earth coords.
+  !> @param[in] npts Maximum number of coordinates.
+  !> @param[in] fill Fill value to set invalid output data.
+  !>            Must be impossible value; suggested value: -9999.
+  !> @param[inout] xpts Grid x point coordinates if iopt>0.
+  !> @param[inout] ypts Grid y point coordinates if iopt>0.
+  !> @param[inout] rlon Earth longitudes in degrees e if iopt<0
+  !>                   (Acceptable range: -360. to 360.)
+  !> @param[inout] rlat Earth latitudes in degrees n if iopt<0
+  !>                (Acceptable range: -90. to 90.)
+  !> @param[out] nret Number of valid points computed.
+  !> @param[out] crot Optional clockwise vector rotation cosines.
+  !> @param[out] srot Optional clockwise vector rotation sines.
+  !> @param[out] xlon Optional dx/dlon in 1/degrees.
+  !> @param[out] xlat Optional dx/dlat in 1/degrees.
+  !> @param[out] ylon Optional dy/dlon in 1/degrees.
+  !> @param[out] ylat Optional dy/dlat in 1/degrees.
+  !> @param[out] area Optional area weights in m**2.
+  !>
+  !> @author Mark Iredell, George Gayno, Kyle Gerheiser
+  !> @date Jan 2015
   SUBROUTINE GDSWZD_ROT_EQUID_CYLIND_EGRID(self,IOPT,NPTS,&
        FILL,XPTS,YPTS,RLON,RLAT,NRET, &
        CROT,SROT,XLON,XLAT,YLON,YLAT,AREA)
@@ -481,18 +489,18 @@ contains
   END SUBROUTINE ROT_EQUID_CYLIND_EGRID_ERROR
 
   !> Computes the vector rotation sines and
-  !! cosines for a rotated equidistant cylindrical grid.
-  !!
-  !! @param[in] rlon Longitude in degrees.
-  !! @param[out] crot Clockwise vector rotation cosines.
-  !! @param[out] srot Clockwise vector rotation sines.
-  !!
-  !! @note
-  !! ugrid=crot*uearth-srot*vearth;
-  !! vgrid=srot*uearth+crot*vearth)
-  !!
-  !! @author George Gayno
-  !! @date Jan 2015
+  !> cosines for a rotated equidistant cylindrical grid.
+  !>
+  !> @param[in] rlon Longitude in degrees.
+  !> @param[out] crot Clockwise vector rotation cosines.
+  !> @param[out] srot Clockwise vector rotation sines.
+  !>
+  !> @note
+  !> ugrid=crot*uearth-srot*vearth;
+  !> vgrid=srot*uearth+crot*vearth)
+  !>
+  !> @author George Gayno
+  !> @date Jan 2015
   SUBROUTINE ROT_EQUID_CYLIND_EGRID_VECT_ROT(RLON, CROT, SROT)
     IMPLICIT NONE
 
@@ -518,16 +526,16 @@ contains
   END SUBROUTINE ROT_EQUID_CYLIND_EGRID_VECT_ROT
 
   !> Computes the map jacobians for a rotated equidistant cylindrical grid.
-  !!
-  !! @param[in] fill Fill value for undefined points.
-  !! @param[in] rlon Longitude in degrees.
-  !! @param[out] xlon dx/dlon in 1/degrees.
-  !! @param[out] xlat dx/dlat in 1/degrees.
-  !! @param[out] ylon dy/dlon in 1/degrees.
-  !! @param[out] ylat dy/dlat in 1/degrees.
-  !!
-  !! @author George Gayno
-  !! @date Jan 2015
+  !>
+  !> @param[in] fill Fill value for undefined points.
+  !> @param[in] rlon Longitude in degrees.
+  !> @param[out] xlon dx/dlon in 1/degrees.
+  !> @param[out] xlat dx/dlat in 1/degrees.
+  !> @param[out] ylon dy/dlon in 1/degrees.
+  !> @param[out] ylat dy/dlat in 1/degrees.
+  !>
+  !> @author George Gayno
+  !> @date Jan 2015
   SUBROUTINE ROT_EQUID_CYLIND_EGRID_MAP_JACOB(FILL, RLON, &
        XLON, XLAT, YLON, YLAT)
     IMPLICIT NONE
@@ -560,12 +568,12 @@ contains
   END SUBROUTINE ROT_EQUID_CYLIND_EGRID_MAP_JACOB
 
   !> Computes the grid box area for a rotated equidistant cylindrical grid.
-  !!
-  !! @param[in] fill Fill value for undefined points.
-  !! @param[out] area Area weights in m^2.
-  !!
-  !! @author George Gayno
-  !! @date Jan 2015
+  !>
+  !> @param[in] fill Fill value for undefined points.
+  !> @param[out] area Area weights in m^2.
+  !>
+  !> @author George Gayno
+  !> @date Jan 2015
   SUBROUTINE ROT_EQUID_CYLIND_EGRID_GRID_AREA(FILL, AREA)
     IMPLICIT NONE
 

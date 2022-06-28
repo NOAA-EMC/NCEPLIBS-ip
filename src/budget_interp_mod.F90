@@ -3,7 +3,7 @@
 !! @author Mark Iredell, Kyle Gerheiser
 !! @date July 2021
 
-!> Budget interpolation routines for scalars and vectors.
+!> @brief Budget interpolation routines for scalars and vectors.
 !!
 !! @author George Gayno, Mark Iredell, Kyle Gerheiser
 !! @date July 2021

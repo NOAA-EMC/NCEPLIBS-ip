@@ -1,11 +1,18 @@
 !> @file
-!> @brief GDS wizard for mercator cylindrical.
+!> @brief Rotated equidistant cylindrical GRIB decoder and grid
+!> coordinate transformations for Arakawa grids A through D.
 !>
-!> @author Gayno @date 2007-NOV-15
+!> @author Mark Iredell, George Gayno, Kyle Gerheiser
+!> @date July 2021
 
-!> @brief GDS wizard for mercator cylindrical.
+!> Rotated equidistant cylindrical GRIB decoder and grid coordinate
+!> transformations for Arakawa grids A through D.
 !>
-!> Octet numbers refer to ??? []().
+!> See more info about [Awakawa
+!> grids](https://en.wikipedia.org/wiki/Arakawa_grids).
+!>
+!> Octet numbers refer to [GRIB2 - GRID DEFINITION TEMPLATE 3.1 Rotate
+!> Latitude/Longitude](https://www.nco.ncep.noaa.gov/pmb/docs/grib2/grib2_doc/grib2_temp3-1.shtml).
 !>
 !> @author Gayno @date 2007-NOV-15
 module ip_rot_equid_cylind_grid_mod

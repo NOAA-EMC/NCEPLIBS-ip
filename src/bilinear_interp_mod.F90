@@ -1,10 +1,10 @@
 !> @file
-!! @brief Bilinear interpolation routines for scalars and vectors
-!! @author Mark Iredell, Kyle Gerheiser
+!> @brief Bilinear interpolation routines for scalars and vectors.
+!> @author Mark Iredell, Kyle Gerheiser
 
-!> Bilinear interpolation routines for scalars and vectors
-!!
-!! @author George Gayno, Mark Iredell, Kyle Gerheiser
+!> @brief Bilinear interpolation routines for scalars and vectors.
+!>
+!> @author George Gayno, Mark Iredell, Kyle Gerheiser
 module bilinear_interp_mod
   use gdswzd_mod
   use ip_grids_mod
@@ -23,47 +23,49 @@ module bilinear_interp_mod
 
 contains
 
-  !> @brief This subprogram performs bilinear interpolation
-  !! from any grid to any grid for scalar fields.
-  !! 
-  !! @details Options allow varying the minimum percentage for mask,
-  !! i.e. percent valid input data required to make output data,
-  !! (ipopt(1)) which defaults to 50 (if ipopt(1)=-1).
-  !! only horizontal interpolation is performed.
-  !! if no input data is found near the output point, a spiral
-  !! search may be invoked by setting ipopt(2)> 0.
-  !! no searching is done if output point is outside the input grid.
-  !! as an added bonus the number of output grid points
-  !! and their latitudes and longitudes are also returned.
-  !! on the other hand, the output can be a set of station points
-  !! if igdtnumo<0, in which case the number of points
-  !! and their latitudes and longitudes must be input.
-  !! input bitmaps will be interpolated to output bitmaps.
-  !! output bitmaps will also be created when the output grid
-  !! extends outside of the domain of the input grid.
-  !!
-  !! The output field is set to 0 where the output bitmap is off.
-  !! @param[in] ipopt interpolation options
-  !! - IPOPT(1) IS MINIMUM PERCENTAGE FOR MASK (DEFAULTS TO 50 IF IPOPT(1)=-1)
-  !! - IPOPT(2) IS WIDTH OF SQUARE TO EXAMINE IN SPIRAL SEARCH (DEFAULTS TO NO SEARCH IF IPOPT(2)=-1)
-  !! @param[in] grid_in Input grid
-  !! @param[in] grid_out Output grid
-  !! @param[in]  MI SKIP NUMBER BETWEEN INPUT GRID FIELDS IF KM>1 OR DIMENSION OF INPUT GRID FIELDS IF KM=1
-  !! @param[out] MO SKIP NUMBER BETWEEN OUTPUT GRID FIELDS IF KM>1 OR DIMENSION OF OUTPUT GRID FIELDS IF KM=1
-  !! @param[in]  km NUMBER OF FIELDS TO INTERPOLATE
-  !! @param[in]  IBI INPUT BITMAP FLAGS
-  !! @param[in]  LI INPUT BITMAPS (IF SOME IBI(K)=1)
-  !! @param[in]  GI INPUT FIELDS TO INTERPOLATE
-  !! @param[in,out] NO  NUMBER OF OUTPUT POINTS (ONLY IF IGDTNUMO<0)
-  !! @param[in,out] RLAT OUTPUT LATITUDES IN DEGREES (IF IGDTNUMO<0)
-  !! @param[in,out] RLON OUTPUT LONGITUDES IN DEGREES (IF IGDTNUMO<0)
-  !! @param[out] IBO OUTPUT BITMAP FLAGS
-  !! @param[out] LO OUTPUT BITMAPS (ALWAYS OUTPUT)
-  !! @param[out] GO OUTPUT FIELDS INTERPOLATED
-  !! @param[out] IRET RETURN CODE
-  !! - 0 SUCCESSFUL INTERPOLATION
-  !! - 2 UNRECOGNIZED INPUT GRID OR NO GRID OVERLAP
-  !! - 3 UNRECOGNIZED OUTPUT GRID
+  !> This subprogram performs bilinear interpolation
+  !> from any grid to any grid for scalar fields.
+  !> 
+  !> @details Options allow varying the minimum percentage for mask,
+  !> i.e. percent valid input data required to make output data,
+  !> (ipopt(1)) which defaults to 50 (if ipopt(1)=-1).
+  !> only horizontal interpolation is performed.
+  !> if no input data is found near the output point, a spiral
+  !> search may be invoked by setting ipopt(2)> 0.
+  !> no searching is done if output point is outside the input grid.
+  !> as an added bonus the number of output grid points
+  !> and their latitudes and longitudes are also returned.
+  !> on the other hand, the output can be a set of station points
+  !> if igdtnumo<0, in which case the number of points
+  !> and their latitudes and longitudes must be input.
+  !> input bitmaps will be interpolated to output bitmaps.
+  !> output bitmaps will also be created when the output grid
+  !> extends outside of the domain of the input grid.
+  !>
+  !> The output field is set to 0 where the output bitmap is off.
+  !> @param[in] ipopt interpolation options
+  !> - ipopt(1) is minimum percentage for mask (defaults to 50 if ipopt(1)=-1)
+  !> - ipopt(2) is width of square to examine in spiral search (defaults to no search if ipopt(2)=-1)
+  !> @param[in] grid_in input grid
+  !> @param[in] grid_out output grid
+  !> @param[in]  mi skip number between input grid fields if km>1 or dimension of input grid fields if km=1
+  !> @param[out] mo skip number between output grid fields if km>1 or dimension of output grid fields if km=1
+  !> @param[in]  km number of fields to interpolate
+  !> @param[in]  ibi input bitmap flags
+  !> @param[in]  li input bitmaps (if some ibi(k)=1)
+  !> @param[in]  gi input fields to interpolate
+  !> @param[in,out] no  number of output points (only if igdtnumo<0)
+  !> @param[in,out] rlat output latitudes in degrees (if igdtnumo<0)
+  !> @param[in,out] rlon output longitudes in degrees (if igdtnumo<0)
+  !> @param[out] ibo output bitmap flags
+  !> @param[out] lo output bitmaps (always output)
+  !> @param[out] go output fields interpolated
+  !> @param[out] iret return code
+  !> - 0 successful interpolation
+  !> - 2 unrecognized input grid or no grid overlap
+  !> - 3 unrecognized output grid
+  !>
+  !> @author George Gayno, Mark Iredell, Kyle Gerheiser  
   subroutine interpolate_bilinear_scalar(IPOPT,grid_in,grid_out,MI,MO,KM,IBI,LI,GI,NO,RLAT,RLON,IBO,LO,GO,IRET)
     class(ip_grid), intent(in) :: grid_in, grid_out
     INTEGER,               INTENT(IN   ) :: IPOPT(20)
@@ -272,56 +274,58 @@ contains
 
   end subroutine interpolate_bilinear_scalar
 
-
-  !> @brief This subprogram performs bilinear interpolation from any grid to any grid for vector fields.
-  !!
-  !! @details Options allow varying the minimum percentage for mask,
-  !! i.e. percent valid input data required to make output data,
-  !! (ipopt(1)) which defaults to 50 (if ipopt(1)=-1).
-  !!
-  !! Only horizontal interpolation is performed.
-  !! the input and output vectors are rotated so that they are
-  !! either resolved relative to the defined grid
-  !! in the direction of increasing x and y coordinates
-  !! or resolved relative to easterly and northerly directions,
-  !! as designated by their respective grid description sections.
-  !!
-  !! As an added bonus the number of output grid points
-  !! and their latitudes and longitudes are also returned
-  !! along with their vector rotation parameters.
-  !! on the other hand, the data may be interpolated to a set of
-  !! station points if igdtnumo < 0, in which case the number
-  !! of points and their latitudes and longitudes must be
-  !! input along with their vector rotation parameters.
-  !! input bitmaps will be interpolated to output bitmaps.
-  !! output bitmaps will also be created when the output grid
-  !! extends outside of the domain of the input grid.
-  !! the output field is set to 0 where the output bitmap is off.
-  !!
-  !! @param[in] IPOPT Interpolation options
-  !! - IPOPT(1) IS MINIMUM PERCENTAGE FOR MASK (DEFAULTS TO 50 IF IPOPT(1)=-1)
-  !! @param[in] grid_in Input grid
-  !! @param[in] grid_out Output grid
-  !! @param[in]  MI SKIP NUMBER BETWEEN INPUT GRID FIELDS IF KM>1 OR DIMENSION OF INPUT GRID FIELDS IF KM=1
-  !! @param[out] MO SKIP NUMBER BETWEEN OUTPUT GRID FIELDS IF KM>1 OR DIMENSION OF OUTPUT GRID FIELDS IF KM=1
-  !! @param[in]  km NUMBER OF FIELDS TO INTERPOLATE
-  !! @param[in]  IBI INPUT BITMAP FLAGS
-  !! @param[in]  LI INPUT BITMAPS (IF SOME IBI(K)=1)
-  !! @param[in]  UI INPUT U-COMPONENT FIELDS to INTERPOLATE
-  !! @param[in]  VI INPUT V-COMPONENT FIELDS to INTERPOLATE
-  !! @param[in,out] NO  NUMBER OF OUTPUT POINTS (ONLY IF IGDTNUMO<0)
-  !! @param[in,out] RLAT OUTPUT LATITUDES IN DEGREES (IF IGDTNUMO<0)
-  !! @param[in,out] RLON OUTPUT LONGITUDES IN DEGREES (IF IGDTNUMO<0)
-  !! @param[in,out] CROT VECTOR ROTATION COSINES (IF IGDTNUMO<0) UGRID=CROT*UEARTH-SROT*VEARTH;
-  !! @param[in,out] SROT VECTOR ROTATION SINES (IF IGDTNUMO<0) VGRID=SROT*UEARTH+CROT*VEARTH)
-  !! @param[out] IBO OUTPUT BITMAP FLAGS
-  !! @param[out] LO OUTPUT BITMAPS (ALWAYS OUTPUT)
-  !! @param[out] UO OUTPUT U-COMPONENT FIELDS INTERPOLATED
-  !! @param[out] VO OUTPUT V-COMPONENT FIELDS INTERPOLATED
-  !! @param[out] IRET RETURN CODE
-  !! - 0 SUCCESSFUL INTERPOLATION
-  !! - 2 UNRECOGNIZED INPUT GRID OR NO GRID OVERLAP
-  !! - 3 UNRECOGNIZED OUTPUT GRID  
+  !> This subprogram performs bilinear interpolation from any grid to
+  !> any grid for vector fields.
+  !>
+  !> Options allow varying the minimum percentage for mask,
+  !> i.e. percent valid input data required to make output data,
+  !> (ipopt(1)) which defaults to 50 (if ipopt(1)=-1).
+  !>
+  !> Only horizontal interpolation is performed.
+  !> the input and output vectors are rotated so that they are
+  !> either resolved relative to the defined grid
+  !> in the direction of increasing x and y coordinates
+  !> or resolved relative to easterly and northerly directions,
+  !> as designated by their respective grid description sections.
+  !>
+  !> As an added bonus the number of output grid points
+  !> and their latitudes and longitudes are also returned
+  !> along with their vector rotation parameters.
+  !> on the other hand, the data may be interpolated to a set of
+  !> station points if igdtnumo < 0, in which case the number
+  !> of points and their latitudes and longitudes must be
+  !> input along with their vector rotation parameters.
+  !> input bitmaps will be interpolated to output bitmaps.
+  !> output bitmaps will also be created when the output grid
+  !> extends outside of the domain of the input grid.
+  !> the output field is set to 0 where the output bitmap is off.
+  !>
+  !> @param[in] ipopt interpolation options
+  !> - ipopt(1) is minimum percentage for mask (defaults to 50 if ipopt(1)=-1)
+  !> @param[in] grid_in Input grid
+  !> @param[in] grid_out Output grid
+  !> @param[in]  mi skip number between input grid fields if km>1 or dimension of input grid fields if km=1
+  !> @param[out] mo skip number between output grid fields if km>1 or dimension of output grid fields if km=1
+  !> @param[in]  km number of fields to interpolate
+  !> @param[in]  ibi input bitmap flags
+  !> @param[in]  li input bitmaps (if some ibi(k)=1)
+  !> @param[in]  ui input u-component fields to interpolate
+  !> @param[in]  vi input v-component fields to interpolate
+  !> @param[in,out] no  number of output points (only if igdtnumo<0)
+  !> @param[in,out] rlat output latitudes in degrees (if igdtnumo<0)
+  !> @param[in,out] rlon output longitudes in degrees (if igdtnumo<0)
+  !> @param[in,out] crot vector rotation cosines (if igdtnumo<0) ugrid=crot*uearth-srot*vearth;
+  !> @param[in,out] srot vector rotation sines (if igdtnumo<0) vgrid=srot*uearth+crot*vearth)
+  !> @param[out] ibo output bitmap flags
+  !> @param[out] lo output bitmaps (always output)
+  !> @param[out] uo output u-component fields interpolated
+  !> @param[out] vo output v-component fields interpolated
+  !> @param[out] iret return code
+  !> - 0 successful interpolation
+  !> - 2 unrecognized input grid or no grid overlap
+  !> - 3 unrecognized output grid
+  !>
+  !> @author George Gayno, Mark Iredell, Kyle Gerheiser  
   SUBROUTINE interpolate_bilinear_vector(ipopt,grid_in,grid_out, &
        MI,MO,KM,IBI,LI,UI,VI, &
        NO,RLAT,RLON,CROT,SROT,IBO,LO,UO,VO,IRET)
