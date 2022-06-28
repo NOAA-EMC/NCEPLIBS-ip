@@ -10,119 +10,160 @@ many fields at one time.
 ## Interpolation
 
 There are currently six interpolation methods available in the
-library: bilinear, bicubic, neighbor, budget, spectral and
-neighbor-budget.
+library:
+- bilinear
+- bicubic
+- neighbor
+- budget
+- spectral
+- neighbor-budget
 
 Some of the methods have interpolation sub-options. A few methods have
 restrictions on the type of input or output grids.
 
-Also, several methods can perform interpolation on fields with bitmaps
+Several methods can perform interpolation on fields with bitmaps
 (i.e. some points on the input grid may be undefined). In this case,
 the bitmap is interpolated to the output grid. Only valid input points
 are used to interpolate to valid output points. An output bitmap will
 also be created to locate invalid data where the output grid extends
 outside the domain of the input grid.
 
-The driver routine for interpolating scalars is ipolates(), while the routine
-for interpolating vectors is ipolatev. The interpolation method is chosen
-via the first argument of these routines (variable IP). Sub-options are
-set via the IPOPT array.
+The driver routines for interpolating scalars and vectors may be found
+in ipolates_mod. The interpolation method is chosen via the first
+argument of these routines (variable IP). Sub-options are set via the
+IPOPT array.
 
 ### Bilinear Interpolation
 
-Bilinear interpolation is chosen by setting IP=0. This method has two 
-sub-options. (1) The percent of valid input data required to make output
-data (the default is 50%). (2) If valid input data is not found near an
-a spiral search may be performed. The spiral search is only
-an option for scalar data. The bilinear method also has no restrictions
-and can interpolate with bitmaps.
+Bilinear interpolation is chosen by setting IP=0.
+
+This method has two sub-options:
+
+1. The percent of valid input data required to make output data (the
+default is 50%).
+
+2. If valid input data is not found near an a spiral search may be
+performed. The spiral search is only an option for scalar data.
+
+The bilinear method has no restrictions and can interpolate with
+bitmaps.
 
 ### Bicubic Interpolation
 
-Bicubic interpolation is chosen by setting IP=1. This method has two
-sub-options:
+Bicubic interpolation is chosen by setting IP=1.
+
+This method has two sub-options:
 
 1. A monotonic constraint option for straight bicubic or for
 constraining the output value to be within the range of the four
 surrounding input values.
 2. The percent of valid input data required to make output data, which
-defaults to 50%. Note: the bicubic method cannot interpolate data with
-bitmaps.
+defaults to 50%.
+
+The bicubic method cannot interpolate data with bitmaps.
 
 ### Neighbor Interpolation
 
-Neighbor interpolation is chosen by setting IP=2. Neighbor interpolation
-means that the output value is set to the nearest input value. It would be
-appropriate for interpolating integer fields such as vegetation index.
+Neighbor interpolation is chosen by setting IP=2.
+
+Neighbor interpolation means that the output value is set to the
+nearest input value. It would be appropriate for interpolating integer
+fields such as vegetation index.
+
 This method has one sub-option: If valid input data is not found near an 
-an output point, a spiral search is optionally performed. The neighbor
-method has no restrictions and can interpolate with bitmaps.
+an output point, a spiral search is optionally performed.
+
+The neighbor method has no restrictions and can interpolate with
+bitmaps.
 
 ### Budget interpolation
 
-Budget interpolation is chosen by setting IP=3. Budget interpolation
-means a low-order interpolation method that quasi-conserves area
-averages. It would be appropriate for interpolating budget fields
-such as precipitation.
+Budget interpolation is chosen by setting IP=3.
+
+Budget interpolation means a low-order interpolation method that
+quasi-conserves area averages. It would be appropriate for
+interpolating budget fields such as precipitation.
 
 This method assumes that the field really represents box averages
 where each box extends halfway to its neighboring grid point in each
 direction. The method actually averages bilinearly interpolated
 values in a square array of points distributed within each output grid
-box. This method can interpolate data with bitmaps. There are several
-sub-options:
+box.
 
--  (1) The number of points in the radius of the square array may be set.
-   The default is 2, meaning that 25 sample points will be averaged
-   for each output value. 
--  (2) The respective averaging weights for the radius points are adjustable.
-   The default is for all weights equal to 1, giving an unweighted average.
--  (3) Optionally, one may assume the boxes stretch nearly all the way to each of 
-   the neighboring grid points and the weights are the adjoint of the bilinear 
-   interpolation weights.
--  (4) The percent of valid input data required to make output data is
-   adjustable. The default is 50%.
--  (5) In cases where there is no or insufficient valid input data,
-   a spiral search may be invoked to search for the nearest valid data.
-   search square (scalar interpolation only). 
+There are several sub-options:
+
+1. The number of points in the radius of the square array may be set.
+The default is 2, meaning that 25 sample points will be averaged for
+each output value.
+  
+2. The respective averaging weights for the radius points are
+adjustable. The default is for all weights equal to 1, giving an
+unweighted average.
+  
+3. Optionally, one may assume the boxes stretch nearly all the way to
+each of the neighboring grid points and the weights are the adjoint of
+the bilinear interpolation weights.
+   
+4. The percent of valid input data required to make output data is
+adjustable. The default is 50%.
+
+5. In cases where there is no or insufficient valid input data, a
+spiral search may be invoked to search for the nearest valid data.
+search square (scalar interpolation only).
+
+This method can interpolate data with bitmaps.
 
 ### Spectral Interpolation
 
-Spectral interpolation is chosen by setting IP=4. This method has two
-sub-options, to (1) set the spectral shape (triangular or rhomboidal)
-and (2) set the spectral truncation. The input grid must be a global
-cylindrical grid (either Gaussian or equidistant). This method cannot
-interpolate data with bitmaps. Unless the output grid is a global
-cylindrical grid, a polar stereographic grid centered at the pole, or
-a Mercator grid, this method can be quite expensive.
+Spectral interpolation is chosen by setting IP=4.
+
+This method has two
+sub-options:
+
+1. set the spectral shape (triangular or rhomboidal)
+
+2. set the spectral truncation.
+
+The input grid must be a global cylindrical grid (either Gaussian or
+equidistant). This method cannot interpolate data with bitmaps.
+
+Unless the output grid is a global cylindrical grid, a polar
+stereographic grid centered at the pole, or a Mercator grid, this
+method can be quite expensive.
 
 ### Neighbor-Budget Interpolation
 
-Neighbor-budget interpolation is chosen by setting IP=6. This method
-computes weighted averages of neighbor points arranged in a square box
-centered around each output grid point and stretching nearly halfway
-to each of the neighboring grid points. The main difference with the
-budget interpolation (IP=3) is neighbor vs bilinear interpolation of
-the square box of points. There are the following sub-options:
+Neighbor-budget interpolation is chosen by setting IP=6.
 
--  (1) The number of points in the radius of the square array may be set.
-   The default is 2, meaning that 25 sample points will be averaged
-   for each output value. 
--  (2) The respective averaging weights for the radius points are adjustable.
-   The default is for all weights equal to 1, giving an unweighted average.
--  (3) The percent of valid input data required to make output data is
-   adjustable. The default is 50%.
+This method computes weighted averages of neighbor points arranged in
+a square box centered around each output grid point and stretching
+nearly halfway to each of the neighboring grid points. The main
+difference with the budget interpolation (IP=3) is neighbor vs
+bilinear interpolation of the square box of points.
+
+There are the following sub-options:
+
+1. The number of points in the radius of the square array may be set.
+The default is 2, meaning that 25 sample points will be averaged for
+each output value.
+
+2. The respective averaging weights for the radius points are
+adjustable. The default is for all weights equal to 1, giving an
+unweighted average.
+
+3. The percent of valid input data required to make output data is
+adjustable. The default is 50%.
 
 ## Vectors and Scalars
 
 The library can handle two-dimensional vector fields as well as scalar
-fields.  The input and output vectors are rotated if necessary so that
+fields. The input and output vectors are rotated if necessary so that
 they are either resolved relative to their defined grid in the
 direction of increasing x and y coordinates or resolved relative to
 eastward and northward directions on the earth. The rotation is
 determined by the grid definitions.
 
-Vectors are generally interpolated (by all methods but spectral
+Vectors are generally interpolated (by all methods except spectral
 interpolation) by moving the relevant input vectors along a great
 circle to the output point, keeping their orientations with respect to
 the great circle constant, before independently interpolating the
@@ -135,24 +176,25 @@ The input and output grids are defined by their respective GRIB2 grid
 definition template and template number as decoced by the NCEP G2
 library. There are six map projections recognized by the library:
 
-Grid def. template #    | Map projection
---------------------    | ---------------------------------
-       00               | Equidistant cyclindrical
-       01               | Rotated equidistant cylindrical
-       10               | Mercator cyclindrical
-       20               | Polar stereographic azimuthal
-       30               | Lambert conformal conical
-       40               | Gaussian equidistant cyclindrical
+Grid Template Number | Map projection
+---------------------|---------------
+00 | Equidistant cyclindrical
+01 | Rotated equidistant cylindrical
+10 | Mercator cyclindrical
+20 | Polar stereographic azimuthal
+30 | Lambert conformal conical
+40 | Gaussian equidistant cyclindrical
 
 If the output grid definition template number is negative, then the
 output data may be just a set of station points. In this case, the
 user must pass the number of points to be output along with their
-latitudes and longitudes. For vector interpolation, the vector
-rotations parameters must also be passed. On the other hand, for
-non-negative output data representation types, the number of output
-grid points and their latitudes and longitudes (and the vector
-rotation parameters for vector interpolation) are all returned by the
-interpolation subprograms.
+latitudes and longitudes.
+
+For vector interpolation, the vector rotations parameters must also be
+passed. On the other hand, for non-negative output data representation
+types, the number of output grid points and their latitudes and
+longitudes (and the vector rotation parameters for vector
+interpolation) are all returned by the interpolation subprograms.
 
 If an output equidistant cylindrical grid contains multiple pole
 points, then the pole points are forced to be self-consistent. That
@@ -162,18 +204,16 @@ pole.
 
 Generally, only regular grids can be interpolated in this
 library. However, the thinned WAFS grids may be expanded to a regular
-grid (or vice versa) using subprograms ipxwafs/2/3. Eta data (with
-Arakawa "E" staggering) on the "H" or "V" grid may be expanded to a
-filled regular grid (or vice versa) using subprogram ipxetas.
+grid (or vice versa) using subprograms ipxwafs(), ipxwafs2(), or
+ipxwafs3(). Eta data (with Arakawa "E" staggering) on the "H" or "V"
+grid may be expanded to a filled regular grid (or vice versa) using
+subprogram ipxetas().
 
 ## Return Codes
 
 The return code issued by an interpolation subprogram determines
 whether it ran successfully or how it failed. Check nonzero return
 codes against the docblock of the respective subprogram.
-
-Developers are encouraged to create additional interpolation methods
-or to create additional map projection "wizards" for ip2lib.
 
 ## Entry point list
 
