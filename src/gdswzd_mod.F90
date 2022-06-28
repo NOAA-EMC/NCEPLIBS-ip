@@ -4,7 +4,7 @@
 !! @date Jan 2015
 !! @author George Gayno, Kyle Gerheiser
 
-!> Driver module for gdswzd routines.
+!> @brief Driver module for gdswzd routines.
 !!
 !! These routines do the following for several map projections:
 !! - Convert from earth to grid coordinates or vice versa.
