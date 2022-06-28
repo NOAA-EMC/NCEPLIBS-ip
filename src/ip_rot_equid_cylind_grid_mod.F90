@@ -6,7 +6,8 @@
 !> @date July 2021
 
 !> Rotated equidistant cylindrical GRIB decoder and grid coordinate
-!> transformations for Arakawa grids A through D.
+!> transformations for Arakawa grids A through D. (To handle the E
+!> grid, see ip_rot_equid_cylind_egrid_mod).
 !>
 !> See more info about [Awakawa
 !> grids](https://en.wikipedia.org/wiki/Arakawa_grids).

@@ -6,7 +6,8 @@
 !> @date July 2021
 
 !> Rotated equidistant cylindrical GRIB decoder and grid coordinate
-!> transformations for Arakawa grid E.
+!> transformations for Arakawa grid E. (To handle the A through D
+!> grids, see ip_rot_equid_cylind_grid_mod).
 !>
 !> The E stagger is a bit odd because the 'wind' points shift by
 !> half a grid box in each row. That makes the logic tricky. So the
