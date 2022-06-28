@@ -1,3 +1,6 @@
+! This is a test for the NCEPLBS-ip library.
+!
+! Kyle Gerheiser June, 2021
 module interp_mod_grib1
   use ip_mod
   implicit none
@@ -44,10 +47,9 @@ contains
     implicit none
 
     character(*), intent(in) :: grid, interp_opt
-    character*100 :: output_file, baseline_file
+    character*100 :: baseline_file
 
 
-    integer(kind=4)           :: i1
     integer                   :: ip, ipopt(20), output_kgds(200)
     integer                   :: km, ibi(1), mi, iret, i, j
     integer                   :: i_output, j_output, mo, no, ibo(1)
@@ -299,9 +301,6 @@ contains
 
     character*100             :: baseline_file
 
-    character*100             :: output_file
-
-    integer(kind=4)           :: i1
     integer                   :: ip, ipopt(20), output_kgds(200)
     integer                   :: km, ibi(1), mi, iret, i, j
     integer                   :: i_output, j_output, mo, no, ibo(1)
