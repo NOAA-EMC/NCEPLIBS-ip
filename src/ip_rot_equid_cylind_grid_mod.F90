@@ -39,9 +39,11 @@ module ip_rot_equid_cylind_grid_mod
      real(kd) :: sbd !< ???
      integer :: irot !< ???
    contains
-     !> Initializes a gaussian grid given a grib1_descriptor object. @return N/A
+     !> Initializes a Rotated equidistant cylindrical grid given a
+     !> grib1_descriptor object. @return N/A
      procedure :: init_grib1
-     !> Initializes a gaussian grid given a grib2_descriptor object. @return N/A
+     !> Initializes a Rotated equidistant cylindrical given a
+     !> grib2_descriptor object. @return N/A
      procedure :: init_grib2
      !> Calculates Earth coordinates (iopt = 1) or grid coorindates (iopt = -1)
      !> for Gaussian grids. @return N/A
@@ -58,7 +60,8 @@ module ip_rot_equid_cylind_grid_mod
 
 CONTAINS
 
-  !> Initializes a gaussian grid given a grib1_descriptor object.
+  !> Initializes a Rotated equidistant cylindrical grid given a
+  !> grib1_descriptor object.
   !>
   !> @param[inout] self The grid to initialize
   !> @param[in] g1_desc A grib1_descriptor
@@ -124,7 +127,9 @@ CONTAINS
 
   end subroutine init_grib1
 
-  !> Initializes a gaussian grid given a grib2_descriptor object.
+  !> Initializes a Rotated equidistant cylindrical grid given a
+  !> grib2_descriptor object.
+  !>
   !> @param[inout] self The grid to initialize
   !> @param[in] g2_desc A grib2_descriptor
   !>

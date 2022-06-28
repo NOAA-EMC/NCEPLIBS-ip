@@ -45,9 +45,15 @@ module ip_rot_equid_cylind_egrid_mod
      real(kd) :: hi !< ???
      integer :: irot !< ???
    contains
-     procedure :: init_grib1 !< Initialize with GRIB1 descriptor. @return N/A
-     procedure :: init_grib2 !< Initialize with GRIB2 descriptor @return N/A
-     procedure :: gdswzd => gdswzd_rot_equid_cylind_egrid !< gdswzd() @return N/A
+     !> Initializes a rotated equidistant cylindrical grid given a
+     !> grib1_descriptor object. @return N/A
+     procedure :: init_grib1
+     !> Initializes a rotated equidistant cylindrical grid given a
+     !> grib2_descriptor object. @return N/A
+     procedure :: init_grib2
+     !> Calculates Earth coordinates (iopt = 1) or grid coorindates
+     !> (iopt = -1). @return N/A
+     procedure :: gdswzd => gdswzd_rot_equid_cylind_egrid
   end type ip_rot_equid_cylind_egrid
 
   INTEGER :: IROT !< ???
@@ -66,7 +72,8 @@ module ip_rot_equid_cylind_egrid_mod
 
 contains
 
-  !> Initializes a rotated equidistant cylindrical grid given a grib1_descriptor object.
+  !> Initializes a rotated equidistant cylindrical grid given a
+  !> grib1_descriptor object.
   !> 
   !> @param[inout] self The grid to initialize
   !> @param[in] g1_desc A grib1_descriptor
