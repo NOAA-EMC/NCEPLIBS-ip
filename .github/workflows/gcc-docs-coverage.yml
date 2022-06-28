@@ -58,7 +58,7 @@ jobs:
     - name: run-gcovr
       run: |
         cd $GITHUB_WORKSPACE/ip/build
-        gcovr -r .. -v  --html-details -o test-coverage.html
+        gcovr -r .. -v  --html-details  --exclude ../tests --exclude CMakeFiles --print-summary -o test-coverage.html
 
     - name: upload-test-coverage
       uses: actions/upload-artifact@v2
