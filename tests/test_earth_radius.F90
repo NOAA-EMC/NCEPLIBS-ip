@@ -24,17 +24,19 @@ program test_earth_radius
   if (abs(radius - 0.1) > epsilon(radius)) stop 4
   if (abs(eccen_squared - 0.0) > epsilon(eccen_squared)) stop 5
 
+  ! Another case 1.
+  igdtmpl(1) = 1
+  igdtmpl(2) = 2
+  igdtmpl(3) = 63600000
+  call earth_radius(igdtmpl, igdtlen, radius, eccen_squared)
+  if (abs(radius - 636000.0) > epsilon(radius)) stop 4
+  if (abs(eccen_squared - 0.0) > epsilon(eccen_squared)) stop 5
+
   ! Case 2.
   igdtmpl(1) = 2
   call earth_radius(igdtmpl, igdtlen, radius, eccen_squared)
   if (abs(radius - 6378160) > epsilon(radius)) stop 6
   if (abs(eccen_squared - 6.7226700223333219E-003) > epsilon(eccen_squared)) stop 7
-
-  ! Case 3.
-  igdtmpl(1) = 2
-  call earth_radius(igdtmpl, igdtlen, radius, eccen_squared)
-  if (abs(radius - 6378160) > epsilon(radius)) stop 8
-  if (abs(eccen_squared - 6.7226700223333219E-003) > epsilon(eccen_squared)) stop 9
 
   ! Case 3.
   igdtmpl(1) = 3
