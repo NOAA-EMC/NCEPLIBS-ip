@@ -1,9 +1,12 @@
+! This is a test for the NCEPLBS-ip library.
+!
+! Kyle Gerheiser June, 2021
 program test_scalar_grib1
   use input_data_mod_grib1
   use interp_mod_grib1
   implicit none
 
-  integer :: num_args, i, len, status
+  integer :: num_args, len, status
   character(len=32) :: grid_type, interp_opt
 
   num_args = command_argument_count()
