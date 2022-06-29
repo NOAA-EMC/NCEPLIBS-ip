@@ -28,8 +28,12 @@ module ip_mercator_grid_mod
      real :: dlon !< Longitudinal direction grid length. Section 3, octets 65-68.
      real :: dphi !< Latitudinal direction grid length. Section 3, octets 69-72.
    contains
-     procedure :: init_grib1 !< Init GRIB1. @return N/A
-     procedure :: init_grib2 !< Init GRIB2. @return N/A
+     !> Initializes a gaussian grid given a grib1_descriptor object. @return N/A
+     procedure :: init_grib1
+     !> Initializes a gaussian grid given a grib2_descriptor object. @return N/A
+     procedure :: init_grib2
+     !> Calculates Earth coordinates (iopt = 1) or grid coorindates (iopt = -1)
+     !> for Gaussian grids. @return N/A
      procedure :: gdswzd => gdswzd_mercator !< gdswzd() @return N/A
   end type ip_mercator_grid
 
@@ -39,7 +43,7 @@ module ip_mercator_grid_mod
 
 CONTAINS
 
-  !> Init GRIB1.
+  !> Initializes a mercator grid given a grib1_descriptor object.
   !>
   !> @param[inout] self ip_mercator_grid object.
   !> @param[in] g1_desc GRIB1 descriptor.

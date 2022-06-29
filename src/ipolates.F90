@@ -2,8 +2,10 @@
 !! @brief Top-level driver for scalar interpolation routine ipolates().
 !! @author Mark Iredell, Kyle Gerheiser
 
-!> @brief Top-level driver for scalar interpolation interpolation routine ipolates().
-!! ipolates() is overloaded with interfaces for grib1 and grib2
+!> @brief Top-level driver for scalar interpolation interpolation
+!! routine ipolates().
+!!
+!! ipolates() is overloaded with interfaces for GRIB1 and GRIB2
 !! descriptors.
 !!
 !! @author George Gayno, Mark Iredell, Kyle Gerheiser

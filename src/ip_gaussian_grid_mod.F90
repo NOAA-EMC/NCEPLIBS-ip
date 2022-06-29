@@ -5,6 +5,10 @@
 
 !> @brief Gaussian grid coordinate transformations.
 !!
+!! Octet numbers refer to [GRIB2 - GRID DEFINITION TEMPLATE 3.40
+!! Gaussian
+!! Latitude/Longitude](https://www.nco.ncep.noaa.gov/pmb/docs/grib2/grib2_doc/grib2_temp3-40.shtml).
+!!
 !! @author George Gayno, Mark Iredell, Kyle Gerheiser
 !! @date July 2021
 module ip_gaussian_grid_mod
@@ -19,13 +23,13 @@ module ip_gaussian_grid_mod
 
   type, extends(ip_grid) :: ip_gaussian_grid
      integer :: jh !< ???
-     real :: dlon !< ???
-     real :: rlat1 !< ???
-     real :: rlon1 !< ???
-     real :: rlon2 !< ???
+     real :: dlon !< "i"-direction increment. GRIB2 Section 3, octets 64-67.
+     real :: rlat1 !<  Latitude of first grid point. GRIB2 Section 3, octets 47-50.
+     real :: rlon1 !< Longitude of first grid point. GRIB2 Section 3, octets 51-54.
+     real :: rlon2 !< Longitude of last grid point. GRIB2 Section 3, octets 60-63.
      real :: hi !< ???
-     integer :: jg !< ???
-     integer :: jscan !< ???
+     integer :: jg !< Number of parallels between the equator and pole times 2. GRIB2 Section 3, octets 68-71.
+     integer :: jscan !< Scanning mode in the 'j' direction. GRIB2 Section 3, octet 72.
    contains
      !> Initializes a gaussian grid given a grib1_descriptor object. @return N/A
      procedure :: init_grib1
@@ -36,22 +40,22 @@ module ip_gaussian_grid_mod
      procedure :: gdswzd => gdswzd_gaussian
   end type ip_gaussian_grid
 
-  INTEGER :: J1 !< ???
-  INTEGER :: JH !< ???
-  REAL, ALLOCATABLE :: BLAT(:) !< ???
+  INTEGER :: J1 !< 'j' index of first grid point within the global array of latitudes.
+  INTEGER :: JH !< Scan mode flag in 'j' direction. When '1' points scan from N to S. When "-1" points scan from S to N.
+  REAL, ALLOCATABLE :: BLAT(:) !< Gaussian latitude for each parallel.
   REAL :: DLON !< ???
-  REAL :: RERTH !< ???
-  REAL, ALLOCATABLE :: YLAT_ROW(:) !< ???
+  REAL :: RERTH !< Radius of the earth. GRIB2 Section 3, octets 15-30.
+  REAL, ALLOCATABLE :: YLAT_ROW(:) !< dy/dlat for each row in 1/degrees.
 
 contains
 
   !> Initializes a gaussian grid given a grib1_descriptor object.
-  !!
-  !! @param[inout] self The grid to initialize
-  !! @param[in] g1_desc A grib1_descriptor
-  !!
-  !! @author Kyle Gerheiser
-  !! @date July 2021
+  !>
+  !> @param[inout] self The grid to initialize
+  !> @param[in] g1_desc A grib1_descriptor
+  !>
+  !> @author Kyle Gerheiser
+  !> @date July 2021
   subroutine init_grib1(self, g1_desc)
     class(ip_gaussian_grid), intent(inout) :: self
     type(grib1_descriptor), intent(in) :: g1_desc
@@ -96,11 +100,11 @@ contains
   end subroutine init_grib1
 
   !> Initializes a gaussian grid given a grib2_descriptor object.
-  !! @param[inout] self The grid to initialize
-  !! @param[in] g2_desc A grib2_descriptor
-  !!
-  !! @author Kyle Gerheiser
-  !! @date July 2021
+  !> @param[inout] self The grid to initialize
+  !> @param[in] g2_desc A grib2_descriptor
+  !>
+  !> @author Kyle Gerheiser
+  !> @date July 2021
   subroutine init_grib2(self, g2_desc)
     class(ip_gaussian_grid), intent(inout) :: self
     type(grib2_descriptor), intent(in) :: g2_desc
@@ -144,49 +148,49 @@ contains
   end subroutine init_grib2
 
   !> Calculates Earth coordinates (iopt = 1) or grid coorindates (iopt = -1)
-  !! for Gaussian grids.
-  !!
-  !! If the selected coordinates are more than one gridpoint
-  !! beyond the the edges of the grid domain, then the relevant
-  !! output elements are set to fill values.
-  !!
-  !! The actual number of valid points computed is returned too.
-  !! Optionally, the vector rotations, the map jacobians and
-  !! the grid box areas may be returned as well.
-  !!
-  !! To compute the vector rotations, the optional arguments 'srot' and 'crot'
-  !! must be present.
-  !!
-  !! To compute the map jacobians, the optional arguments
-  !! 'xlon', 'xlat', 'ylon', 'ylat' must be present.
-  !!
-  !! To compute the grid box areas, the optional argument
-  !! 'area' must be present.
-  !!
-  !! @param[in] self The grid object gdswzd was called on.
-  !! @param[in] iopt option flag
-  !!            - +1 to compute earth coords of selected grid coords.
-  !!            - -1 o compute grid coords of selected earth coords.
-  !! @param[in] npts Maximum number of coordinates.
-  !! @param[in] fill Fill value to set invalid output data.
-  !!            Must be impossible value; suggested value: -9999.
-  !! @param[inout] xpts Grid x point coordinates if iopt>0.
-  !! @param[inout] ypts Grid y point coordinates if iopt>0.
-  !! @param[inout] rlon Earth longitudes in degrees e if iopt<0
-  !!                   (Acceptable range: -360. to 360.)
-  !! @param[inout] rlat Earth latitudes in degrees n if iopt<0
-  !!                (Acceptable range: -90. to 90.)
-  !! @param[out] nret Number of valid points computed.
-  !! @param[out] crot Optional clockwise vector rotation cosines.
-  !! @param[out] srot Optional clockwise vector rotation sines.
-  !! @param[out] xlon Optional dx/dlon in 1/degrees.
-  !! @param[out] xlat Optional dx/dlat in 1/degrees.
-  !! @param[out] ylon Optional dy/dlon in 1/degrees.
-  !! @param[out] ylat Optional dy/dlat in 1/degrees.
-  !! @param[out] area Optional area weights in m**2.
-  !!
-  !! @author Mark Iredell, George Gayno, Kyle Gerheiser
-  !! @date July 2021
+  !> for Gaussian grids.
+  !>
+  !> If the selected coordinates are more than one gridpoint
+  !> beyond the the edges of the grid domain, then the relevant
+  !> output elements are set to fill values.
+  !>
+  !> The actual number of valid points computed is returned too.
+  !> Optionally, the vector rotations, the map jacobians and
+  !> the grid box areas may be returned as well.
+  !>
+  !> To compute the vector rotations, the optional arguments 'srot' and 'crot'
+  !> must be present.
+  !>
+  !> To compute the map jacobians, the optional arguments
+  !> 'xlon', 'xlat', 'ylon', 'ylat' must be present.
+  !>
+  !> To compute the grid box areas, the optional argument
+  !> 'area' must be present.
+  !>
+  !> @param[in] self The grid object gdswzd was called on.
+  !> @param[in] iopt option flag
+  !>            - +1 to compute earth coords of selected grid coords.
+  !>            - -1 o compute grid coords of selected earth coords.
+  !> @param[in] npts Maximum number of coordinates.
+  !> @param[in] fill Fill value to set invalid output data.
+  !>            Must be impossible value; suggested value: -9999.
+  !> @param[inout] xpts Grid x point coordinates if iopt>0.
+  !> @param[inout] ypts Grid y point coordinates if iopt>0.
+  !> @param[inout] rlon Earth longitudes in degrees e if iopt<0
+  !>                   (Acceptable range: -360. to 360.)
+  !> @param[inout] rlat Earth latitudes in degrees n if iopt<0
+  !>                (Acceptable range: -90. to 90.)
+  !> @param[out] nret Number of valid points computed.
+  !> @param[out] crot Optional clockwise vector rotation cosines.
+  !> @param[out] srot Optional clockwise vector rotation sines.
+  !> @param[out] xlon Optional dx/dlon in 1/degrees.
+  !> @param[out] xlat Optional dx/dlat in 1/degrees.
+  !> @param[out] ylon Optional dy/dlon in 1/degrees.
+  !> @param[out] ylat Optional dy/dlat in 1/degrees.
+  !> @param[out] area Optional area weights in m**2.
+  !>
+  !> @author Mark Iredell, George Gayno, Kyle Gerheiser
+  !> @date July 2021
   SUBROUTINE GDSWZD_GAUSSIAN(self,IOPT,NPTS,FILL, &
        XPTS,YPTS,RLON,RLAT,NRET, &
        CROT,SROT,XLON,XLAT,YLON,YLAT,AREA)
@@ -399,17 +403,17 @@ SUBROUTINE GAUSSIAN_ERROR(IOPT,FILL,RLAT,RLON,XPTS,YPTS,NPTS)
   END SUBROUTINE GAUSSIAN_ERROR
 
   !> Computes the vector rotation sines and cosines for a gaussian
-  !! cylindrical grid.
-  !!
-  !! @param[out] crot Clockwise vector rotation cosines.
-  !! @param[out] srot Clockwise vector rotation sines.
-  !!
-  !! @note
-  !! ugrid=crot*uearth-srot*vearth;
-  !! vgrid=srot*uearth+crot*vearth)
-  !!
-  !! @author George Gayno
-  !! @date July 2021
+  !> cylindrical grid.
+  !>
+  !> @param[out] crot Clockwise vector rotation cosines.
+  !> @param[out] srot Clockwise vector rotation sines.
+  !>
+  !> @note
+  !> ugrid=crot*uearth-srot*vearth;
+  !> vgrid=srot*uearth+crot*vearth)
+  !>
+  !> @author George Gayno
+  !> @date July 2021
   SUBROUTINE GAUSSIAN_VECT_ROT(CROT,SROT)
     IMPLICIT NONE
 
@@ -421,15 +425,15 @@ SUBROUTINE GAUSSIAN_ERROR(IOPT,FILL,RLAT,RLON,XPTS,YPTS,NPTS)
   END SUBROUTINE GAUSSIAN_VECT_ROT
 
   !> Computes the map jacobians for a gaussian cylindrical grid.
-  !!
-  !! @param[in] ypts y-index of grid point.
-  !! @param[out] xlon dx/dlon in 1/degrees.
-  !! @param[out] xlat dx/dlat in 1/degrees.
-  !! @param[out] ylon dy/dlon in 1/degrees.
-  !! @param[out] ylat dy/dlat in 1/degrees.
-  !!
-  !! @author George Gayno
-  !! @date July 2021
+  !>
+  !> @param[in] ypts y-index of grid point.
+  !> @param[out] xlon dx/dlon in 1/degrees.
+  !> @param[out] xlat dx/dlat in 1/degrees.
+  !> @param[out] ylon dy/dlon in 1/degrees.
+  !> @param[out] ylat dy/dlat in 1/degrees.
+  !>
+  !> @author George Gayno
+  !> @date July 2021
   SUBROUTINE GAUSSIAN_MAP_JACOB(YPTS, XLON, XLAT, YLON, YLAT)
     IMPLICIT NONE
 
@@ -444,12 +448,12 @@ SUBROUTINE GAUSSIAN_ERROR(IOPT,FILL,RLAT,RLON,XPTS,YPTS,NPTS)
   END SUBROUTINE GAUSSIAN_MAP_JACOB
 
   !> Computes the grid box area for a gaussian cylindrical grid.
-  !!
-  !! @param[in] ypts y-index of grid point.
-  !! @param[out] area Area weights in m^2
-  !!
-  !! @author Mark Iredell, George Gayno
-  !! @date July 2021
+  !>
+  !> @param[in] ypts y-index of grid point.
+  !> @param[out] area Area weights in m^2
+  !>
+  !> @author Mark Iredell, George Gayno
+  !> @date July 2021
   SUBROUTINE GAUSSIAN_GRID_AREA(YPTS,AREA)
     IMPLICIT NONE
 

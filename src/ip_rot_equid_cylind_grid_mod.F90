@@ -5,6 +5,8 @@
 
 !> @brief GDS wizard for mercator cylindrical.
 !>
+!> Octet numbers refer to ??? []().
+!>
 !> @author Gayno @date 2007-NOV-15
 module ip_rot_equid_cylind_grid_mod
   use iso_fortran_env, only: real64
@@ -29,8 +31,12 @@ module ip_rot_equid_cylind_grid_mod
      real(kd) :: sbd !< ???
      integer :: irot !< ???
    contains
-     procedure :: init_grib1 !< Init grib1 @return N/A
-     procedure :: init_grib2 !< Init grib2 @return N/A
+     !> Initializes a gaussian grid given a grib1_descriptor object. @return N/A
+     procedure :: init_grib1
+     !> Initializes a gaussian grid given a grib2_descriptor object. @return N/A
+     procedure :: init_grib2
+     !> Calculates Earth coordinates (iopt = 1) or grid coorindates (iopt = -1)
+     !> for Gaussian grids. @return N/A
      procedure :: gdswzd => gdswzd_rot_equid_cylind !< ??? @return N/A
   end type ip_rot_equid_cylind_grid
 
@@ -44,10 +50,10 @@ module ip_rot_equid_cylind_grid_mod
 
 CONTAINS
 
-  !> Init GRIB1.
+  !> Initializes a gaussian grid given a grib1_descriptor object.
   !>
-  !> @param[inout] self ???
-  !> @param[in] g1_desc ???
+  !> @param[inout] self The grid to initialize
+  !> @param[in] g1_desc A grib1_descriptor
   !>
   !> @author Gayno @date 2007-NOV-15
   subroutine init_grib1(self, g1_desc)
@@ -110,10 +116,9 @@ CONTAINS
 
   end subroutine init_grib1
 
-  !> Init GRIB2.
-  !>
-  !> @param[inout] self ???
-  !> @param[in] g2_desc ???
+  !> Initializes a gaussian grid given a grib2_descriptor object.
+  !> @param[inout] self The grid to initialize
+  !> @param[in] g2_desc A grib2_descriptor
   !>
   !> @author Gayno @date 2007-NOV-15
   subroutine init_grib2(self, g2_desc)
