@@ -1,11 +1,10 @@
 !> @file
 !> @brief Top-level driver for vector interpolation routine ipolates.
-!> @author Mark Iredell, Kyle Gerheiser
-!> @date July 2021
+!> @author Mark Iredell, Kyle Gerheiser @date July 2021
 
 !> @brief Top-level driver for vector interpolation interpolation
-!> routine ipolates.  Ipolatev is overloaded with interfaces for grib1
-!> and grib2 descriptors
+!> routine ipolatev(). The ipolatev() subprogram is overloaded with
+!> interfaces for GRIB1 and GRIB2 descriptors.
 !>
 !> @author George Gayno, Mark Iredell, Kyle Gerheiser
 module ipolatev_mod
@@ -27,7 +26,7 @@ module ipolatev_mod
   
 contains
 
-  !> Interpolates scalar fields between grids given ip_grid objects.
+  !> Interpolates vector fields between grids given ip_grid objects.
   !>
   !> Calls the specific interpolation routines on the generic ip_grids
   !> created from a GRIB1 or GRIB2 descriptor.
@@ -196,102 +195,102 @@ contains
   !> Section 3 Info:
   !>
   !> All map projections:
-  !> - (1): Shape of earth, octet 15.
-  !> - (2): Scale factor of spherical earth radius, octet 16.
-  !> - (3): Scaled value of radius of spherical earth, octets 17-20.
-  !> - (4): Scale factor of major axis of elliptical earth, octet 21.
-  !> - (5): Scaled value of major axis of elliptical earth, octets 22-25.
-  !> - (6): Scale factor of minor axis of elliptical earth, octet 26.
-  !> - (7): Scaled value of minor axis of elliptical earth, octets 27-30.
+  !> 1. Shape of earth, octet 15.
+  !> 2. Scale factor of spherical earth radius, octet 16.
+  !> 3. Scaled value of radius of spherical earth, octets 17-20.
+  !> 4. Scale factor of major axis of elliptical earth, octet 21.
+  !> 5. Scaled value of major axis of elliptical earth, octets 22-25.
+  !> 6. Scale factor of minor axis of elliptical earth, octet 26.
+  !> 7: Scaled value of minor axis of elliptical earth, octets 27-30.
   !>
   !> Equidistant Cyclindrical:
-  !> - (8):  Number of points along a parallel, octs 31-34.
-  !> - (9):  Number of points along a meridian, octs 35-38.
-  !> - (10): Basic angle of initial production domain, octets 39-42.
-  !> - (11): Subdivisions of basic angle, octets 43-46.
-  !> - (12): Latitude of first grid point, octets 47-50.
-  !> - (13): Longitude of first grid point, octets 51-54.
-  !> - (14): Resolution and component flags, octet 55.
-  !> - (15): Latitude of last grid point, octets 56-59.
-  !> - (16): Longitude of last grid point, octets 60-63.
-  !> - (17): i-direction increment, octets 64-67.
-  !> - (18): j-direction increment, octets 68-71.
-  !> - (19): Scanning mode, octet 72.
+  !> 8.  Number of points along a parallel, octs 31-34.
+  !> 9.  Number of points along a meridian, octs 35-38.
+  !> 10. Basic angle of initial production domain, octets 39-42.
+  !> 11. Subdivisions of basic angle, octets 43-46.
+  !> 12. Latitude of first grid point, octets 47-50.
+  !> 13. Longitude of first grid point, octets 51-54.
+  !> 14. Resolution and component flags, octet 55.
+  !> 15. Latitude of last grid point, octets 56-59.
+  !> 16. Longitude of last grid point, octets 60-63.
+  !> 17. i-direction increment, octets 64-67.
+  !> 18. j-direction increment, octets 68-71.
+  !> 19. Scanning mode, octet 72.
   !>
   !> Mercator Cyclindrical:
-  !> - (8):  Number of points along a parallel, octs 31-34.
-  !> - (9):  Number of points along a meridian, octs 35-38.
-  !> - (10): Latitude of first point, octets 39-42.
-  !> - (11): Longitude of first point, octets 43-46.
-  !> - (12): Resolution and component flags, octet 47.
-  !> - (13): Tangent latitude, octets 48-51.
-  !> - (14): Latitude of last point, octets 52-55.
-  !> - (15): Longitude of last point, octets 56-59.
-  !> - (16): Scanning mode flags, octet 60.
-  !> - (17): Orientation of grid, octets 61-64.
-  !> - (18): Longitudinal grid length, octets 65-68.
-  !> - (19): Latitudinal grid length, octets 69-72.
+  !> 8.  Number of points along a parallel, octs 31-34.
+  !> 9.  Number of points along a meridian, octs 35-38.
+  !> 10. Latitude of first point, octets 39-42.
+  !> 11. Longitude of first point, octets 43-46.
+  !> 12. Resolution and component flags, octet 47.
+  !> 13. Tangent latitude, octets 48-51.
+  !> 14. Latitude of last point, octets 52-55.
+  !> 15. Longitude of last point, octets 56-59.
+  !> 16. Scanning mode flags, octet 60.
+  !> 17. Orientation of grid, octets 61-64.
+  !> 18. Longitudinal grid length, octets 65-68.
+  !> 19. Latitudinal grid length, octets 69-72.
   !>
   !> Lambert Conformal Conical:
-  !> - (8):  Number of points along x-axis, octs 31-34.
-  !> - (9):  Number of points along y-axis, octs 35-38.
-  !> - (10): Latitude of first point, octets 39-42.
-  !> - (11): Longitude of first point, octets 43-46.
-  !> - (12): Resolution of component flag, octet 47.
-  !> - (13): Latitude where grid lengths specified,octets 48-51.
-  !> - (14): Longitude of meridian that is parallel to y-axis, octets 52-55.
-  !> - (15): x-direction grid length, octets 56-59.
-  !> - (16): y-direction grid length, octets 60-63.
-  !> - (17): Projection center flag, octet 64.
-  !> - (18): Scanning mode, octet 65.
-  !> - (19): First tangent latitude from pole, octets 66-69.
-  !> - (20): Second tangent latitude from pole, octets 70-73.
-  !> - (21): Latitude of south pole of projection, octets 74-77.
-  !> - (22): Longitude of south pole of projection, octets 78-81.
+  !> 8.  Number of points along x-axis, octs 31-34.
+  !> 9.  Number of points along y-axis, octs 35-38.
+  !> 10. Latitude of first point, octets 39-42.
+  !> 11. Longitude of first point, octets 43-46.
+  !> 12. Resolution of component flag, octet 47.
+  !> 13. Latitude where grid lengths specified,octets 48-51.
+  !> 14. Longitude of meridian that is parallel to y-axis, octets 52-55.
+  !> 15. x-direction grid length, octets 56-59.
+  !> 16. y-direction grid length, octets 60-63.
+  !> 17. Projection center flag, octet 64.
+  !> 18. Scanning mode, octet 65.
+  !> 19. First tangent latitude from pole, octets 66-69.
+  !> 20. Second tangent latitude from pole, octets 70-73.
+  !> 21. Latitude of south pole of projection, octets 74-77.
+  !> 22. Longitude of south pole of projection, octets 78-81.
   !>
   !> Gaussian Cylindrical:
-  !> - (8):  Number of points along a parallel, octs 31-34.
-  !> - (9):  Number of points along a meridian, octs 35-38.
-  !> - (10): Basic angle of initial production domain, octets 39-42.
-  !> - (11): Subdivisions of basic angle, octets 43-46.
-  !> - (12): Latitude of first grid point, octets 47-50.
-  !> - (13): Longitude of first grid point, octets 51-54.
-  !> - (14): Resolution and component flags, octet 55.
-  !> - (15): Latitude of last grid point, octets 56-59.
-  !> - (16): Longitude of last grid point, octets 60-63.
-  !> - (17): i-direction increment, octets 64-67.
-  !> - (18): Number of parallels between pole and equator, octets 68-71.
-  !> - (19): Scanning mode, octet 72.
+  !> 8.  Number of points along a parallel, octs 31-34.
+  !> 9.  Number of points along a meridian, octs 35-38.
+  !> 10. Basic angle of initial production domain, octets 39-42.
+  !> 11. Subdivisions of basic angle, octets 43-46.
+  !> 12. Latitude of first grid point, octets 47-50.
+  !> 13. Longitude of first grid point, octets 51-54.
+  !> 14. Resolution and component flags, octet 55.
+  !> 15. Latitude of last grid point, octets 56-59.
+  !> 16. Longitude of last grid point, octets 60-63.
+  !> 17. i-direction increment, octets 64-67.
+  !> 18. Number of parallels between pole and equator, octets 68-71.
+  !> 19. Scanning mode, octet 72.
   !>
   !> Polar Stereographic Azimuthal:
-  !> - (8):  Number of points along x-axis, octets 31-34.
-  !> - (9):  Number of points along y-axis, octets 35-38.
-  !> - (10): Latitude of first grid point, octets 39-42.
-  !> - (11): Longitude of first grid point, octets 43-46.
-  !> - (12): Resolution and component flags, octet 47.
-  !> - (13): True latitude, octets 48-51.
-  !> - (14): Orientation longitude, octets 52-55.
-  !> - (15): x-direction grid length, octets 56-59.
-  !> - (16): y-direction grid length, octets 60-63.
-  !> - (17): Projection center flag, octet 64.
-  !> - (18): Scanning mode flags, octet 65.
+  !> 8.  Number of points along x-axis, octets 31-34.
+  !> 9.  Number of points along y-axis, octets 35-38.
+  !> 10. Latitude of first grid point, octets 39-42.
+  !> 11. Longitude of first grid point, octets 43-46.
+  !> 12. Resolution and component flags, octet 47.
+  !> 13. True latitude, octets 48-51.
+  !> 14. Orientation longitude, octets 52-55.
+  !> 15. x-direction grid length, octets 56-59.
+  !> 16. y-direction grid length, octets 60-63.
+  !> 17. Projection center flag, octet 64.
+  !> 18. Scanning mode flags, octet 65.
   !>
   !> Rotated Equidistant Cyclindrical:
-  !> - (8):  Number of points along a parallel, octs 31-34.
-  !> - (9):  Number of points along a meridian, octs 35-38.
-  !> - (10): Basic angle of initial production domain, octets 39-42.
-  !> - (11): Subdivisions of basic angle, octets 43-46.
-  !> - (12): Latitude of first grid point, octets 47-50.
-  !> - (13): Longitude of first grid point, octets 51-54.
-  !> - (14): Resolution and component flags, octet 55.
-  !> - (15): Latitude of last grid point, octets 56-59.
-  !> - (16): Longitude of last grid point, octets 60-63.
-  !> - (17): i-direction increment, octets 64-67.
-  !> - (18): j-direction increment, octets 68-71.
-  !> - (19): Scanning mode, octet 72.
-  !> - (20): Latitude of southern pole of projection, octets 73-76.
-  !> - (21): Longitude of southern pole of projection, octets 77-80.
-  !> - (22): Angle of rotation of projection, octs 81-84.
+  !> 8.  Number of points along a parallel, octs 31-34.
+  !> 9.  Number of points along a meridian, octs 35-38.
+  !> 10. Basic angle of initial production domain, octets 39-42.
+  !> 11. Subdivisions of basic angle, octets 43-46.
+  !> 12. Latitude of first grid point, octets 47-50.
+  !> 13. Longitude of first grid point, octets 51-54.
+  !> 14. Resolution and component flags, octet 55.
+  !> 15. Latitude of last grid point, octets 56-59.
+  !> 16. Longitude of last grid point, octets 60-63.
+  !> 17. i-direction increment, octets 64-67.
+  !> 18. j-direction increment, octets 68-71.
+  !> 19. Scanning mode, octet 72.
+  !> 20. Latitude of southern pole of projection, octets 73-76.
+  !> 21. Longitude of southern pole of projection, octets 77-80.
+  !> 22. Angle of rotation of projection, octs 81-84.
   !>
   !> @param[in] igdtleni Number of elements of the grid definition
   !> template array for the input grid. Corresponds to the gfld%igdtlen
@@ -378,8 +377,7 @@ contains
   !>   SPECTRAL| 4 | 0,-1         | 12.60
   !>   N-BUDGET| 6 | -1,-1        | 0.33
   !>
-  !> @date July 2021
-  !> @author Kyle Gerheiser
+  !> @author Kyle Gerheiser @date July 2021
   subroutine ipolatev_grib2(ip,ipopt,igdtnumi,igdtmpli,igdtleni, &
        igdtnumo,igdtmplo,igdtleno, &
        mi,mo,km,ibi,li,ui,vi, &
@@ -598,7 +596,9 @@ contains
   END SUBROUTINE IPOLATEV_grib1
 
   !> Special case of ipolatev_grib1 when interpolating a single field.
-  !> Removes the km dimension of input arrays so scalars can be passed to ibi/ibo.
+  !>
+  !> Removes the km dimension of input arrays so vectors can be passed
+  !> to ibi/ibo.
   !>
   !> @param ip Interpolation method
   !> - ip = BILINEAR_INTERP_ID = 0 for bilinear
