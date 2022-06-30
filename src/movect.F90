@@ -2,11 +2,10 @@
 !> @brief Move a vector along a great circle.
 !> @author Iredell @date 96-04-10
 
-!> ABSTRACT: THIS SUBPROGRAM PROVIDES THE ROTATION PARAMETERS
-!>           TO MOVE A VECTOR ALONG A GREAT CIRCLE FROM ONE
-!>           POSITION TO ANOTHER WHILE CONSERVING ITS ORIENTATION
-!>           WITH RESPECT TO THE GREAT CIRCLE.  THESE ROTATION
-!>           PARAMETERS ARE USEFUL FOR VECTOR INTERPOLATION.
+!> This subprogram provides the rotation parameters to move a vector
+!> along a great circle from one position to another while conserving
+!> its orientation with respect to the great circle. These rotation
+!> parameters are useful for vector interpolation.
 !>        
 !> ### Program History Log
 !> Date | Programmer | Comments

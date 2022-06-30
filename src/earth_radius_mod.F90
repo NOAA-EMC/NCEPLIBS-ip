@@ -39,16 +39,16 @@ contains
   !> @author Gayno @date 2015-07-14
   SUBROUTINE EARTH_RADIUS(IGDTMPL, IGDTLEN, RADIUS, ECCEN_SQUARED)
     IMPLICIT NONE
-    !
+
     INTEGER,                INTENT(IN   ) :: IGDTLEN
     INTEGER,                INTENT(IN   ) :: IGDTMPL(IGDTLEN)
-    !
+
     REAL,                   INTENT(  OUT) :: ECCEN_SQUARED
     REAL,                   INTENT(  OUT) :: RADIUS
-    !
+
     REAL                                  :: FLAT
     REAL                                  :: MAJOR_AXIS, MINOR_AXIS
-    !
+
     SELECT CASE (IGDTMPL(1))
     CASE (0)
        RADIUS        = 6367470.0

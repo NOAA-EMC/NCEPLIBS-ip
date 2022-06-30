@@ -2,11 +2,13 @@
 #
 # Mark Potts, Kyle Gerheiser
 
+# Link data directory to find the test data.
 execute_process(COMMAND cmake -E create_symlink
   "${CMAKE_CURRENT_SOURCE_DIR}/data"
   "${CMAKE_CURRENT_BINARY_DIR}/data" # New name
   )
 
+# Set compiler flags for intel.
 if(CMAKE_Fortran_COMPILER_ID MATCHES "^(Intel)$")
   set(CMAKE_Fortran_FLAGS "-r8 -g -traceback -check all -warn all -heap-arrays -assume byterecl ${CMAKE_Fortran_FLAGS} ")
   set(CMAKE_C_FLAGS "-std=c99")
@@ -14,10 +16,15 @@ elseif(CMAKE_Fortran_COMPILER_ID MATCHES "^(GNU)$")
   set(CMAKE_Fortran_FLAGS "-fdefault-real-8 -fno-range-check -g -fbacktrace -fcheck=all -Wall -O0 -fimplicit-none -Wsurprising -Wextra ${CMAKE_Fortran_FLAGS} ")
 endif()
 
+# Set compiler flags for GNU.
 if(${CMAKE_Fortran_COMPILER_ID} MATCHES "^(GNU)$" AND ${CMAKE_Fortran_COMPILER_VERSION} VERSION_GREATER_EQUAL 10)
   set(CMAKE_Fortran_FLAGS "${CMAKE_Fortran_FLAGS} -w -fallow-argument-mismatch -fallow-invalid-boz")
 endif()
 
+# Test earth_radius_mod.
+add_executable(test_earth_radius test_earth_radius.F90)
+target_link_libraries(test_earth_radius PUBLIC ip::ip_d)
+add_test(test_earth_radius test_earth_radius)
 
 # grib-2 tests
 add_library(test_library_grib2 input_data_mod_grib2.F90 interp_mod_grib2.F90)
@@ -81,3 +88,5 @@ add_test(test_mercator_bicubic_vector_grib1 test_vector_grib1 8 1)
 add_test(test_polar-stereo_neighbor-budget_vector_grib1 test_vector_grib1 212 6)
 add_test(test_rotatedB_spectral_vector_grib1 test_vector_grib1 205 4)
 add_test(test_rotatedE_budget_vector_grib1 test_vector_grib1 203 3)
+
+

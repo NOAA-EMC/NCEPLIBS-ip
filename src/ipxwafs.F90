@@ -2,7 +2,7 @@
 !> @brief Expand or contract wafs grids.
 !> @author Iredell @date 96-04-10
 
-!> @brief Expand or contract wafs grids.
+!> Expand or contract wafs grids.
 !>
 !> This subprogram transforms between the thinned wafs grids used for
 !> transmitting to the aviation community and their full expansion as
