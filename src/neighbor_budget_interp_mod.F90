@@ -1,5 +1,5 @@
 !> @file
-!> @brief Interpolate scalar fields (neighbor).
+!> @brief Interpolate scalar and vector fields with neighbor budget interpolation.
 !> @author Mark Iredell @date 96-04-10
 
 !> @brief Interpolate scalar fields (neighbor).
@@ -76,8 +76,8 @@ contains
   !> are respective weights (defaults to all 1 if ipopt(1)=-1 or
   !> ipopt(2)=-1).  ipopt(3+ipopt(1)) is minimum percentage for mask
   !> (defaults to 50 if ipopt(3+ipopt(1)=-1)
-  !> @param[in] grid_in ???
-  !> @param[in] grid_out ???
+  !> @param[in] grid_in The input grid.
+  !> @param[in] grid_out The output grid.
   !> @param[in] mi skip number between input grid fields if km>1 or
   !> dimension of input grid fields if km=1
   !> @param[in] mo skip number between output grid fields if km>1 or
@@ -306,8 +306,8 @@ contains
   !> are respective weights (defaults to all 1 if ipopt(1)=-1 or
   !> ipopt(2)=-1).  ipopt(3+ipopt(1)) is minimum percentage for mask
   !> (defaults to 50 if ipopt(3+ipopt(1)=-1)
-  !> @param[in] grid_in ???
-  !> @param[in] grid_out ???
+  !> @param[in] grid_in The input grid.
+  !> @param[in] grid_out The output grid.
   !> @param[in] mi skip number between input grid fields if km>1 or
   !> dimension of input grid fields if km=1
   !> @param[in] mo skip number between output grid fields if km>1 or

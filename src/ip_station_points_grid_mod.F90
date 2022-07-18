@@ -1,11 +1,11 @@
 !> @file
 !> @brief ???
 !>
-!> @author Iredell @date 96-04-10
+!> @author Kyle Gerheiser @date ???
 
 !> @brief ???
 !>
-!> @author Iredell @date 96-04-10
+!> @author Kyle Gerheiser @date ???
 module ip_station_points_grid_mod
   use ip_grid_descriptor_mod
   use ip_grid_mod
