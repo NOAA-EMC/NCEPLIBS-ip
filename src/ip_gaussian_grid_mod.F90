@@ -27,7 +27,7 @@ module ip_gaussian_grid_mod
      real :: rlat1 !<  Latitude of first grid point. GRIB2 Section 3, octets 47-50.
      real :: rlon1 !< Longitude of first grid point. GRIB2 Section 3, octets 51-54.
      real :: rlon2 !< Longitude of last grid point. GRIB2 Section 3, octets 60-63.
-     real :: hi !< ???
+     real :: hi !< Scan mode flag in 'i' direction. When '1' points scan from W to E. When "-1" points scan from E to W.
      integer :: jg !< Number of parallels between the equator and pole times 2. GRIB2 Section 3, octets 68-71.
      integer :: jscan !< Scanning mode in the 'j' direction. GRIB2 Section 3, octet 72.
    contains
