@@ -149,33 +149,34 @@ contains
   !>
   !> This subprogram performs spectral interpolation from any grid to
   !> any grid for scalar fields. It requires that the input fields be
-  !> uniformly global. OPTIONS ALLOW CHOICES BETWEEN TRIANGULAR SHAPE
-  !> (IPOPT(1)=0) and rhomboidal shape (ipopt(1)=1) which has no
+  !> uniformly global. Options allow choices between triangular shape
+  !> (ipopt(1)=0) and rhomboidal shape (ipopt(1)=1) which has no
   !> default; a second option is the truncation (ipopt(2)) which
   !> defaults to a sensible truncation for the input grid (if
   !> opt(2)=-1).
   !>
   !> @note If the output grid is not found in a special list, then the
-  !> transform back to grid is not very fast.  This special list
+  !> transform back to grid is not very fast. This special list
   !> contains global cylindrical grids, polar stereographic grids
-  !> centered at the pole and mercator grids. only horizontal
-  !> interpolation is performed.
+  !> centered at the pole and mercator grids.
+  !>
+  !> Only horizontal interpolation is performed.
   !>
   !> The code recognizes the following projections, where "igdtnumi/o"
-  !> is the grib 2 grid defintion template number for the input and
+  !> is the GRIB2 grid defintion template number for the input and
   !> onutput grids, respectively:
-  !> - (igdtnumi/o=00) equidistant cylindrical
-  !> - (igdtnumo  =01) rotated equidistant cylindrical. "e" and non-"e" staggered
-  !> - (igdtnumo  =10) mercator cylindrical
-  !> - (igdtnumo  =20) polar stereographic azimuthal
-  !> - (igdtnumo  =30) lambert conformal conical
-  !> - (igdtnumi/o=40) gaussian cylindrical
+  !> - igdtnumi/o = 00 equidistant cylindrical
+  !> - igdtnumo = 01 rotated equidistant cylindrical. "e" and non-"e" staggered
+  !> - igdtnumo = 10 mercator cylindrical
+  !> - igdtnumo = 20 polar stereographic azimuthal
+  !> - igdtnumo = 30 lambert conformal conical
+  !> - igdtnumi/o = 40 gaussian cylindrical
   !>
   !> As an added bonus the number of output grid points and their
   !> latitudes and longitudes are also returned. On the other hand,
-  !> the output can be a set of station points if igdtnumo<0, in which
+  !> the output can be a set of station points if igdtnumo < 0, in which
   !> case the number of points and their latitudes and longitudes must
-  !> be input.  output bitmaps will not be created.
+  !> be input. Output bitmaps will not be created.
   !>        
   !> ### Program History Log
   !> Date | Programmer | Comments
@@ -189,8 +190,9 @@ contains
   !> triangular, ipopt(1)=1 for rhomboidal; ipopt(2) is truncation
   !> number (defaults to sensible if ipopt(2)=-1).
   !> @param[in] igdtnumi grid definition template number - input
-  !> grid. Corresponds to the gfld%igdtnum component of the ncep g2
-  !> library gridmod data structure.
+  !> grid. Corresponds to the gfld%igdtnum component of the
+  !> [NCEPLIBS-g2](https://github.com/NOAA-EMC/NCEPLIBS-g2) library
+  !> gridmod data structure.
   !> - 00 - equidistant cylindrical
   !> - 01 - rotated equidistant cylindrical.  "e" and non-"e" staggered
   !> - 10 - mercator cyclindrical
@@ -205,16 +207,19 @@ contains
   !> template array - input grid.  corresponds to the gfld%igdtlen
   !> component of the ncep g2 library gridmod data structure.
   !> @param[in] igdtnumo grid definition template number - output
-  !> grid. Corresponds to the gfld%igdtnum component of the ncep g2
-  !> library gridmod data structure. igdtnumo<0 means interpolate to
-  !> random station points. Otherwise, same definition as "igdtnumi".
+  !> grid. Corresponds to the gfld%igdtnum component of the
+  !> [NCEPLIBS-g2](https://github.com/NOAA-EMC/NCEPLIBS-g2) library
+  !> gridmod data structure. igdtnumo<0 means interpolate to random
+  !> station points. Otherwise, same definition as igdtnumi.
   !> @param[in] igdtmplo (igdtleno) grid definition template array -
-  !> output grid. corresponds to the gfld%igdtmpl component of the
-  !> ncep g2 library gridmod data structure. (section 3 info).  see
+  !> output grid. Corresponds to the gfld%igdtmpl component of the
+  !> ncep g2 library gridmod data structure (section 3 info). See
   !> comments in routine ipolates() for complete definition.
   !> @param[in] igdtleno number of elements of the grid definition
-  !> template array - output grid.  corresponds to the gfld%igdtlen
-  !> component of the ncep g2 library gridmod data structure.
+  !> template array - output grid. Corresponds to the gfld%igdtlen
+  !> component of the
+  !> [NCEPLIBS-g2](https://github.com/NOAA-EMC/NCEPLIBS-g2) library
+  !> gridmod data structure.
   !> @param[in] mi skip number between input grid fields if km>1 or
   !> dimension of input grid fields if km=1
   !> @param[in] mo skip number between output grid fields if km>1 or
@@ -226,7 +231,7 @@ contains
   !> @param[out] rlat (mo) output latitudes in degrees (if igdtnumo<0)
   !> @param[out] rlon (mo) output longitudes in degrees (if igdtnumo<0)
   !> @param[out] ibo (km) output bitmap flags
-  !> @param[out] lo *1 (mo,km) output bitmaps (always output)
+  !> @param[out] lo (mo,km) output bitmaps (always output)
   !> @param[out] go (mo,km) output fields interpolated
   !> @param[out] iret return code
   !> - 0 successful interpolation
@@ -484,26 +489,26 @@ contains
   !> truncation for the input grid (if opt(2)=-1).
   !>
   !> @note If the output grid is not found in a special list, then the
-  !> transform back to grid is not very fast.  This special list
+  !> transform back to grid is not very fast. This special list
   !> contains global cylindrical grids, polar stereographic grids
   !> centered at the pole and mercator grids.
   !>
   !> Only horizontal interpolation is performed. The grids are defined
   !> by their grid description sections (passed in integer form as
-  !> decoded by subprogram w3fi63).
+  !> decoded by subprogram w3fi63()).
   !>
   !> The current code recognizes the following projections:
-  !> - (kgds(1)=000) equidistant cylindrical
-  !> - (kgds(1)=001) mercator cylindrical
-  !> - (kgds(1)=003) lambert conformal conical
-  !> - (kgds(1)=004) gaussian cylindrical (spectral native)
-  !> - (kgds(1)=005) polar stereographic azimuthal
-  !> - (kgds(1)=203) rotated equidistant cylindrical (e-stagger)
-  !> - (kgds(1)=205) rotated equidistant cylindrical (b-stagger)
+  !> - kgds(1) = 000 equidistant cylindrical
+  !> - kgds(1) = 001 mercator cylindrical
+  !> - kgds(1) = 003 lambert conformal conical
+  !> - kgds(1) = 004 gaussian cylindrical (spectral native)
+  !> - kgds(1) = 005 polar stereographic azimuthal
+  !> - kgds(1) = 203 rotated equidistant cylindrical (e-stagger)
+  !> - kgds(1) = 205 rotated equidistant cylindrical (b-stagger)
   !>
-  !> Where kgds could be either input kgdsi or output kgdso.  As an
+  !> Where kgds could be either input kgdsi or output kgdso. As an
   !> added bonus the number of output grid points and their latitudes
-  !> and longitudes are also returned.  On the other hand, the output
+  !> and longitudes are also returned. On the other hand, the output
   !> can be a set of station points if kgdso(1)<0, in which case the
   !> number of points and their latitudes and longitudes must be
   !> input. Output bitmaps will not be created.
@@ -526,8 +531,8 @@ contains
   !> dimension of output grid fields if km=1
   !> @param[in] km number of fields to interpolate
   !> @param[in] ibi (km) input bitmap flags (must be all 0)
-  !> @param[in] gi  (mi,km) input fields to interpolate
-  !> @param[out] no  number of output points (only if kgdso(1)<0)
+  !> @param[in] gi (mi,km) input fields to interpolate
+  !> @param[out] no number of output points (only if kgdso(1)<0)
   !> @param[out] rlat (no) output latitudes in degrees (if kgdso(1)<0)
   !> @param[out] rlon (no) output longitudes in degrees (if kgdso(1)<0)
   !> @param[out] ibo (km) output bitmap flags
@@ -781,12 +786,12 @@ contains
   !> recognizes the following projections, where "igdtnumi/o" is the
   !> grib 2 grid defintion template number for the input and output
   !> grids, respectively:
-  !> - (igdtnumi/o=00) equidistant cylindrical
-  !> - (igdtnumo  =01) rotated equidistant cylindrical. "e" and non-"e" staggered
-  !> - (igdtnumo  =10) mercator cylindrical
-  !> - (igdtnumo  =20) polar stereographic azimuthal
-  !> - (igdtnumo  =30) lambert conformal conical
-  !> - (igdtnumi/o=40) gaussian cylindrical
+  !> - igdtnumi/o=00 equidistant cylindrical
+  !> - igdtnumo  =01 rotated equidistant cylindrical. "e" and non-"e" staggered
+  !> - igdtnumo  =10 mercator cylindrical
+  !> - igdtnumo  =20 polar stereographic azimuthal
+  !> - igdtnumo  =30 lambert conformal conical
+  !> - igdtnumi/o=40 gaussian cylindrical
   !>
   !> The input and output vectors are rotated so that they are either
   !> resolved relative to the defined grid in the direction of
