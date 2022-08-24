@@ -1,5 +1,5 @@
 !> @file
-!> @brief Interpolate scalar fields (neighbor).
+!> @brief Interpolate scalar and vector fields with neighbor interpolation.
 !> @author Mark Iredell @date 96-04-10
 
 !> @brief Interpolate scalar fields (neighbor).
@@ -71,8 +71,8 @@ contains
   !>        
   !> @param[in] ipopt (20) interpolation options ipopt(1) is width of
   !> square to examine in spiral search (defaults to 1 if ipopt(1)=-1)
-  !> @param[in] grid_in ???
-  !> @param[in] grid_out ???
+  !> @param[in] grid_in The input grid.
+  !> @param[in] grid_out The output grid.
   !> @param[in] mi skip number between input grid fields if km>1 or
   !> dimension of input grid fields if km=1.
   !> @param[in] mo skip number between output grid fields if km>1 or
@@ -319,8 +319,8 @@ contains
   !>        
   !> @param[in] ipopt (20) interpolation options ipopt(1) is width of
   !> square to examine in spiral search (defaults to 1 if ipopt(1)=-1)
-  !> @param[in] grid_in ???
-  !> @param[in] grid_out ???
+  !> @param[in] grid_in The input grid.
+  !> @param[in] grid_out The output grid.
   !> @param[in] mi skip number between input grid fields if km>1 or
   !> dimension of input grid fields if km=1
   !> @param[in] mo skip number between output grid fields if km>1 or

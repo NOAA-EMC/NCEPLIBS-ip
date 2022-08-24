@@ -22,12 +22,12 @@ module ip_gaussian_grid_mod
   public :: ip_gaussian_grid
 
   type, extends(ip_grid) :: ip_gaussian_grid
-     integer :: jh !< ???
+     integer :: jh !< Scan mode flag in 'j' direction. When '1' points scan from N to S. When "-1" points scan from S to N.
      real :: dlon !< "i"-direction increment. GRIB2 Section 3, octets 64-67.
      real :: rlat1 !<  Latitude of first grid point. GRIB2 Section 3, octets 47-50.
      real :: rlon1 !< Longitude of first grid point. GRIB2 Section 3, octets 51-54.
      real :: rlon2 !< Longitude of last grid point. GRIB2 Section 3, octets 60-63.
-     real :: hi !< ???
+     real :: hi !< Scan mode flag in 'i' direction. When '1' points scan from W to E. When "-1" points scan from E to W.
      integer :: jg !< Number of parallels between the equator and pole times 2. GRIB2 Section 3, octets 68-71.
      integer :: jscan !< Scanning mode in the 'j' direction. GRIB2 Section 3, octet 72.
    contains
@@ -43,7 +43,7 @@ module ip_gaussian_grid_mod
   INTEGER :: J1 !< 'j' index of first grid point within the global array of latitudes.
   INTEGER :: JH !< Scan mode flag in 'j' direction. When '1' points scan from N to S. When "-1" points scan from S to N.
   REAL, ALLOCATABLE :: BLAT(:) !< Gaussian latitude for each parallel.
-  REAL :: DLON !< ???
+  REAL :: DLON !< "i"-direction increment. GRIB2 Section 3, octets 64-67.
   REAL :: RERTH !< Radius of the earth. GRIB2 Section 3, octets 15-30.
   REAL, ALLOCATABLE :: YLAT_ROW(:) !< dy/dlat for each row in 1/degrees.
 
