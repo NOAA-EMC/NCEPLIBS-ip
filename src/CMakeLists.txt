@@ -1,6 +1,6 @@
 # This is the CMake file for the src directory of NCEPLIBS-ip.
 #
-# Mark Potts, Kyle Gerheiser
+# Mark Potts, Kyle Gerheiser, Eric Engle
 
 set(fortran_src gdswzd_c.F90 gdswzd_mod.F90
   ip2lib_4.h ip2lib_8.h ip2lib_d.h ipolates.F90 ipolatev.F90
@@ -40,24 +40,38 @@ foreach(kind ${kinds})
 
   set(BUILD_FLAGS "${fortran_${kind}_flags}")
 
-  add_library(${lib_name} STATIC ${fortran_src})
-  add_library(${PROJECT_NAME}::${lib_name} ALIAS ${lib_name})
+  add_library(${lib_name}_objlib OBJECT ${fortran_src})
+  if(BUILD_SHARED_LIBS)
+    set_property(TARGET ${lib_name}_objlib PROPERTY POSITION_INDEPENDENT_CODE 1)
+  endif()
+  add_library(${PROJECT_NAME}::${lib_name} ALIAS ${lib_name}_objlib)
 
-  target_compile_definitions(${lib_name} PRIVATE "LSIZE=${kind_definition}")
-  set_target_properties(${lib_name} PROPERTIES COMPILE_FLAGS "${BUILD_FLAGS}")
-  set_target_properties(${lib_name} PROPERTIES Fortran_MODULE_DIRECTORY "${module_dir}")
+  target_compile_definitions(${lib_name}_objlib PRIVATE "LSIZE=${kind_definition}")
+  set_target_properties(${lib_name}_objlib PROPERTIES COMPILE_FLAGS "${BUILD_FLAGS}")
+  set_target_properties(${lib_name}_objlib PROPERTIES Fortran_MODULE_DIRECTORY "${module_dir}")
 
   if(OpenMP_Fortran_FOUND)
-    target_link_libraries(${lib_name} PUBLIC OpenMP::OpenMP_Fortran)
+    target_link_libraries(${lib_name}_objlib PUBLIC OpenMP::OpenMP_Fortran)
   endif()
 
-  target_link_libraries(${lib_name} PUBLIC sp::sp_${kind})
-  
-  target_include_directories(${lib_name}
+  target_include_directories(${lib_name}_objlib
     PUBLIC $<BUILD_INTERFACE:${module_dir}>
     $<INSTALL_INTERFACE:include_${kind}>)
 
-  list(APPEND LIB_TARGETS ${lib_name})
+  # Create static object library from object library.
+  add_library(${lib_name}_static STATIC $<TARGET_OBJECTS:${lib_name}_objlib>)
+  set_target_properties(${lib_name}_static PROPERTIES OUTPUT_NAME ${lib_name})
+  set_target_properties(${lib_name}_static PROPERTIES EXPORT_NAME ${lib_name})
+  set_target_properties(${lib_name}_static PROPERTIES EXPORT_NAME ${lib_name}_static)
+  list(APPEND LIB_TARGETS ${lib_name}_static)
+
+  if(BUILD_SHARED_LIBS)
+    # Create shared object library from object library.
+    add_library(${lib_name}_shared SHARED $<TARGET_OBJECTS:${lib_name}_objlib>)
+    set_target_properties(${lib_name}_shared PROPERTIES OUTPUT_NAME ${lib_name})
+    set_target_properties(${lib_name}_shared PROPERTIES EXPORT_NAME ${lib_name})
+    list(APPEND LIB_TARGETS ${lib_name}_shared)
+  endif()
   
   install(DIRECTORY ${module_dir} DESTINATION ${CMAKE_INSTALL_PREFIX})
   install(FILES ip2lib_${kind}.h DESTINATION ${CMAKE_INSTALL_PREFIX}/include_${kind} RENAME ip2lib.h)

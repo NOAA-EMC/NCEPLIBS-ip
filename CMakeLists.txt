@@ -1,6 +1,6 @@
 # This is the main CMake file for NCEPLIBS-ip.
 #
-# Mark Potts, Kyle Gerheiser
+# Mark Potts, Kyle Gerheiser, Eric Engle
 cmake_minimum_required(VERSION 3.15)
 
 # Get the version from the VERSION file.
