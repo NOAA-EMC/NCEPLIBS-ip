@@ -16,12 +16,13 @@ module ipolatev_mod
   implicit none
 
   private
-  public :: ipolatev, ipolatev_grib2, ipolatev_grib1_single_field, ipolatev_grib1
+  public :: ipolatev, ipolatev_grib2, ipolatev_grib1_single_field, ipolatev_grib1, ipolatev_grib2_single_field
 
   interface ipolatev
      module procedure ipolatev_grib1
      module procedure ipolatev_grib1_single_field
      module procedure ipolatev_grib2
+     module procedure ipolatev_grib2_single_field
   end interface ipolatev
   
 contains
@@ -701,6 +702,131 @@ contains
     ENDIF
 
   END SUBROUTINE ipolatev_grib1_single_field
+
+  !> This subprogram interpolates vector fields from any grid to any
+  !> grid given a grib2 descriptor.
+  !>
+  !> @param[in] ip Interpolation method
+  !> - ip=0 for bilinear
+  !> - ip=1 for bicubic
+  !> - ip=2 for neighbor;
+  !> - ip=3 for budget;
+  !> - ip=4 for spectral;
+  !> - ip=6 for neighbor-budget
+  !>
+  !> @param[in] ipopt Interpolation options
+  !> - ip=0: (No options)
+  !> - ip=1: Constraint option
+  !> - ip=2: (No options)
+  !> - ip=3: Number in radius, radius weights, search radius
+  !> - ip=4: Spectral shape, spectral truncation
+  !> - ip=6: Number in radius, radius weights ...)
+  !>
+  !> @param[in] igdtnumi Grid definition template number for the input grid.
+  !> Corresponds to the gfld%igdtnum component of the ncep g2 library
+  !> gridmod data structure:
+  !> - 00 - Equidistant Cylindrical
+  !> - 01 - Rotated Equidistant cylindrical. "e" and non-"e" staggered
+  !> - 10 - Mercator Cyclindrical
+  !> - 20 - Polar Stereographic azimuthal
+  !> - 30 - Lambert Conformal Conical
+  !> - 40 - Gaussian Equidistant Cyclindrical
+  !>
+  !> @param[in] igdtmpli Grid definition template array input grid.
+  !> Corresponds to the gfld%igdtmpl component of the NCEPLIBS-g2
+  !> gridmod data structure
+  !>
+  !> @param[in] igdtleni Number of elements of the grid definition
+  !> template array for the input grid. Corresponds to the gfld%igdtlen
+  !> component of the ncep g2 library gridmod data structure.
+  !>
+  !> @param[in] igdtnumo Grid definition template number for the output grid.
+  !> Corresponds to the gfld%igdtnum component of the
+  !> ncep g2 library gridmod data structure.
+  !> See "igdtnumi" for specific template definitions.
+  !> Note: igdtnumo<0 means interpolate to random station points.
+  !>
+  !> @param[in] igdtmplo Grid definition template array for the output grid.
+  !> Corresponds to the gfld%igdtmpl component of the ncep g2 library
+  !> gridmod data structure.
+  !> See "igdtmpli" for definition of array elements.
+  !>
+  !> @param[in] igdtleno Number of elements of the grid definition
+  !> template array for the output grid. Corresponds to the gfld%igdtlen
+  !> component of the ncep g2 library gridmod data structure.
+  !>
+  !> @param[in] mi    Skip number between input grid fields if km>1 or
+  !> dimension of input grid fields if km=1.
+  !> @param[in] mo    Skip number between output grid fields if km>1
+  !> or dimension of output grid fields if km=1.
+  !> @param[in] km    Number of fields to interpolate.
+  !> @param[in] ibi   Input bitmap flags.
+  !> @param[in] li    Input bitmaps (if respective ibi(k)=1).
+  !> @param[in] ui    Input u-component fields to interpolate.
+  !> @param[in] vi    Input v-component fields to interpolate.
+  !> @param[out] no Number of output points (only if kgdso(1)<0).
+  !> @param[inout] rlat Output latitudes in degrees (if kgdso(1)<0).
+  !> @param[inout] rlon Output longitudes in degrees (if kgdso(1)<0).
+  !> @param[inout] crot Vector rotation cosines (if igdtnumo>=0).
+  !> @param[inout] srot Vector rotation sines (if igdtnumo>=0).
+  !> @param[out] ibo Output bitmap flags.
+  !> @param[out] lo  Output bitmaps (always output).
+  !> @param[out] uo  Output u-component fields interpolated.
+  !> @param[out] vo  Output v-component fields interpolated.
+  !> @param[out] iret Return code.
+  !> - 0 Successful interpolation.
+  !> - 1 Unrecognized interpolation method.
+  !> - 2 Unrecognized input grid or no grid overlap.
+  !> - 3 Unrecognized output grid.
+  !> - 1x Invalid bicubic method parameters.
+  !> - 3x Invalid budget method parameters.
+  !> - 4x Invalid spectral method parameters.
+  !>
+  !> @author Kyle Gerheiser @date July 2021
+  subroutine ipolatev_grib2_single_field(ip,ipopt,igdtnumi,igdtmpli,igdtleni, &
+       igdtnumo,igdtmplo,igdtleno, &
+       mi,mo,km,ibi,li,ui,vi, &
+       no,rlat,rlon,crot,srot,ibo,lo,uo,vo,iret) bind(c)
+
+    INTEGER,               INTENT(IN   ) :: IP, IPOPT(20), IBI
+    INTEGER,               INTENT(IN   ) :: KM, MI, MO
+    INTEGER,               INTENT(IN   ) :: IGDTNUMI, IGDTLENI
+    INTEGER,               INTENT(IN   ) :: IGDTMPLI(IGDTLENI)
+    INTEGER,               INTENT(IN   ) :: IGDTNUMO, IGDTLENO
+    INTEGER,               INTENT(IN   ) :: IGDTMPLO(IGDTLENO)
+    INTEGER,               INTENT(  OUT) :: IBO, IRET, NO
+    !
+    LOGICAL*1,             INTENT(IN   ) :: LI(MI)
+    LOGICAL*1,             INTENT(  OUT) :: LO(MO)
+    !
+    REAL,                  INTENT(IN   ) :: UI(MI),VI(MI)
+    REAL,                  INTENT(INOUT) :: CROT(MO),SROT(MO)
+    REAL,                  INTENT(INOUT) :: RLAT(MO),RLON(MO)
+    REAL,                  INTENT(  OUT) :: UO(MO),VO(MO)
+    !
+    INTEGER                              :: K, N
+
+    type(grib2_descriptor) :: desc_in, desc_out
+    class(ip_grid), allocatable :: grid_in, grid_out
+    integer :: ibo_array(1)
+
+    ! Can't pass expression (e.g. [ibo]) to intent(out) argument.
+    ! Initialize placeholder array of size 1 to make rank match.
+    ibo_array(1) = ibo
+
+    desc_in = init_descriptor(igdtnumi, igdtleni, igdtmpli)
+    desc_out = init_descriptor(igdtnumo, igdtleno, igdtmplo)
+
+    call init_grid(grid_in, desc_in)
+    call init_grid(grid_out, desc_out)
+
+    CALL ipolatev_grid(ip,IPOPT,grid_in,grid_out, &
+         MI,MO,KM,[IBI],LI,UI,VI,&
+         NO,RLAT,RLON,CROT,SROT,IBO_ARRAY,LO,UO,VO,IRET)
+
+    ibo = ibo_array(1)
+
+  end subroutine ipolatev_grib2_single_field
 
 end module ipolatev_mod
 

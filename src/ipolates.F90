@@ -18,12 +18,13 @@ module ipolates_mod
   implicit none
 
   private
-  public :: ipolates, ipolates_grib2, ipolates_grib1_single_field, ipolates_grib1
+  public :: ipolates, ipolates_grib2, ipolates_grib1_single_field, ipolates_grib1, ipolates_grib2_single_field
 
   interface ipolates
      module procedure ipolates_grib1
      module procedure ipolates_grib1_single_field
      module procedure ipolates_grib2
+     module procedure ipolates_grib2_single_field
   end interface ipolates
 
 contains
@@ -589,6 +590,88 @@ contains
     CALL ipolates_grid(ip,IPOPT,grid_in,grid_out,MI,MO,KM,IBI,LI,GI,NO,RLAT,RLON,IBO,LO,GO,IRET)
 
   END SUBROUTINE IPOLATES_GRIB2
+
+  !> Special case of ipolates_grib2 when interpolating a single field.
+  !! Removes the km dimension of input arrays so scalars can be passed to ibi/ibo.
+  !!
+  !! @param[in] igdtleni Number of elements of the grid definition
+  !! template array for the input grid. Corresponds to the gfld%igdtlen
+  !! component of the ncep g2 library gridmod data structure.
+  !!
+  !! @param[in] igdtnumo Grid definition template number for the output grid.
+  !! Corresponds to the gfld%igdtnum component of the
+  !! ncep g2 library gridmod data structure.
+  !! See "igdtnumi" for specific template definitions.
+  !! Note: igdtnumo<0 means interpolate to random station points.
+  !!
+  !! @param[in] igdtmplo Grid definition template array for the output grid.
+  !! Corresponds to the gfld%igdtmpl component of the ncep g2 library gridmod data structure.
+  !! See "igdtmpli" for definition of array elements.
+  !!
+  !! @param[in] igdtleno Number of elements of the grid definition template array for the output grid.  c
+  !! Corresponds to the gfld%igdtlen component of the ncep g2 library gridmod data structure.
+  !!
+  !! @param[in] mi    Skip number between input grid fields if km>1 or dimension of input grid fields if km=1.
+  !! @param[in] mo    Skip number between output grid fields if km>1 or dimension of output grid fields if km=1.
+  !! @param[in] km    Number of fields to interpolate.
+  !! @param[in] ibi   Input bitmap flags.
+  !! @param[in] li    Input bitmaps (if respective ibi(k)=1).
+  !! @param[in] gi    Input fields to interpolate.
+  !! @param[out] no Number of output points (only if kgdso(1)<0).
+  !! @param[out] rlat Output latitudes in degrees (if kgdso(1)<0).
+  !! @param[out] rlon Output longitudes in degrees (if kgdso(1)<0).
+  !! @param[out] ibo Output bitmap flags.
+  !! @param[out] lo  Output bitmaps (always output).
+  !! @param[out] go  Output fields interpolated.
+  !! @param[out] iret Return code.
+  !! - 0 Successful interpolation.
+  !! - 1 Unrecognized interpolation method.
+  !! - 2 Unrecognized input grid or no grid overlap.
+  !! - 3 Unrecognized output grid.
+  !! - 1x Invalid bicubic method parameters.
+  !! - 3x Invalid budget method parameters.
+  !! - 4x Invalid spectral method parameters.
+  !!
+  !! @author Mark Iredell, Kyle Gerheiser, Eric Engle
+  SUBROUTINE IPOLATES_GRIB2_SINGLE_FIELD(IP,IPOPT,IGDTNUMI,IGDTMPLI,IGDTLENI, &
+       IGDTNUMO,IGDTMPLO,IGDTLENO, &
+       MI,MO,KM,IBI,LI,GI, &
+       NO,RLAT,RLON,IBO,LO,GO,IRET) bind(C)
+    INTEGER,        INTENT(IN   )     :: IP, IPOPT(20), KM, MI, MO
+    INTEGER,        INTENT(IN   )     :: IBI
+    INTEGER,        INTENT(IN   )     :: IGDTNUMI, IGDTLENI
+    INTEGER,        INTENT(IN   )     :: IGDTMPLI(IGDTLENI)
+    INTEGER,        INTENT(IN   )     :: IGDTNUMO, IGDTLENO
+    INTEGER,        INTENT(IN   )     :: IGDTMPLO(IGDTLENO)
+    INTEGER,        INTENT(  OUT)     :: NO
+    INTEGER,        INTENT(  OUT)     :: IRET, IBO
+    !
+    LOGICAL*1,      INTENT(IN   )     :: LI(MI)
+    LOGICAL*1,      INTENT(  OUT)     :: LO(MO)
+    !
+    REAL,           INTENT(IN   )     :: GI(MI)
+    REAL,           INTENT(INOUT)     :: RLAT(MO),RLON(MO)
+    REAL,           INTENT(  OUT)     :: GO(MO)
+
+    type(grib2_descriptor) :: desc_in, desc_out
+    class(ip_grid), allocatable :: grid_in, grid_out
+    integer :: ibo_array(1)
+
+    desc_in = init_descriptor(igdtnumi, igdtleni, igdtmpli)
+    desc_out = init_descriptor(igdtnumo, igdtleno, igdtmplo)
+
+    call init_grid(grid_in, desc_in)
+    call init_grid(grid_out, desc_out)
+
+    ! Can't pass expression (e.g. [ibo]) to intent(out) argument.
+    ! Initialize placeholder array of size 1 to make rank match.
+    ibo_array(1) = ibo
+
+    CALL ipolates_grid(ip,IPOPT,grid_in,grid_out,MI,MO,KM,[IBI],LI,GI,NO,RLAT,RLON,IBO_ARRAY,LO,GO,IRET)
+
+    ibo = ibo_array(1)
+
+  END SUBROUTINE IPOLATES_GRIB2_SINGLE_FIELD
 
 end module ipolates_mod
 
