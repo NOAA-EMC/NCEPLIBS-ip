@@ -1,16 +1,34 @@
-name: MacOS Build
-on: [push, pull_request]
+name: MacOS
+on:
+  push:
+    branches:
+    - develop
+    paths-ignore:
+    - README.md
+  pull_request:
+    branches:
+    - develop
+    paths-ignore:
+    - README.md
 
 jobs:
-  macOS-build:
+  MacOS:
     runs-on: macos-latest
     env:
-      FC: gfortran-9
-      CC: gcc-9
+      FC: gfortran-11
+      CC: gcc-11
 
     steps:
       
+    - name: cache-sp
+      id: cache-sp
+      uses: actions/cache@v2
+      with:
+        path: ~/sp
+        key: sp-${{ runner.os }}-MacOS-2.3.3
+
     - name: checkout-sp
+      if: steps.cache-sp.outputs.cache-hit != 'true'
       uses: actions/checkout@v2
       with:
         repository: NOAA-EMC/NCEPLIBS-sp
@@ -18,6 +36,7 @@ jobs:
         ref: v2.3.3
 
     - name: build-sp
+      if: steps.cache-sp.outputs.cache-hit != 'true'
       run: |
         cd sp
         mkdir build
@@ -42,4 +61,4 @@ jobs:
     - name: test
       run: |
         cd $GITHUB_WORKSPACE/ip/build
-        ctest --output-on-failure
+        ctest --verbose --output-on-failure --rerun-failed

@@ -1,0 +1,70 @@
+name: Linux
+on:
+  push:
+    branches:
+    - develop
+    paths-ignore:
+    - README.md
+  pull_request:
+    branches:
+    - develop
+    paths-ignore:
+    - README.md
+
+jobs:
+  Linux:
+    runs-on: ubuntu-latest
+    env:
+      FC: gfortran-10
+      CC: gcc-10
+
+    strategy:
+      matrix:
+        openmp: [ ON, OFF ]
+        
+    steps:
+
+    - name: cache-sp
+      id: cache-sp
+      uses: actions/cache@v2
+      with:
+        path: ~/sp
+        key: sp-${{ runner.os }}-Linux-2.3.3
+
+    - name: checkout-sp
+      if: steps.cache-sp.outputs.cache-hit != 'true'
+      uses: actions/checkout@v2
+      with:
+        repository: NOAA-EMC/NCEPLIBS-sp
+        path: sp
+        ref: v2.3.3
+
+    - name: build-sp
+      if: steps.cache-sp.outputs.cache-hit != 'true'
+      run: |
+        cd sp
+        mkdir build
+        cd build
+        cmake .. -DCMAKE_INSTALL_PREFIX=~/sp
+        make -j2
+        make install
+
+    - name: checkout
+      uses: actions/checkout@v2
+      with: 
+        path: ip
+        submodules: true
+
+    - name: build
+      run: |
+        cd ip
+        mkdir build 
+        cd build
+        cmake .. -DCMAKE_PREFIX_PATH="~/" -DOPENMP=${{ matrix.openmp }} 
+        make -j2
+    
+    - name: test
+      run: |
+        cd $GITHUB_WORKSPACE/ip/build
+        ctest --verbose --output-on-failure --rerun-failed
+
