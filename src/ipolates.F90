@@ -594,6 +594,134 @@ contains
   !> Special case of ipolates_grib2 when interpolating a single field.
   !! Removes the km dimension of input arrays so scalars can be passed to ibi/ibo.
   !!
+  !! @param[in] ip Interpolation method
+  !! - ip=0 for bilinear
+  !! - ip=1 for bicubic
+  !! - ip=2 for neighbor;
+  !! - ip=3 for budget;
+  !! - ip=4 for spectral;
+  !! - ip=6 for neighbor-budget
+  !!
+  !! @param[in] ipopt Interpolation options
+  !! - ip=0: (No options)
+  !! - ip=1: Constraint option
+  !! - ip=2: (No options)
+  !! - ip=3: Number in radius, radius weights, search radius
+  !! - ip=4: Spectral shape, spectral truncation
+  !! - ip=6: Number in radius, radius weights ...)
+  !!
+  !! @param[in] igdtnumi Grid definition template number for the input grid.
+  !! Corresponds to the gfld%igdtnum component of the ncep g2 library gridmod data structure:
+  !! - 00 - EQUIDISTANT CYLINDRICAL
+  !! - 01 - Rotated equidistant cylindrical. "e" and non-"e" staggered
+  !! - 10 - MERCATOR CYCLINDRICAL
+  !! - 20 - POLAR STEREOGRAPHIC AZIMUTHAL
+  !! - 30 - LAMBERT CONFORMAL CONICAL
+  !! - 40 - GAUSSIAN EQUIDISTANT CYCLINDRICAL
+  !!
+  !! @param[in] igdtmpli Grid definition template array input grid.
+  !! Corresponds to the gfld%igdtmpl component of the NCEPLIBS-g2 gridmod data structure
+  !!
+  !! Section 3 Info:
+  !!
+  !! All map projections:
+  !! - (1): SHAPE OF EARTH, OCTET 15
+  !! - (2): SCALE FACTOR OF SPHERICAL EARTH RADIUS, OCTET 16
+  !! - (3): SCALED VALUE OF RADIUS OF SPHERICAL EARTH, OCTETS 17-20
+  !! - (4): SCALE FACTOR OF MAJOR AXIS OF ELLIPTICAL EARTH, OCTET 21
+  !! - (5): SCALED VALUE OF MAJOR AXIS OF ELLIPTICAL EARTH, OCTETS 22-25
+  !! - (6): SCALE FACTOR OF MINOR AXIS OF ELLIPTICAL EARTH, OCTET 26
+  !! - (7): SCALED VALUE OF MINOR AXIS OF ELLIPTICAL EARTH, OCTETS 27-30
+  !!
+  !! Equidistant Cyclindrical:
+  !! - (8):  NUMBER OF POINTS ALONG A PARALLEL, OCTS 31-34
+  !! - (9):  NUMBER OF POINTS ALONG A MERIDIAN, OCTS 35-38
+  !! - (10): BASIC ANGLE OF INITIAL PRODUCTION DOMAIN, OCTETS 39-42.
+  !! - (11): SUBDIVISIONS OF BASIC ANGLE, OCTETS 43-46
+  !! - (12): LATITUDE OF FIRST GRID POINT, OCTETS 47-50
+  !! - (13): LONGITUDE OF FIRST GRID POINT, OCTETS 51-54
+  !! - (14): RESOLUTION AND COMPONENT FLAGS, OCTET 55
+  !! - (15): LATITUDE OF LAST GRID POINT, OCTETS 56-59
+  !! - (16): LONGITUDE OF LAST GRID POINT, OCTETS 60-63
+  !! - (17): I-DIRECTION INCREMENT, OCTETS 64-67
+  !! - (18): J-DIRECTION INCREMENT, OCTETS 68-71
+  !! - (19): SCANNING MODE, OCTET 72
+  !!
+  !! Mercator Cyclindrical:
+  !! - (8):  NUMBER OF POINTS ALONG A PARALLEL, OCTS 31-34
+  !! - (9):  NUMBER OF POINTS ALONG A MERIDIAN, OCTS 35-38
+  !! - (10): LATITUDE OF FIRST POINT, OCTETS 39-42
+  !! - (11): LONGITUDE OF FIRST POINT, OCTETS 43-46
+  !! - (12): RESOLUTION AND COMPONENT FLAGS, OCTET 47
+  !! - (13): TANGENT LATITUDE, OCTETS 48-51
+  !! - (14): LATITUDE OF LAST POINT, OCTETS 52-55
+  !! - (15): LONGITUDE OF LAST POINT, OCTETS 56-59
+  !! - (16): SCANNING MODE FLAGS, OCTET 60
+  !! - (17): ORIENTATION OF GRID, OCTETS 61-64
+  !! - (18): LONGITUDINAL GRID LENGTH, OCTETS 65-68
+  !! - (19): LATITUDINAL GRID LENGTH, OCTETS 69-72
+  !!
+  !! Lambert Conformal Conical:
+  !! - (8):  NUMBER OF POINTS ALONG X-AXIS, OCTS 31-34
+  !! - (9):  NUMBER OF POINTS ALONG Y-AXIS, OCTS 35-38
+  !! - (10): LATITUDE OF FIRST POINT, OCTETS 39-42
+  !! - (11): LONGITUDE OF FIRST POINT, OCTETS 43-46
+  !! - (12): RESOLUTION OF COMPONENT FLAG, OCTET 47
+  !! - (13): LATITUDE WHERE GRID LENGTHS SPECIFIED,OCTETS 48-51
+  !! - (14): LONGITUDE OF MERIDIAN THAT IS PARALLEL TO Y-AXIS, OCTETS 52-55
+  !! - (15): X-DIRECTION GRID LENGTH, OCTETS 56-59
+  !! - (16): Y-DIRECTION GRID LENGTH, OCTETS 60-63
+  !! - (17): PROJECTION CENTER FLAG, OCTET 64
+  !! - (18): SCANNING MODE, OCTET 65
+  !! - (19): FIRST TANGENT LATITUDE FROM POLE, OCTETS 66-69
+  !! - (20): SECOND TANGENT LATITUDE FROM POLE, OCTETS 70-73
+  !! - (21): LATITUDE OF SOUTH POLE OF PROJECTION, OCTETS 74-77
+  !! - (22): LONGITUDE OF SOUTH POLE OF PROJECTION, OCTETS 78-81
+  !!
+  !! Gaussian Cylindrical:
+  !! - (8):  NUMBER OF POINTS ALONG A PARALLEL, OCTS 31-34
+  !! - (9):  NUMBER OF POINTS ALONG A MERIDIAN, OCTS 35-38
+  !! - (10): BASIC ANGLE OF INITIAL PRODUCTION DOMAIN, OCTETS 39-42
+  !! - (11): SUBDIVISIONS OF BASIC ANGLE, OCTETS 43-46
+  !! - (12): LATITUDE OF FIRST GRID POINT, OCTETS 47-50
+  !! - (13): LONGITUDE OF FIRST GRID POINT, OCTETS 51-54
+  !! - (14): RESOLUTION AND COMPONENT FLAGS, OCTET 55
+  !! - (15): LATITUDE OF LAST GRID POINT, OCTETS 56-59
+  !! - (16): LONGITUDE OF LAST GRID POINT, OCTETS 60-63
+  !! - (17): I-DIRECTION INCREMENT, OCTETS 64-67
+  !! - (18): NUMBER OF PARALLELS BETWEEN POLE AND EQUATOR, OCTETS 68-71
+  !! - (19): SCANNING MODE, OCTET 72
+  !!
+  !! Polar Stereographic Azimuthal:
+  !! - (8):  NUMBER OF POINTS ALONG X-AXIS, OCTETS 31-34
+  !! - (9):  NUMBER OF POINTS ALONG Y-AXIS, OCTETS 35-38
+  !! - (10): LATITUDE OF FIRST GRID POINT, OCTETS 39-42
+  !! - (11): LONGITUDE OF FIRST GRID POINT, OCTETS 43-46
+  !! - (12): RESOLUTION AND COMPONENT FLAGS, OCTET 47
+  !! - (13): TRUE LATITUDE, OCTETS 48-51
+  !! - (14): ORIENTATION LONGITUDE, OCTETS 52-55
+  !! - (15): X-DIRECTION GRID LENGTH, OCTETS 56-59
+  !! - (16): Y-DIRECTION GRID LENGTH, OCTETS 60-63
+  !! - (17): PROJECTION CENTER FLAG, OCTET 64
+  !! - (18): SCANNING MODE FLAGS, OCTET 65
+  !!
+  !! Rotated Equidistant Cyclindrical:
+  !! - (8):  NUMBER OF POINTS ALONG A PARALLEL, OCTS 31-34
+  !! - (9):  NUMBER OF POINTS ALONG A MERIDIAN, OCTS 35-38
+  !! - (10): BASIC ANGLE OF INITIAL PRODUCTION DOMAIN, OCTETS 39-42
+  !! - (11): SUBDIVISIONS OF BASIC ANGLE, OCTETS 43-46
+  !! - (12): LATITUDE OF FIRST GRID POINT, OCTETS 47-50
+  !! - (13): LONGITUDE OF FIRST GRID POINT, OCTETS 51-54
+  !! - (14): RESOLUTION AND COMPONENT FLAGS, OCTET 55
+  !! - (15): LATITUDE OF LAST GRID POINT, OCTETS 56-59
+  !! - (16): LONGITUDE OF LAST GRID POINT, OCTETS 60-63
+  !! - (17): I-DIRECTION INCREMENT, OCTETS 64-67
+  !! - (18): J-DIRECTION INCREMENT, OCTETS 68-71
+  !! - (19): SCANNING MODE, OCTET 72
+  !! - (20): LATITUDE OF SOUTHERN POLE OF PROJECTION, OCTETS 73-76
+  !! - (21): LONGITUDE OF SOUTHERN POLE OF PROJECTION, OCTETS 77-80
+  !! - (22): ANGLE OF ROTATION OF PROJECTION, OCTS 81-84
+  !!
   !! @param[in] igdtleni Number of elements of the grid definition
   !! template array for the input grid. Corresponds to the gfld%igdtlen
   !! component of the ncep g2 library gridmod data structure.
@@ -667,7 +795,7 @@ contains
     ! Initialize placeholder array of size 1 to make rank match.
     ibo_array(1) = ibo
 
-    CALL ipolates_grid(ip,IPOPT,grid_in,grid_out,MI,MO,KM,[IBI],LI,GI,NO,RLAT,RLON,IBO_ARRAY,LO,GO,IRET)
+    call ipolates_grid(ip,ipopt,grid_in,grid_out,mi,mo,km,[ibi],li,gi,no,rlat,rlon,ibo_array,lo,go,iret)
 
     ibo = ibo_array(1)
 
