@@ -20,7 +20,15 @@ jobs:
 
     steps:
       
+    - name: cache-sp
+      id: cache-sp
+      uses: actions/cache@v2
+      with:
+        path: ~/sp
+        key: sp-${{ runner.os }}-2.3.3
+
     - name: checkout-sp
+      if: steps.cache-sp.outputs.cache-hit != 'true'
       uses: actions/checkout@v2
       with:
         repository: NOAA-EMC/NCEPLIBS-sp
@@ -28,6 +36,7 @@ jobs:
         ref: v2.3.3
 
     - name: build-sp
+      if: steps.cache-sp.outputs.cache-hit != 'true'
       run: |
         cd sp
         mkdir build
