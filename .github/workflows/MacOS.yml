@@ -41,7 +41,7 @@ jobs:
         cd sp
         mkdir build
         cd build
-        cmake .. -DCMAKE_INSTALL_PREFIX=~/sp
+        cmake .. -DOPENMP=ON -DBUILD_SHARED_LIBS=ON -DCMAKE_INSTALL_PREFIX=~/sp
         make -j2
         make install
 
