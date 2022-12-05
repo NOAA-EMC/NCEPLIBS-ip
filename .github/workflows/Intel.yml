@@ -1,4 +1,4 @@
-name: Intel Build
+name: Intel
 on: [push, pull_request]
 
 # Use custom shell with -l so .bash_profile is sourced which loads intel/oneapi/setvars.sh
@@ -8,7 +8,7 @@ defaults:
     shell: bash -leo pipefail {0}
 
 jobs:
-  build:
+  Intel:
     runs-on: ubuntu-latest
     env:
       CC: icc
@@ -65,4 +65,4 @@ jobs:
       run: |
         ulimit -s unlimited
         cd $GITHUB_WORKSPACE/ip/build
-        ctest --output-on-failure
+        ctest --verbose --output-on-failure --rerun-failed
