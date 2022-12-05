@@ -1,4 +1,4 @@
-name: GCC Docs Coverage Build
+name: Linux
 on:
   push:
     branches:
@@ -12,7 +12,7 @@ on:
     - README.md
 
 jobs:
-  build:
+  Linux:
     runs-on: ubuntu-latest
     env:
       FC: gfortran-10
