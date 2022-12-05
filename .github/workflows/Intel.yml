@@ -37,7 +37,7 @@ jobs:
       uses: actions/cache@v2
       with:
         path: ~/sp
-        key: sp-${{ runner.os }}-2.3.3
+        key: sp-${{ runner.os }}-2.3.3-1
 
     - name: checkout-sp
       if: steps.cache-sp.outputs.cache-hit != 'true'
