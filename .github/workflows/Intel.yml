@@ -75,4 +75,4 @@ jobs:
       run: |
         ulimit -s unlimited
         cd $GITHUB_WORKSPACE/ip/build
-        ctest --output-on-failure
+        ctest --verbose --output-on-failure --rerun-failed
