@@ -1,5 +1,15 @@
-name: Intel Build
-on: [push, pull_request]
+name: Intel
+on:
+  push:
+    branches:
+    - develop
+    paths-ignore:
+    - README.md
+  pull_request:
+    branches:
+    - develop
+    paths-ignore:
+    - README.md
 
 # Use custom shell with -l so .bash_profile is sourced which loads intel/oneapi/setvars.sh
 # without having to do it in manually every step
@@ -8,7 +18,7 @@ defaults:
     shell: bash -leo pipefail {0}
 
 jobs:
-  build:
+  Intel:
     runs-on: ubuntu-latest
     env:
       CC: icc
@@ -32,7 +42,15 @@ jobs:
         sudo apt-get install intel-oneapi-dev-utilities intel-oneapi-mpi-devel intel-oneapi-openmp intel-oneapi-compiler-fortran intel-oneapi-compiler-dpcpp-cpp-and-cpp-classic
         echo "source /opt/intel/oneapi/setvars.sh" >> ~/.bash_profile
       
+    - name: cache-sp
+      id: cache-sp
+      uses: actions/cache@v2
+      with:
+        path: ~/sp
+        key: sp-${{ runner.os }}-Intel-2.3.3-1
+
     - name: checkout-sp
+      if: steps.cache-sp.outputs.cache-hit != 'true'
       uses: actions/checkout@v2
       with:
         repository: NOAA-EMC/NCEPLIBS-sp
@@ -40,6 +58,7 @@ jobs:
         ref: v2.3.3
 
     - name: build-sp
+      if: steps.cache-sp.outputs.cache-hit != 'true'
       run: |
         cd sp
         mkdir build
@@ -58,11 +77,11 @@ jobs:
         cd ip
         mkdir build 
         cd build
-        cmake .. -DENABLE_TESTS=ON -DOPENMP=ON -DCMAKE_PREFIX_PATH="~/"
+        cmake .. -DENABLE_TESTS=ON -DOPENMP=ON -DCMAKE_PREFIX_PATH="~/" 
         make -j2
     
     - name: test
       run: |
         ulimit -s unlimited
         cd $GITHUB_WORKSPACE/ip/build
-        ctest --output-on-failure
+        ctest --verbose --output-on-failure --rerun-failed
