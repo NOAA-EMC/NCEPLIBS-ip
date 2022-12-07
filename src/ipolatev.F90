@@ -782,7 +782,7 @@ contains
   !> - 3x Invalid budget method parameters.
   !> - 4x Invalid spectral method parameters.
   !>
-  !> @author Kyle Gerheiser @date July 2021
+  !> @author Eric Engle @date November 2022
   subroutine ipolatev_grib2_single_field(ip,ipopt,igdtnumi,igdtmpli,igdtleni, &
        igdtnumo,igdtmplo,igdtleno, &
        mi,mo,km,ibi,li,ui,vi, &
