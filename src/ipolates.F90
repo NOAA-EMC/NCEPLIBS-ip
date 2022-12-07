@@ -760,7 +760,7 @@ contains
   !! - 3x Invalid budget method parameters.
   !! - 4x Invalid spectral method parameters.
   !!
-  !! @author Eric Engle
+  !! @author Eric Engle @date November 2022
   SUBROUTINE IPOLATES_GRIB2_SINGLE_FIELD(IP,IPOPT,IGDTNUMI,IGDTMPLI,IGDTLENI, &
        IGDTNUMO,IGDTMPLO,IGDTLENO, &
        MI,MO,KM,IBI,LI,GI, &
