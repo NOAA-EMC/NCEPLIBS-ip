@@ -49,20 +49,17 @@ foreach(kind ${kinds})
   target_compile_definitions(${lib_name}_objlib PRIVATE "LSIZE=${kind_definition}")
   set_target_properties(${lib_name}_objlib PROPERTIES COMPILE_FLAGS "${BUILD_FLAGS}")
   set_target_properties(${lib_name}_objlib PROPERTIES Fortran_MODULE_DIRECTORY "${module_dir}")
-
-  if(OpenMP_Fortran_FOUND)
-    target_link_libraries(${lib_name}_objlib PUBLIC OpenMP::OpenMP_Fortran)
-  endif()
-
-  target_include_directories(${lib_name}_objlib
-    PUBLIC $<BUILD_INTERFACE:${module_dir}>
-    $<INSTALL_INTERFACE:include_${kind}>)
+  target_include_directories(${lib_name}_objlib PUBLIC $<BUILD_INTERFACE:${module_dir}> $<INSTALL_INTERFACE:include_${kind}>)
 
   # Create static object library from object library.
   add_library(${lib_name}_static STATIC $<TARGET_OBJECTS:${lib_name}_objlib>)
   set_target_properties(${lib_name}_static PROPERTIES OUTPUT_NAME ${lib_name})
   set_target_properties(${lib_name}_static PROPERTIES EXPORT_NAME ${lib_name})
   set_target_properties(${lib_name}_static PROPERTIES EXPORT_NAME ${lib_name}_static)
+  target_link_libraries(${lib_name}_static PUBLIC sp::sp_${kind})
+  if(OpenMP_Fortran_FOUND)
+    target_link_libraries(${lib_name}_static PUBLIC OpenMP::OpenMP_Fortran)
+  endif()
   list(APPEND LIB_TARGETS ${lib_name}_static)
 
   if(BUILD_SHARED_LIBS)
@@ -70,6 +67,10 @@ foreach(kind ${kinds})
     add_library(${lib_name}_shared SHARED $<TARGET_OBJECTS:${lib_name}_objlib>)
     set_target_properties(${lib_name}_shared PROPERTIES OUTPUT_NAME ${lib_name})
     set_target_properties(${lib_name}_shared PROPERTIES EXPORT_NAME ${lib_name})
+    target_link_libraries(${lib_name}_shared PUBLIC sp::sp_${kind})
+    if(OpenMP_Fortran_FOUND)
+      target_link_libraries(${lib_name}_shared PUBLIC OpenMP::OpenMP_Fortran)
+    endif()
     list(APPEND LIB_TARGETS ${lib_name}_shared)
   endif()
   
@@ -110,4 +111,3 @@ install(EXPORT ${PROJECT_NAME}Exports
   NAMESPACE ${PROJECT_NAME}::
   FILE ${PROJECT_NAME}-targets.cmake
   DESTINATION ${CONFIG_INSTALL_DESTINATION})
-
