@@ -17,7 +17,10 @@ jobs:
     env:
       FC: gfortran-11
       CC: gcc-11
-
+    strategy:
+      matrix:
+        openmp: [ ON, OFF ]
+        
     steps:
       
     - name: cache-sp
@@ -25,7 +28,7 @@ jobs:
       uses: actions/cache@v2
       with:
         path: ~/sp
-        key: sp-${{ runner.os }}-MacOS-2.3.3
+        key: sp-${{ matrix.openmp }}-MacOS-2.3.3
 
     - name: checkout-sp
       if: steps.cache-sp.outputs.cache-hit != 'true'
@@ -41,7 +44,7 @@ jobs:
         cd sp
         mkdir build
         cd build
-        cmake .. -DOPENMP=ON -DBUILD_SHARED_LIBS=ON -DCMAKE_INSTALL_PREFIX=~/sp
+        cmake -DOPENMP=${{ matrix.openmp }} -DCMAKE_INSTALL_PREFIX=~/sp ..
         make -j2
         make install
 
@@ -55,8 +58,8 @@ jobs:
         cd ip
         mkdir build 
         cd build
-        cmake .. -DENABLE_TESTS=ON -DOPENMP=ON -DCMAKE_PREFIX_PATH="~/"
-        make -j2
+        cmake -DOPENMP=${{ matrix.openmp }}  -DCMAKE_PREFIX_PATH="~/sp" ..
+        make -j2 VERBOSE=2
     
     - name: test
       run: |
