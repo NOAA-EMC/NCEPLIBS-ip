@@ -77,7 +77,7 @@ jobs:
         cd ip
         mkdir build 
         cd build
-        cmake -DOPENMP=${{ matrix.openmp }} -DCMAKE_PREFIX_PATH="~/sp" ..
+        cmake -DOPENMP=${{ matrix.openmp }} -DBUILD_SHARED_LIBS=OFF -DCMAKE_PREFIX_PATH="~/sp" ..
         make -j2 VERBOSE=1
     
     - name: test
