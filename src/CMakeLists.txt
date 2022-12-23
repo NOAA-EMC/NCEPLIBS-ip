@@ -16,7 +16,7 @@ set(fortran_src gdswzd_c.F90 gdswzd_mod.F90
   constants_mod.F90 ip_grids_mod.F90 ip_grid_factory_mod.F90
   ip_interpolators_mod.F90 earth_radius_mod.F90 polfix_mod.F90 )
 
-if(CMAKE_Fortran_COMPILER_ID MATCHES "^(Intel)$")
+if(CMAKE_Fortran_COMPILER_ID MATCHES "^(Intel|IntelLLVM)$")
   set(CMAKE_Fortran_FLAGS "-g -traceback -warn all -auto -convert big_endian -assume byterecl -fp-model strict -fpp ${CMAKE_Fortran_FLAGS}")
   set(CMAKE_Fortran_FLAGS_DEBUG "-O0 -check all -warn all")
   set(fortran_d_flags "-r8")
