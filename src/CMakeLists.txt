@@ -3,7 +3,7 @@
 # Mark Potts, Kyle Gerheiser, Ed Hartnett
 
 # These are the source code filees.
-set(fortran_src gdswzd_c.F90 gdswzd_mod.F90 ip2lib_4.h ip2lib_8.h
+set(fortran_src gdswzd_c.F90 gdswzd_mod.F90 ip2lib_4.h 
 ip2lib_d.h ipolates.F90 ipolatev.F90 ipxetas.F90 ipxwafs.F90
 ipxwafs2.F90 ipxwafs3.F90 movect.F90 bilinear_interp_mod.F90
 bicubic_interp_mod.F90 neighbor_interp_mod.F90 budget_interp_mod.F90

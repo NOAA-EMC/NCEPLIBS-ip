@@ -30,7 +30,7 @@ jobs:
       uses: actions/cache@v2
       with:
         path: ~/sp
-        key: sp-${{ runner.os }}-Linux-2.3.3
+        key: sp-${{ runner.os }}-Linux-${{ matrix.openmp }}-2.3.3
 
     - name: checkout-sp
       if: steps.cache-sp.outputs.cache-hit != 'true'
@@ -46,7 +46,7 @@ jobs:
         cd sp
         mkdir build
         cd build
-        cmake -DCMAKE_INSTALL_PREFIX=~/sp ..
+        cmake -DCMAKE_INSTALL_PREFIX=~/sp -DOPENMP=${{ matrix.openmp }} ..
         make -j2
         make install
 
