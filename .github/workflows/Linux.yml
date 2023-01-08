@@ -61,7 +61,7 @@ jobs:
         cd ip
         mkdir build 
         cd build
-        cmake -DCMAKE_PREFIX_PATH="~/" -DOPENMP=${{ matrix.openmp }} ${{ matric.options }} ..
+        cmake -DCMAKE_PREFIX_PATH="~/" -DOPENMP=${{ matrix.openmp }} ${{ matrix.options }} ..
         make -j2
     
     - name: test
