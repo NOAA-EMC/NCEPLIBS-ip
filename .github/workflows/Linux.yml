@@ -21,6 +21,7 @@ jobs:
     strategy:
       matrix:
         openmp: [ ON, OFF ]
+        options: [ -DBUILD_D=OFF, -DBUILD_4=OFF ]
         
     steps:
 
@@ -45,7 +46,7 @@ jobs:
         cd sp
         mkdir build
         cd build
-        cmake .. -DCMAKE_INSTALL_PREFIX=~/sp
+        cmake -DCMAKE_INSTALL_PREFIX=~/sp ..
         make -j2
         make install
 
@@ -60,7 +61,7 @@ jobs:
         cd ip
         mkdir build 
         cd build
-        cmake .. -DCMAKE_PREFIX_PATH="~/" -DOPENMP=${{ matrix.openmp }} 
+        cmake -DCMAKE_PREFIX_PATH="~/" -DOPENMP=${{ matrix.openmp }} ${{ matric.options }} ..
         make -j2
     
     - name: test
