@@ -1,3 +1,8 @@
+# This is a CI workflow for the NCEPLIBS-ip project.
+#
+# This workflow builds with the Intel compiler.
+#
+# Ed Hartnett, 1/8/23
 name: Intel
 on:
   push:
@@ -47,7 +52,7 @@ jobs:
       uses: actions/cache@v2
       with:
         path: ~/sp
-        key: sp-${{ runner.os }}-Intel-2.3.3-1
+        key: sp-${{ runner.os }}-Intel-${{ matrix.openmp }}-2.3.3-1
 
     - name: checkout-sp
       if: steps.cache-sp.outputs.cache-hit != 'true'
@@ -63,7 +68,7 @@ jobs:
         cd sp
         mkdir build
         cd build
-        cmake .. -DOPENMP=${{matrix.openmp}} -DCMAKE_INSTALL_PREFIX=~/sp
+        cmake -DCMAKE_INSTALL_PREFIX=~/sp -DOPENMP=${{ matrix.openmp}} ..
         make -j2
         make install
 
