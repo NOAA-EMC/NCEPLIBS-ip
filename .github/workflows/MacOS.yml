@@ -1,3 +1,8 @@
+# This is a CI workflow for the NCEPLIBS-ip project.
+#
+# This workflow builds on MacOS with different options.
+#
+# Ed Hartnett, 1/8/23
 name: MacOS
 on:
   push:

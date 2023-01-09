@@ -22,6 +22,7 @@
 !> -----|------------|---------
 !> 96-04-10 | Iredell | Initial
 !> 2015-07-14 | Gayno | Make grib 2 compliant. Replace 4-pt interpolation with call to ipolates.
+!> 2022-11-09 | Engle | Made ibi and ibo scalars.
 !>
 !> @param[in] idir integer transform option.
 !> - 0 to expand staggered fields to full fields
@@ -89,6 +90,7 @@
  SUBROUTINE IPXETAS(IDIR, IGDTNUMI, IGDTLEN, IGDTMPLI, NPTS_INPUT,  &
                     BITMAP_INPUT, DATA_INPUT, IGDTNUMO, IGDTMPLO, &
                     NPTS_OUTPUT, BITMAP_OUTPUT, DATA_OUTPUT, IRET)
+ USE IPOLATES_MOD
  IMPLICIT NONE
 !
  INTEGER,         INTENT(IN   )    :: IDIR
@@ -106,7 +108,7 @@
  REAL,            INTENT(  OUT)    :: DATA_OUTPUT(NPTS_OUTPUT)
 
  INTEGER                           :: SCAN_MODE, ISCALE, IP, IPOPT(20)
- INTEGER                           :: IBI(1), IBO(1), J, KM, NO
+ INTEGER                           :: IBI, IBO, J, KM, NO
 
  REAL                              :: DLONS
  REAL, ALLOCATABLE                 :: OUTPUT_RLAT(:), OUTPUT_RLON(:)
