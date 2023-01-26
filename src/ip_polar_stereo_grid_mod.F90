@@ -38,13 +38,13 @@ module ip_polar_stereo_grid_mod
      procedure :: gdswzd => gdswzd_polar_stereo
   end type ip_polar_stereo_grid
 
-  INTEGER :: IROT !< ???
+  INTEGER :: IROT !< Local copy of irot.
   REAL :: DE2 !< ???
-  REAL :: DXS !< ???
-  REAL :: DYS !< ???
+  REAL :: DXS !< Local copy of dxs.
+  REAL :: DYS !< Local copy of dys.
   REAL :: E2 !< ???
-  REAL :: RERTH !< ???
-  REAL :: H !< ???
+  REAL :: RERTH !< Radius of the Earth.
+  REAL :: H !< Local copy of h.
   REAL :: ORIENT !< ???
 
 CONTAINS
