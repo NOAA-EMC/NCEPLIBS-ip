@@ -50,16 +50,16 @@ module ip_rot_equid_cylind_grid_mod
      procedure :: init_grib2
      !> Calculates Earth coordinates (iopt = 1) or grid coorindates (iopt = -1)
      !> for Gaussian grids. @return N/A
-     procedure :: gdswzd => gdswzd_rot_equid_cylind !< ??? @return N/A
+     procedure :: gdswzd => gdswzd_rot_equid_cylind
   end type ip_rot_equid_cylind_grid
 
-  INTEGER :: IROT !< ???
-  REAL(KIND=KD) :: RERTH !< ???
-  REAL(KIND=KD) :: CLAT0 !< ???
-  REAL(KIND=KD) :: DLATS !< ???
-  REAL(KIND=KD) :: DLONS !< ???
-  REAL(KIND=KD) :: RLON0 !< ???
-  REAL(KIND=KD) :: SLAT0 !< ???
+  INTEGER :: IROT !< Local copy of irot.
+  REAL(KIND=KD) :: RERTH !< Radius of the Earth.
+  REAL(KIND=KD) :: CLAT0 !< Local copy of clat0.
+  REAL(KIND=KD) :: DLATS !< Local copy of dlats.
+  REAL(KIND=KD) :: DLONS !< Local copy of dlons.
+  REAL(KIND=KD) :: RLON0 !< Local copy of rlon0.
+  REAL(KIND=KD) :: SLAT0 !< Local copy of slat0.
 
 CONTAINS
 
@@ -229,7 +229,7 @@ CONTAINS
   !> 2015-jul-13 | gayno | convert to grib 2. replace grib 1 kgds array with grib 2 grid definition template array. rename as "gdswzd_rot_equid_cylind."
   !> 2018-07-20 | wesley | add threads.
   !>
-  !> @param[in] self ???
+  !> @param[in] self Module reference.
   !> @param[in] iopt integer option flag
   !> - 1 to compute earth coords of selected grid coords
   !> - -1 to compute grid coords of selected earth coords

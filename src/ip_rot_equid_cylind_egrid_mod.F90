@@ -59,18 +59,18 @@ module ip_rot_equid_cylind_egrid_mod
      procedure :: gdswzd => gdswzd_rot_equid_cylind_egrid
   end type ip_rot_equid_cylind_egrid
 
-  INTEGER :: IROT !< ???
+  INTEGER :: IROT !< Local copy of irot.
 
   REAL(KIND=KD) :: CLAT !< ???
-  REAL(KIND=KD) :: CLAT0 !< ???
+  REAL(KIND=KD) :: CLAT0 !< Local copy of clat0.
   REAL(KIND=KD) :: CLATR !< ???
   REAL(KIND=KD) :: CLON !< ???
-  REAL(KIND=KD) :: DLATS !< ???
-  REAL(KIND=KD) :: DLONS !< ???
-  REAL(KIND=KD) :: RERTH !< ???
-  REAL(KIND=KD) :: RLON0 !< ???
+  REAL(KIND=KD) :: DLATS !< Local copy of dlats.
+  REAL(KIND=KD) :: DLONS !< Local copy of dlons.
+  REAL(KIND=KD) :: RERTH !< Radius of the Earth.
+  REAL(KIND=KD) :: RLON0 !< Local copy of rlon0.
   REAL(KIND=KD) :: SLAT !< ???
-  REAL(KIND=KD) :: SLAT0 !< ???
+  REAL(KIND=KD) :: SLAT0 !< Local copy of slat0.
   REAL(KIND=KD) :: SLATR !< ???
 
 contains
