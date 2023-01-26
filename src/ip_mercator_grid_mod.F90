@@ -37,9 +37,9 @@ module ip_mercator_grid_mod
      procedure :: gdswzd => gdswzd_mercator !< gdswzd() @return N/A
   end type ip_mercator_grid
 
-  REAL :: DLON !< ???
-  REAL :: DPHI !< ???
-  REAL :: RERTH !< ???
+  REAL :: DLON !< Longitudinal direction grid length.
+  REAL :: DPHI !< Latitudinal direction grid length.
+  REAL :: RERTH !< Radius of the Earth.
 
 CONTAINS
 

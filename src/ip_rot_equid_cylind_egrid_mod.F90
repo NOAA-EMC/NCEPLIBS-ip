@@ -35,15 +35,15 @@ module ip_rot_equid_cylind_egrid_mod
   integer, parameter :: kd = real64 !< ???
 
   type, extends(ip_grid) :: ip_rot_equid_cylind_egrid
-     real(kd) :: rlon0 !< ???
-     real(kd) :: rlon1 !< ???
-     real(kd) :: rlat1 !< ???
-     real(kd) :: clat0 !< ???
-     real(kd) :: slat0 !< ???
-     real(kd) :: dlats !< ???
-     real(kd) :: dlons !< ???
-     real(kd) :: hi !< ???
-     integer :: irot !< ???
+     real(kd) :: rlon0 !< Longitude of southern pole of projection.
+     real(kd) :: rlon1 !< Longitude of first grid point.
+     real(kd) :: rlat1 !< Latitude of first grid point.
+     real(kd) :: clat0 !< Cosine of the latitude of the southern pole of projection.
+     real(kd) :: slat0 !< Sine of the latitude of the southern pole of projection.
+     real(kd) :: dlats !< 'J'-direction grid increment.
+     real(kd) :: dlons !< 'I'-direction grid increment.
+     real(kd) :: hi !< Scan mode in the 'i' direction.
+     integer :: irot !< Rotation flag. When '0' the u/v vector components are relative to north/east. When '1' the u/v vector components are grid relative.
    contains
      !> Initializes a rotated equidistant cylindrical grid given a
      !> grib1_descriptor object. @return N/A
