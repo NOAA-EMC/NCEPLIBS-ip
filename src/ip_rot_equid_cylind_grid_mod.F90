@@ -27,7 +27,7 @@ module ip_rot_equid_cylind_grid_mod
   private
   public :: ip_rot_equid_cylind_grid
 
-  integer, parameter :: kd = real64 !< ???
+  integer, parameter :: kd = real64 !< Fortran kind for reals.
 
   type, extends(ip_grid) :: ip_rot_equid_cylind_grid
      real(kd) :: clat0 !< ???
