@@ -43,7 +43,10 @@ module ip_rot_equid_cylind_egrid_mod
      real(kd) :: dlats !< 'J'-direction grid increment.
      real(kd) :: dlons !< 'I'-direction grid increment.
      real(kd) :: hi !< Scan mode in the 'i' direction.
-     integer :: irot !< Rotation flag. When '0' the u/v vector components are relative to north/east. When '1' the u/v vector components are grid relative.
+     !> Rotation flag. When '0' the u/v vector components are relative
+     !> to north/east. When '1' the u/v vector components are grid
+     !> relative.
+     integer :: irot 
    contains
      !> Initializes a rotated equidistant cylindrical grid given a
      !> grib1_descriptor object. @return N/A
