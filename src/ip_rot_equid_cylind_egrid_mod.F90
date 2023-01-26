@@ -32,7 +32,7 @@ module ip_rot_equid_cylind_egrid_mod
   private
   public :: ip_rot_equid_cylind_egrid
 
-  integer, parameter :: kd = real64 !< ???
+  integer, parameter :: kd = real64 !< Kind of reals.
 
   type, extends(ip_grid) :: ip_rot_equid_cylind_egrid
      real(kd) :: rlon0 !< Longitude of southern pole of projection.
