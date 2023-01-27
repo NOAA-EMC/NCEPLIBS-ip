@@ -1,11 +1,11 @@
 !> @file
-!> @brief ???
+!> @brief Interpolate gridded data to a series of station points.
 !>
-!> @author Kyle Gerheiser @date ???
+!> @author Kyle Gerheiser @date 7/21/21
 
-!> @brief ???
+!> @brief Interpolate gridded data to a series of station points.
 !>
-!> @author Kyle Gerheiser @date ???
+!> @author Kyle Gerheiser @date 7/21/21
 module ip_station_points_grid_mod
   use ip_grid_descriptor_mod
   use ip_grid_mod
@@ -50,7 +50,7 @@ contains
     type(grib2_descriptor), intent(in) :: g2_desc
   end subroutine init_grib2
 
-  !> ???
+  !> Interpolate gridded data to a series of station points.
   !>
   !> @param[in] self ???
   !> @param[in] IOPT ???
@@ -69,7 +69,7 @@ contains
   !> @param[out] YLAT ???
   !> @param[out] AREA ???
   !>
-  !> @author Iredell @date 96-04-10
+  !> @author Kyle Gerheiser @date 7/21/21
   SUBROUTINE GDSWZD_station_points(self,IOPT,NPTS, &
        FILL,XPTS,YPTS,RLON,RLAT,NRET, &
        CROT,SROT,XLON,XLAT,YLON,YLAT,AREA)
