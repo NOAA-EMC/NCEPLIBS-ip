@@ -21,18 +21,18 @@ module ip_polar_stereo_grid_mod
   public :: ip_polar_stereo_grid
 
   type, extends(ip_grid) :: ip_polar_stereo_grid
-     logical :: elliptical !< ???
-     real :: rlat1 !< ???
-     real :: rlon1 !< ???
-     real :: orient !< ???
-     real :: h !< ???
-     real :: dxs !< ???
-     real :: dys !< ???
-     real :: slatr !< ???
+     logical :: elliptical !< When true/false, computations are based on an elliptical/spherical earth.
+     real :: rlat1 !< Latitude of the first grid point.
+     real :: rlon1 !< Longitude of the first grid point.
+     real :: orient !< Orientation longitude.
+     real :: h !< Hemisphere flag. 0 - NH; 1 - SH.
+     real :: dxs !< 'x'-direction grid length, adjusted by the scanning mode.
+     real :: dys !< 'y'-direction grid length, adjusted by the scanning mode.
+     real :: slatr !< Standard latitude of grid in radians.
      !> Rotation flag. When '0' the u/v vector components are relative
      !> to north/east. When '1' the u/v vector components are grid
      !> relative.
-     integer :: irot !< ???
+     integer :: irot
    contains
      procedure :: init_grib1 !< Initializes a grid given a grib1_descriptor object. @return N/A
      procedure :: init_grib2 !< Initializes a grid given a grib2_descriptor object. @return N/A
@@ -42,13 +42,13 @@ module ip_polar_stereo_grid_mod
   end type ip_polar_stereo_grid
 
   INTEGER :: IROT !< Local copy of irot.
-  REAL :: DE2 !< ???
+  REAL :: DE2 !< Square of DE.
   REAL :: DXS !< Local copy of dxs.
   REAL :: DYS !< Local copy of dys.
-  REAL :: E2 !< ???
+  REAL :: E2 !< Eccentricity squared.
   REAL :: RERTH !< Radius of the Earth.
   REAL :: H !< Local copy of h.
-  REAL :: ORIENT !< ???
+  REAL :: ORIENT !< Local copy of orient.
 
 CONTAINS
 
@@ -209,7 +209,7 @@ CONTAINS
   !> 2015-07-13 | gayno | convert to grib 2. replace grib 1 kgds array with grib 2 grid definition template array. rename routine.
   !> 2018-07-20 | wesley | add threading.
   !>
-  !> @param[in] self ???
+  !> @param[in] self grid
   !> @param[in] iopt option flag
   !> - 1 to compute earth coords of selected grid coords
   !> - -1 to compute grid coords of selected earth coords
