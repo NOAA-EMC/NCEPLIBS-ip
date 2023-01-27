@@ -29,6 +29,9 @@ module ip_polar_stereo_grid_mod
      real :: dxs !< ???
      real :: dys !< ???
      real :: slatr !< ???
+     !> Rotation flag. When '0' the u/v vector components are relative
+     !> to north/east. When '1' the u/v vector components are grid
+     !> relative.
      integer :: irot !< ???
    contains
      procedure :: init_grib1 !< Initializes a grid given a grib1_descriptor object. @return N/A
