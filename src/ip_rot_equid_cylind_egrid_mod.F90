@@ -61,17 +61,17 @@ module ip_rot_equid_cylind_egrid_mod
 
   INTEGER :: IROT !< Local copy of irot.
 
-  REAL(KIND=KD) :: CLAT !< ???
+  REAL(KIND=KD) :: CLAT !< Cosine of the latitude.
   REAL(KIND=KD) :: CLAT0 !< Local copy of clat0.
-  REAL(KIND=KD) :: CLATR !< ???
-  REAL(KIND=KD) :: CLON !< ???
+  REAL(KIND=KD) :: CLATR !< Cosine of the rotated latitude.
+  REAL(KIND=KD) :: CLON !< Cosine of the difference between rlon and rlon0.
   REAL(KIND=KD) :: DLATS !< Local copy of dlats.
   REAL(KIND=KD) :: DLONS !< Local copy of dlons.
   REAL(KIND=KD) :: RERTH !< Radius of the Earth.
   REAL(KIND=KD) :: RLON0 !< Local copy of rlon0.
-  REAL(KIND=KD) :: SLAT !< ???
+  REAL(KIND=KD) :: SLAT !< Sine of the latitude.
   REAL(KIND=KD) :: SLAT0 !< Local copy of slat0.
-  REAL(KIND=KD) :: SLATR !< ???
+  REAL(KIND=KD) :: SLATR !< Sine of the rotated latitude.
 
 contains
 
