@@ -52,7 +52,7 @@ contains
 
   !> Interpolate gridded data to a series of station points.
   !>
-  !> @param[in] self ???
+  !> @param[in] self The grid.
   !> @param[in] IOPT ???
   !> @param[in] NPTS ???
   !> @param[in] FILL ???

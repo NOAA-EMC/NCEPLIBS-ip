@@ -27,17 +27,20 @@ module ip_rot_equid_cylind_grid_mod
   private
   public :: ip_rot_equid_cylind_grid
 
-  integer, parameter :: kd = real64 !< ???
+  integer, parameter :: kd = real64 !< Fortran kind for reals.
 
   type, extends(ip_grid) :: ip_rot_equid_cylind_grid
-     real(kd) :: clat0 !< ???
-     real(kd) :: dlats !< ???
-     real(kd) :: dlons !< ???
-     real(kd) :: rlon0 !< ???
-     real(kd) :: slat0 !< ???
-     real(kd) :: wbd !< ???
-     real(kd) :: sbd !< ???
-     integer :: irot !< ???
+     real(kd) :: clat0 !< Cosine of the latitude of the southern pole of projection.
+     real(kd) :: dlats !< 'J'-direction grid increment.
+     real(kd) :: dlons !< 'I'-direction grid increment.
+     real(kd) :: rlon0 !< Longitude of southern pole of projection.
+     real(kd) :: slat0 !< Sine of the latitude of the southern pole of projection.
+     real(kd) :: wbd !< Longitude of the western boundary of the grid before rotation.
+     real(kd) :: sbd !<  Latitude of the southern boundary of the grid before rotation.
+     !> Rotation flag. When '0' the u/v vector components are relative
+     !> to north/east. When '1' the u/v vector components are grid
+     !> relative.
+     integer :: irot
    contains
      !> Initializes a Rotated equidistant cylindrical grid given a
      !> grib1_descriptor object. @return N/A
@@ -47,16 +50,16 @@ module ip_rot_equid_cylind_grid_mod
      procedure :: init_grib2
      !> Calculates Earth coordinates (iopt = 1) or grid coorindates (iopt = -1)
      !> for Gaussian grids. @return N/A
-     procedure :: gdswzd => gdswzd_rot_equid_cylind !< ??? @return N/A
+     procedure :: gdswzd => gdswzd_rot_equid_cylind
   end type ip_rot_equid_cylind_grid
 
-  INTEGER :: IROT !< ???
-  REAL(KIND=KD) :: RERTH !< ???
-  REAL(KIND=KD) :: CLAT0 !< ???
-  REAL(KIND=KD) :: DLATS !< ???
-  REAL(KIND=KD) :: DLONS !< ???
-  REAL(KIND=KD) :: RLON0 !< ???
-  REAL(KIND=KD) :: SLAT0 !< ???
+  INTEGER :: IROT !< Local copy of irot.
+  REAL(KIND=KD) :: RERTH !< Radius of the Earth.
+  REAL(KIND=KD) :: CLAT0 !< Local copy of clat0.
+  REAL(KIND=KD) :: DLATS !< Local copy of dlats.
+  REAL(KIND=KD) :: DLONS !< Local copy of dlons.
+  REAL(KIND=KD) :: RLON0 !< Local copy of rlon0.
+  REAL(KIND=KD) :: SLAT0 !< Local copy of slat0.
 
 CONTAINS
 
@@ -226,7 +229,7 @@ CONTAINS
   !> 2015-jul-13 | gayno | convert to grib 2. replace grib 1 kgds array with grib 2 grid definition template array. rename as "gdswzd_rot_equid_cylind."
   !> 2018-07-20 | wesley | add threads.
   !>
-  !> @param[in] self ???
+  !> @param[in] self Module reference.
   !> @param[in] iopt integer option flag
   !> - 1 to compute earth coords of selected grid coords
   !> - -1 to compute grid coords of selected earth coords

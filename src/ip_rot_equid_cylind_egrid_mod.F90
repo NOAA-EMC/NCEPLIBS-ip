@@ -32,18 +32,21 @@ module ip_rot_equid_cylind_egrid_mod
   private
   public :: ip_rot_equid_cylind_egrid
 
-  integer, parameter :: kd = real64 !< ???
+  integer, parameter :: kd = real64 !< Kind of reals.
 
   type, extends(ip_grid) :: ip_rot_equid_cylind_egrid
-     real(kd) :: rlon0 !< ???
-     real(kd) :: rlon1 !< ???
-     real(kd) :: rlat1 !< ???
-     real(kd) :: clat0 !< ???
-     real(kd) :: slat0 !< ???
-     real(kd) :: dlats !< ???
-     real(kd) :: dlons !< ???
-     real(kd) :: hi !< ???
-     integer :: irot !< ???
+     real(kd) :: rlon0 !< Longitude of southern pole of projection.
+     real(kd) :: rlon1 !< Longitude of first grid point.
+     real(kd) :: rlat1 !< Latitude of first grid point.
+     real(kd) :: clat0 !< Cosine of the latitude of the southern pole of projection.
+     real(kd) :: slat0 !< Sine of the latitude of the southern pole of projection.
+     real(kd) :: dlats !< 'J'-direction grid increment.
+     real(kd) :: dlons !< 'I'-direction grid increment.
+     real(kd) :: hi !< Scan mode in the 'i' direction.
+     !> Rotation flag. When '0' the u/v vector components are relative
+     !> to north/east. When '1' the u/v vector components are grid
+     !> relative.
+     integer :: irot 
    contains
      !> Initializes a rotated equidistant cylindrical grid given a
      !> grib1_descriptor object. @return N/A
@@ -56,19 +59,19 @@ module ip_rot_equid_cylind_egrid_mod
      procedure :: gdswzd => gdswzd_rot_equid_cylind_egrid
   end type ip_rot_equid_cylind_egrid
 
-  INTEGER :: IROT !< ???
+  INTEGER :: IROT !< Local copy of irot.
 
-  REAL(KIND=KD) :: CLAT !< ???
-  REAL(KIND=KD) :: CLAT0 !< ???
-  REAL(KIND=KD) :: CLATR !< ???
-  REAL(KIND=KD) :: CLON !< ???
-  REAL(KIND=KD) :: DLATS !< ???
-  REAL(KIND=KD) :: DLONS !< ???
-  REAL(KIND=KD) :: RERTH !< ???
-  REAL(KIND=KD) :: RLON0 !< ???
-  REAL(KIND=KD) :: SLAT !< ???
-  REAL(KIND=KD) :: SLAT0 !< ???
-  REAL(KIND=KD) :: SLATR !< ???
+  REAL(KIND=KD) :: CLAT !< Cosine of the latitude.
+  REAL(KIND=KD) :: CLAT0 !< Local copy of clat0.
+  REAL(KIND=KD) :: CLATR !< Cosine of the rotated latitude.
+  REAL(KIND=KD) :: CLON !< Cosine of the difference between rlon and rlon0.
+  REAL(KIND=KD) :: DLATS !< Local copy of dlats.
+  REAL(KIND=KD) :: DLONS !< Local copy of dlons.
+  REAL(KIND=KD) :: RERTH !< Radius of the Earth.
+  REAL(KIND=KD) :: RLON0 !< Local copy of rlon0.
+  REAL(KIND=KD) :: SLAT !< Sine of the latitude.
+  REAL(KIND=KD) :: SLAT0 !< Local copy of slat0.
+  REAL(KIND=KD) :: SLATR !< Sine of the rotated latitude.
 
 contains
 
