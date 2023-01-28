@@ -3,7 +3,7 @@
 # Mark Potts, Kyle Gerheiser, Ed Hartnett, Eric Engle
 
 # These are the source code filees.
-set(fortran_src gdswzd_c.F90 gdswzd_mod.F90 ip2lib_4.h 
+set(fortran_src gdswzd_c.F90 gdswzd_mod.F90 ip2lib_4.h
 ip2lib_d.h ipolates.F90 ipolatev.F90 ipxetas.F90 ipxwafs.F90
 ipxwafs2.F90 ipxwafs3.F90 movect.F90 bilinear_interp_mod.F90
 bicubic_interp_mod.F90 neighbor_interp_mod.F90 budget_interp_mod.F90
@@ -39,28 +39,24 @@ foreach(kind ${kinds})
   # Compiled with preprocessor definition LSIZE=D, not d
   string(TOUPPER ${kind} kind_definition)
 
-  set(BUILD_FLAGS "${fortran_${kind}_flags}")
-
   add_library(${lib_name}_objlib OBJECT ${fortran_src})
   if(BUILD_SHARED_LIBS)
     set_property(TARGET ${lib_name}_objlib PROPERTY POSITION_INDEPENDENT_CODE 1)
   endif()
-  add_library(${PROJECT_NAME}::${lib_name} ALIAS ${lib_name}_objlib)
-
   target_compile_definitions(${lib_name}_objlib PRIVATE "LSIZE=${kind_definition}")
-  set_target_properties(${lib_name}_objlib PROPERTIES COMPILE_FLAGS "${BUILD_FLAGS}")
+  set_target_properties(${lib_name}_objlib PROPERTIES COMPILE_FLAGS "${fortran_${kind}_flags}")
   set_target_properties(${lib_name}_objlib PROPERTIES Fortran_MODULE_DIRECTORY "${module_dir}")
-  target_include_directories(${lib_name}_objlib PUBLIC $<BUILD_INTERFACE:${module_dir}> $<INSTALL_INTERFACE:include_${kind}>)
+  target_include_directories(${lib_name}_objlib PRIVATE $<BUILD_INTERFACE:${module_dir}> $<INSTALL_INTERFACE:include_${kind}>)
 
   # Create static object library from object library.
   if(BUILD_STATIC_LIBS)
     add_library(${lib_name}_static STATIC $<TARGET_OBJECTS:${lib_name}_objlib>)
-    set_target_properties(${lib_name}_static PROPERTIES OUTPUT_NAME ${lib_name})
-    set_target_properties(${lib_name}_static PROPERTIES EXPORT_NAME ${lib_name})
-    set_target_properties(${lib_name}_static PROPERTIES EXPORT_NAME ${lib_name}_static)
+    add_library(${PROJECT_NAME}::${lib_name}_static ALIAS ${lib_name}_static)
+    target_include_directories(${lib_name}_static PUBLIC $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include_${kind}>)
+    target_include_directories(${lib_name}_static INTERFACE $<BUILD_INTERFACE:${module_dir}> $<INSTALL_INTERFACE:include_${kind}>)
     target_link_libraries(${lib_name}_static PUBLIC sp::sp_${kind})
     if(OpenMP_Fortran_FOUND)
-      target_link_libraries(${lib_name}_static PUBLIC OpenMP::OpenMP_Fortran)
+      target_link_libraries(${lib_name}_static PRIVATE OpenMP::OpenMP_Fortran)
     endif()
     list(APPEND LIB_TARGETS ${lib_name}_static)
   endif()
@@ -68,16 +64,17 @@ foreach(kind ${kinds})
   # Create shared object library from object library.
   if(BUILD_SHARED_LIBS)
     add_library(${lib_name}_shared SHARED $<TARGET_OBJECTS:${lib_name}_objlib>)
-    set_target_properties(${lib_name}_shared PROPERTIES OUTPUT_NAME ${lib_name})
-    set_target_properties(${lib_name}_shared PROPERTIES EXPORT_NAME ${lib_name})
+    add_library(${PROJECT_NAME}::${lib_name}_shared ALIAS ${lib_name}_shared)
     set_target_properties(${lib_name}_shared PROPERTIES SOVERSION 0)
+    target_include_directories(${lib_name}_shared PUBLIC $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include_${kind}>)
+    target_include_directories(${lib_name}_shared INTERFACE $<BUILD_INTERFACE:${module_dir}> $<INSTALL_INTERFACE:include_${kind}>)
     target_link_libraries(${lib_name}_shared PUBLIC sp::sp_${kind})
     if(OpenMP_Fortran_FOUND)
-      target_link_libraries(${lib_name}_shared PUBLIC OpenMP::OpenMP_Fortran)
+      target_link_libraries(${lib_name}_shared PRIVATE OpenMP::OpenMP_Fortran)
     endif()
     list(APPEND LIB_TARGETS ${lib_name}_shared)
   endif()
-  
+
   install(DIRECTORY ${module_dir} DESTINATION ${CMAKE_INSTALL_PREFIX})
   install(FILES ip2lib_${kind}.h DESTINATION ${CMAKE_INSTALL_PREFIX}/include_${kind} RENAME ip2lib.h)
   install(FILES iplib_${kind}.h DESTINATION ${CMAKE_INSTALL_PREFIX}/include_${kind} RENAME iplib.h)
