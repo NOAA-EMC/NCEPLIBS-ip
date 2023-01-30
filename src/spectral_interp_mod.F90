@@ -35,21 +35,26 @@ contains
 
   !> Interpolate spectral scalar.
   !>
-  !> @param ipopt ???
-  !> @param grid_in ???
-  !> @param grid_out ???
-  !> @param MI ???
-  !> @param MO ???
-  !> @param KM ???
-  !> @param IBI ???
-  !> @param GI ???
-  !> @param NO ???
-  !> @param RLAT ???
-  !> @param RLON ???
-  !> @param IBO ???
-  !> @param LO ???
-  !> @param GO ???
-  !> @param IRET ???
+  !> @param[in] ipopt interpolation options; ipopt(1)=0 for triangular;
+  !> ipopt(1)=1 for rhomboidal; ipopt(2) is truncation number
+  !> (defaults to a sensible truncation if ipopt(2)=-1).
+  !> @param[in] grid_in input grid descriptor.
+  !> @param[in] grid_out output grid descriptor.
+  !> @param[in] MI skip number between input grid fields if km>1 or
+  !> dimension of input grid fields if km=1.
+  !> @param[in] MO skip number between output grid fields if km>1 or
+  !> dimension of output grid fields if km=1.
+  !> @param[in] KM number of fields to interpolate.
+  !> @param[in] IBI input bitmap flags (Must be all 0. Routine does
+  !> not do bitmapped interpolation.)
+  !> @param[in] GI input fields to interpolate.
+  !> @param[out] NO number of output points.
+  !> @param[inout] RLAT output latitudes in degrees.
+  !> @param[inout] RLON output longitudes in degrees.
+  !> @param[out] IBO output bitmap flags.
+  !> @param[out] LO output bitmaps.
+  !> @param[out] GO output fields interpolated.
+  !> @param[out] IRET return code. 0/non-0 - successful/not successful.
   !>
   !! @author Mark Iredell @date 96-04-10
   subroutine interpolate_spectral_scalar(IPOPT,grid_in,grid_out, &
@@ -87,25 +92,30 @@ contains
 
   !> Interpolate spectral vector.
   !>
-  !> @param ipopt ???
-  !> @param grid_in ???
-  !> @param grid_out ???
-  !> @param MI ???
-  !> @param MO ???
-  !> @param KM ???
-  !> @param IBI ???
-  !> @param UI ???
-  !> @param VI ???
-  !> @param NO ???
-  !> @param RLAT ???
-  !> @param RLON ???
-  !> @param CROT ???
-  !> @param SROT ???
-  !> @param IBO ???
-  !> @param LO ???
-  !> @param UO ???
-  !> @param VO ???
-  !> @param IRET ???
+  !> @param ipopt interpolation options; ipopt(1)=0 for triangular;
+  !> ipopt(1)=1 for rhomboidal; ipopt(2) is truncation number
+  !> (defaults to a sensible truncation if ipopt(2)=-1).
+  !> @param grid_in input grid descriptor.
+  !> @param grid_out output grid descriptor.
+  !> @param MI skip number between input grid fields if km>1 or
+  !> dimension of input grid fields if km=1.
+  !> @param MO skip number between output grid fields if km>1 or
+  !> dimension of output grid fields if km=1.
+  !> @param KM number of fields to interpolate.
+  !> @param IBI input bitmap flags (Must be all 0. Routine does not do
+  !> bitmapped interpolation.)
+  !> @param UI input u-component fields to interpolate.
+  !> @param VI input v-component fields to interpolate.
+  !> @param NO number of output points.
+  !> @param RLAT output latitudes in degrees.
+  !> @param RLON output longitudes in degrees.
+  !> @param CROT vector rotation cosines.
+  !> @param SROT vector rotation sines.
+  !> @param IBO output bitmap flags.
+  !> @param LO output bitmaps.
+  !> @param UO output u-component fields interpolated.
+  !> @param VO output v-component fields interpolated.
+  !> @param IRET return code. 0/non-0 - successful/not successful.
   !>
   !! @author Mark Iredell @date 96-04-10
   subroutine interpolate_spectral_vector(IPOPT,grid_in,grid_out, &
