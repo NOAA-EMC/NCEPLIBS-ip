@@ -54,13 +54,13 @@ contains
   !>
   !> @param[in] self The grid.
   !> @param[in] IOPT must be minus 1 (return grid coordinates for selected earth coordinates).
-  !> @param[in] NPTS  Maximum number of coordinates.
+  !> @param[in] NPTS  Maximum number of points.
   !> @param[in] FILL Fill value to set invalid output data.
   !> Must be impossible value; suggested value: -9999.
-  !> @param[inout] XPTS Always output.
-  !> @param[inout] YPTS Always output.
-  !> @param[inout] RLON Always input.
-  !> @param[inout] RLAT Always input.
+  !> @param[inout] XPTS X point coordinates. Always output.
+  !> @param[inout] YPTS Y point coordinates. Always output.
+  !> @param[inout] RLON Point longitudes. Always input.
+  !> @param[inout] RLAT Point latitudes. Always input.
   !> @param[out] NRET Number of valid points computed.
   !> @param[out] CROT Not used.
   !> @param[out] SROT Not used.
