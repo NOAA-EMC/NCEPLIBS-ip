@@ -53,21 +53,22 @@ contains
   !> Interpolate gridded data to a series of station points.
   !>
   !> @param[in] self The grid.
-  !> @param[in] IOPT ???
-  !> @param[in] NPTS ???
-  !> @param[in] FILL ???
-  !> @param[inout] XPTS ???
-  !> @param[inout] YPTS ???
-  !> @param[inout] RLON ???
-  !> @param[inout] RLAT ???
-  !> @param[out] NRET ???
-  !> @param[out] CROT ???
-  !> @param[out] SROT ???
-  !> @param[out] XLON ???
-  !> @param[out] XLAT ???
-  !> @param[out] YLON ???
-  !> @param[out] YLAT ???
-  !> @param[out] AREA ???
+  !> @param[in] IOPT must be minus 1 (return grid coordinates for selected earth coordinates).
+  !> @param[in] NPTS  Maximum number of coordinates.
+  !> @param[in] FILL Fill value to set invalid output data.
+  !> Must be impossible value; suggested value: -9999.
+  !> @param[inout] XPTS Always output.
+  !> @param[inout] YPTS Always output.
+  !> @param[inout] RLON Always input.
+  !> @param[inout] RLAT Always input.
+  !> @param[out] NRET Number of valid points computed.
+  !> @param[out] CROT Not used.
+  !> @param[out] SROT Not used.
+  !> @param[out] XLON Not used.
+  !> @param[out] XLAT Not used.
+  !> @param[out] YLON Not used.
+  !> @param[out] YLAT Not used.
+  !> @param[out] AREA Not used.
   !>
   !> @author Kyle Gerheiser @date 7/21/21
   SUBROUTINE GDSWZD_station_points(self,IOPT,NPTS, &
