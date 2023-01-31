@@ -18,6 +18,7 @@ option(OPENMP "use OpenMP threading" OFF)
 option(BUILD_SHARED_LIBS "Build shared libraries" OFF)
 option(BUILD_4 "Build the 4-byte real version of the library, libip_4.a" ON)
 option(BUILD_D "Build the 8-byte real version of the library, libip_d.a" ON)
+option(BUILD_TESTING "Build tests of the library" ON)
 
 # Figure whether user wants a _4, a _d, or both libraries.
 if(BUILD_4 AND BUILD_D)
@@ -45,18 +46,18 @@ endif()
 # We need the NCEPLIBS-sp library.
 find_package(sp 2.3.0 REQUIRED)
 
+# This is the source code directiroy.
+add_subdirectory(src)
+
+# Build tests.
+if(BUILD_TESTING)
+  include(CTest)
+  add_subdirectory(tests)
+endif()
+
 # If doxygen documentation we enabled, build it.
 if(ENABLE_DOCS)
   find_package(Doxygen REQUIRED)
   set(abs_top_srcdir "${CMAKE_SOURCE_DIR}")
   add_subdirectory(docs)  
-endif()
-
-# This is the source code directiroy.
-add_subdirectory(src)
-
-# Build tests.
-include(CTest)
-if(BUILD_TESTING)
-    add_subdirectory(tests)
 endif()
