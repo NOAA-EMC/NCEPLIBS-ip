@@ -138,7 +138,7 @@
  * @param[out] xlat (npts) dx/dlat in 1/degrees
  * @param[out] ylon (npts) dy/dlon in 1/degrees
  * @param[out] ylat (npts) dy/dlat in 1/degrees
- *  @param[out] AREA (npts) area weights in m**2 (Proportional to the
+ * @param[out] area (npts) area weights in m**2 (Proportional to the ???)
  *
  * @author Jovic, G. Gayno @date 2016
  */
@@ -154,6 +154,8 @@ void gdswzd(int igdtnum, int *igdtmpl, int igdtlen, int iopt,
  * This is a C prototype to call the Fortran module subroutine
  * gdswzd_c_grib1() for the _4 version of the library.
  *
+ * @param kgds (200) gds parameters as decoded by
+ * [w3fi63](https://noaa-emc.github.io/NCEPLIBS-w3emc/w3fi63_8f.html).
  * @param iopt option flag
  * - 0 to compute earth coords of all the grid points
  * - 1 to compute earth coords of selected grid coords
