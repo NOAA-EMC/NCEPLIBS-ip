@@ -21,6 +21,7 @@ jobs:
     strategy:
       matrix:
         openmp: [ ON, OFF ]
+        sharedlibs: [ON, OFF]
         
     steps:
       
@@ -45,9 +46,11 @@ jobs:
         cd sp
         mkdir build
         cd build
-        cmake -DOPENMP=${{ matrix.openmp }} -DCMAKE_INSTALL_PREFIX=~/sp ..
+        cmake -DOPENMP=${{ matrix.openmp }} -DCMAKE_INSTALL_PREFIX=~/sp -DBUILD_SHARED_LIBS=${{ matrix.sharedlibs }} ..
         make -j2
         make install
+        ls -l ~/sp
+        ls -l ~/sp/lib
 
     - name: checkout
       uses: actions/checkout@v2
@@ -59,8 +62,11 @@ jobs:
         cd ip
         mkdir build 
         cd build
-        cmake -DOPENMP=${{ matrix.openmp }}  -DCMAKE_PREFIX_PATH="~/sp" ..
+        cmake -DOPENMP=${{ matrix.openmp }}  -DCMAKE_PREFIX_PATH="~/sp" -DBUILD_SHARED_LIBS=${{ matrix.sharedlibs }} -DCMAKE_INSTALL_PREFIX=~/install ..
         make -j2 VERBOSE=2
+        make install
+        ls -l ~/install
+        ls -l ~/install/lib
     
     - name: test
       run: |
