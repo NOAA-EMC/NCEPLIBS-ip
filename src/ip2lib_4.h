@@ -8,7 +8,7 @@
 #define IPLIB
 
 /**
- *  gdswzd() interface for C.
+ * gdswzd() interface for C for _4 build of library.
  *
  * @param igdtnum grid definition template number. Corresponds
  * to the gfld%igdtnum component of the ncep g2 library gridmod data
@@ -149,7 +149,7 @@ void gdswzd(int igdtnum, int *igdtmpl, int igdtlen, int iopt,
             float *ylon, float *ylat, float *area);
 
 /**
- * gdswzd_grib1() interface for C.
+ * gdswzd_grib1() interface for C for the _4 build of the library.
  *
  * This is a C prototype to call the Fortran module subroutine
  * gdswzd_c_grib1() for the _4 version of the library.
