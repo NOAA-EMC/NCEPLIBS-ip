@@ -8,9 +8,9 @@
 #define IPLIB
 
 /**
- *  gdswzd() in C.
+ *  gdswzd() interface for C.
  *
- * @param[in] igdtnum grid definition template number. Corresponds
+ * @param igdtnum grid definition template number. Corresponds
  * to the gfld%igdtnum component of the ncep g2 library gridmod data
  * structure.
  * - 00 equidistant cylindrical
@@ -19,7 +19,7 @@
  * - 20 polar stereographic azimuthal
  * - 30 lambert conformal conical
  * - 40 gaussian equidistant cyclindrical
- * @param[in] igdtmpl (igdtlen) grid definition template array.
+ * @param igdtmpl (igdtlen) grid definition template array.
  * corresponds to the gfld%igdtmpl component of the ncep g2 library
  * gridmod data structure for section three.
  * all projections:
@@ -113,32 +113,32 @@
  * - 20 latitude of southern pole of projection, octets 73-76
  * - 21 longitude of southern pole of projection, octets 77-80
  * - 22 angle of rotation of projection, octs 81-84
- * @param[in] igdtlen number of elements of the grid definition
+ * @param igdtlen number of elements of the grid definition
  * template array. Corresponds to the gfld%igdtlen component of the
  * ncep g2 library gridmod data structure.
- * @param[in] iopt option flag
+ * @param iopt option flag
  * - 0 to compute earth coords of all the grid points
  * - 1 to compute earth coords of selected grid coords
  * - -1 to compute grid coords of selected earth coords
- * @param[in] npts integer maximum number of coordinates
- * @param[in] fill real fill value to set invalid output data (must
+ * @param npts integer maximum number of coordinates
+ * @param fill real fill value to set invalid output data (must
  * be impossible value; suggested value: -9999.)
- * @param[inout] xpts real (npts) grid x point coordinates if iopt>0
- * @param[inout] ypts real (npts) grid y point coordinates if iopt>0
- * @param[inout] rlon real (npts) earth longitudes in degrees e if
+ * @param xpts real (npts) grid x point coordinates if iopt>0
+ * @param ypts real (npts) grid y point coordinates if iopt>0
+ * @param rlon real (npts) earth longitudes in degrees e if
  * iopt<0 (acceptable range: -360. to 360.)
- * @param[inout] rlat real (npts) earth latitudes in degrees n if
+ * @param rlat real (npts) earth latitudes in degrees n if
  * iopt<0 (acceptable range: -90. to 90.)
- * @param[out] nret number of valid points computed (-1 if
+ * @param nret number of valid points computed (-1 if
  * projection unrecognized)
- * @param[out] crot (npts) clockwise vector rotation cosines
- * @param[out] srot (npts) clockwise vector rotation sines
+ * @param crot (npts) clockwise vector rotation cosines
+ * @param srot (npts) clockwise vector rotation sines
  * (ugrid=crot*uearth-srot*vearth, vgrid=srot*uearth+crot*vearth)
- * @param[out] xlon (npts) dx/dlon in 1/degrees
- * @param[out] xlat (npts) dx/dlat in 1/degrees
- * @param[out] ylon (npts) dy/dlon in 1/degrees
- * @param[out] ylat (npts) dy/dlat in 1/degrees
- * @param[out] area (npts) area weights in m**2 (Proportional to the ???)
+ * @param xlon (npts) dx/dlon in 1/degrees
+ * @param xlat (npts) dx/dlat in 1/degrees
+ * @param ylon (npts) dy/dlon in 1/degrees
+ * @param ylat (npts) dy/dlat in 1/degrees
+ * @param area (npts) area weights in m**2 (Proportional to the ???)
  *
  * @author Jovic, G. Gayno @date 2016
  */
@@ -149,7 +149,7 @@ void gdswzd(int igdtnum, int *igdtmpl, int igdtlen, int iopt,
             float *ylon, float *ylat, float *area);
 
 /**
- * GDSWZD_grib1 in C.
+ * gdswzd_grib1() interface for C.
  *
  * This is a C prototype to call the Fortran module subroutine
  * gdswzd_c_grib1() for the _4 version of the library.
@@ -165,20 +165,20 @@ void gdswzd(int igdtnum, int *igdtmpl, int igdtlen, int iopt,
  * impossible value; suggested value: -9999.)
  * @param xpts (npts) grid x point coordinates if iopt>0
  * @param ypts (npts) grid y point coordinates if iopt>0
- * @param[out] rlon (npts) earth longitudes in degrees e if iopt<0
+ * @param rlon (npts) earth longitudes in degrees e if iopt<0
  * (acceptable range: -360. to 360.)
- * @param[out] rlat (npts) earth latitudes in degrees n if iopt<0
+ * @param rlat (npts) earth latitudes in degrees n if iopt<0
  * (acceptable range: -90. to 90.)
- * @param[out] nret number of valid points computed (-1 if
+ * @param nret number of valid points computed (-1 if
  * projection unrecognized)
- * @param[out] crot (npts) clockwise vector rotation cosines
- * @param[out] srot (npts) clockwise vector rotation sines
+ * @param crot (npts) clockwise vector rotation cosines
+ * @param srot (npts) clockwise vector rotation sines
  * (ugrid=crot*uearth-srot*vearth; vgrid=srot*uearth+crot*vearth)
- * @param[out] xlon (npts) dx/dlon in 1/degrees
- * @param[out] xlat (npts) dx/dlat in 1/degrees
- * @param[out] ylon (npts) dy/dlon in 1/degrees
- * @param[out] ylat (npts) dy/dlat in 1/degrees
- * @param[out] area (npts) area weights in m**2 (proportional to the
+ * @param xlon (npts) dx/dlon in 1/degrees
+ * @param xlat (npts) dx/dlat in 1/degrees
+ * @param ylon (npts) dy/dlon in 1/degrees
+ * @param ylat (npts) dy/dlat in 1/degrees
+ * @param area (npts) area weights in m**2 (proportional to the
  * square of the map factor in the case of conformal projections.)
  *
  * @author Jovic, G. Gayno @date 2016
