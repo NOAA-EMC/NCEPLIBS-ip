@@ -166,7 +166,8 @@ contains
   !> @param[out] xlat (npts) dx/dlat in 1/degrees
   !> @param[out] ylon (npts) dy/dlon in 1/degrees
   !> @param[out] ylat (npts) dy/dlat in 1/degrees
-  !> @param[out] AREA (npts) area weights in m**2 (Proportional to the ???)
+  !> @param[out] AREA (npts) area weights in m**2 (Proportional to the
+  !> square of the map factor in the case of conformal projections.)
   !>
   !> @author JOVIC @date 2016-04-10
   SUBROUTINE GDSWZD_C(IGDTNUM,IGDTMPL,IGDTLEN,IOPT,NPTS,FILL, &

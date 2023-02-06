@@ -138,7 +138,8 @@
  * @param xlat (npts) dx/dlat in 1/degrees
  * @param ylon (npts) dy/dlon in 1/degrees
  * @param ylat (npts) dy/dlat in 1/degrees
- * @param area (npts) area weights in m**2 (Proportional to the ???)
+ * @param area (npts) area weights in m**2 (Proportional to the 
+ * square of the map factor in the case of conformal projections.)
  *
  * @author Jovic, G. Gayno @date 2016
  */
