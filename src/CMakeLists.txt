@@ -64,6 +64,9 @@ foreach(kind ${kinds})
     target_link_libraries(${lib_name} PUBLIC OpenMP::OpenMP_Fortran)
   endif()
 
+  # Link to sp library.
+  target_link_libraries(${lib_name} PUBLIC sp::sp_${kind})
+  
   list(APPEND LIB_TARGETS ${lib_name})
   
   install(DIRECTORY ${module_dir} DESTINATION ${CMAKE_INSTALL_PREFIX})

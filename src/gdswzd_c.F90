@@ -10,9 +10,9 @@ module gdswzd_c_mod
 
 contains
 
-  !> C wrapper for routine gdswzd.
+  !> C wrapper for routine gdswzd().
   !>
-  !> Use this routine to call 'gdswzd' from a C or C++ program. Takes
+  !> Use this routine to call gdswzd() from a C or C++ program. Takes
   !> advantage of the fortran/c interoperability standard.
   !>
   !> ### Program History Log
@@ -167,6 +167,7 @@ contains
   !> @param[out] ylon (npts) dy/dlon in 1/degrees
   !> @param[out] ylat (npts) dy/dlat in 1/degrees
   !> @param[out] AREA (npts) area weights in m**2 (Proportional to the
+  !> square of the map factor in the case of conformal projections.)
   !>
   !> @author JOVIC @date 2016-04-10
   SUBROUTINE GDSWZD_C(IGDTNUM,IGDTMPL,IGDTLEN,IOPT,NPTS,FILL, &
@@ -221,7 +222,7 @@ contains
   !>         xlat, ylon, ylat, area);
   !> @endcode
   !>
-  !> @param kgds (200) gds parameters as decoded by w3fi63
+  !> @param kgds (200) gds parameters as decoded by [w3fi63](https://noaa-emc.github.io/NCEPLIBS-w3emc/w3fi63_8f.html).
   !> @param iopt option flag
   !> - 0 to compute earth coords of all the grid points
   !> - 1 to compute earth coords of selected grid coords
