@@ -10,9 +10,9 @@ module gdswzd_c_mod
 
 contains
 
-  !> C wrapper for routine gdswzd.
+  !> C wrapper for routine gdswzd().
   !>
-  !> Use this routine to call 'gdswzd' from a C or C++ program. Takes
+  !> Use this routine to call gdswzd() from a C or C++ program. Takes
   !> advantage of the fortran/c interoperability standard.
   !>
   !> ### Program History Log
