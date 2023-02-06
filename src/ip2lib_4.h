@@ -1,7 +1,7 @@
 /** @file
  * @brief C interface to gdswzd() and gdswzd_grib1() functions for '4'
  * library build.
- * @author Jovic, G. Gayno @date 2016
+ * @author Jovic @date 2016
  */
 
 #ifndef IPLIB
@@ -141,7 +141,7 @@
  * @param area (npts) area weights in m**2 (Proportional to the 
  * square of the map factor in the case of conformal projections.)
  *
- * @author Jovic, G. Gayno @date 2016
+ * @author Jovic @date 2016
  */
 void gdswzd(int igdtnum, int *igdtmpl, int igdtlen, int iopt,
             int npts, float fill, float *xpts, float *ypts, 
@@ -182,7 +182,7 @@ void gdswzd(int igdtnum, int *igdtmpl, int igdtlen, int iopt,
  * @param area (npts) area weights in m**2 (proportional to the
  * square of the map factor in the case of conformal projections.)
  *
- * @author Jovic, G. Gayno @date 2016
+ * @author Jovic @date 2016
  */
 void gdswzd_grib1(int kgds, int iopt, int npts, float *fill, float *xpts,
 		  float *ypts, float *rlon, float *rlat, int nret, float *crot,
