@@ -62,7 +62,7 @@ jobs:
         cd ip
         mkdir build 
         cd build
-        cmake -DOPENMP=${{ matrix.openmp }}  -DCMAKE_PREFIX_PATH="~/sp" -DBUILD_SHARED_LIBS=${{ matrix.sharedlibs }} -DCMAKE_INSTALL_PREFIX=~/install ..
+        cmake -DOPENMP=${{ matrix.openmp }}  -DCMAKE_PREFIX_PATH="~/sp" -DBUILD_SHARED_LIBS=${{ matrix.sharedlibs }} -DCMAKE_INSTALL_PREFIX=~/install -DBUILD_8=ON ..
         make -j2 VERBOSE=2
         make install
         ls -l ~/install
