@@ -39,7 +39,7 @@ jobs:
         cd sp
         mkdir build
         cd build
-        cmake -DOPENMP=ON -DCMAKE_INSTALL_PREFIX=~/sp ..
+        cmake -DOPENMP=ON -DCMAKE_INSTALL_PREFIX=~/sp -DBUILD_8=ON ..
         make -j2
         make install
 

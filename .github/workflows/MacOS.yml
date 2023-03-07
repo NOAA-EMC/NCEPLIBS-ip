@@ -30,7 +30,7 @@ jobs:
       uses: actions/cache@v2
       with:
         path: ~/sp
-        key: sp-${{ matrix.openmp }}-MacOS-2.3.3
+        key: sp-${{ matrix.openmp }}-MacOS-2.3.3-1
 
     - name: checkout-sp
       if: steps.cache-sp.outputs.cache-hit != 'true'
@@ -46,7 +46,7 @@ jobs:
         cd sp
         mkdir build
         cd build
-        cmake -DOPENMP=${{ matrix.openmp }} -DCMAKE_INSTALL_PREFIX=~/sp -DBUILD_SHARED_LIBS=${{ matrix.sharedlibs }} ..
+        cmake -DOPENMP=${{ matrix.openmp }} -DCMAKE_INSTALL_PREFIX=~/sp -DBUILD_SHARED_LIBS=${{ matrix.sharedlibs }} -DBUILD_8=ON ..
         make -j2
         make install
         ls -l ~/sp

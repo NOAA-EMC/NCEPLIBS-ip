@@ -48,7 +48,7 @@ jobs:
       uses: actions/cache@v2
       with:
         path: ~/sp
-        key: sp-${{ runner.os }}-Intel-${{ matrix.openmp }}-2.3.3-1
+        key: sp-${{ runner.os }}-Intel-${{ matrix.openmp }}-2.3.3-2
 
     - name: checkout-sp
       if: steps.cache-sp.outputs.cache-hit != 'true'
@@ -64,7 +64,7 @@ jobs:
         cd sp
         mkdir build
         cd build
-        cmake -DCMAKE_INSTALL_PREFIX=~/sp -DOPENMP=${{ matrix.openmp}} ..
+        cmake -DCMAKE_INSTALL_PREFIX=~/sp -DOPENMP=${{ matrix.openmp}} -DBUILD_8=ON ..
         make -j2
         make install
 
