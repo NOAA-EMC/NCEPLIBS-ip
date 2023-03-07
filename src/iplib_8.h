@@ -1,5 +1,5 @@
 /** @file
- * @brief C interface to gdswzd() function for '4' library build.
+ * @brief C interface to gdswzd() function for '8' library build.
  * @author NOAA Programmer 
  */
 
