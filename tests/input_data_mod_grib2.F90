@@ -1,3 +1,9 @@
+! This is test code from the NCEPLIBS-ip project.
+!
+! This is a helper module for tests which load some GRIB2 input data
+! to be interpolated.
+!
+! Kyle Gerheiser June, 2021
 module input_data_mod_grib2
   implicit none
 
