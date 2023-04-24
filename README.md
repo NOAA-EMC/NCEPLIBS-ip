@@ -21,11 +21,13 @@ library:
 
 For full documentation see https://noaa-emc.github.io/NCEPLIBS-ip/.
 
+To submit bug reports, feature requests, or other code-related issues including installation and usage questions, please create a [GitHub issue](https://github.com/NOAA-EMC/NCEPLIBS-ip/issues). For general NCEPLIBS inquiries, contact [Ed Hartnett](mailto:edward.hartnett@noaa.gov) (secondary point of contact [Alex Richert](mailto:alexander.richert@noaa.gov)).
+
 ### Authors
 
 * NCEP/EMC Developers
 
-Code Manager: George Gayno
+Code Manager: [George Gayno](george.gayno@noaa.gov)
 
 ### Prerequisites
 
