@@ -27,7 +27,7 @@ To submit bug reports, feature requests, or other code-related issues including 
 
 * NCEP/EMC Developers
 
-Code Manager: [George Gayno](george.gayno@noaa.gov)
+Code Manager: [George Gayno](mailto:george.gayno@noaa.gov)
 
 ### Prerequisites
 
