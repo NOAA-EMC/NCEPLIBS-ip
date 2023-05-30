@@ -64,9 +64,11 @@ contains
 
     real, allocatable         :: output_rlat(:), output_rlon(:)
     real, allocatable         :: output_data(:,:)
+    real                      :: station_ref_output(4)
     real(kind=4), allocatable :: baseline_data(:,:)
     real                      :: avgdiff, maxdiff
     real(kind=4)              :: output_data4
+    real, parameter           :: abstol=0.0001
 
     integer, parameter        :: gdtlen3 = 19  ! ncep grid3; one-degree lat/lon
     integer                   :: gdtmpl3(gdtlen3)
@@ -110,6 +112,12 @@ contains
          12191000, 12191000, 0, 64, 25000000, 25000000, -90000000, 0/
 
     select case (trim(grid))
+    case ('-1')
+       ! station points
+       output_gdtnum = -256
+       output_gdtlen = 1
+       allocate(output_gdtmpl(output_gdtlen))
+       output_gdtmpl = -9999
     case ('3')
        output_gdtnum = 0
        output_gdtlen = gdtlen3
@@ -167,36 +175,36 @@ contains
 
     select case (interp_opt)
        ! bi-linear
-    case ('0')           
+    case ('0')
        ip = 0
-       ipopt = 0  
+       ipopt = 0
        ibi   = 0  ! no bitmap
        ! bi-cubic
-    case ('1')          
+    case ('1')
        ip = 1
-       ipopt = 0  
+       ipopt = 0
        ibi   = 0  ! no bitmap
        ! neighbor
-    case ('2')       
+    case ('2')
        ip = 2
-       ipopt = 0  
+       ipopt = 0
        ibi   = 0  ! no bitmap
        ! budget
-    case ('3')       
+    case ('3')
        ip = 3
-       ipopt = -1  
+       ipopt = -1
        ibi   = 0  ! no bitmap
-       ! spectral 
-    case ('4')         
+       ! spectral
+    case ('4')
        ip = 4
        ipopt(1) = 0  ! triangular
        ipopt(2) = -1 ! code chooses wave number
        ipopt(3:20)=0
        ibi   = 0     ! can't use bitmap with spectral
        ! neighbor-budget
-    case ('6')            
+    case ('6')
        ip = 6
-       ipopt = -1  
+       ipopt = -1
        ibi   = 0  ! no bitmap
     case default
        print*,"ERROR: ENTER VALID INTERP OPTION."
@@ -205,19 +213,52 @@ contains
     print*,"- USE INTERP OPTION: ", interp_opt
 
     km = 1  ! number of fields to interpolate
-    mi = i_input * j_input ! dimension of input grids
 
-    mo = i_output * j_output 
+    if (trim(grid) .eq. '-1') then
+        mo = 4
+        no = mo
+        allocate (output_data(1,4))
+        allocate (output_bitmap(1,4))
+    else
+        mi = i_input * j_input ! dimension of input grids
+        mo = i_output * j_output
+        allocate (output_data(i_output,j_output))
+        allocate (output_bitmap(i_output,j_output))
+    endif
 
-    allocate (output_rlat(i_output * j_output))
-    allocate (output_rlon(i_output * j_output))
-    allocate (output_data(i_output,j_output))
-    allocate (output_bitmap(i_output,j_output))
+    allocate (output_rlat(mo))
+    allocate (output_rlon(mo))
+
+    if (trim(grid) .eq. '-1') then
+        output_rlat = (/ 45.0, 35.0, 40.0, 35.0 /)
+        output_rlon = (/ -100.0, -100.0, -90.0, -120.0 /)
+    endif
 
     call ipolates(ip, ipopt, input_gdtnum, input_gdtmpl, input_gdtlen, &
          output_gdtnum, output_gdtmpl, output_gdtlen, &
          mi, mo, km, ibi, input_bitmap, input_data, &
          no, output_rlat, output_rlon, ibo, output_bitmap, output_data, iret)
+    print*, "IRET:", iret
+
+    if (trim(grid) .eq. '-1') then
+        select case (interp_opt)
+            case ('0')
+                station_ref_output = (/77.5, 71.0, 69.5, 65.0/)
+            case ('1')
+                station_ref_output = (/77.6875, 71.0625, 69.8750, 69.9375/)
+            case ('2')
+                station_ref_output = (/78.0, 71.0, 69.0, 61.0/)
+            case ('3')
+                station_ref_output = (/0.0,0.0,0.0,0.0/)
+            case ('4')
+                station_ref_output = (/77.31757, 70.45621, 72.89352, 51.05908/)
+!            case ('6')
+!                station_ref_output = (/1.0,1.0,1.0,1.0/)
+        end select
+        if (maxval(abs(output_data(1,:)-station_ref_output)) .gt. abstol) stop 60
+        if (any(isnan(output_data))) stop 61
+        return
+    endif
 
     deallocate (output_gdtmpl)
 
@@ -260,7 +301,7 @@ contains
     do j = 1, j_output
        do i = 1, i_output
           output_data4 = real(output_data(i,j),4)
-          if ( abs(output_data4 - baseline_data(i,j)) > 0.0001) then
+          if ( abs(output_data4 - baseline_data(i,j)) > abstol) then
              avgdiff = avgdiff + abs(output_data4-baseline_data(i,j))
              num_pts_diff = num_pts_diff + 1
              if (abs(output_data4-baseline_data(i,j)) > abs(maxdiff))then
@@ -296,7 +337,7 @@ contains
   end subroutine interp
 
 
-  
+
   subroutine interp_vector(grid, interp_opt)
 
     !-------------------------------------------------------------------------
@@ -356,11 +397,14 @@ contains
     real, allocatable         :: output_rlat(:), output_rlon(:)
     real, allocatable         :: output_crot(:), output_srot(:)
     real, allocatable         :: output_u_data(:,:), output_v_data(:,:)
+    real, allocatable         :: output_u_pt_data(:), output_v_pt_data(:), output_pt_bitmap(:)
     real                      :: avg_u_diff, avg_v_diff
     real                      :: max_u_diff, max_v_diff
     real(kind=4)              :: output_data4
     real(kind=4), allocatable :: baseline_u_data(:,:)
     real(kind=4), allocatable :: baseline_v_data(:,:)
+    real                      :: station_ref_output_u(4), station_ref_output_v(4)
+    real, parameter           :: abstol=0.0001
 
     integer, parameter        :: gdtlen3 = 19  ! ncep grid3; one-degree lat/lon
     integer                   :: gdtmpl3(gdtlen3)
@@ -404,6 +448,13 @@ contains
          12191000, 12191000, 0, 64, 25000000, 25000000, -90000000, 0/
 
     select case (trim(grid))
+    case ('-1')
+       output_gdtnum = -256
+       output_gdtlen = 1
+       allocate(output_gdtmpl(output_gdtlen))
+       output_gdtmpl = -9999
+       i_output = 1
+       j_output = 4
     case ('3')
        output_gdtnum = 0
        output_gdtlen = gdtlen3
@@ -461,36 +512,36 @@ contains
 
     select case (interp_opt)
        ! bi-linear
-    case ('0')           
+    case ('0')
        ip = 0
-       ipopt = 0  
+       ipopt = 0
        ibi   = 0  ! no bitmap
        ! bi-cubic
-    case ('1')          
+    case ('1')
        ip = 1
-       ipopt = 0  
+       ipopt = 0
        ibi   = 0  ! no bitmap
        ! neighbor
-    case ('2')       
+    case ('2')
        ip = 2
-       ipopt = 0  
+       ipopt = 0
        ibi   = 0  ! no bitmap
        ! budget
-    case ('3')       
+    case ('3')
        ip = 3
-       ipopt = -1  
+       ipopt = -1
        ibi   = 0  ! no bitmap
-       ! spectral 
-    case ('4')         
+       ! spectral
+    case ('4')
        ip = 4
        ipopt(1) = 0  ! triangular
        ipopt(2) = -1 ! code chooses wave number
        ipopt(3:20)=0
        ibi   = 0     ! no bitmap
        ! neighbor-budget
-    case ('6')            
+    case ('6')
        ip = 6
-       ipopt = -1  
+       ipopt = -1
        ibi   = 0  ! no bitmap
     case default
        print*,"ERROR: ENTER VALID INTERP OPTION."
@@ -501,21 +552,60 @@ contains
     km = 1  ! number of fields to interpolate
     mi = i_input * j_input ! dimension of input grids
 
-    mo = i_output * j_output 
+    if (trim(grid) .eq. '-1') then
+        mo = 4
+        no = mo
+    else
+        mo = i_output * j_output
+    endif
 
-    allocate (output_rlat(i_output*j_output))
-    allocate (output_rlon(i_output*j_output))
+    allocate (output_rlat(mo))
+    allocate (output_rlon(mo))
+    allocate (output_crot(mo))
+    allocate (output_srot(mo))
     allocate (output_u_data(i_output,j_output))
     allocate (output_v_data(i_output,j_output))
     allocate (output_bitmap(i_output,j_output))
-    allocate (output_srot(i_output*j_output))
-    allocate (output_crot(i_output*j_output))
+
+    if (trim(grid) .eq. '-1') then
+        output_rlat = (/ 45.0, 35.0, 40.0, 90.0 /)
+        output_rlon = (/ -100.0, -100.0, -90.0, 10.0 /)
+        output_srot = 0.0   ! no turning of wind
+        output_crot = 1.0   ! no turning of wind
+    endif
 
     call ipolatev(ip, ipopt, input_gdtnum, vector_input_gdtmpl, input_gdtlen, &
          output_gdtnum, output_gdtmpl, output_gdtlen, mi, mo,   &
          km, ibi, input_bitmap, input_u_data, input_v_data,  &
          no, output_rlat, output_rlon, output_crot, output_srot, &
          ibo, output_bitmap, output_u_data, output_v_data, iret)
+
+    if (trim(grid) .eq. '-1') then
+        select case (interp_opt)
+            case ('0')
+                station_ref_output_u = (/3.55000, 6.47000, 8.25000, 0.68000/)
+                station_ref_output_v = (/26.38000, 17.14000, 8.32000, -7.28000/)
+            case ('1')
+                station_ref_output_u = (/3.55000, 6.47000, 8.25000, 0.68000/)
+                station_ref_output_v = (/26.38000, 17.14000, 8.32000, -7.28000/)
+            case ('2')
+                station_ref_output_u = (/3.55000, 6.47000, 8.25000, 0.68000/)
+                station_ref_output_v = (/26.38000, 17.14000, 8.32000, -7.28000/)
+            case ('3')
+                station_ref_output_u = (/-2.62717, -3.90844, -4.03447, -7.21662/)
+                station_ref_output_v = (/-6.76755, -6.11767, -6.03530, -0.78883/)
+            case ('4')
+                station_ref_output_u = (/2.83803, 7.78011, 7.76679, 0.71303/)
+                station_ref_output_v = (/24.58017, 18.86850, 8.75517, -7.95236/)
+!            case ('6')
+!                station_ref_output_u = (/1.0,1.0,1.0,1.0/)
+        end select
+        if (maxval(abs(output_u_data(1,:)-station_ref_output_u)) .gt. abstol) stop 160
+        if (maxval(abs(output_v_data(1,:)-station_ref_output_v)) .gt. abstol) stop 161
+        if (any(isnan(output_u_data))) stop 162
+        if (any(isnan(output_v_data))) stop 163
+        return
+    endif
 
     deallocate(input_bitmap, input_u_data, input_v_data, output_gdtmpl)
 
@@ -535,7 +625,7 @@ contains
     ! polatev4 does not always initialize the ibo or output_bitmap variables,
     ! so they can't be used.  this should be fixed.
     ! according to the comments, polatev4 only outputs a bitmap in areas
-    ! that extend outside the domain of the input grid. 
+    ! that extend outside the domain of the input grid.
     !-------------------------------------------------------------------------
 
     if (ip /= 4) then
@@ -551,7 +641,7 @@ contains
 
     !-------------------------------------------------------------------------
     ! Compared data from ipolatev to its corresponding baseline
-    ! data.  
+    ! data.
     !-------------------------------------------------------------------------
 
     if (kind(output_u_data) == 8) then
@@ -580,7 +670,7 @@ contains
     do j = 1, j_output
        do i = 1, i_output
           output_data4 = real(output_u_data(i,j),4)
-          if (abs(output_data4 - baseline_u_data(i,j)) > 0.0001) then
+          if (abs(output_data4 - baseline_u_data(i,j)) > abstol) then
              avg_u_diff = avg_u_diff + abs(output_data4-baseline_u_data(i,j))
              num_upts_diff = num_upts_diff + 1
              if (abs(output_data4-baseline_u_data(i,j)) > abs(max_u_diff))then
@@ -588,7 +678,7 @@ contains
              endif
           endif
           output_data4 = real(output_v_data(i,j),4)
-          if (abs(output_data4 - baseline_v_data(i,j)) > 0.0001) then
+          if (abs(output_data4 - baseline_v_data(i,j)) > abstol) then
              avg_v_diff = avg_v_diff + abs(output_data4-baseline_v_data(i,j))
              num_vpts_diff = num_vpts_diff + 1
              if (abs(output_data4-baseline_v_data(i,j)) > abs(max_v_diff))then

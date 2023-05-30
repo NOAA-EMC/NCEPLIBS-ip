@@ -52,6 +52,14 @@ foreach(kind "d")
   add_test(test_polar-stereo_neighbor-budget_scalar_grib2_${kind} test_scalar_grib2_${kind} 212 6)
   add_test(test_rotatedB_spectral_scalar_grib2_${kind} test_scalar_grib2_${kind} 205 4)
   add_test(test_rotatedE_budget_scalar_grib2_${kind} test_scalar_grib2_${kind} 203 3)
+
+  # scalar station point tests
+  add_test(test_station_points_bilinear_scalar_grib2_${kind} test_scalar_grib2_${kind} -1 0)
+  add_test(test_station_points_bicubic_scalar_grib2_${kind} test_scalar_grib2_${kind} -1 1)
+  add_test(test_station_points_neighbor_scalar_grib2_${kind} test_scalar_grib2_${kind} -1 2)
+  add_test(test_station_points_budget_scalar_grib2_${kind} test_scalar_grib2_${kind} -1 3)
+  add_test(test_station_points_spectral_scalar_grib2_${kind} test_scalar_grib2_${kind} -1 4)
+#  add_test(test_station_points_neighbor-budget_scalar_grib2_${kind} test_scalar_grib2_${kind} -1 6)
   
   # # vector tests
   add_test(test_lambert_biliner_vector_grib2_${kind} test_vector_grib2_${kind} 218 0)
@@ -61,6 +69,14 @@ foreach(kind "d")
   add_test(test_polar-stereo_neighbor-budget_vector_grib2_${kind} test_vector_grib2_${kind} 212 6)
   add_test(test_rotatedB_spectral_vector_grib2_${kind} test_vector_grib2_${kind} 205 4)
   add_test(test_rotatedE_budget_vector_grib2_${kind} test_vector_grib2_${kind} 203 3)
+
+  # vector station point tests
+  add_test(test_station_points_bilinear_vector_grib2_${kind} test_vector_grib2_${kind} -1 0)
+  add_test(test_station_points_bicubic_vector_grib2_${kind} test_vector_grib2_${kind} -1 1)
+  add_test(test_station_points_neighbor_vector_grib2_${kind} test_vector_grib2_${kind} -1 2)
+  add_test(test_station_points_budget_vector_grib2_${kind} test_vector_grib2_${kind} -1 3)
+  add_test(test_station_points_spectral_vector_grib2_${kind} test_vector_grib2_${kind} -1 4)
+#  add_test(test_station_points_neighbor-budget_vector_grib2_${kind} test_vector_grib2_${kind} -1 6)
   
   # grib-1 tests
   add_library(test_library_grib1_${kind} input_data_mod_grib1.F90 interp_mod_grib1.F90)
