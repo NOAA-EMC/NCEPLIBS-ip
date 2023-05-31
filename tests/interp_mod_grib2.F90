@@ -115,7 +115,7 @@ contains
     case ('-1')
        ! station points
        output_gdtnum = -256
-       output_gdtlen = 1
+       output_gdtlen = 1000
        allocate(output_gdtmpl(output_gdtlen))
        output_gdtmpl = -9999
     case ('3')
@@ -449,7 +449,7 @@ contains
     select case (trim(grid))
     case ('-1')
        output_gdtnum = -256
-       output_gdtlen = 1
+       output_gdtlen = 10000
        allocate(output_gdtmpl(output_gdtlen))
        output_gdtmpl = -9999
        i_output = 1
