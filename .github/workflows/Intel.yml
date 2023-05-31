@@ -1,6 +1,6 @@
 # This is a CI workflow for the NCEPLIBS-ip project.
 #
-# This workflow builds with the Intel compiler.
+# This workflow builds with the Intel Classic and OneAPI compilers.
 #
 # Ed Hartnett, 1/8/23
 name: Intel
@@ -21,13 +21,10 @@ defaults:
 jobs:
   Intel:
     runs-on: ubuntu-latest
-    env:
-      CC: icc
-      FC: ifort
-      CXX: icpc
     strategy:
       matrix:
         openmp: [ ON, OFF ]
+        compilers: ["export CC=icc ; export FC=ifort ; export CXX=icpc", "export CC=icx ; export FC=ifx ; export CXX=icpx"]
 
     steps:
 
@@ -64,6 +61,7 @@ jobs:
         cd sp
         mkdir build
         cd build
+        ${{ matrix.compilers }}
         cmake -DCMAKE_INSTALL_PREFIX=~/sp -DOPENMP=${{ matrix.openmp}} ..
         make -j2
         make install
@@ -78,6 +76,7 @@ jobs:
         cd ip
         mkdir build 
         cd build
+        ${{ matrix.compilers }}
         cmake -DOPENMP=${{ matrix.openmp }} -DBUILD_SHARED_LIBS=OFF -DCMAKE_PREFIX_PATH="~/sp" ..
         make -j2 VERBOSE=1
     
