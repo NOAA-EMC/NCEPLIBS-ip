@@ -214,13 +214,13 @@ contains
 
     km = 1  ! number of fields to interpolate
 
+    mi = i_input * j_input ! dimension of input grids
     if (trim(grid) .eq. '-1') then
         mo = 4
         no = mo
         allocate (output_data(1,4))
         allocate (output_bitmap(1,4))
     else
-        mi = i_input * j_input ! dimension of input grids
         mo = i_output * j_output
         allocate (output_data(i_output,j_output))
         allocate (output_bitmap(i_output,j_output))
@@ -238,7 +238,6 @@ contains
          output_gdtnum, output_gdtmpl, output_gdtlen, &
          mi, mo, km, ibi, input_bitmap, input_data, &
          no, output_rlat, output_rlon, ibo, output_bitmap, output_data, iret)
-    print*, "IRET:", iret
 
     if (trim(grid) .eq. '-1') then
         select case (interp_opt)
