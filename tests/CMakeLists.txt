@@ -33,16 +33,16 @@ foreach(kind "d")
   target_link_libraries(test_library_grib2_${kind} PUBLIC ip::ip_${kind})
   target_link_libraries(test_library_grib2_${kind} PUBLIC sp::sp_${kind})
   
-  add_executable(test_gdswzd_grib2_${kind} test_gdswzd_grib2.c)
-  set_target_properties(test_gdswzd_grib2_${kind} PROPERTIES LINKER_LANGUAGE C)
+  add_executable(tst_gdswzd_grib2_${kind} tst_gdswzd_grib2.c)
+  set_target_properties(tst_gdswzd_grib2_${kind} PROPERTIES LINKER_LANGUAGE C)
   add_executable(test_scalar_grib2_${kind} test_scalar_grib2.F90)
   add_executable(test_vector_grib2_${kind} test_vector_grib2.F90)
   
-  target_link_libraries(test_gdswzd_grib2_${kind} PRIVATE test_library_grib2_${kind})
+  target_link_libraries(tst_gdswzd_grib2_${kind} PRIVATE test_library_grib2_${kind})
   target_link_libraries(test_scalar_grib2_${kind} PRIVATE test_library_grib2_${kind})
   target_link_libraries(test_vector_grib2_${kind} PRIVATE test_library_grib2_${kind})
   
-  add_test(test_gdswzd_c_grib2_${kind} test_gdswzd_grib2_${kind})
+  add_test(tst_gdswzd_c_grib2_${kind} tst_gdswzd_grib2_${kind})
   
   # scalar tests
   add_test(test_lambert_bilinear_scalar_grib2_${kind} test_scalar_grib2_${kind} 218 0)
@@ -83,17 +83,17 @@ foreach(kind "d")
   target_link_libraries(test_library_grib1_${kind} PUBLIC ip::ip_${kind})
   target_link_libraries(test_library_grib1_${kind} PUBLIC sp::sp_${kind})
   
-  add_executable(test_gdswzd_grib1_${kind} test_gdswzd_grib1.c)
-  set_target_properties(test_gdswzd_grib1_${kind} PROPERTIES LINKER_LANGUAGE C)
+  add_executable(tst_gdswzd_grib1_${kind} tst_gdswzd_grib1.c)
+  set_target_properties(tst_gdswzd_grib1_${kind} PROPERTIES LINKER_LANGUAGE C)
   add_executable(test_scalar_grib1_${kind} test_scalar_grib1.F90)
   add_executable(test_vector_grib1_${kind} test_vector_grib1.F90)
   
   target_link_libraries(test_scalar_grib1_${kind} PRIVATE test_library_grib1_${kind})
   target_link_libraries(test_vector_grib1_${kind} PRIVATE test_library_grib1_${kind})
-  target_link_libraries(test_gdswzd_grib1_${kind} ip::ip_${kind})
-  target_link_libraries(test_gdswzd_grib1_${kind} sp::sp_${kind})
+  target_link_libraries(tst_gdswzd_grib1_${kind} ip::ip_${kind})
+  target_link_libraries(tst_gdswzd_grib1_${kind} sp::sp_${kind})
   
-  add_test(test_gdswzd_c_grib1_${kind} test_gdswzd_grib1_${kind})
+  add_test(tst_gdswzd_c_grib1_${kind} tst_gdswzd_grib1_${kind})
   add_test(test_lambert_bilinear_scalar_grib1_${kind} test_scalar_grib1_${kind} 218 0)
   add_test(test_gaussian_neighbor_scalar_grib1_${kind} test_scalar_grib1_${kind} 127 2)
   add_test(test_latlon_bilinear_scalar_grib1_${kind} test_scalar_grib1_${kind} 3 0)
