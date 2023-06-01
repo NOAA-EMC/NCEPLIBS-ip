@@ -125,9 +125,13 @@ CONTAINS
     IF(IOPT.EQ.0) THEN
        IOPF=1
 
-       im = grid%im
-       jm = grid%jm
-       nm = im * jm
+       if(grid%descriptor%grid_num.eq.-1)then
+          nm = npts
+       else
+          im = grid%im
+          jm = grid%jm
+          nm = im * jm
+       endif
        nscan = grid%nscan
        kscan = grid%kscan
 
@@ -161,7 +165,12 @@ CONTAINS
              XPTS(N)=IS1+(I-(J-KSCAN))/2
              YPTS(N)=(I+(J-KSCAN))/2
           ENDDO
-          class default
+       type is(ip_station_points_grid)
+          DO N=1,NM
+             XPTS(N)=FILL
+             YPTS(N)=FILL
+          ENDDO
+       class default
           DO N=1,NM
              IF(NSCAN.EQ.0) THEN
                 J=(N-1)/IM+1
