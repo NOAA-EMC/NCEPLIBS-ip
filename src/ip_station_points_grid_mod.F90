@@ -71,6 +71,7 @@ contains
   !> @param[out] AREA Not used.
   !>
   !> @author Kyle Gerheiser @date 7/21/21
+  !> @author Eric Engle @date 5/4/23
   SUBROUTINE GDSWZD_station_points(self,IOPT,NPTS, &
        FILL,XPTS,YPTS,RLON,RLAT,NRET, &
        CROT,SROT,XLON,XLAT,YLON,YLAT,AREA)
@@ -84,6 +85,9 @@ contains
     REAL,  OPTIONAL,         INTENT(  OUT) :: CROT(NPTS),SROT(NPTS)
     REAL,  OPTIONAL,         INTENT(  OUT) :: XLON(NPTS),XLAT(NPTS)
     REAL,  OPTIONAL,         INTENT(  OUT) :: YLON(NPTS),YLAT(NPTS),AREA(NPTS)
+
+    ! This is all that needs to be done for GDSWZD for station points.
+    NRET = NPTS
 
   end subroutine GDSWZD_STATION_POINTS
 

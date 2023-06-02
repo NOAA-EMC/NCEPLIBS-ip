@@ -92,7 +92,8 @@ contains
   !> - 2    unrecognized input grid or no grid overlap
   !> - 3    unrecognized output grid
   !>
-  !> @author Mark Iredell @date 96-04-10  
+  !> @author Mark Iredell @date 96-04-10
+  !> @author Eric Engle @date 23-05-04
   SUBROUTINE interpolate_neighbor_scalar(IPOPT,grid_in,grid_out, &
        MI,MO,KM,IBI,LI,GI,  &
        NO,RLAT,RLON,IBO,LO,GO,IRET)
@@ -161,10 +162,8 @@ contains
     IF(IRET.EQ.0.AND.(to_station_points.OR..NOT.SAME_GRIDI.OR..NOT.SAME_GRIDO))THEN
        ! - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
        !  COMPUTE NUMBER OF OUTPUT POINTS AND THEIR LATITUDES AND LONGITUDES.
-       IF(.not. to_station_points) THEN
-          CALL GDSWZD(grid_out, 0,MO,FILL,XPTS,YPTS,RLON,RLAT,NO)
-          IF(NO.EQ.0) IRET=3
-       ENDIF
+       CALL GDSWZD(grid_out, 0,MO,FILL,XPTS,YPTS,RLON,RLAT,NO)
+       IF(NO.EQ.0) IRET=3
        ! - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
        !  LOCATE INPUT POINTS
        CALL GDSWZD(grid_in,-1,NO,FILL,XPTS,YPTS,RLON,RLAT,NV)
@@ -346,6 +345,7 @@ contains
   !> - 3    unrecognized output grid
   !>
   !> @author Mark Iredell @date 96-04-10
+  !> @author Eric Engle @date 23-05-04
   SUBROUTINE interpolate_neighbor_vector(IPOPT,grid_in,grid_out, &
        MI,MO,KM,IBI,LI,UI,VI, &
        NO,RLAT,RLON,CROT,SROT,IBO,LO,UO,VO,IRET)
@@ -422,17 +422,13 @@ contains
     IF(IRET.EQ.0.AND.(to_station_points.OR..NOT.SAME_GRIDI.OR..NOT.SAME_GRIDO))THEN
        ! - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
        !  COMPUTE NUMBER OF OUTPUT POINTS AND THEIR LATITUDES AND LONGITUDES.
-       IF(.not. to_station_points) THEN
-          CALL GDSWZD(grid_out, 0,MO,FILL,XPTS,YPTS,RLON,RLAT, &
-               NO,CROT,SROT)
-          IF(NO.EQ.0) IRET=3
-       ENDIF
+       CALL GDSWZD(grid_out, 0,MO,FILL,XPTS,YPTS,RLON,RLAT,NO,CROT,SROT)
+       IF(NO.EQ.0) IRET=3
        ! - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
        !  LOCATE INPUT POINTS
        CALL GDSWZD(grid_in,-1,NO,FILL,XPTS,YPTS,RLON,RLAT,NV)
        IF(IRET.EQ.0.AND.NV.EQ.0) IRET=2
-       CALL GDSWZD(grid_in, 0,MI,FILL,XPTI,YPTI,RLOI,RLAI, & 
-            NV,CROI,SROI)
+       CALL GDSWZD(grid_in, 0,MI,FILL,XPTI,YPTI,RLOI,RLAI,NV,CROI,SROI)
        ! - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
        !  ALLOCATE AND SAVE GRID DATA
        IF(NOX.NE.NO) THEN

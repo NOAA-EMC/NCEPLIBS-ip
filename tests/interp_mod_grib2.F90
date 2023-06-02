@@ -114,10 +114,10 @@ contains
     select case (trim(grid))
     case ('-1')
        ! station points
-       output_gdtnum = -256
-       output_gdtlen = 1000
+       output_gdtnum = -1
+       output_gdtlen = 200
        allocate(output_gdtmpl(output_gdtlen))
-       output_gdtmpl = -9999
+       output_gdtmpl = 0 !-9999
     case ('3')
        output_gdtnum = 0
        output_gdtlen = gdtlen3
@@ -248,11 +248,11 @@ contains
             case ('2')
                 station_ref_output = (/78.0, 71.0, 69.0, 61.0/)
             case ('3')
-                station_ref_output = (/0.0,0.0,0.0,0.0/)
+                station_ref_output = (/77.32, 71.0599, 69.32, 61.82/)
             case ('4')
                 station_ref_output = (/77.31757, 70.45621, 72.89352, 51.05908/)
-!            case ('6')
-!                station_ref_output = (/1.0,1.0,1.0,1.0/)
+            case ('6')
+                station_ref_output = (/77.59999, 71.00000, 69.40000, 64.20000/)
         end select
         if (maxval(abs(output_data(1,:)-station_ref_output)) .gt. abstol) stop 60
         if (any(isnan(output_data))) stop 61
@@ -448,10 +448,10 @@ contains
 
     select case (trim(grid))
     case ('-1')
-       output_gdtnum = -256
-       output_gdtlen = 10000
+       output_gdtnum = -1
+       output_gdtlen = 200
        allocate(output_gdtmpl(output_gdtlen))
-       output_gdtmpl = -9999
+       output_gdtmpl = 0 !-9999
        i_output = 1
        j_output = 4
     case ('3')
@@ -591,13 +591,14 @@ contains
                 station_ref_output_u = (/3.55000, 6.47000, 8.25000, 0.68000/)
                 station_ref_output_v = (/26.38000, 17.14000, 8.32000, -7.28000/)
             case ('3')
-                station_ref_output_u = (/-2.62717, -3.90844, -4.03447, -7.21662/)
-                station_ref_output_v = (/-6.76755, -6.11767, -6.03530, -0.78883/)
+                station_ref_output_u = (/3.18230, 6.74294, 7.89213, 0.70410/)
+                station_ref_output_v = (/26.20624, 17.97046, 8.75334, -7.37988/)
             case ('4')
                 station_ref_output_u = (/2.83803, 7.78011, 7.76679, 0.71303/)
                 station_ref_output_v = (/24.58017, 18.86850, 8.75517, -7.95236/)
-!            case ('6')
-!                station_ref_output_u = (/1.0,1.0,1.0,1.0/)
+            case ('6')
+                station_ref_output_u = (/3.54999, 6.46999, 8.25000, 0.68000/)
+                station_ref_output_v = (/26.37999, 17.13999, 8.31999, -7.28000/)
         end select
         if (maxval(abs(output_u_data(1,:)-station_ref_output_u)) .gt. abstol) stop 160
         if (maxval(abs(output_v_data(1,:)-station_ref_output_v)) .gt. abstol) stop 161
