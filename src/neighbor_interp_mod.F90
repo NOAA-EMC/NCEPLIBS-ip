@@ -92,8 +92,8 @@ contains
   !> - 2    unrecognized input grid or no grid overlap
   !> - 3    unrecognized output grid
   !>
-  !> @author Mark Iredell @date 96-04-10  
-  !> @author Eric Enlgle @date 23-05-04  
+  !> @author Mark Iredell @date 96-04-10
+  !> @author Eric Engle @date 23-05-04
   SUBROUTINE interpolate_neighbor_scalar(IPOPT,grid_in,grid_out, &
        MI,MO,KM,IBI,LI,GI,  &
        NO,RLAT,RLON,IBO,LO,GO,IRET)

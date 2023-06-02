@@ -398,17 +398,13 @@ contains
     ! - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
     !  COMPUTE NUMBER OF OUTPUT POINTS AND THEIR LATITUDES AND LONGITUDES.
     IRET=0
+    CALL GDSWZD(grid_out, 0,MO,FILL,XPTS,YPTS,RLON,RLAT,NO,CROT,SROT)
+    IF(NO.EQ.0) IRET=3
     if(to_station_points) then
-       CALL GDSWZD(grid_out, 0,MO,FILL,XPTS,YPTS,RLON,RLAT,NO,CROT,SROT)
-       IF(NO.EQ.0) IRET=3
        CALL GDSWZD(grid_in,-1,NO,FILL,XPTS,YPTS,RLON,RLAT,NV,CROT,SROT)
        IF(NV.EQ.0) IRET=2
-    else
-       CALL GDSWZD(grid_out, 0,MO,FILL,XPTS,YPTS,RLON,RLAT,NO,CROT,SROT)
-       IF(NO.EQ.0) IRET=3
     endif
        
-
     if (.not. allocated(prev_grid_in)) then
        allocate(prev_grid_in, source = grid_in)
 
