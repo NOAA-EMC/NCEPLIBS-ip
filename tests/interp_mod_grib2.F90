@@ -251,8 +251,8 @@ contains
                 station_ref_output = (/77.32, 71.0599, 69.32, 61.82/)
             case ('4')
                 station_ref_output = (/77.31757, 70.45621, 72.89352, 51.05908/)
-!            case ('6')
-!                station_ref_output = (/1.0,1.0,1.0,1.0/)
+            case ('6')
+                station_ref_output = (/77.59999, 71.00000, 69.40000, 64.20000/)
         end select
         if (maxval(abs(output_data(1,:)-station_ref_output)) .gt. abstol) stop 60
         if (any(isnan(output_data))) stop 61
@@ -596,8 +596,9 @@ contains
             case ('4')
                 station_ref_output_u = (/2.83803, 7.78011, 7.76679, 0.71303/)
                 station_ref_output_v = (/24.58017, 18.86850, 8.75517, -7.95236/)
-!            case ('6')
-!                station_ref_output_u = (/1.0,1.0,1.0,1.0/)
+            case ('6')
+                station_ref_output_u = (/3.54999, 6.46999, 8.25000, 0.68000/)
+                station_ref_output_v = (/26.37999, 17.13999, 8.31999, -7.28000/)
         end select
         if (maxval(abs(output_u_data(1,:)-station_ref_output_u)) .gt. abstol) stop 160
         if (maxval(abs(output_v_data(1,:)-station_ref_output_v)) .gt. abstol) stop 161
