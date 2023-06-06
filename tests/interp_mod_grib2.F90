@@ -58,7 +58,7 @@ contains
     integer                   :: km, ibi(1), mi, iret, i, j
     integer                   :: i_output, j_output, mo, no, ibo(1)
     integer                   :: num_pts_diff
-    integer     , parameter   :: missing=b'11111111111111111111111111111111'
+    integer     , parameter   :: missing=4294967296
 
     logical*1, allocatable    :: output_bitmap(:,:)
 
@@ -389,7 +389,7 @@ contains
     integer                   :: km, ibi(1), mi, iret, i, j
     integer                   :: i_output, j_output, mo, no, ibo(1)
     integer                   :: num_upts_diff, num_vpts_diff
-    integer     , parameter   :: missing=b'11111111111111111111111111111111'
+    integer     , parameter   :: missing=4294967296
 
     logical*1, allocatable    :: output_bitmap(:,:)
 
