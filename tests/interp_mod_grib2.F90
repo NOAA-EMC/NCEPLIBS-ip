@@ -396,7 +396,6 @@ contains
     real, allocatable         :: output_rlat(:), output_rlon(:)
     real, allocatable         :: output_crot(:), output_srot(:)
     real, allocatable         :: output_u_data(:,:), output_v_data(:,:)
-    real, allocatable         :: output_u_pt_data(:), output_v_pt_data(:), output_pt_bitmap(:)
     real                      :: avg_u_diff, avg_v_diff
     real                      :: max_u_diff, max_v_diff
     real(kind=4)              :: output_data4
