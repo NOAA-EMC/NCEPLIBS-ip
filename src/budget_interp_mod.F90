@@ -105,9 +105,9 @@ contains
     !
     REAL,       PARAMETER         :: FILL=-9999.
     !
-    INTEGER                       :: IJKGDS1, I1, J1, I2, J2, IB, JB
-    INTEGER                       :: IJKGDSA(20), IX, JX, IXS, JXS
-    INTEGER                       :: K, KXS, KXT, IGDTNUMO2
+    INTEGER                       :: I1, J1, I2, J2, IB, JB
+    INTEGER                       :: IX, JX, IXS, JXS
+    INTEGER                       :: K, KXS, KXT
     INTEGER                       :: LB, LSW, MP, MSPIRAL, MX
     INTEGER                       :: N, NB, NB1, NB2, NB3, NB4, NV, NX
     INTEGER                       :: N11(MO),N21(MO),N12(MO),N22(MO)
@@ -122,7 +122,6 @@ contains
     logical :: to_station_points
 
     class(ip_grid), allocatable :: grid_out2
-    class(ip_grid_descriptor), allocatable :: grid_desc_out2
     
     ! - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
     !  COMPUTE NUMBER OF OUTPUT POINTS AND THEIR LATITUDES AND LONGITUDES.
@@ -436,7 +435,6 @@ contains
     !
     REAL,             PARAMETER     :: FILL=-9999.
     !
-    INTEGER                         :: IGDTNUMO2
     INTEGER                         :: I1,I2,J1,J2,IB,JB,LSW,MP
     INTEGER                         :: K,LB,N,NB,NB1,NB2,NB3,NB4,NV
     INTEGER                         :: N11(MO),N21(MO),N12(MO),N22(MO)
@@ -458,7 +456,6 @@ contains
 
     logical :: to_station_points
 
-    class(ip_grid_descriptor), allocatable :: desc_out_subgrid
     class(ip_grid), allocatable :: grid_out2
     
     ! Save coeffecients between calls and only compute if grids have changed

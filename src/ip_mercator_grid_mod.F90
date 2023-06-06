@@ -215,7 +215,7 @@ CONTAINS
     !
     LOGICAL                          :: LROT, LMAP, LAREA
     !
-    REAL                             :: DY, HI
+    REAL                             :: HI
     REAL                             :: RLAT1, RLON1, RLON2, RLATI
     REAL                             :: XMAX, XMIN, YMAX, YMIN
     REAL                             :: YE

@@ -400,7 +400,6 @@ contains
     REAL,                  INTENT(INOUT) :: RLAT(MO),RLON(MO)
     REAL,                  INTENT(  OUT) :: UO(MO,KM),VO(MO,KM)
     !
-    INTEGER                              :: K, N
 
     type(grib2_descriptor) :: desc_in, desc_out
     class(ip_grid), allocatable :: grid_in, grid_out
@@ -563,7 +562,7 @@ contains
     REAL,                  INTENT(INOUT):: RLAT(MO),RLON(MO)
     REAL,                  INTENT(  OUT):: UO(MO,KM),VO(MO,KM)
     !
-    INTEGER                             :: K, N, KGDSI11, KGDSO11
+    INTEGER                             :: KGDSI11, KGDSO11
 
     type(grib1_descriptor) :: desc_in, desc_out
     class(ip_grid), allocatable :: grid_in, grid_out
@@ -663,7 +662,7 @@ contains
     REAL,                  INTENT(INOUT):: RLAT(MO),RLON(MO)
     REAL,                  INTENT(  OUT):: UO(MO),VO(MO)
     !
-    INTEGER                             :: K, N, KGDSI11, KGDSO11
+    INTEGER                             :: KGDSI11, KGDSO11
 
     type(grib1_descriptor) :: desc_in, desc_out
     class(ip_grid), allocatable :: grid_in, grid_out
@@ -804,7 +803,6 @@ contains
     REAL,                  INTENT(INOUT) :: RLAT(MO),RLON(MO)
     REAL,                  INTENT(  OUT) :: UO(MO),VO(MO)
     !
-    INTEGER                              :: K, N
 
     type(grib2_descriptor) :: desc_in, desc_out
     class(ip_grid), allocatable :: grid_in, grid_out
