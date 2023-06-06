@@ -56,7 +56,7 @@ contains
     integer, allocatable      :: output_gdtmpl(:)
     integer                   :: ip, ipopt(20), output_gdtlen, output_gdtnum
     integer                   :: km, ibi(1), mi, iret, i, j
-    integer                   :: i_output, j_output, mo, no, ibo(1)
+    integer                   :: i_output=-1, j_output=-1, mo, no, ibo(1)
     integer                   :: num_pts_diff
     integer     , parameter   :: missing=4294967296
 
