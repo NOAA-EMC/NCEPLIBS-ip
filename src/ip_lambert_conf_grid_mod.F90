@@ -390,25 +390,25 @@ contains
   !> @param[in] npts maximum number of coordinates
   !>
   !> @author Gayno @date 2015-07-13
-  SUBROUTINE LAMBERT_CONF_ERROR(IOPT,FILL,RLAT,RLON,XPTS,YPTS,NPTS)
-    IMPLICIT NONE
-    !
-    INTEGER, INTENT(IN   ) :: IOPT, NPTS
-    !
-    REAL,    INTENT(IN   ) :: FILL
-    REAL,    INTENT(  OUT) :: RLAT(NPTS),RLON(NPTS)
-    REAL,    INTENT(  OUT) :: XPTS(NPTS),YPTS(NPTS)
-    ! - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-    IF(IOPT>=0) THEN
-       RLON=FILL
-       RLAT=FILL
-    ENDIF
-    IF(IOPT<=0) THEN
-       XPTS=FILL
-       YPTS=FILL
-    ENDIF
-    ! - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-  END SUBROUTINE LAMBERT_CONF_ERROR
+!  SUBROUTINE LAMBERT_CONF_ERROR(IOPT,FILL,RLAT,RLON,XPTS,YPTS,NPTS)
+!    IMPLICIT NONE
+!    !
+!    INTEGER, INTENT(IN   ) :: IOPT, NPTS
+!    !
+!    REAL,    INTENT(IN   ) :: FILL
+!    REAL,    INTENT(  OUT) :: RLAT(NPTS),RLON(NPTS)
+!    REAL,    INTENT(  OUT) :: XPTS(NPTS),YPTS(NPTS)
+!    ! - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+!    IF(IOPT>=0) THEN
+!       RLON=FILL
+!       RLAT=FILL
+!    ENDIF
+!    IF(IOPT<=0) THEN
+!       XPTS=FILL
+!       YPTS=FILL
+!    ENDIF
+!    ! - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+!  END SUBROUTINE LAMBERT_CONF_ERROR
 
   !> Vector rotation fields for lambert conformal conical.
   !>

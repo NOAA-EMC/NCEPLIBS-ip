@@ -476,25 +476,25 @@ CONTAINS
   !> @param[in] npts maximum number of coordinates
   !>
   !> @author Gayno @date 2015-07-13
-  SUBROUTINE POLAR_STEREO_ERROR(IOPT,FILL,RLAT,RLON,XPTS,YPTS,NPTS)
-    IMPLICIT NONE
-    !
-    INTEGER, INTENT(IN   ) :: IOPT, NPTS
-    !
-    REAL,    INTENT(IN   ) :: FILL
-    REAL,    INTENT(  OUT) :: RLAT(NPTS),RLON(NPTS)
-    REAL,    INTENT(  OUT) :: XPTS(NPTS),YPTS(NPTS)
-    ! - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-    IF(IOPT>=0) THEN
-       RLON=FILL
-       RLAT=FILL
-    ENDIF
-    IF(IOPT<=0) THEN
-       XPTS=FILL
-       YPTS=FILL
-    ENDIF
-    ! - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-  END SUBROUTINE POLAR_STEREO_ERROR
+!  SUBROUTINE POLAR_STEREO_ERROR(IOPT,FILL,RLAT,RLON,XPTS,YPTS,NPTS)
+!    IMPLICIT NONE
+!    !
+!    INTEGER, INTENT(IN   ) :: IOPT, NPTS
+!    !
+!    REAL,    INTENT(IN   ) :: FILL
+!    REAL,    INTENT(  OUT) :: RLAT(NPTS),RLON(NPTS)
+!    REAL,    INTENT(  OUT) :: XPTS(NPTS),YPTS(NPTS)
+!    ! - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+!    IF(IOPT>=0) THEN
+!       RLON=FILL
+!       RLAT=FILL
+!    ENDIF
+!    IF(IOPT<=0) THEN
+!       XPTS=FILL
+!       YPTS=FILL
+!    ENDIF
+!    ! - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+!  END SUBROUTINE POLAR_STEREO_ERROR
 
   !> Vector rotation fields for polar stereographic grids.
   !>

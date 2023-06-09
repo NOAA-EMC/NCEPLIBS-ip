@@ -383,24 +383,24 @@ contains
   !> @param[in] npts maximum number of coordinates
   !>
   !> @author GAYNO @date 2015-07-13
-SUBROUTINE GAUSSIAN_ERROR(IOPT,FILL,RLAT,RLON,XPTS,YPTS,NPTS)
-    IMPLICIT NONE
-    !
-    INTEGER, INTENT(IN   ) :: IOPT, NPTS
-    !
-    REAL,    INTENT(IN   ) :: FILL
-    REAL,    INTENT(  OUT) :: RLAT(NPTS),RLON(NPTS)
-    REAL,    INTENT(  OUT) :: XPTS(NPTS),YPTS(NPTS)
-
-    IF(IOPT>=0) THEN
-       RLON=FILL
-       RLAT=FILL
-    ENDIF
-    IF(IOPT<=0) THEN
-       XPTS=FILL
-       YPTS=FILL
-    ENDIF
-  END SUBROUTINE GAUSSIAN_ERROR
+!SUBROUTINE GAUSSIAN_ERROR(IOPT,FILL,RLAT,RLON,XPTS,YPTS,NPTS)
+!    IMPLICIT NONE
+!    !
+!    INTEGER, INTENT(IN   ) :: IOPT, NPTS
+!    !
+!    REAL,    INTENT(IN   ) :: FILL
+!    REAL,    INTENT(  OUT) :: RLAT(NPTS),RLON(NPTS)
+!    REAL,    INTENT(  OUT) :: XPTS(NPTS),YPTS(NPTS)
+!
+!    IF(IOPT>=0) THEN
+!       RLON=FILL
+!       RLAT=FILL
+!    ENDIF
+!    IF(IOPT<=0) THEN
+!       XPTS=FILL
+!       YPTS=FILL
+!    ENDIF
+!  END SUBROUTINE GAUSSIAN_ERROR
 
   !> Computes the vector rotation sines and cosines for a gaussian
   !> cylindrical grid.
