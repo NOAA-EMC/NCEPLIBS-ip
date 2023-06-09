@@ -119,7 +119,6 @@ CONTAINS
 
     INTEGER                       :: IS1, IM, JM, NM, KSCAN, NSCAN, N
     INTEGER                       :: IOPF, NN, I, J
-    INTEGER                       :: I_OFFSET_ODD, I_OFFSET_EVEN
 
     !  COMPUTE GRID COORDINATES FOR ALL GRID POINTS
     IF(IOPT.EQ.0) THEN

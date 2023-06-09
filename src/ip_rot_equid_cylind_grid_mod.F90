@@ -76,7 +76,6 @@ CONTAINS
 
     real(kd) :: rlat1, rlon1, rlat0, rlat2, rlon2, nbd, ebd
     real(kd) :: hs, hs2, slat1, slat2, slatr, clon1, clon2, clat1, clat2, clatr, clonr, rlonr, rlatr
-    integer :: iscale
 
     associate(kgds => g1_desc%gds)
       self%rerth = 6.3712E6_KD
@@ -274,7 +273,6 @@ CONTAINS
     !
     LOGICAL                                :: LROT, LMAP, LAREA
     !
-    REAL                                   :: DUM1,DUM2
     REAL(KIND=KD)                          :: HS
     REAL(KIND=KD)                          :: CLONR,CLATR,SLATR
     REAL(KIND=KD)                          :: CLAT,SLAT,CLON

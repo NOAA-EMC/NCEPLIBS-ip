@@ -170,7 +170,6 @@ contains
     REAL,       INTENT(INOUT) :: RLAT(MO),RLON(MO)
     REAL,       INTENT(  OUT) :: GO(MO)
     !
-    INTEGER                   :: K, N
 
     type(grib1_descriptor) :: desc_in, desc_out
     class(ip_grid), allocatable :: grid_in, grid_out
@@ -292,7 +291,6 @@ contains
     REAL,       INTENT(INOUT) :: RLAT(MO),RLON(MO)
     REAL,       INTENT(  OUT) :: GO(MO,KM)
     !
-    INTEGER                   :: K, N
 
     type(grib1_descriptor) :: desc_in, desc_out
     class(ip_grid), allocatable :: grid_in, grid_out
