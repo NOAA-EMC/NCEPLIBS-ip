@@ -16,7 +16,7 @@ module constants_mod
   real, parameter :: pi2=pi/2.0 !< PI / 2.0
   real, parameter :: pi4=pi/4.0 !< PI / 4.0
   real, parameter :: RERTH_WGS84=6.378137E6 !< Radius of the Earth defined by WGS-84
-  real, parameter :: E2_WGS84 = 0.00669437999013 !< Eccentricity squared of Earth defined by WGS-84 
+  real, parameter :: E2_WGS84 = 0.00669437999013 !< Eccentricity squared of Earth defined by WGS-84
   
 end module constants_mod
 
