@@ -185,7 +185,7 @@
          RAT1=FLOAT(IM1-1)/FLOAT(IM2-1)
          DO I=1,IM2
            X1=(I-1)*RAT1+1
-           IA=X1
+           IA=INT(X1)
            IA=MIN(MAX(IA,1),IM1-1)
            IB=IA+1
            WA=IB-X1
@@ -208,7 +208,7 @@
          RAT2=FLOAT(IM2-1)/FLOAT(IM1-1)
          DO I=1,IM1
            X2=(I-1)*RAT2+1
-           IA=X2
+           IA=INT(X2)
            IA=MIN(MAX(IA,1),IM2-1)
            IB=IA+1
            WA=IB-X2
