@@ -215,9 +215,9 @@ contains
              XI=XPTB(N)
              YI=YPTB(N)
              IF(XI.NE.FILL.AND.YI.NE.FILL) THEN
-                I1=XI
+                I1=INT(XI)
                 I2=I1+1
-                J1=YI
+                J1=INT(YI)
                 J2=J1+1
                 XF=XI-I1
                 YF=YI-J1
@@ -298,10 +298,10 @@ contains
              IF(NV.EQ.1)THEN
                 I1=NINT(XX)
                 J1=NINT(YY)
-                IXS=SIGN(1.,XX-I1)
-                JXS=SIGN(1.,YY-J1)
+                IXS=INT(SIGN(1.,XX-I1))
+                JXS=INT(SIGN(1.,YY-J1))
                 SPIRAL_LOOP : DO MX=2,MSPIRAL**2
-                   KXS=SQRT(4*MX-2.5)
+                   KXS=INT(SQRT(4*MX-2.5))
                    KXT=MX-(KXS**2/4+1)
                    SELECT CASE(MOD(KXS,4))
                    CASE(1)
@@ -577,11 +577,11 @@ contains
              XI=XPTB(N)
              YI=YPTB(N)
              IF(XI.NE.FILL.AND.YI.NE.FILL) THEN
-                I1=XI
+                I1=INT(XI)
                 I2=I1+1
                 WI2=XI-I1
                 WI1=1-WI2
-                J1=YI
+                J1=INT(YI)
                 J2=J1+1
                 WJ2=YI-J1
                 WJ1=1-WJ2
