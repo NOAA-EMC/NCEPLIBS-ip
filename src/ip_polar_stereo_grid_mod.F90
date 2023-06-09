@@ -260,7 +260,7 @@ CONTAINS
     REAL                            :: ALAT, ALAT1, ALONG, DIFF
     REAL                            :: DI, DJ, DE
     REAL                            :: DR, E, E_OVER_2
-    REAL                            :: MC, SLAT, SLATR
+    REAL                            :: MC, SLATR
     REAL                            :: RLAT1, RLON1, RHO, T, TC
     REAL                            :: XMAX, XMIN, YMAX, YMIN
     REAL                            :: XP, YP, DR2

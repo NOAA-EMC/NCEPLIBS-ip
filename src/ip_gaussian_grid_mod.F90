@@ -209,7 +209,7 @@ contains
     !
     INTEGER                        :: JSCAN, IM, JM
     INTEGER                        :: J, JA, JG
-    INTEGER                        :: ISCALE, N
+    INTEGER                        :: N
     !
     LOGICAL                        :: LROT, LMAP, LAREA
     !
