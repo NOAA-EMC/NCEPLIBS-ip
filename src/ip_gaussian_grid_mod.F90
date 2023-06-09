@@ -265,7 +265,7 @@ contains
     ALLOCATE(BLAT(0:JG+1))
     !$OMP PARALLEL DO PRIVATE(JA) SCHEDULE(STATIC)
     DO JA=1,JG
-       ALAT(JA)=DPR*ASIN(ALAT_TEMP(JA))
+       ALAT(JA)=REAL(DPR*ASIN(ALAT_TEMP(JA)))
        BLAT(JA)=BLAT_TEMP(JA)
     ENDDO
     !$OMP END PARALLEL DO
@@ -307,7 +307,7 @@ contains
           IF(XPTS(N).GE.XMIN.AND.XPTS(N).LE.XMAX.AND. &
                YPTS(N).GE.YMIN.AND.YPTS(N).LE.YMAX) THEN
              RLON(N)=MOD(RLON1+DLON*(XPTS(N)-1)+3600,360.)
-             J=YPTS(N)
+             J=INT(YPTS(N))
              WB=YPTS(N)-J
              RLATA=ALAT(J1+JH*(J-1))
              RLATB=ALAT(J1+JH*J)
@@ -464,12 +464,12 @@ SUBROUTINE GAUSSIAN_ERROR(IOPT,FILL,RLAT,RLON,XPTS,YPTS,NPTS)
 
     REAL                           :: WB, WLAT, WLATA, WLATB
 
-    J = YPTS
+    J = INT(YPTS)
     WB=YPTS-J
     WLATA=BLAT(J1+JH*(J-1))
     WLATB=BLAT(J1+JH*J)
     WLAT=WLATA+WB*(WLATB-WLATA)
-    AREA=RERTH**2*WLAT*DLON/DPR
+    AREA=REAL(RERTH**2*WLAT*DLON/DPR)
 
   END SUBROUTINE GAUSSIAN_GRID_AREA
 end module ip_gaussian_grid_mod
