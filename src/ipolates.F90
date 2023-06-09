@@ -171,8 +171,7 @@ contains
     REAL(C_DOUBLE),       INTENT(IN   ) :: GI(MI)
     REAL(C_DOUBLE),       INTENT(INOUT) :: RLAT(MO),RLON(MO)
     REAL(C_DOUBLE),       INTENT(  OUT) :: GO(MO)
-#endif
-#if (LSIZE==4)
+#elif (LSIZE==4)
     REAL(C_FLOAT),       INTENT(IN   ) :: GI(MI)
     REAL(C_FLOAT),       INTENT(INOUT) :: RLAT(MO),RLON(MO)
     REAL(C_FLOAT),       INTENT(  OUT) :: GO(MO)
@@ -300,8 +299,7 @@ contains
     REAL(C_DOUBLE),       INTENT(IN   ) :: GI(MI,KM)
     REAL(C_DOUBLE),       INTENT(INOUT) :: RLAT(MO),RLON(MO)
     REAL(C_DOUBLE),       INTENT(  OUT) :: GO(MO,KM)
-#endif
-#if (LSIZE==4)
+#elif (LSIZE==4)
     REAL(C_FLOAT),       INTENT(IN   ) :: GI(MI,KM)
     REAL(C_FLOAT),       INTENT(INOUT) :: RLAT(MO),RLON(MO)
     REAL(C_FLOAT),       INTENT(  OUT) :: GO(MO,KM)
@@ -593,8 +591,7 @@ contains
     REAL(C_DOUBLE),       INTENT(IN   ) :: GI(MI,KM)
     REAL(C_DOUBLE),       INTENT(INOUT) :: RLAT(MO),RLON(MO)
     REAL(C_DOUBLE),       INTENT(  OUT) :: GO(MO,KM)
-#endif
-#if (LSIZE==4)
+#elif (LSIZE==4)
     REAL(C_FLOAT),       INTENT(IN   ) :: GI(MI,KM)
     REAL(C_FLOAT),       INTENT(INOUT) :: RLAT(MO),RLON(MO)
     REAL(C_FLOAT),       INTENT(  OUT) :: GO(MO,KM)
@@ -804,8 +801,7 @@ contains
     REAL(C_DOUBLE),       INTENT(IN   ) :: GI(MI)
     REAL(C_DOUBLE),       INTENT(INOUT) :: RLAT(MO),RLON(MO)
     REAL(C_DOUBLE),       INTENT(  OUT) :: GO(MO)
-#endif
-#if (LSIZE==4)
+#elif (LSIZE==4)
     REAL(C_FLOAT),       INTENT(IN   ) :: GI(MI)
     REAL(C_FLOAT),       INTENT(INOUT) :: RLAT(MO),RLON(MO)
     REAL(C_FLOAT),       INTENT(  OUT) :: GO(MO)
