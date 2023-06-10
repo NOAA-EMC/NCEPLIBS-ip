@@ -22,6 +22,12 @@ if(${CMAKE_Fortran_COMPILER_ID} MATCHES "^(GNU)$" AND ${CMAKE_Fortran_COMPILER_V
 endif()
 
 foreach(kind "d")
+  # Test ipxwafs routines
+  add_executable(test_ipxwafs_${kind} test_ipxwafs.F90)
+  target_link_libraries(test_ipxwafs_${kind} PUBLIC ip::ip_${kind})
+  target_link_libraries(test_ipxwafs_${kind} PUBLIC sp::sp_${kind})
+  add_test(test_ipxwafs_${kind} test_ipxwafs_${kind})
+
   # Test earth_radius_mod.
   add_executable(test_earth_radius_${kind} test_earth_radius.F90)
   target_link_libraries(test_earth_radius_${kind} PUBLIC ip::ip_${kind})
