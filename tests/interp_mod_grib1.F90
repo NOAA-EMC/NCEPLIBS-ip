@@ -51,9 +51,9 @@ contains
 
 
     integer                   :: ip, ipopt(20), output_kgds(200)
-    integer                   :: km, ibi(1), mi, iret, i, j
-    integer                   :: i_output, j_output, mo, no, ibo(1)
-    integer                   :: num_pts_diff
+    integer                   :: km, ibi(1), mi, iret, i, j, ibi_scalar=0
+    integer                   :: i_output, j_output, mo, no, ibo(1), ibo_scalar
+    integer                   :: num_pts_diff, which_func
 
     logical*1, allocatable    :: output_bitmap(:,:)
 
@@ -176,72 +176,82 @@ contains
     allocate (output_data(i_output,j_output))
     allocate (output_bitmap(i_output,j_output))
 
-    call ipolates(ip, ipopt, input_kgds, output_kgds, mi, mo,&
-         km, ibi, input_bitmap, input_data, &
-         no, output_rlat, output_rlon, ibo, output_bitmap, output_data, iret)
-
-    if (iret /= 0) then
-       print*,'- BAD STATUS FROM IPOLATES: ', iret
-       stop 6
-    end if
-
-    if (no /= mo) then
-       print*,'- ERROR: WRONG # OF POINTS RETURNED FROM IPOLATES'
-       stop 7
-    end if
-
-    !print*,'- SUCCESSFULL CALL TO IPOLATES'
-
-    do j = 1, j_output
-       do i = 1, i_output
-          if (.not. output_bitmap(i,j)) then
-             output_data(i,j) = -9.
-          endif
-       enddo
-    enddo
-
     allocate (baseline_data(i_output,j_output))
 
-    if (kind(output_data) == 8) then
-       baseline_file = "./data/baseline_data/grib1/scalar/8_byte_bin/grid" // trim(grid) // ".opt" // trim(interp_opt) // ".bin_8"
-    else
-       baseline_file = "./data/baseline_data/grib1/scalar/4_byte_bin/grid" // trim(grid) // ".opt" // trim(interp_opt) // ".bin_4"
-    endif
+    do which_func=1,2
+        if (which_func .eq. 1) then
+            call ipolates(ip, ipopt, input_kgds, output_kgds, mi, mo,&
+                 km, ibi, input_bitmap, input_data, &
+                 no, output_rlat, output_rlon, ibo, output_bitmap, output_data, iret)
+        elseif (which_func .eq. 2) then
+            call ipolates_grib1_single_field(ip, ipopt, input_kgds, output_kgds, mi, mo,&
+                 km, ibi_scalar, input_bitmap, input_data, &
+                 no, output_rlat, output_rlon, ibo_scalar, output_bitmap, output_data, iret)
+        endif
 
-    open (12, file=baseline_file, access="direct", err=38, recl=mo*4)
-    read (12, err=38, rec=1) baseline_data
-    close (12)
+        if (iret /= 0) then
+           print*,'- BAD STATUS FROM IPOLATES: ', iret
+           stop 6
+        end if
 
-    avgdiff=0.0
-    maxdiff=0.0
-    num_pts_diff=0
+        if (no /= mo) then
+           print*,'- ERROR: WRONG # OF POINTS RETURNED FROM IPOLATES'
+           stop 7
+        end if
 
-    do j = 1, j_output
-       do i = 1, i_output
-          output_data4 = real(output_data(i,j),4)
-          if ( abs(output_data4 - baseline_data(i,j)) > 0.0001) then
-             avgdiff = avgdiff + abs(output_data4-baseline_data(i,j))
-             num_pts_diff = num_pts_diff + 1
-             if (abs(output_data4-baseline_data(i,j)) > abs(maxdiff))then
-                maxdiff = output_data4-baseline_data(i,j)
-             endif
-          endif
-       enddo
-    enddo
+        !print*,'- SUCCESSFULL CALL TO IPOLATES'
 
-    print*,'- MAX/MIN OF DATA: ', maxval(output_data),minval(output_data)
-    print*,'- NUMBER OF PTS DIFFERENT: ',num_pts_diff
-    print*,'- PERCENT OF TOTAL: ',(float(num_pts_diff)/float(i_output*j_output))*100.
-    print*,'- MAX DIFFERENCE: ', maxdiff
-    if (num_pts_diff > 0) then
-       avgdiff = avgdiff / float(num_pts_diff)
-    endif
-    print*,'- AVG DIFFERENCE: ', avgdiff
+        do j = 1, j_output
+           do i = 1, i_output
+              if (.not. output_bitmap(i,j)) then
+                 output_data(i,j) = -9.
+              endif
+           enddo
+        enddo
 
-    if (num_pts_diff > 0) then
-       print *, "Expected 0 points > 0, found: ", num_pts_diff
-       error stop
-    endif
+        if (kind(output_data) == 8) then
+           baseline_file = "./data/baseline_data/grib1/scalar/8_byte_bin/grid" // &
+               trim(grid) // ".opt" // trim(interp_opt) // ".bin_8"
+        else
+           baseline_file = "./data/baseline_data/grib1/scalar/4_byte_bin/grid" // &
+               trim(grid) // ".opt" // trim(interp_opt) // ".bin_4"
+        endif
+
+        open (12, file=baseline_file, access="direct", err=38, recl=mo*4)
+        read (12, err=38, rec=1) baseline_data
+        close (12)
+
+        avgdiff=0.0
+        maxdiff=0.0
+        num_pts_diff=0
+
+        do j = 1, j_output
+           do i = 1, i_output
+              output_data4 = real(output_data(i,j),4)
+              if ( abs(output_data4 - baseline_data(i,j)) > 0.0001) then
+                 avgdiff = avgdiff + abs(output_data4-baseline_data(i,j))
+                 num_pts_diff = num_pts_diff + 1
+                 if (abs(output_data4-baseline_data(i,j)) > abs(maxdiff))then
+                    maxdiff = output_data4-baseline_data(i,j)
+                 endif
+              endif
+           enddo
+        enddo
+
+        print*,'- MAX/MIN OF DATA: ', maxval(output_data),minval(output_data)
+        print*,'- NUMBER OF PTS DIFFERENT: ',num_pts_diff
+        print*,'- PERCENT OF TOTAL: ',(float(num_pts_diff)/float(i_output*j_output))*100.
+        print*,'- MAX DIFFERENCE: ', maxdiff
+        if (num_pts_diff > 0) then
+           avgdiff = avgdiff / float(num_pts_diff)
+        endif
+        print*,'- AVG DIFFERENCE: ', avgdiff
+
+        if (num_pts_diff > 0) then
+           print *, "Expected 0 points > 0, found: ", num_pts_diff
+           error stop
+        endif
+    enddo ! which_func
 
     deallocate (output_rlat, output_rlon, output_data, output_bitmap, baseline_data)
 
@@ -302,8 +312,9 @@ contains
     character*100             :: baseline_file
 
     integer                   :: ip, ipopt(20), output_kgds(200)
-    integer                   :: km, ibi(1), mi, iret, i, j
+    integer                   :: km, ibi(1), mi, iret, i, j, which_func
     integer                   :: i_output, j_output, mo, no, ibo(1)
+    integer                   :: ibi_scalar=0, ibo_scalar
     integer                   :: num_upts_diff, num_vpts_diff
 
     logical*1, allocatable    :: output_bitmap(:,:)
@@ -431,117 +442,126 @@ contains
     allocate (output_bitmap(i_output,j_output))
     allocate (output_srot(i_output * j_output))
     allocate (output_crot(i_output * j_output))
-
-    call ipolatev(ip, ipopt, vector_input_kgds, output_kgds, mi, mo,   &
-         km, ibi, input_bitmap, input_u_data, input_v_data,  &
-         no, output_rlat, output_rlon, output_crot, output_srot, &
-         ibo, output_bitmap, output_u_data, output_v_data, iret)
-
-    deallocate(input_bitmap, input_u_data, input_v_data)
-
-    if (iret /= 0) then
-       print*,'- BAD STATUS FROM IPOLATES: ', iret
-       stop 6
-    end if
-
-    if (no /= mo) then
-       print*,'- ERROR: WRONG # OF POINTS RETURNED FROM IPOLATES'
-       stop 7
-    end if
-
-    !print*,'- SUCCESSFULL CALL TO IPOLATES'
-
-    !-------------------------------------------------------------------------
-    ! polatev4 does not always initialize the ibo or output_bitmap variables,
-    ! so they can't be used.  this should be fixed.
-    ! according to the comments, polatev4 only outputs a bitmap in areas
-    ! that extend outside the domain of the input grid. 
-    !-------------------------------------------------------------------------
-
-    if (ip /= 4) then
-       do j = 1, j_output
-          do i = 1, i_output
-             if (.not. output_bitmap(i,j)) then
-                output_u_data(i,j) = -9999.
-                output_v_data(i,j) = -9999.
-             endif
-          enddo
-       enddo
-    endif
-
-
-    !-------------------------------------------------------------------------
-    ! Compared data from ipolatev to its corresponding baseline
-    ! data.  
-    !-------------------------------------------------------------------------
-
-    if (kind(output_u_data) == 8) then
-       baseline_file = "./data/baseline_data/grib1/vector/8_byte_bin/grid" // trim(grid) // ".opt" // trim(interp_opt) // ".bin_8"
-    else
-       baseline_file = "./data/baseline_data/grib1/vector/4_byte_bin/grid" // trim(grid) // ".opt" // trim(interp_opt) // ".bin_4"
-    endif
-
     allocate (baseline_u_data(i_output,j_output))
     allocate (baseline_v_data(i_output,j_output))
 
-    print *,"baseline_file = ", baseline_file
+    do which_func=1,2
+        if (which_func .eq. 1) then
+            call ipolatev(ip, ipopt, vector_input_kgds, output_kgds, mi, mo,   &
+                 km, ibi, input_bitmap, input_u_data, input_v_data,  &
+                 no, output_rlat, output_rlon, output_crot, output_srot, &
+                 ibo, output_bitmap, output_u_data, output_v_data, iret)
+        elseif (which_func .eq. 2) then
+            call ipolatev_grib1_single_field(ip, ipopt, vector_input_kgds, output_kgds, mi, mo,   &
+                 km, ibi_scalar, input_bitmap, input_u_data, input_v_data,  &
+                 no, output_rlat, output_rlon, output_crot, output_srot, &
+                 ibo_scalar, output_bitmap, output_u_data, output_v_data, iret)
+        endif
 
-    open (12, file=baseline_file, access="direct", err=38, recl=mo*4)
-    read (12, err=38, rec=1) baseline_u_data
-    read (12, err=38, rec=2) baseline_v_data
-    close (12)
+        if (iret /= 0) then
+           print*,'- BAD STATUS FROM IPOLATES: ', iret
+           stop 6
+        end if
 
-    avg_u_diff=0.0
-    max_u_diff=0.0
-    num_upts_diff=0
-    avg_v_diff=0.0
-    max_v_diff=0.0
-    num_vpts_diff=0
+        if (no /= mo) then
+           print*,'- ERROR: WRONG # OF POINTS RETURNED FROM IPOLATES'
+           stop 7
+        end if
 
-    do j = 1, j_output
-       do i = 1, i_output
-          output_data4 = real(output_u_data(i,j),4)
-          if (abs(output_data4 - baseline_u_data(i,j)) > 0.0001) then
-             avg_u_diff = avg_u_diff + abs(output_data4-baseline_u_data(i,j))
-             num_upts_diff = num_upts_diff + 1
-             if (abs(output_data4-baseline_u_data(i,j)) > abs(max_u_diff))then
-                max_u_diff = output_data4-baseline_u_data(i,j)
-             endif
-          endif
-          output_data4 = real(output_v_data(i,j),4)
-          if (abs(output_data4 - baseline_v_data(i,j)) > 0.0001) then
-             avg_v_diff = avg_v_diff + abs(output_data4-baseline_v_data(i,j))
-             num_vpts_diff = num_vpts_diff + 1
-             if (abs(output_data4-baseline_v_data(i,j)) > abs(max_v_diff))then
-                max_v_diff = output_data4-baseline_v_data(i,j)
-             endif
-          endif
-       enddo
-    enddo
+        !print*,'- SUCCESSFULL CALL TO IPOLATES'
 
-    print*,'- MAX/MIN OF U-WIND DATA: ', maxval(output_u_data),minval(output_u_data)
-    print*,'- NUMBER OF PTS DIFFERENT: ',num_upts_diff
-    print*,'- PERCENT OF TOTAL: ',(float(num_upts_diff)/float(i_output*j_output))*100.
-    print*,'- MAX DIFFERENCE: ', max_u_diff
-    if (num_upts_diff > 0) then
-       avg_u_diff = avg_u_diff / float(num_upts_diff)
-    endif
-    print*,'- AVG DIFFERENCE: ', avg_u_diff
+        !-------------------------------------------------------------------------
+        ! polatev4 does not always initialize the ibo or output_bitmap variables,
+        ! so they can't be used.  this should be fixed.
+        ! according to the comments, polatev4 only outputs a bitmap in areas
+        ! that extend outside the domain of the input grid. 
+        !-------------------------------------------------------------------------
 
-    print*,'- MAX/MIN OF V-WIND DATA: ', maxval(output_v_data),minval(output_v_data)
-    print*,'- NUMBER OF PTS DIFFERENT: ',num_vpts_diff
-    print*,'- PERCENT OF TOTAL: ',(float(num_vpts_diff)/float(i_output*j_output))*100.
-    print*,'- MAX DIFFERENCE: ', max_v_diff
-    if (num_vpts_diff > 0) then
-       avg_v_diff = avg_v_diff / float(num_vpts_diff)
-    endif
-    print*,'- AVG DIFFERENCE: ', avg_v_diff
+        if (ip /= 4) then
+           do j = 1, j_output
+              do i = 1, i_output
+                 if (.not. output_bitmap(i,j)) then
+                    output_u_data(i,j) = -9999.
+                    output_v_data(i,j) = -9999.
+                 endif
+              enddo
+           enddo
+        endif
 
-    if (num_vpts_diff + num_upts_diff > 0) then
-       print *, "Expected 0 points > 0, found: ", num_upts_diff + num_vpts_diff
-       error stop
-    endif
 
+        !-------------------------------------------------------------------------
+        ! Compared data from ipolatev to its corresponding baseline
+        ! data.  
+        !-------------------------------------------------------------------------
+
+        if (kind(output_u_data) == 8) then
+           baseline_file = "./data/baseline_data/grib1/vector/8_byte_bin/grid" // &
+               trim(grid) // ".opt" // trim(interp_opt) // ".bin_8"
+        else
+           baseline_file = "./data/baseline_data/grib1/vector/4_byte_bin/grid" // &
+               trim(grid) // ".opt" // trim(interp_opt) // ".bin_4"
+        endif
+
+        print *,"baseline_file = ", baseline_file
+
+        open (12, file=baseline_file, access="direct", err=38, recl=mo*4)
+        read (12, err=38, rec=1) baseline_u_data
+        read (12, err=38, rec=2) baseline_v_data
+        close (12)
+
+        avg_u_diff=0.0
+        max_u_diff=0.0
+        num_upts_diff=0
+        avg_v_diff=0.0
+        max_v_diff=0.0
+        num_vpts_diff=0
+
+        do j = 1, j_output
+           do i = 1, i_output
+              output_data4 = real(output_u_data(i,j),4)
+              if (abs(output_data4 - baseline_u_data(i,j)) > 0.0001) then
+                 avg_u_diff = avg_u_diff + abs(output_data4-baseline_u_data(i,j))
+                 num_upts_diff = num_upts_diff + 1
+                 if (abs(output_data4-baseline_u_data(i,j)) > abs(max_u_diff))then
+                    max_u_diff = output_data4-baseline_u_data(i,j)
+                 endif
+              endif
+              output_data4 = real(output_v_data(i,j),4)
+              if (abs(output_data4 - baseline_v_data(i,j)) > 0.0001) then
+                 avg_v_diff = avg_v_diff + abs(output_data4-baseline_v_data(i,j))
+                 num_vpts_diff = num_vpts_diff + 1
+                 if (abs(output_data4-baseline_v_data(i,j)) > abs(max_v_diff))then
+                    max_v_diff = output_data4-baseline_v_data(i,j)
+                 endif
+              endif
+           enddo
+        enddo
+
+        print*,'- MAX/MIN OF U-WIND DATA: ', maxval(output_u_data),minval(output_u_data)
+        print*,'- NUMBER OF PTS DIFFERENT: ',num_upts_diff
+        print*,'- PERCENT OF TOTAL: ',(float(num_upts_diff)/float(i_output*j_output))*100.
+        print*,'- MAX DIFFERENCE: ', max_u_diff
+        if (num_upts_diff > 0) then
+           avg_u_diff = avg_u_diff / float(num_upts_diff)
+        endif
+        print*,'- AVG DIFFERENCE: ', avg_u_diff
+
+        print*,'- MAX/MIN OF V-WIND DATA: ', maxval(output_v_data),minval(output_v_data)
+        print*,'- NUMBER OF PTS DIFFERENT: ',num_vpts_diff
+        print*,'- PERCENT OF TOTAL: ',(float(num_vpts_diff)/float(i_output*j_output))*100.
+        print*,'- MAX DIFFERENCE: ', max_v_diff
+        if (num_vpts_diff > 0) then
+           avg_v_diff = avg_v_diff / float(num_vpts_diff)
+        endif
+        print*,'- AVG DIFFERENCE: ', avg_v_diff
+
+        if (num_vpts_diff + num_upts_diff > 0) then
+           print *, "Expected 0 points > 0, found: ", num_upts_diff + num_vpts_diff
+           error stop
+        endif
+    enddo ! which_func
+
+    deallocate(input_bitmap, input_u_data, input_v_data)
     deallocate (baseline_u_data, baseline_v_data)
     deallocate (output_rlat, output_rlon, output_u_data, output_bitmap)
     deallocate (output_v_data, output_crot, output_srot)
