@@ -221,10 +221,10 @@ contains
              ELSEIF(MSPIRAL.GT.1) THEN
                 I1=NINT(XPTS(N))
                 J1=NINT(YPTS(N))
-                IXS=SIGN(1.,XPTS(N)-I1)
-                JXS=SIGN(1.,YPTS(N)-J1)
+                IXS=INT(SIGN(1.,XPTS(N)-I1))
+                JXS=INT(SIGN(1.,YPTS(N)-J1))
                 DO MX=2,MSPIRAL**2
-                   KXS=SQRT(4*MX-2.5)
+                   KXS=INT(SQRT(4*MX-2.5))
                    KXT=MX-(KXS**2/4+1)
                    SELECT CASE(MOD(KXS,4))
                    CASE(1)
@@ -498,10 +498,10 @@ contains
              ELSEIF(MSPIRAL.GT.1) THEN
                 I1=NINT(XPTS(N))
                 J1=NINT(YPTS(N))
-                IXS=SIGN(1.,XPTS(N)-I1)
-                JXS=SIGN(1.,YPTS(N)-J1)
+                IXS=INT(SIGN(1.,XPTS(N)-I1))
+                JXS=INT(SIGN(1.,YPTS(N)-J1))
                 DO MX=2,MSPIRAL**2
-                   KXS=SQRT(4*MX-2.5)
+                   KXS=INT(SQRT(4*MX-2.5))
                    KXT=MX-(KXS**2/4+1)
                    SELECT CASE(MOD(KXS,4))
                    CASE(1)

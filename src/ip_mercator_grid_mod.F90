@@ -312,43 +312,6 @@ CONTAINS
     ! - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   END SUBROUTINE GDSWZD_MERCATOR
 
-  !> Error handler.
-  !>
-  !> Upon an error, this subprogram assigns
-  !>           a "fill" value to the output fields.
-  !>
-  !> @param[in] iopt option flag
-  !> - +1 to compute earth coords of selected grid coords
-  !> - -1 to compute grid coords of selected earth coords
-  !> @param[in] fill fill value to set invalid output data (must be
-  !> impossible value; suggested value: -9999.)
-  !> @param[out] rlat (npts) earth latitudes if iopt<0
-  !> @param[out] rlon (npts) earth longitudes if iopt<0
-  !> @param[out] xpts (npts) grid x point coordinates if iopt>0
-  !> @param[out] ypts (npts) grid y point coordinates if iopt>0
-  !> @param[in] NPTS MAXIMUM NUMBER OF COORDINATES
-  !>
-  !> @author Gayno @date 2015-07-13
-  SUBROUTINE MERCATOR_ERROR(IOPT,FILL,RLAT,RLON,XPTS,YPTS,NPTS)
-    IMPLICIT NONE
-    !
-    INTEGER, INTENT(IN   ) :: IOPT, NPTS
-    !
-    REAL,    INTENT(IN   ) :: FILL
-    REAL,    INTENT(  OUT) :: RLAT(NPTS),RLON(NPTS)
-    REAL,    INTENT(  OUT) :: XPTS(NPTS),YPTS(NPTS)
-    ! - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-    IF(IOPT>=0) THEN
-       RLON=FILL
-       RLAT=FILL
-    ENDIF
-    IF(IOPT<=0) THEN
-       XPTS=FILL
-       YPTS=FILL
-    ENDIF
-    ! - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-  END SUBROUTINE MERCATOR_ERROR
-
   !> Vector rotation fields for mercator cylindrical grids.
   !>
   !> This subprogram computes the vector rotation sines and cosines

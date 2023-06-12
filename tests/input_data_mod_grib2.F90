@@ -20,7 +20,7 @@ module input_data_mod_grib2
   integer, public                :: input_gdtmpl(input_gdtlen)
   integer, public                :: vector_input_gdtmpl(input_gdtlen)
   
-  integer, parameter :: missing=b'11111111111111111111111111111111'
+  integer, parameter :: missing=4294967296
 
   real, allocatable, public      :: input_data(:,:)
   logical*1, allocatable, public :: input_bitmap(:,:)

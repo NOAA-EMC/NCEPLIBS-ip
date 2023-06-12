@@ -289,8 +289,7 @@ contains
     !
     REAL(KIND=KD)                  :: RLAT1, RLON1
     REAL(KIND=KD)                  :: CLONR
-    REAL(KIND=KD)                  :: RLATR, RLONR, SBD, WBD, HS
-    REAL                           :: HI
+    REAL(KIND=KD)                  :: RLATR, RLONR, SBD, WBD, HS, HI
     REAL                           :: XMAX, XMIN, YMAX, YMIN, XPTF, YPTF
     ! - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
     IF(PRESENT(CROT)) CROT=FILL
@@ -389,8 +388,8 @@ contains
                 CLAT=SQRT(1-SLAT**2)
                 CLON=(CLAT0*CLATR*CLONR-SLAT0*SLATR)/CLAT
                 CLON=MIN(MAX(CLON,-1._KD),1._KD)
-                RLON(N)=MOD(RLON0+HS*DPR*ACOS(CLON)+3600,360._KD)
-                RLAT(N)=DPR*ASIN(SLAT)
+                RLON(N)=REAL(MOD(RLON0+HS*DPR*ACOS(CLON)+3600,360._KD))
+                RLAT(N)=REAL(DPR*ASIN(SLAT))
              ENDIF
              NRET=NRET+1
              IF(LROT) CALL ROT_EQUID_CYLIND_EGRID_VECT_ROT(RLON(N),CROT(N),SROT(N))
@@ -429,11 +428,11 @@ contains
              ENDIF
              select type(desc => self%descriptor)
              type is(grib1_descriptor)
-                XPTF=((RLONR-WBD)/DLONS)+1.0_KD
-                YPTF=((RLATR-SBD)/DLATS)+1.0_KD
+                XPTF=REAL(((RLONR-WBD)/DLONS)+1.0_KD)
+                YPTF=REAL(((RLATR-SBD)/DLATS)+1.0_KD)
              type is(grib2_descriptor)
-                XPTF=(IM+1)/2+RLONR/DLONS
-                YPTF=(JM+1)/2+RLATR/DLATS
+                XPTF=REAL((IM+1)/2+RLONR/DLONS)
+                YPTF=REAL((JM+1)/2+RLATR/DLATS)
              end select
 
              IF(XPTF.GE.XMIN.AND.XPTF.LE.XMAX.AND. &
@@ -522,12 +521,12 @@ contains
 
     IF(IROT.EQ.1) THEN
        IF(CLATR.LE.0) THEN
-          CROT=-SIGN(1._KD,SLATR*SLAT0)
+          CROT=REAL(-SIGN(1._KD,SLATR*SLAT0))
           SROT=0.
        ELSE
           SLON=SIN((RLON-RLON0)/DPR)
-          CROT=(CLAT0*CLAT+SLAT0*SLAT*CLON)/CLATR
-          SROT=SLAT0*SLON/CLATR
+          CROT=REAL((CLAT0*CLAT+SLAT0*SLAT*CLON)/CLATR)
+          SROT=REAL(SLAT0*SLON/CLATR)
        ENDIF
     ELSE
        CROT=1.
@@ -570,10 +569,10 @@ contains
        XLATF=-TERM2/(DLONS*CLATR)
        YLONF=TERM2*CLAT/DLATS
        YLATF=TERM1/DLATS
-       XLON=XLONF-YLONF
-       XLAT=XLATF-YLATF
-       YLON=XLONF+YLONF
-       YLAT=XLATF+YLATF
+       XLON=REAL(XLONF-YLONF)
+       XLAT=REAL(XLATF-YLATF)
+       YLON=REAL(XLONF+YLONF)
+       YLAT=REAL(XLATF+YLATF)
     ENDIF
 
   END SUBROUTINE ROT_EQUID_CYLIND_EGRID_MAP_JACOB
@@ -594,7 +593,7 @@ contains
     IF(CLATR.LE.0._KD) THEN
        AREA=FILL
     ELSE
-       AREA=RERTH**2*CLATR*DLATS*DLONS*2/DPR**2
+       AREA=REAL(RERTH**2*CLATR*DLATS*DLONS)*2/DPR**2
     ENDIF
 
   END SUBROUTINE ROT_EQUID_CYLIND_EGRID_GRID_AREA

@@ -158,17 +158,24 @@ contains
    subroutine ipolates_grib1_single_field(ip,ipopt,kgdsi,kgdso,mi,mo,km,ibi,li,gi, &
        no,rlat,rlon,ibo,lo,go,iret) bind(c)
     !
-    INTEGER,    INTENT(IN   ) :: IP, IPOPT(20), KM, MI, MO
-    INTEGER,    INTENT(IN   ) :: IBI, KGDSI(200), KGDSO(200)
-    INTEGER,    INTENT(INOUT) :: NO
-    INTEGER,    INTENT(  OUT) :: IRET, IBO
+    USE ISO_C_BINDING, ONLY: C_INT, C_FLOAT, C_DOUBLE, C_BOOL
+    INTEGER(C_INT),    INTENT(IN   ) :: IP, IPOPT(20), KM, MI, MO
+    INTEGER(C_INT),    INTENT(IN   ) :: IBI, KGDSI(200), KGDSO(200)
+    INTEGER(C_INT),    INTENT(INOUT) :: NO
+    INTEGER(C_INT),    INTENT(  OUT) :: IRET, IBO
     !
-    LOGICAL*1,  INTENT(IN   ) :: LI(MI)
-    LOGICAL*1,  INTENT(  OUT) :: LO(MO)
+    LOGICAL(C_BOOL),  INTENT(IN   ) :: LI(MI)
+    LOGICAL(C_BOOL),  INTENT(  OUT) :: LO(MO)
     !
-    REAL,       INTENT(IN   ) :: GI(MI)
-    REAL,       INTENT(INOUT) :: RLAT(MO),RLON(MO)
-    REAL,       INTENT(  OUT) :: GO(MO)
+#if (LSIZE==D)
+    REAL(C_DOUBLE),       INTENT(IN   ) :: GI(MI)
+    REAL(C_DOUBLE),       INTENT(INOUT) :: RLAT(MO),RLON(MO)
+    REAL(C_DOUBLE),       INTENT(  OUT) :: GO(MO)
+#elif (LSIZE==4)
+    REAL(C_FLOAT),       INTENT(IN   ) :: GI(MI)
+    REAL(C_FLOAT),       INTENT(INOUT) :: RLAT(MO),RLON(MO)
+    REAL(C_FLOAT),       INTENT(  OUT) :: GO(MO)
+#endif
     !
 
     type(grib1_descriptor) :: desc_in, desc_out
@@ -279,17 +286,24 @@ contains
   subroutine ipolates_grib1(ip,ipopt,kgdsi,kgdso,mi,mo,km,ibi,li,gi, &
        no,rlat,rlon,ibo,lo,go,iret) bind(c)
     !
-    INTEGER,    INTENT(IN   ) :: IP, IPOPT(20), KM, MI, MO
-    INTEGER,    INTENT(IN   ) :: IBI(KM), KGDSI(200), KGDSO(200)
-    INTEGER,    INTENT(INOUT) :: NO
-    INTEGER,    INTENT(  OUT) :: IRET, IBO(KM)
+    USE ISO_C_BINDING, ONLY: C_INT, C_FLOAT, C_DOUBLE, C_BOOL
+    INTEGER(C_INT),    INTENT(IN   ) :: IP, IPOPT(20), KM, MI, MO
+    INTEGER(C_INT),    INTENT(IN   ) :: IBI(KM), KGDSI(200), KGDSO(200)
+    INTEGER(C_INT),    INTENT(INOUT) :: NO
+    INTEGER(C_INT),    INTENT(  OUT) :: IRET, IBO(KM)
     !
-    LOGICAL*1,  INTENT(IN   ) :: LI(MI,KM)
-    LOGICAL*1,  INTENT(  OUT) :: LO(MO,KM)
+    LOGICAL(C_BOOL),  INTENT(IN   ) :: LI(MI,KM)
+    LOGICAL(C_BOOL),  INTENT(  OUT) :: LO(MO,KM)
     !
-    REAL,       INTENT(IN   ) :: GI(MI,KM)
-    REAL,       INTENT(INOUT) :: RLAT(MO),RLON(MO)
-    REAL,       INTENT(  OUT) :: GO(MO,KM)
+#if (LSIZE==D)
+    REAL(C_DOUBLE),       INTENT(IN   ) :: GI(MI,KM)
+    REAL(C_DOUBLE),       INTENT(INOUT) :: RLAT(MO),RLON(MO)
+    REAL(C_DOUBLE),       INTENT(  OUT) :: GO(MO,KM)
+#elif (LSIZE==4)
+    REAL(C_FLOAT),       INTENT(IN   ) :: GI(MI,KM)
+    REAL(C_FLOAT),       INTENT(INOUT) :: RLAT(MO),RLON(MO)
+    REAL(C_FLOAT),       INTENT(  OUT) :: GO(MO,KM)
+#endif
     !
 
     type(grib1_descriptor) :: desc_in, desc_out
@@ -560,21 +574,28 @@ contains
        IGDTNUMO,IGDTMPLO,IGDTLENO, &
        MI,MO,KM,IBI,LI,GI, &
        NO,RLAT,RLON,IBO,LO,GO,IRET) bind(C)
-    INTEGER,        INTENT(IN   )     :: IP, IPOPT(20), KM, MI, MO
-    INTEGER,        INTENT(IN   )     :: IBI(KM)
-    INTEGER,        INTENT(IN   )     :: IGDTNUMI, IGDTLENI
-    INTEGER,        INTENT(IN   )     :: IGDTMPLI(IGDTLENI)
-    INTEGER,        INTENT(IN   )     :: IGDTNUMO, IGDTLENO
-    INTEGER,        INTENT(IN   )     :: IGDTMPLO(IGDTLENO)
-    INTEGER,        INTENT(  OUT)     :: NO
-    INTEGER,        INTENT(  OUT)     :: IRET, IBO(KM)
+    USE ISO_C_BINDING, ONLY: C_INT, C_FLOAT, C_DOUBLE, C_BOOL
+    INTEGER(C_INT),        INTENT(IN   )     :: IP, IPOPT(20), KM, MI, MO
+    INTEGER(C_INT),        INTENT(IN   )     :: IBI(KM)
+    INTEGER(C_INT),        INTENT(IN   )     :: IGDTNUMI, IGDTLENI
+    INTEGER(C_INT),        INTENT(IN   )     :: IGDTMPLI(IGDTLENI)
+    INTEGER(C_INT),        INTENT(IN   )     :: IGDTNUMO, IGDTLENO
+    INTEGER(C_INT),        INTENT(IN   )     :: IGDTMPLO(IGDTLENO)
+    INTEGER(C_INT),        INTENT(  OUT)     :: NO
+    INTEGER(C_INT),        INTENT(  OUT)     :: IRET, IBO(KM)
     !
-    LOGICAL*1,      INTENT(IN   )     :: LI(MI,KM)
-    LOGICAL*1,      INTENT(  OUT)     :: LO(MO,KM)
+    LOGICAL(C_BOOL),      INTENT(IN   )     :: LI(MI,KM)
+    LOGICAL(C_BOOL),      INTENT(  OUT)     :: LO(MO,KM)
     !
-    REAL,           INTENT(IN   )     :: GI(MI,KM)
-    REAL,           INTENT(INOUT)     :: RLAT(MO),RLON(MO)
-    REAL,           INTENT(  OUT)     :: GO(MO,KM)
+#if (LSIZE==D)
+    REAL(C_DOUBLE),       INTENT(IN   ) :: GI(MI,KM)
+    REAL(C_DOUBLE),       INTENT(INOUT) :: RLAT(MO),RLON(MO)
+    REAL(C_DOUBLE),       INTENT(  OUT) :: GO(MO,KM)
+#elif (LSIZE==4)
+    REAL(C_FLOAT),       INTENT(IN   ) :: GI(MI,KM)
+    REAL(C_FLOAT),       INTENT(INOUT) :: RLAT(MO),RLON(MO)
+    REAL(C_FLOAT),       INTENT(  OUT) :: GO(MO,KM)
+#endif
 
     type(grib2_descriptor) :: desc_in, desc_out
     class(ip_grid), allocatable :: grid_in, grid_out
@@ -763,21 +784,28 @@ contains
        IGDTNUMO,IGDTMPLO,IGDTLENO, &
        MI,MO,KM,IBI,LI,GI, &
        NO,RLAT,RLON,IBO,LO,GO,IRET) bind(C)
-    INTEGER,        INTENT(IN   )     :: IP, IPOPT(20), KM, MI, MO
-    INTEGER,        INTENT(IN   )     :: IBI
-    INTEGER,        INTENT(IN   )     :: IGDTNUMI, IGDTLENI
-    INTEGER,        INTENT(IN   )     :: IGDTMPLI(IGDTLENI)
-    INTEGER,        INTENT(IN   )     :: IGDTNUMO, IGDTLENO
-    INTEGER,        INTENT(IN   )     :: IGDTMPLO(IGDTLENO)
-    INTEGER,        INTENT(  OUT)     :: NO
-    INTEGER,        INTENT(  OUT)     :: IRET, IBO
+    USE ISO_C_BINDING, ONLY: C_INT, C_FLOAT, C_DOUBLE, C_BOOL
+    INTEGER(C_INT),        INTENT(IN   )     :: IP, IPOPT(20), KM, MI, MO
+    INTEGER(C_INT),        INTENT(IN   )     :: IBI
+    INTEGER(C_INT),        INTENT(IN   )     :: IGDTNUMI, IGDTLENI
+    INTEGER(C_INT),        INTENT(IN   )     :: IGDTMPLI(IGDTLENI)
+    INTEGER(C_INT),        INTENT(IN   )     :: IGDTNUMO, IGDTLENO
+    INTEGER(C_INT),        INTENT(IN   )     :: IGDTMPLO(IGDTLENO)
+    INTEGER(C_INT),        INTENT(  OUT)     :: NO
+    INTEGER(C_INT),        INTENT(  OUT)     :: IRET, IBO
     !
-    LOGICAL*1,      INTENT(IN   )     :: LI(MI)
-    LOGICAL*1,      INTENT(  OUT)     :: LO(MO)
+    LOGICAL(C_BOOL),      INTENT(IN   )     :: LI(MI)
+    LOGICAL(C_BOOL),      INTENT(  OUT)     :: LO(MO)
     !
-    REAL,           INTENT(IN   )     :: GI(MI)
-    REAL,           INTENT(INOUT)     :: RLAT(MO),RLON(MO)
-    REAL,           INTENT(  OUT)     :: GO(MO)
+#if (LSIZE==D)
+    REAL(C_DOUBLE),       INTENT(IN   ) :: GI(MI)
+    REAL(C_DOUBLE),       INTENT(INOUT) :: RLAT(MO),RLON(MO)
+    REAL(C_DOUBLE),       INTENT(  OUT) :: GO(MO)
+#elif (LSIZE==4)
+    REAL(C_FLOAT),       INTENT(IN   ) :: GI(MI)
+    REAL(C_FLOAT),       INTENT(INOUT) :: RLAT(MO),RLON(MO)
+    REAL(C_FLOAT),       INTENT(  OUT) :: GO(MO)
+#endif
 
     type(grib2_descriptor) :: desc_in, desc_out
     class(ip_grid), allocatable :: grid_in, grid_out
