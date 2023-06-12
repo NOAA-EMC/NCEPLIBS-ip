@@ -53,7 +53,7 @@ jobs:
         cd ip
         mkdir build 
         cd build
-        cmake -DENABLE_DOCS=YES -DCMAKE_PREFIX_PATH="~/" -DOPENMP=ON -DCMAKE_Fortran_FLAGS="-g -fprofile-abs-path -fprofile-arcs -ftest-coverage -O0 -fsanitize=address -Werror" -DCMAKE_C_FLAGS="-g -fprofile-abs-path -fprofile-arcs -ftest-coverage -O0 -fsanitize=address" -DCMAKE_BUILD_TYPE=Debug -DBUILD_SHARED_LIBS=ON ..
+        cmake -DENABLE_DOCS=YES -DCMAKE_PREFIX_PATH="~/" -DOPENMP=ON -DCMAKE_Fortran_FLAGS="-g -fprofile-abs-path -fprofile-arcs -ftest-coverage -O0 -fsanitize=address -Werror -Wno-unused-dummy-argument" -DCMAKE_C_FLAGS="-g -fprofile-abs-path -fprofile-arcs -ftest-coverage -O0 -fsanitize=address" -DCMAKE_BUILD_TYPE=Debug -DBUILD_SHARED_LIBS=ON ..
         make -j2 VERBOSE=1
     
     - name: test

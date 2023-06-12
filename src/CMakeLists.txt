@@ -23,7 +23,7 @@ if(CMAKE_Fortran_COMPILER_ID MATCHES "^(Intel)$")
   set(fortran_d_flags "-r8")
 elseif(CMAKE_Fortran_COMPILER_ID MATCHES "^(GNU)$")
   set(CMAKE_Fortran_FLAGS "-g  -fbacktrace -fconvert=big-endian -cpp ${CMAKE_Fortran_FLAGS}")
-  set(CMAKE_Fortran_FLAGS_DEBUG "-O0 -ggdb -Wall -Wno-unused-dummy-argument -fcheck=all")
+  set(CMAKE_Fortran_FLAGS_DEBUG "-O0 -ggdb -Wall -fcheck=all")
   set(fortran_d_flags "-fdefault-real-8")
 endif()
 
