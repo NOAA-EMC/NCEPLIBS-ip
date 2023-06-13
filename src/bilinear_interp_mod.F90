@@ -1,10 +1,10 @@
 !> @file
 !> @brief Bilinear interpolation routines for scalars and vectors.
-!> @author Mark Iredell, Kyle Gerheiser
+!> @author Mark Iredell, Kyle Gerheiser, Eric Engle
 
 !> @brief Bilinear interpolation routines for scalars and vectors.
 !>
-!> @author George Gayno, Mark Iredell, Kyle Gerheiser
+!> @author George Gayno, Mark Iredell, Kyle Gerheiser, Eric Engle
 module bilinear_interp_mod
   use gdswzd_mod
   use ip_grids_mod
@@ -65,7 +65,7 @@ contains
   !> - 2 unrecognized input grid or no grid overlap
   !> - 3 unrecognized output grid
   !>
-  !> @author George Gayno, Mark Iredell, Kyle Gerheiser  
+  !> @author George Gayno, Mark Iredell, Kyle Gerheiser, Eric Engle
   subroutine interpolate_bilinear_scalar(IPOPT,grid_in,grid_out,MI,MO,KM,IBI,LI,GI,NO,RLAT,RLON,IBO,LO,GO,IRET)
     class(ip_grid), intent(in) :: grid_in, grid_out
     INTEGER,               INTENT(IN   ) :: IPOPT(20)
@@ -142,14 +142,11 @@ contains
     IF(IRET==0.AND.(to_station_points.OR..NOT.SAME_GRIDI.OR..NOT.SAME_GRIDO))THEN
        ! - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
        !  COMPUTE NUMBER OF OUTPUT POINTS AND THEIR LATITUDES AND LONGITUDES.
-       IF(.not. to_station_points) THEN
-          CALL GDSWZD(grid_out, 0,MO,FILL,XPTS,YPTS,RLON,RLAT,NO)
-          IF(NO.EQ.0) IRET=3
-       ENDIF
+       CALL GDSWZD(grid_out, 0,MO,FILL,XPTS,YPTS,RLON,RLAT,NO)
+       IF(NO.EQ.0) IRET=3
        ! - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
        !  LOCATE INPUT POINTS
        CALL GDSWZD(grid_in,-1,NO,FILL,XPTS,YPTS,RLON,RLAT,NV)
-
        IF(IRET.EQ.0.AND.NV.EQ.0) IRET=2
        ! - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
        !  ALLOCATE AND SAVE GRID DATA
@@ -223,10 +220,10 @@ contains
           ELSEIF(MSPIRAL.GT.0.AND.XPTS(N).NE.FILL.AND.YPTS(N).NE.FILL) THEN
              I1=NINT(XPTS(N))
              J1=NINT(YPTS(N))
-             IXS=SIGN(1.,XPTS(N)-I1)
-             JXS=SIGN(1.,YPTS(N)-J1)
+             IXS=INT(SIGN(1.,XPTS(N)-I1))
+             JXS=INT(SIGN(1.,YPTS(N)-J1))
              SPIRAL : DO MX=1,MSPIRAL**2
-                KXS=SQRT(4*MX-2.5)
+                KXS=INT(SQRT(4*MX-2.5))
                 KXT=MX-(KXS**2/4+1)
                 SELECT CASE(MOD(KXS,4))
                 CASE(1)
@@ -325,7 +322,7 @@ contains
   !> - 2 unrecognized input grid or no grid overlap
   !> - 3 unrecognized output grid
   !>
-  !> @author George Gayno, Mark Iredell, Kyle Gerheiser  
+  !> @author George Gayno, Mark Iredell, Kyle Gerheiser, Eric Engle
   SUBROUTINE interpolate_bilinear_vector(ipopt,grid_in,grid_out, &
        MI,MO,KM,IBI,LI,UI,VI, &
        NO,RLAT,RLON,CROT,SROT,IBO,LO,UO,VO,IRET)
@@ -405,17 +402,13 @@ contains
     IF(IRET.EQ.0.AND.(to_station_points.OR..NOT.SAME_GRIDI.OR..NOT.SAME_GRIDO))THEN
        ! - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
        !  COMPUTE NUMBER OF OUTPUT POINTS AND THEIR LATITUDES AND LONGITUDES.
-       IF(.not. to_station_points) THEN
-          CALL GDSWZD(grid_out, 0,MO,FILL,XPTS,YPTS,RLON,RLAT, &
-               NO,CROT,SROT)
-          IF(NO.EQ.0) IRET=3
-       ENDIF
+       CALL GDSWZD(grid_out, 0,MO,FILL,XPTS,YPTS,RLON,RLAT,NO,CROT,SROT)
+       IF(NO.EQ.0) IRET=3
        ! - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
        !  LOCATE INPUT POINTS
        CALL GDSWZD(grid_in,-1,NO,FILL,XPTS,YPTS,RLON,RLAT,NV)
        IF(IRET.EQ.0.AND.NV.EQ.0) IRET=2
-       CALL GDSWZD(grid_in, 0,MI,FILL,XPTI,YPTI,RLOI,RLAI,NV,&
-            CROI,SROI)
+       CALL GDSWZD(grid_in, 0,MI,FILL,XPTI,YPTI,RLOI,RLAI,NV,CROI,SROI)
        ! - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
        !  ALLOCATE AND SAVE GRID DATA
        IF(NOX.NE.NO) THEN

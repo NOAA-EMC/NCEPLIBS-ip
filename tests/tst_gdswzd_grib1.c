@@ -12,7 +12,9 @@
   Tests the mixed precision version of gdswzd.
 **************************************************************/
 
-extern void gdswzd_grib1(int [], int, int, double, double*, double *, double*, double *, int *, double *, double *, double *, double *, double *, double *, double *);
+void gdswzd_grib1(int *, int, int, double,
+         double *, double *, double *, double *, int *,
+         double *, double *, double *, double *, double *, double *, double *);
 
 int main()
 {

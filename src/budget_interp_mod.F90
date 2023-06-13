@@ -1,11 +1,11 @@
 !> @file
 !! @brief Budget interpolation routines for scalars and vectors
-!! @author Mark Iredell, Kyle Gerheiser
+!! @author Mark Iredell, Kyle Gerheiser, Eric Engle
 !! @date July 2021
 
 !> @brief Budget interpolation routines for scalars and vectors.
 !!
-!! @author George Gayno, Mark Iredell, Kyle Gerheiser
+!! @author George Gayno, Mark Iredell, Kyle Gerheiser, Eric Engle
 !! @date July 2021
 module budget_interp_mod
   use gdswzd_mod
@@ -86,7 +86,7 @@ contains
   !> - 3 Unrecognized output grid.
   !> - 32 Invalid budget method parameters.
   !>
-  !> @author Marke Iredell, George Gayno, Kyle Gerheiser
+  !> @author Marke Iredell, George Gayno, Kyle Gerheiser, Eric Engle
   !> @date July 2021
   SUBROUTINE interpolate_budget_scalar(IPOPT,grid_in,grid_out, &
        MI,MO,KM,IBI,LI,GI, &
@@ -105,9 +105,9 @@ contains
     !
     REAL,       PARAMETER         :: FILL=-9999.
     !
-    INTEGER                       :: IJKGDS1, I1, J1, I2, J2, IB, JB
-    INTEGER                       :: IJKGDSA(20), IX, JX, IXS, JXS
-    INTEGER                       :: K, KXS, KXT, IGDTNUMO2
+    INTEGER                       :: I1, J1, I2, J2, IB, JB
+    INTEGER                       :: IX, JX, IXS, JXS
+    INTEGER                       :: K, KXS, KXT
     INTEGER                       :: LB, LSW, MP, MSPIRAL, MX
     INTEGER                       :: N, NB, NB1, NB2, NB3, NB4, NV, NX
     INTEGER                       :: N11(MO),N21(MO),N12(MO),N22(MO)
@@ -118,8 +118,10 @@ contains
     REAL                          :: WO(MO,KM), XF, YF, XI, YI, XX, YY
     REAL                          :: XPTS(MO),YPTS(MO),XPTB(MO),YPTB(MO)
     REAL                          :: XXX(1), YYY(1)
+
+    logical :: to_station_points
+
     class(ip_grid), allocatable :: grid_out2
-    class(ip_grid_descriptor), allocatable :: grid_desc_out2
     
     ! - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
     !  COMPUTE NUMBER OF OUTPUT POINTS AND THEIR LATITUDES AND LONGITUDES.
@@ -128,15 +130,14 @@ contains
 
     select type(grid_out)
     type is(ip_station_points_grid)
-       allocate(grid_desc_out2, source = grid_out%descriptor)
-       grid_desc_out2%grid_num = 255 + grid_out%descriptor%grid_num
-       call init_grid(grid_out2, grid_desc_out2)
-
-       CALL GDSWZD(grid_out2,-1,MO,FILL,XPTS,YPTS,RLON,RLAT,NO)
-       IF(NO.EQ.0) then
-          IRET=3
-       end if
+       to_station_points = .true.
+       allocate(grid_out2, source = grid_out)
+       CALL GDSWZD(grid_out2, 0,MO,FILL,XPTS,YPTS,RLON,RLAT,NO)
+       IF(NO.EQ.0) IRET=3
+       CALL GDSWZD(grid_in,-1,NO,FILL,XPTS,YPTS,RLON,RLAT,NV)
+       IF(NV.EQ.0) IRET=2
     class default
+       to_station_points = .false.
        allocate(grid_out2, source = grid_out)
        CALL GDSWZD(grid_out2, 0,MO,FILL,XPTS,YPTS,RLON,RLAT,NO)
        IF(NO.EQ.0) IRET=3
@@ -201,17 +202,22 @@ contains
              YPTB(N)=YPTS(N)+JB*RB2
           ENDDO
           !$OMP END PARALLEL DO
-          CALL GDSWZD(grid_out2, 1,NO,FILL,XPTB,YPTB,RLOB,RLAB,NV)
-          CALL GDSWZD(grid_in,-1,NO,FILL,XPTB,YPTB,RLOB,RLAB,NV)
+          if(to_station_points)then
+             CALL GDSWZD(grid_in, 1,NO,FILL,XPTB,YPTB,RLOB,RLAB,NV)
+             CALL GDSWZD(grid_in,-1,NO,FILL,XPTB,YPTB,RLOB,RLAB,NV)
+          else
+             CALL GDSWZD(grid_out2, 1,NO,FILL,XPTB,YPTB,RLOB,RLAB,NV)
+             CALL GDSWZD(grid_in,-1,NO,FILL,XPTB,YPTB,RLOB,RLAB,NV)
+          endif
           IF(IRET.EQ.0.AND.NV.EQ.0.AND.LB.EQ.0) IRET=2
           !$OMP PARALLEL DO PRIVATE(N,XI,YI,I1,I2,J1,J2,XF,YF) SCHEDULE(STATIC)
           DO N=1,NO
              XI=XPTB(N)
              YI=YPTB(N)
              IF(XI.NE.FILL.AND.YI.NE.FILL) THEN
-                I1=XI
+                I1=INT(XI)
                 I2=I1+1
-                J1=YI
+                J1=INT(YI)
                 J2=J1+1
                 XF=XI-I1
                 YF=YI-J1
@@ -292,10 +298,10 @@ contains
              IF(NV.EQ.1)THEN
                 I1=NINT(XX)
                 J1=NINT(YY)
-                IXS=SIGN(1.,XX-I1)
-                JXS=SIGN(1.,YY-J1)
+                IXS=INT(SIGN(1.,XX-I1))
+                JXS=INT(SIGN(1.,YY-J1))
                 SPIRAL_LOOP : DO MX=2,MSPIRAL**2
-                   KXS=SQRT(4*MX-2.5)
+                   KXS=INT(SQRT(4*MX-2.5))
                    KXT=MX-(KXS**2/4+1)
                    SELECT CASE(MOD(KXS,4))
                    CASE(1)
@@ -409,7 +415,7 @@ contains
   !> - 3 Unrecognized output grid.
   !> - 32 Invalid budget method parameters.
   !> 
-  !> @author Marke Iredell, George Gayno, Kyle Gerheiser
+  !> @author Marke Iredell, George Gayno, Kyle Gerheiser, Eric Engle
   !> @date July 2021
   SUBROUTINE interpolate_budget_vector(IPOPT,grid_in,grid_out, &
        MI,MO,KM,IBI,LI,UI,VI, &
@@ -429,7 +435,6 @@ contains
     !
     REAL,             PARAMETER     :: FILL=-9999.
     !
-    INTEGER                         :: IGDTNUMO2
     INTEGER                         :: I1,I2,J1,J2,IB,JB,LSW,MP
     INTEGER                         :: K,LB,N,NB,NB1,NB2,NB3,NB4,NV
     INTEGER                         :: N11(MO),N21(MO),N12(MO),N22(MO)
@@ -449,7 +454,8 @@ contains
     REAL                            :: XPTS(MO),YPTS(MO)
     REAL                            :: XPTB(MO),YPTB(MO),RLOB(MO),RLAB(MO)
 
-    class(ip_grid_descriptor), allocatable :: desc_out_subgrid
+    logical :: to_station_points
+
     class(ip_grid), allocatable :: grid_out2
     
     ! Save coeffecients between calls and only compute if grids have changed
@@ -465,17 +471,16 @@ contains
     ! The type of the subgrid is calculated by 255 + 
     select type(grid_out)
     type is(ip_station_points_grid)
-       allocate(desc_out_subgrid, source = grid_out%descriptor)
-       desc_out_subgrid%grid_num = 255 + grid_out%descriptor%grid_num
-
-       call init_grid(grid_out2, desc_out_subgrid)
-       CALL GDSWZD(grid_out2,-1,MO,FILL,XPTS,YPTS, &
-            RLON,RLAT,NO,CROT,SROT)
-       IF(NO.EQ.0) IRET=3
-    class default
+       to_station_points = .true.
        allocate(grid_out2, source = grid_out)
-       CALL GDSWZD(grid_out2, 0,MO,FILL,XPTS,YPTS, &
-            RLON,RLAT,NO,CROT,SROT)
+       CALL GDSWZD(grid_out2, 0,MO,FILL,XPTS,YPTS,RLON,RLAT,NO,CROT,SROT)
+       IF(NO.EQ.0) IRET=3
+       CALL GDSWZD(grid_in,-1,NO,FILL,XPTS,YPTS,RLON,RLAT,NV,CROT,SROT)
+       IF(NV.EQ.0) IRET=2
+    class default
+       to_station_points = .false.
+       allocate(grid_out2, source = grid_out)
+       CALL GDSWZD(grid_out2, 0,MO,FILL,XPTS,YPTS,RLON,RLAT,NO,CROT,SROT)
     end select
 
     if (.not. allocated(prev_grid_in)) then
@@ -497,8 +502,7 @@ contains
           ALLOCATE(XPTI(MI),YPTI(MI),RLOI(MI),RLAI(MI),CROI(MI),SROI(MI))
           MIX=MI
        ENDIF
-       CALL GDSWZD(grid_in, 0,MI,FILL,XPTI,YPTI, &
-            RLOI,RLAI,NV,CROI,SROI)
+       CALL GDSWZD(grid_in, 0,MI,FILL,XPTI,YPTI,RLOI,RLAI,NV,CROI,SROI)
     ENDIF
 
     ! - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -559,10 +563,13 @@ contains
              YPTB(N)=YPTS(N)+JB*RB2
           ENDDO
           !$OMP END PARALLEL DO
-          CALL GDSWZD(grid_out2, 1,NO,FILL,XPTB,YPTB, &
-               RLOB,RLAB,NV)
-          CALL GDSWZD(grid_in,-1,NO,FILL,XPTB,YPTB, &
-               RLOB,RLAB,NV)
+          if(to_station_points)then
+             CALL GDSWZD(grid_in, 1,NO,FILL,XPTB,YPTB,RLOB,RLAB,NV)
+             CALL GDSWZD(grid_in,-1,NO,FILL,XPTB,YPTB,RLOB,RLAB,NV)
+          else
+             CALL GDSWZD(grid_out2, 1,NO,FILL,XPTB,YPTB,RLOB,RLAB,NV)
+             CALL GDSWZD(grid_in,-1,NO,FILL,XPTB,YPTB,RLOB,RLAB,NV)
+          endif
           IF(IRET.EQ.0.AND.NV.EQ.0.AND.LB.EQ.0) IRET=2
           !$OMP PARALLEL DO PRIVATE(N,XI,YI,I1,I2,WI1,WI2,J1,J2,WJ1,WJ2,CM11,CM21,CM12,CM22,SM11,SM21,SM12,SM22) &
           !$OMP SCHEDULE(STATIC)
@@ -570,11 +577,11 @@ contains
              XI=XPTB(N)
              YI=YPTB(N)
              IF(XI.NE.FILL.AND.YI.NE.FILL) THEN
-                I1=XI
+                I1=INT(XI)
                 I2=I1+1
                 WI2=XI-I1
                 WI1=1-WI2
-                J1=YI
+                J1=INT(YI)
                 J2=J1+1
                 WJ2=YI-J1
                 WJ1=1-WJ2

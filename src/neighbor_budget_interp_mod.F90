@@ -70,6 +70,7 @@ contains
   !> 2001-06-18 | Iredell | include minimum mask percentage option
   !> 2015-01-27 | Gayno | replace calls to gdswiz with new merged version of gdswzd.
   !> 2015-07-13 | Gayno | replace grib 1 kgds arrays with grib 2 grid definition template arrays.
+  !> 2023-05-04 | Engle | allow calls to GDSWZD for station points
   !>
   !> @param[in] ipopt (20) interpolation options ipopt(1) is number of
   !> radius points (defaults to 2 if ipopt(1)=-1); ipopt(2:2+ipopt(1))
@@ -136,12 +137,15 @@ contains
     ! - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
     !  COMPUTE NUMBER OF OUTPUT POINTS AND THEIR LATITUDES AND LONGITUDES.
     IRET=0
-    IF(.not. to_station_points) THEN
+    if(to_station_points) then
        CALL GDSWZD(grid_out, 0,MO,FILL,XPTS,YPTS,RLON,RLAT,NO)
        IF(NO.EQ.0) IRET=3
-    ELSE
-       IRET=31
-    ENDIF
+       CALL GDSWZD(grid_in,-1,NO,FILL,XPTS,YPTS,RLON,RLAT,NV)
+       IF(NV.EQ.0) IRET=2
+    else
+       CALL GDSWZD(grid_out, 0,MO,FILL,XPTS,YPTS,RLON,RLAT,NO)
+       IF(NO.EQ.0) IRET=3
+    endif
     ! - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
     !  SET PARAMETERS
     NB1=IPOPT(1)
@@ -190,8 +194,13 @@ contains
              XPTB(N)=XPTS(N)+IB/REAL(NB2)
              YPTB(N)=YPTS(N)+JB/REAL(NB2)
           ENDDO
-          CALL GDSWZD(grid_out, 1,NO,FILL,XPTB,YPTB,RLOB,RLAB,NV)
-          CALL GDSWZD(grid_in,-1,NO,FILL,XPTB,YPTB,RLOB,RLAB,NV)
+          if(to_station_points)then
+             CALL GDSWZD(grid_in, 1,NO,FILL,XPTB,YPTB,RLOB,RLAB,NV)
+             CALL GDSWZD(grid_in,-1,NO,FILL,XPTB,YPTB,RLOB,RLAB,NV)
+          else
+             CALL GDSWZD(grid_out, 1,NO,FILL,XPTB,YPTB,RLOB,RLAB,NV)
+             CALL GDSWZD(grid_in,-1,NO,FILL,XPTB,YPTB,RLOB,RLAB,NV)
+          endif
           IF(IRET.EQ.0.AND.NV.EQ.0.AND.LB.EQ.0) IRET=2
           DO N=1,NO
              XI=XPTB(N)
@@ -300,6 +309,7 @@ contains
   !> 2002-01-17 | Iredell | save data from last call for optimization
   !> 2015-01-27 | Gayno | replace calls to gdswiz with new merged routine gdswzd.
   !> 2015-07-13 | Gayno | replace grib 1 kgds arrays with grib 2 grid definition template arrays.
+  !> 2023-05-04 | Engle | allow calls to GDSWZD for station points
   !>
   !> @param[in] ipopt (20) interpolation options ipopt(1) is number of
   !> radius points (defaults to 2 if ipopt(1)=-1); ipopt(2:2+ipopt(1))
@@ -388,14 +398,13 @@ contains
     ! - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
     !  COMPUTE NUMBER OF OUTPUT POINTS AND THEIR LATITUDES AND LONGITUDES.
     IRET=0
-    IF(.not. to_station_points) THEN
-       CALL GDSWZD(grid_out, 0,MO,FILL,XPTS,YPTS, &
-            RLON,RLAT,NO,CROT,SROT)
-       IF(NO.EQ.0) IRET=3
-    ELSE
-       IRET=31
-    ENDIF
-
+    CALL GDSWZD(grid_out, 0,MO,FILL,XPTS,YPTS,RLON,RLAT,NO,CROT,SROT)
+    IF(NO.EQ.0) IRET=3
+    if(to_station_points) then
+       CALL GDSWZD(grid_in,-1,NO,FILL,XPTS,YPTS,RLON,RLAT,NV,CROT,SROT)
+       IF(NV.EQ.0) IRET=2
+    endif
+       
     if (.not. allocated(prev_grid_in)) then
        allocate(prev_grid_in, source = grid_in)
 
@@ -466,10 +475,13 @@ contains
              XPTB(N)=XPTS(N)+IB/REAL(NB2)
              YPTB(N)=YPTS(N)+JB/REAL(NB2)
           ENDDO
-          CALL GDSWZD(grid_out, 1,NO,FILL,XPTB,YPTB, &
-               RLOB,RLAB,NV)
-          CALL GDSWZD(grid_in,-1,NO,FILL,XPTB,YPTB, &
-               RLOB,RLAB,NV)
+          if(to_station_points)then
+             CALL GDSWZD(grid_in, 1,NO,FILL,XPTB,YPTB,RLOB,RLAB,NV)
+             CALL GDSWZD(grid_in,-1,NO,FILL,XPTB,YPTB,RLOB,RLAB,NV)
+          else
+             CALL GDSWZD(grid_out, 1,NO,FILL,XPTB,YPTB,RLOB,RLAB,NV)
+             CALL GDSWZD(grid_in,-1,NO,FILL,XPTB,YPTB,RLOB,RLAB,NV)
+          endif
           IF(IRET.EQ.0.AND.NV.EQ.0.AND.LB.EQ.0) IRET=2
           DO N=1,NO
              XI=XPTB(N)

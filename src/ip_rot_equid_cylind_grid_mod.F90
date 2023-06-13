@@ -76,7 +76,6 @@ CONTAINS
 
     real(kd) :: rlat1, rlon1, rlat0, rlat2, rlon2, nbd, ebd
     real(kd) :: hs, hs2, slat1, slat2, slatr, clon1, clon2, clat1, clat2, clatr, clonr, rlonr, rlatr
-    integer :: iscale
 
     associate(kgds => g1_desc%gds)
       self%rerth = 6.3712E6_KD
@@ -274,7 +273,6 @@ CONTAINS
     !
     LOGICAL                                :: LROT, LMAP, LAREA
     !
-    REAL                                   :: DUM1,DUM2
     REAL(KIND=KD)                          :: HS
     REAL(KIND=KD)                          :: CLONR,CLATR,SLATR
     REAL(KIND=KD)                          :: CLAT,SLAT,CLON
@@ -378,8 +376,8 @@ CONTAINS
                 CLAT=SQRT(1-SLAT**2)
                 CLON=(CLAT0*CLATR*CLONR-SLAT0*SLATR)/CLAT
                 CLON=MIN(MAX(CLON,-1._KD),1._KD)
-                RLON(N)=MOD(RLON0+HS*DPR*ACOS(CLON)+3600,360._KD)
-                RLAT(N)=DPR*ASIN(SLAT)
+                RLON(N)=REAL(MOD(RLON0+HS*DPR*ACOS(CLON)+3600,360._KD))
+                RLAT(N)=REAL(DPR*ASIN(SLAT))
              ENDIF
              NRET=NRET+1
              IF(LROT) CALL ROT_EQUID_CYLIND_VECT_ROT(RLON(N), CLATR, SLATR, &
@@ -420,8 +418,8 @@ CONTAINS
                 RLONR=HS*DPR*ACOS(CLONR)
                 RLATR=DPR*ASIN(SLATR)
              ENDIF
-             XPTS(N)=(RLONR-WBD)/DLONS+1._KD
-             YPTS(N)=(RLATR-SBD)/DLATS+1._KD
+             XPTS(N)=REAL((RLONR-WBD)/DLONS+1._KD)
+             YPTS(N)=REAL((RLATR-SBD)/DLATS+1._KD)
              IF(XPTS(N).GE.XMIN.AND.XPTS(N).LE.XMAX.AND. &
                   YPTS(N).GE.YMIN.AND.YPTS(N).LE.YMAX) THEN
                 NRET=NRET+1
@@ -518,12 +516,12 @@ CONTAINS
 
     IF(IROT.EQ.1) THEN
        IF(CLATR.LE.0._KD) THEN
-          CROT=-SIGN(1._KD,SLATR*SLAT0)
+          CROT=REAL(-SIGN(1._KD,SLATR*SLAT0))
           SROT=0.
        ELSE
           SLON=SIN((RLON-RLON0)/DPR)
-          CROT=(CLAT0*CLAT+SLAT0*SLAT*CLON)/CLATR
-          SROT=SLAT0*SLON/CLATR
+          CROT=REAL((CLAT0*CLAT+SLAT0*SLAT*CLON)/CLATR)
+          SROT=REAL(SLAT0*SLON/CLATR)
        ENDIF
     ELSE
        CROT=1.
@@ -576,10 +574,10 @@ CONTAINS
        SLON=SIN((RLON-RLON0)/DPR)
        TERM1=(CLAT0*CLAT+SLAT0*SLAT*CLON)/CLATR
        TERM2=SLAT0*SLON/CLATR
-       XLON=TERM1*CLAT/(DLONS*CLATR)
-       XLAT=-TERM2/(DLONS*CLATR)
-       YLON=TERM2*CLAT/DLATS
-       YLAT=TERM1/DLATS
+       XLON=REAL(TERM1*CLAT/(DLONS*CLATR))
+       XLAT=REAL(-TERM2/(DLONS*CLATR))
+       YLON=REAL(TERM2*CLAT/DLATS)
+       YLAT=REAL(TERM1/DLATS)
     ENDIF
 
   END SUBROUTINE ROT_EQUID_CYLIND_MAP_JACOB
@@ -612,7 +610,7 @@ CONTAINS
     IF(CLATR.LE.0._KD) THEN
        AREA=FILL
     ELSE
-       AREA=2._KD*(RERTH**2)*CLATR*(DLONS/DPR)*SIN(0.5_KD*DLATS/DPR)
+       AREA=REAL(2._KD*(RERTH**2)*CLATR*(DLONS/DPR)*SIN(0.5_KD*DLATS/DPR))
     ENDIF
 
   END SUBROUTINE ROT_EQUID_CYLIND_GRID_AREA

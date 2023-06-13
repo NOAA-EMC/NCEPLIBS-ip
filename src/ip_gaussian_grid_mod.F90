@@ -209,7 +209,7 @@ contains
     !
     INTEGER                        :: JSCAN, IM, JM
     INTEGER                        :: J, JA, JG
-    INTEGER                        :: ISCALE, N
+    INTEGER                        :: N
     !
     LOGICAL                        :: LROT, LMAP, LAREA
     !
@@ -265,7 +265,7 @@ contains
     ALLOCATE(BLAT(0:JG+1))
     !$OMP PARALLEL DO PRIVATE(JA) SCHEDULE(STATIC)
     DO JA=1,JG
-       ALAT(JA)=DPR*ASIN(ALAT_TEMP(JA))
+       ALAT(JA)=REAL(DPR*ASIN(ALAT_TEMP(JA)))
        BLAT(JA)=BLAT_TEMP(JA)
     ENDDO
     !$OMP END PARALLEL DO
@@ -307,7 +307,7 @@ contains
           IF(XPTS(N).GE.XMIN.AND.XPTS(N).LE.XMAX.AND. &
                YPTS(N).GE.YMIN.AND.YPTS(N).LE.YMAX) THEN
              RLON(N)=MOD(RLON1+DLON*(XPTS(N)-1)+3600,360.)
-             J=YPTS(N)
+             J=INT(YPTS(N))
              WB=YPTS(N)-J
              RLATA=ALAT(J1+JH*(J-1))
              RLATB=ALAT(J1+JH*J)
@@ -360,47 +360,6 @@ contains
     IF (ALLOCATED(YLAT_ROW)) DEALLOCATE(YLAT_ROW)
 
   END SUBROUTINE GDSWZD_GAUSSIAN
-
-  !> Error handler.
-  !>
-  !> Upon an error, this subprogram assigns a "fill" value to the
-  !> output fields.
-  !>
-  !> ### Program History Log
-  !> Date | Programmer | Comments
-  !> -----|------------|---------
-  !> 2015-07-13 | GAYNO | Initial version
-  !>
-  !> @param[in] iopt option flag
-  !> - 1 to compute earth coords of selected grid coords
-  !> - -1 to compute grid coords of selected earth coords
-  !> @param[in] fill fill value to set invalid output data (must be
-  !> impossible value; suggested value: -9999.)
-  !> @param[out] rlat (npts) earth latitudes in degrees n if iopt<0
-  !> @param[out] rlon (npts) earth longitudes in degrees e if iopt<0
-  !> @param[out] xpts (npts) grid x point coordinates if iopt>0
-  !> @param[out] ypts (npts) grid y point coordinates if iopt>0
-  !> @param[in] npts maximum number of coordinates
-  !>
-  !> @author GAYNO @date 2015-07-13
-SUBROUTINE GAUSSIAN_ERROR(IOPT,FILL,RLAT,RLON,XPTS,YPTS,NPTS)
-    IMPLICIT NONE
-    !
-    INTEGER, INTENT(IN   ) :: IOPT, NPTS
-    !
-    REAL,    INTENT(IN   ) :: FILL
-    REAL,    INTENT(  OUT) :: RLAT(NPTS),RLON(NPTS)
-    REAL,    INTENT(  OUT) :: XPTS(NPTS),YPTS(NPTS)
-
-    IF(IOPT>=0) THEN
-       RLON=FILL
-       RLAT=FILL
-    ENDIF
-    IF(IOPT<=0) THEN
-       XPTS=FILL
-       YPTS=FILL
-    ENDIF
-  END SUBROUTINE GAUSSIAN_ERROR
 
   !> Computes the vector rotation sines and cosines for a gaussian
   !> cylindrical grid.
@@ -464,12 +423,12 @@ SUBROUTINE GAUSSIAN_ERROR(IOPT,FILL,RLAT,RLON,XPTS,YPTS,NPTS)
 
     REAL                           :: WB, WLAT, WLATA, WLATB
 
-    J = YPTS
+    J = INT(YPTS)
     WB=YPTS-J
     WLATA=BLAT(J1+JH*(J-1))
     WLATB=BLAT(J1+JH*J)
     WLAT=WLATA+WB*(WLATB-WLATA)
-    AREA=RERTH**2*WLAT*DLON/DPR
+    AREA=REAL(RERTH**2*WLAT*DLON/DPR)
 
   END SUBROUTINE GAUSSIAN_GRID_AREA
 end module ip_gaussian_grid_mod
