@@ -1,5 +1,6 @@
 var searchData=
 [
-  ['polates4_5fgrib1_0',['polates4_grib1',['../interfacespectral__interp__mod_1_1polates4.html#a0be1315db4dce899083176b47b6ea6a4',1,'spectral_interp_mod::polates4::polates4_grib1()'],['../spectral__interp__mod_8f90.html#ab9fb87d87f2f9d578a5ade6b512ff366',1,'spectral_interp_mod::polates4_grib1()']]],
-  ['polatev4_5fgrib1_1',['polatev4_grib1',['../interfacespectral__interp__mod_1_1polatev4.html#a5fa619eb983da3326380e9bafcf49ca8',1,'spectral_interp_mod::polatev4::polatev4_grib1()'],['../spectral__interp__mod_8f90.html#af4ce7638750e787dd69c7fe3ff2335cc',1,'spectral_interp_mod::polatev4_grib1()']]]
+  ['lambert_5fconf_5fgrid_5farea_415',['lambert_conf_grid_area',['../namespaceip__lambert__conf__grid__mod.html#a15c44b47172b926aea840caee9723b1c',1,'ip_lambert_conf_grid_mod']]],
+  ['lambert_5fconf_5fmap_5fjacob_416',['lambert_conf_map_jacob',['../namespaceip__lambert__conf__grid__mod.html#a5e1d42f0027236f47467e25c525e66ae',1,'ip_lambert_conf_grid_mod']]],
+  ['lambert_5fconf_5fvect_5frot_417',['lambert_conf_vect_rot',['../namespaceip__lambert__conf__grid__mod.html#a58187073914efa18eca897c6ec203b71',1,'ip_lambert_conf_grid_mod']]]
 ];

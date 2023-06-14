@@ -1,12 +1,11 @@
 var indexSectionsWithContent =
 {
-  0: "bcdefgijklmnoprs",
+  0: "abcdefghijklmnoprswy",
   1: "giop",
-  2: "bcgi",
-  3: "bcgis",
-  4: "efgipr",
-  5: "bdegijklmnprs",
-  6: "d"
+  2: "bceginps",
+  3: "bcegimnps",
+  4: "efgilmpr",
+  5: "abcdeghijklmnoprswy"
 };
 
 var indexSectionNames =
@@ -16,8 +15,7 @@ var indexSectionNames =
   2: "namespaces",
   3: "files",
   4: "functions",
-  5: "variables",
-  6: "pages"
+  5: "variables"
 };
 
 var indexSectionLabels =
@@ -27,7 +25,6 @@ var indexSectionLabels =
   2: "Namespaces",
   3: "Files",
   4: "Functions",
-  5: "Variables",
-  6: "Pages"
+  5: "Variables"
 };
 
