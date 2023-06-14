@@ -1,30 +1,4 @@
 var searchData=
 [
-  ['gaussian_5fgrid_5farea_0',['gaussian_grid_area',['../namespaceip__gaussian__grid__mod.html#ab602a870a477c7ab77438700af4e7780',1,'ip_gaussian_grid_mod']]],
-  ['gaussian_5fgrid_5fid_5fgrib1_1',['gaussian_grid_id_grib1',['../namespaceip__grid__mod.html#a45e8afad72b1b8856b3e44f2dd3123b3',1,'ip_grid_mod']]],
-  ['gaussian_5fgrid_5fid_5fgrib2_2',['gaussian_grid_id_grib2',['../namespaceip__grid__mod.html#a36a9a73ecd50353f892341ae8a5c8316',1,'ip_grid_mod']]],
-  ['gaussian_5fmap_5fjacob_3',['gaussian_map_jacob',['../namespaceip__gaussian__grid__mod.html#adca7b03877c6a7048ff1716a95e0bd9d',1,'ip_gaussian_grid_mod']]],
-  ['gaussian_5fvect_5frot_4',['gaussian_vect_rot',['../namespaceip__gaussian__grid__mod.html#ac72eec96d0012fbe0f0ec7c520f40dad',1,'ip_gaussian_grid_mod']]],
-  ['gds_5',['gds',['../structip__grid__descriptor__mod_1_1grib1__descriptor.html#a08920c194e39d562fbf527939f0ac6c9',1,'ip_grid_descriptor_mod::grib1_descriptor']]],
-  ['gdswzd_6',['gdswzd',['../structip__grid__mod_1_1ip__grid.html#a5fb366fb577a90cc09f21269b90ac080',1,'ip_grid_mod::ip_grid::gdswzd()'],['../interfacegdswzd__mod_1_1gdswzd.html',1,'gdswzd_mod::gdswzd']]],
-  ['gdswzd_5f1d_5farray_7',['gdswzd_1d_array',['../interfacegdswzd__mod_1_1gdswzd.html#afaf35e3ce949dd2ce3d72dd3f06d4e3b',1,'gdswzd_mod::gdswzd::gdswzd_1d_array()'],['../namespacegdswzd__mod.html#ac304e2b046eccc701e24827c81107e76',1,'gdswzd_mod::gdswzd_1d_array()']]],
-  ['gdswzd_5f2d_5farray_8',['gdswzd_2d_array',['../interfacegdswzd__mod_1_1gdswzd.html#a8b60240eefdc297eacf90c348b529d31',1,'gdswzd_mod::gdswzd::gdswzd_2d_array()'],['../namespacegdswzd__mod.html#acdf970e498e9317522fbdfb690b86e25',1,'gdswzd_mod::gdswzd_2d_array()']]],
-  ['gdswzd_5f2d_5farray_5fgrib1_9',['gdswzd_2d_array_grib1',['../interfacegdswzd__mod_1_1gdswzd.html#a7c66a7ede2b644f7e366df9f70b9f0a5',1,'gdswzd_mod::gdswzd::gdswzd_2d_array_grib1()'],['../namespacegdswzd__mod.html#aa032a55281b18e208630a730679958f4',1,'gdswzd_mod::gdswzd_2d_array_grib1()']]],
-  ['gdswzd_5fc_2ef90_10',['gdswzd_c.F90',['../gdswzd__c_8F90.html',1,'']]],
-  ['gdswzd_5fc_5fgrib1_11',['gdswzd_c_grib1',['../gdswzd__c_8F90.html#a06861f1403edf106bb3b399c39981504',1,'gdswzd_c_mod']]],
-  ['gdswzd_5fequid_5fcylind_12',['gdswzd_equid_cylind',['../namespaceip__equid__cylind__grid__mod.html#af20f6f308b5a33211c677b894e41b727',1,'ip_equid_cylind_grid_mod']]],
-  ['gdswzd_5fgaussian_13',['gdswzd_gaussian',['../namespaceip__gaussian__grid__mod.html#a6eefd9270b3f9bb2c59a77bea4ecf1b9',1,'ip_gaussian_grid_mod']]],
-  ['gdswzd_5fgrib1_14',['gdswzd_grib1',['../interfacegdswzd__mod_1_1gdswzd.html#a65b95791813ffd5afbfba9d4cb67676a',1,'gdswzd_mod::gdswzd::gdswzd_grib1()'],['../namespacegdswzd__mod.html#a133e040fac8dd56e607b8e3fb6a58c37',1,'gdswzd_mod::gdswzd_grib1(KGDS, IOPT, NPTS, FILL, XPTS, YPTS, RLON, RLAT, NRET, CROT, SROT, XLON, XLAT, YLON, YLAT, AREA)']]],
-  ['gdswzd_5fgrid_15',['gdswzd_grid',['../namespacegdswzd__mod.html#a584d2bddbc6d857b80cfac5e3b288d45',1,'gdswzd_mod::gdswzd_grid()'],['../interfacegdswzd__mod_1_1gdswzd.html#abfe059339c6c9f05fd4eadb5d70aec16',1,'gdswzd_mod::gdswzd::gdswzd_grid()']]],
-  ['gdswzd_5finterface_16',['gdswzd_interface',['../interfaceip__grid__mod_1_1gdswzd__interface.html',1,'ip_grid_mod']]],
-  ['gdswzd_5fmod_17',['gdswzd_mod',['../namespacegdswzd__mod.html',1,'']]],
-  ['gdswzd_5fmod_2ef90_18',['gdswzd_mod.f90',['../gdswzd__mod_8f90.html',1,'']]],
-  ['gdswzd_5frot_5fequid_5fcylind_5fegrid_19',['gdswzd_rot_equid_cylind_egrid',['../namespaceip__rot__equid__cylind__egrid__mod.html#a9ad11a599fc0bdc4a9ece86a3b1cc399',1,'ip_rot_equid_cylind_egrid_mod']]],
-  ['gdswzd_5fscalar_20',['gdswzd_scalar',['../namespacegdswzd__mod.html#aba3235c5bc5797e72b9a6a8a587b8861',1,'gdswzd_mod::gdswzd_scalar()'],['../interfacegdswzd__mod_1_1gdswzd.html#a1fc841ec08d39463b3f5f36eac0068cd',1,'gdswzd_mod::gdswzd::gdswzd_scalar()']]],
-  ['gdt_5flen_21',['gdt_len',['../structip__grid__descriptor__mod_1_1grib2__descriptor.html#abf8e6d212308608a039e8e97c05c4a06',1,'ip_grid_descriptor_mod::grib2_descriptor']]],
-  ['gdt_5fnum_22',['gdt_num',['../structip__grid__descriptor__mod_1_1grib2__descriptor.html#aa5dd78817926e0246f93819ab7037e19',1,'ip_grid_descriptor_mod::grib2_descriptor']]],
-  ['gdt_5ftmpl_23',['gdt_tmpl',['../structip__grid__descriptor__mod_1_1grib2__descriptor.html#a3a90e1ef19332a1d8ec1f6a3193c6ebe',1,'ip_grid_descriptor_mod::grib2_descriptor']]],
-  ['grib1_5fdescriptor_24',['grib1_descriptor',['../structip__grid__descriptor__mod_1_1grib1__descriptor.html',1,'ip_grid_descriptor_mod']]],
-  ['grib2_5fdescriptor_25',['grib2_descriptor',['../structip__grid__descriptor__mod_1_1grib2__descriptor.html',1,'ip_grid_descriptor_mod']]],
-  ['grid_5fnum_26',['grid_num',['../structip__grid__descriptor__mod_1_1ip__grid__descriptor.html#a6d4598dc4bbf46e059f636715cc390f1',1,'ip_grid_descriptor_mod::ip_grid_descriptor']]]
+  ['field_5fpos_39',['field_pos',['../structip__grid__mod_1_1ip__grid.html#ac071b3d3eca9a5fa88ff5dc211d19179',1,'ip_grid_mod::ip_grid::field_pos()'],['../namespaceip__grid__mod.html#a63572318d74ec94c20c5ccd6ded2d442',1,'ip_grid_mod::field_pos()']]]
 ];

@@ -25,12 +25,21 @@
 var NAVTREE =
 [
   [ "NCEPLIBS-ip", "index.html", [
-    [ "Documentation of the general interpolation library - iplib", "md__Users_KIG_Desktop_dev_work_NCEPLIBS_ip_docs_user_guide.html", [
-      [ "Introduction", "md__Users_KIG_Desktop_dev_work_NCEPLIBS_ip_docs_user_guide.html#autotoc_md1", null ],
-      [ "Entry point list", "md__Users_KIG_Desktop_dev_work_NCEPLIBS_ip_docs_user_guide.html#autotoc_md2", null ],
-      [ "How to invoke ip2lib: examples", "md__Users_KIG_Desktop_dev_work_NCEPLIBS_ip_docs_user_guide.html#autotoc_md3", null ]
-    ] ],
     [ "Modules", "namespaces.html", [
+      [ "Introduction", "index.html#autotoc_md0", null ],
+      [ "Interpolation", "index.html#autotoc_md1", [
+        [ "Bilinear Interpolation", "index.html#autotoc_md2", null ],
+        [ "Bicubic Interpolation", "index.html#autotoc_md3", null ],
+        [ "Neighbor Interpolation", "index.html#autotoc_md4", null ],
+        [ "Budget interpolation", "index.html#autotoc_md5", null ],
+        [ "Spectral Interpolation", "index.html#autotoc_md6", null ],
+        [ "Neighbor-Budget Interpolation", "index.html#autotoc_md7", null ]
+      ] ],
+      [ "Vectors and Scalars", "index.html#autotoc_md8", null ],
+      [ "Grids", "index.html#autotoc_md9", null ],
+      [ "Return Codes", "index.html#autotoc_md10", null ],
+      [ "Entry point list", "index.html#autotoc_md11", null ],
+      [ "How to invoke ip2lib: examples", "index.html#autotoc_md12", null ],
       [ "Modules List", "namespaces.html", "namespaces_dup" ],
       [ "Module Members", "namespacemembers.html", [
         [ "All", "namespacemembers.html", null ],
@@ -48,7 +57,11 @@ var NAVTREE =
       ] ]
     ] ],
     [ "Files", "files.html", [
-      [ "File List", "files.html", "files_dup" ]
+      [ "File List", "files.html", "files_dup" ],
+      [ "Globals", "globals.html", [
+        [ "All", "globals.html", null ],
+        [ "Functions/Subroutines", "globals_func.html", null ]
+      ] ]
     ] ]
   ] ]
 ];
@@ -56,8 +69,9 @@ var NAVTREE =
 var NAVTREEINDEX =
 [
 "annotated.html",
-"namespaceip__gaussian__grid__mod.html#ab602a870a477c7ab77438700af4e7780",
-"structip__rot__equid__cylind__egrid__mod_1_1ip__rot__equid__cylind__egrid.html"
+"ip__rot__equid__cylind__grid__mod_8F90.html",
+"namespacespectral__interp__mod.html#a54dfd0ea8368242a1053d64770bd295a",
+"structip__station__points__grid__mod_1_1ip__station__points__grid.html#a4a2a0dab09f05931d12615b0ac74bc51"
 ];
 
 var SYNCONMSG = 'click to disable panel synchronisation';

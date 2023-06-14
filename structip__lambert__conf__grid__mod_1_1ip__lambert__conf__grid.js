@@ -1,8 +1,17 @@
 var structip__lambert__conf__grid__mod_1_1ip__lambert__conf__grid =
 [
     [ "field_pos", "structip__lambert__conf__grid__mod_1_1ip__lambert__conf__grid.html#ac071b3d3eca9a5fa88ff5dc211d19179", null ],
+    [ "gdswzd", "structip__lambert__conf__grid__mod_1_1ip__lambert__conf__grid.html#aa69861340bc268b91a1076048ed489fc", null ],
+    [ "init", "structip__lambert__conf__grid__mod_1_1ip__lambert__conf__grid.html#a1f3fa40acb8c2ae4a65c00db21872d7c", null ],
+    [ "init_grib1", "structip__lambert__conf__grid__mod_1_1ip__lambert__conf__grid.html#a35dd86b4a9017f5b03a0a6a01eb4d370", null ],
+    [ "init_grib2", "structip__lambert__conf__grid__mod_1_1ip__lambert__conf__grid.html#a64129413df8ea478ab1360fd1a274e9a", null ],
+    [ "descriptor", "structip__lambert__conf__grid__mod_1_1ip__lambert__conf__grid.html#a4a2a0dab09f05931d12615b0ac74bc51", null ],
+    [ "dxs", "structip__lambert__conf__grid__mod_1_1ip__lambert__conf__grid.html#aa3288a7fbf2db34946116c771e5bc7dc", null ],
+    [ "dys", "structip__lambert__conf__grid__mod_1_1ip__lambert__conf__grid.html#a46fa89562e4dd23c765029d2d6c087bc", null ],
     [ "eccen_squared", "structip__lambert__conf__grid__mod_1_1ip__lambert__conf__grid.html#a180a5da6c470fac34b8439d4c0a32d2a", null ],
+    [ "h", "structip__lambert__conf__grid__mod_1_1ip__lambert__conf__grid.html#a733c8a9b6ed498aeec73fa8f11283c03", null ],
     [ "im", "structip__lambert__conf__grid__mod_1_1ip__lambert__conf__grid.html#a546a9c3bb8e93ec8e8f7eaf2a14537dc", null ],
+    [ "irot", "structip__lambert__conf__grid__mod_1_1ip__lambert__conf__grid.html#a0d90490fa5eb04604fc0e01bea2cf3cf", null ],
     [ "iwrap", "structip__lambert__conf__grid__mod_1_1ip__lambert__conf__grid.html#ae179622b9a4c764a5ca90385330941ed", null ],
     [ "jm", "structip__lambert__conf__grid__mod_1_1ip__lambert__conf__grid.html#a41a2a38288864520d8c50854d1843f87", null ],
     [ "jwrap1", "structip__lambert__conf__grid__mod_1_1ip__lambert__conf__grid.html#a92976f110dd7e823799991137ac970a1", null ],
@@ -11,5 +20,10 @@ var structip__lambert__conf__grid__mod_1_1ip__lambert__conf__grid =
     [ "nm", "structip__lambert__conf__grid__mod_1_1ip__lambert__conf__grid.html#a2ae87fb4e6bdcb75fc6fdc80ad73ee30", null ],
     [ "nscan", "structip__lambert__conf__grid__mod_1_1ip__lambert__conf__grid.html#a1a15aa48354dbbd0b8debafbfc6e7b18", null ],
     [ "nscan_field_pos", "structip__lambert__conf__grid__mod_1_1ip__lambert__conf__grid.html#a0640093c52461763f904cc2f12c96b6c", null ],
-    [ "rerth", "structip__lambert__conf__grid__mod_1_1ip__lambert__conf__grid.html#a2bb4d4ec2455c3148313bf7cc54e1cc8", null ]
+    [ "orient", "structip__lambert__conf__grid__mod_1_1ip__lambert__conf__grid.html#a0614cfdb69e59e3c3e2937f3319fe34a", null ],
+    [ "rerth", "structip__lambert__conf__grid__mod_1_1ip__lambert__conf__grid.html#a2bb4d4ec2455c3148313bf7cc54e1cc8", null ],
+    [ "rlat1", "structip__lambert__conf__grid__mod_1_1ip__lambert__conf__grid.html#a618bb61b83c39dd344264933e51fa932", null ],
+    [ "rlati1", "structip__lambert__conf__grid__mod_1_1ip__lambert__conf__grid.html#a7dcfaef2adc076604ad32d1ecd1f1cb4", null ],
+    [ "rlati2", "structip__lambert__conf__grid__mod_1_1ip__lambert__conf__grid.html#ae8b2c54b8d00685e179fec7786422f3b", null ],
+    [ "rlon1", "structip__lambert__conf__grid__mod_1_1ip__lambert__conf__grid.html#ab7e9e396d5eeb63c8079a901c2c8743f", null ]
 ];

@@ -1,8 +1,8 @@
 var namespaceip__grid__mod =
 [
-    [ "gdswzd_interface", "interfaceip__grid__mod_1_1gdswzd__interface.html", null ],
-    [ "init_grib1_interface", "interfaceip__grid__mod_1_1init__grib1__interface.html", null ],
-    [ "init_grib2_interface", "interfaceip__grid__mod_1_1init__grib2__interface.html", null ],
+    [ "gdswzd_interface", "interfaceip__grid__mod_1_1gdswzd__interface.html", "interfaceip__grid__mod_1_1gdswzd__interface" ],
+    [ "init_grib1_interface", "interfaceip__grid__mod_1_1init__grib1__interface.html", "interfaceip__grid__mod_1_1init__grib1__interface" ],
+    [ "init_grib2_interface", "interfaceip__grid__mod_1_1init__grib2__interface.html", "interfaceip__grid__mod_1_1init__grib2__interface" ],
     [ "ip_grid", "structip__grid__mod_1_1ip__grid.html", "structip__grid__mod_1_1ip__grid" ],
     [ "operator(==)", "interfaceip__grid__mod_1_1operator_07_0a_0a_08.html", "interfaceip__grid__mod_1_1operator_07_0a_0a_08" ],
     [ "field_pos", "namespaceip__grid__mod.html#a63572318d74ec94c20c5ccd6ded2d442", null ],

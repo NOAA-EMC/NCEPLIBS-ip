@@ -1,5 +1,10 @@
 var searchData=
 [
-  ['lambert_5fconf_5fgrid_5fid_5fgrib1_0',['lambert_conf_grid_id_grib1',['../namespaceip__grid__mod.html#ab82b90d20f38ff39741f6890fa422d16',1,'ip_grid_mod']]],
-  ['lambert_5fconf_5fgrid_5fid_5fgrib2_1',['lambert_conf_grid_id_grib2',['../namespaceip__grid__mod.html#a2e49846c9122b1fe1fcdbb2913fc32fe',1,'ip_grid_mod']]]
+  ['j1_178',['j1',['../namespaceip__gaussian__grid__mod.html#af5c4024263aa3eaef5801849ae32c15a',1,'ip_gaussian_grid_mod']]],
+  ['jg_179',['jg',['../structip__gaussian__grid__mod_1_1ip__gaussian__grid.html#a110f99e158a977a1679133235fa06c34',1,'ip_gaussian_grid_mod::ip_gaussian_grid']]],
+  ['jh_180',['jh',['../structip__gaussian__grid__mod_1_1ip__gaussian__grid.html#a549ccd3ce1f5c75d99e8e04d4d4341b4',1,'ip_gaussian_grid_mod::ip_gaussian_grid::jh()'],['../namespaceip__gaussian__grid__mod.html#a67d6cd6d188a8bded8bdf64927617028',1,'ip_gaussian_grid_mod::jh()']]],
+  ['jm_181',['jm',['../structip__grid__mod_1_1ip__grid.html#a41a2a38288864520d8c50854d1843f87',1,'ip_grid_mod::ip_grid']]],
+  ['jscan_182',['jscan',['../structip__gaussian__grid__mod_1_1ip__gaussian__grid.html#a3e199827f764b162a14515e837c28903',1,'ip_gaussian_grid_mod::ip_gaussian_grid']]],
+  ['jwrap1_183',['jwrap1',['../structip__grid__mod_1_1ip__grid.html#a92976f110dd7e823799991137ac970a1',1,'ip_grid_mod::ip_grid']]],
+  ['jwrap2_184',['jwrap2',['../structip__grid__mod_1_1ip__grid.html#ae70be8cebcd217a49be4da1cebfc19d2',1,'ip_grid_mod::ip_grid']]]
 ];
