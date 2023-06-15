@@ -22,7 +22,7 @@ jobs:
     strategy:
       matrix:
         openmp: [ ON, OFF ]
-        options: [ -DBUILD_D=OFF, -DBUILD_4=OFF -DBUILD_TESTING=OFF ]
+        options: [ -DBUILD_D=OFF -DBUILD_TESTING=OFF, -DBUILD_4=OFF ]
         
     steps:
 
