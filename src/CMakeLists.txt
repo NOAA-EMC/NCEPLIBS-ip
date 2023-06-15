@@ -29,7 +29,6 @@ endif()
 
 # We build a version of the library with 4-byte reals (_4), and one
 # with 8-byte reals (_d).
-set(kinds "4" "d")
 foreach(kind ${kinds})
   set(lib_name ${PROJECT_NAME}_${kind})
   set(module_dir "${CMAKE_CURRENT_BINARY_DIR}/include_${kind}")
