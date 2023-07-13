@@ -1,6 +1,15 @@
 ! This is a test for the NCEPLBS-ip library.
 !
 ! Kyle Gerheiser June, 2021
+
+#if (LSIZE==D)
+#define REALSIZE 8
+#define REALSIZESTR "8"
+#elif (LSIZE==4)
+#define REALSIZE 4
+#define REALSIZESTR "4"
+#endif
+
 module interp_mod_grib2
   use ip_mod
   implicit none
@@ -63,13 +72,18 @@ contains
 
     logical*1, allocatable    :: output_bitmap(:,:)
 
-    real, allocatable         :: output_rlat(:), output_rlon(:)
-    real, allocatable         :: output_data(:,:)
+    real(KIND=REALSIZE), allocatable         :: output_rlat(:), output_rlon(:)
+    real(KIND=REALSIZE), allocatable         :: output_data(:,:)
     real                      :: station_ref_output(4)
     real(kind=4), allocatable :: baseline_data(:,:)
     real                      :: avgdiff, maxdiff
     real(kind=4)              :: output_data4
+#if (LSIZE==D)
     real, parameter           :: abstol=0.0001
+#elif (LSIZE==4)
+    real, parameter           :: abstol=0.001
+#endif
+
 
     integer, parameter        :: gdtlen3 = 19  ! ncep grid3; one-degree lat/lon
     integer                   :: gdtmpl3(gdtlen3)
@@ -232,8 +246,8 @@ contains
     allocate (baseline_data(i_output,j_output))
 
     if (trim(grid) .eq. '-1') then
-        output_rlat = (/ 45.0, 35.0, 40.0, 35.0 /)
-        output_rlon = (/ -100.0, -100.0, -90.0, -120.0 /)
+        output_rlat = REAL((/ 45.0, 35.0, 40.0, 35.0 /), KIND=REALSIZE)
+        output_rlon = REAL((/ -100.0, -100.0, -90.0, -120.0 /), KIND=REALSIZE)
     endif
 
     do which_func=1,2
@@ -248,6 +262,11 @@ contains
                  mi, mo, km, ibi_scalar, input_bitmap, input_data, &
                  no, output_rlat, output_rlon, ibo_scalar, output_bitmap, output_data, iret)
         endif
+
+! Uncomment to generate new baseline file:
+!        open (13, file="grid"//trim(grid)//".opt"//trim(interp_opt)//".bin_"//REALSIZESTR, access="direct", recl=mo*4)
+!        write (13, rec=1) real(output_data, kind=4)
+!        close (13)
 
         if (trim(grid) .eq. '-1') then
             select case (interp_opt)
@@ -404,17 +423,20 @@ contains
     integer     , parameter   :: missing=4294967296
 
     logical*1, allocatable    :: output_bitmap(:,:)
-
-    real, allocatable         :: output_rlat(:), output_rlon(:)
-    real, allocatable         :: output_crot(:), output_srot(:)
-    real, allocatable         :: output_u_data(:,:), output_v_data(:,:)
+    real(KIND=REALSIZE), allocatable         :: output_rlat(:), output_rlon(:)
+    real(KIND=REALSIZE), allocatable         :: output_crot(:), output_srot(:)
+    real(KIND=REALSIZE), allocatable         :: output_u_data(:,:), output_v_data(:,:)
     real                      :: avg_u_diff, avg_v_diff
     real                      :: max_u_diff, max_v_diff
     real(kind=4)              :: output_data4
     real(kind=4), allocatable :: baseline_u_data(:,:)
     real(kind=4), allocatable :: baseline_v_data(:,:)
     real                      :: station_ref_output_u(4), station_ref_output_v(4)
+#if (LSIZE==D)
     real, parameter           :: abstol=0.0001
+#elif (LSIZE==4)
+    real, parameter           :: abstol=0.001
+#endif
 
     integer, parameter        :: gdtlen3 = 19  ! ncep grid3; one-degree lat/lon
     integer                   :: gdtmpl3(gdtlen3)
@@ -578,8 +600,8 @@ contains
     allocate (output_bitmap(i_output,j_output))
 
     if (trim(grid) .eq. '-1') then
-        output_rlat = (/ 45.0, 35.0, 40.0, 90.0 /)
-        output_rlon = (/ -100.0, -100.0, -90.0, 10.0 /)
+        output_rlat = REAL((/ 45.0, 35.0, 40.0, 90.0 /), KIND=REALSIZE)
+        output_rlon = REAL((/ -100.0, -100.0, -90.0, 10.0 /), KIND=REALSIZE)
         output_srot = 0.0   ! no turning of wind
         output_crot = 1.0   ! no turning of wind
     endif
@@ -602,6 +624,12 @@ contains
                  no, output_rlat, output_rlon, output_crot, output_srot, &
                  ibo_scalar, output_bitmap, output_u_data, output_v_data, iret)
         endif
+
+! Uncomment to generate new baseline file:
+!        open (13, file="grid"//trim(grid)//".opt"//trim(interp_opt)//".bin_"//REALSIZESTR, access="direct", recl=mo*4)
+!        write (13, rec=1) real(output_u_data, kind=4)
+!        write (13, rec=2) real(output_v_data, kind=4)
+!        close (13)
 
         if (trim(grid) .eq. '-1') then
             select case (interp_opt)
