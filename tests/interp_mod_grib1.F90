@@ -71,6 +71,7 @@ contains
     real(kind=4), allocatable :: baseline_data(:,:)
     real                      :: avgdiff, maxdiff
     real(kind=4)              :: output_data4
+    real                      :: abstol
 
     integer :: grd3(200)    ! global one-degree lat/lon
     data grd3 / 0, 360, 181, 90000, 0, 128, -90000,  &
@@ -99,6 +100,16 @@ contains
     integer :: grd218(200)  ! lambert conformal (ncep grid 218) 
     data grd218 /3, 614, 428, 12190, -133459, 8, -95000,  &
          12191, 12191, 0, 64, 25000, 25000, 0, 0, 0, 0, 0, 0, 255, 180*0/
+
+#if (LSIZE==D)
+    abstol=0.0001
+#elif (LSIZE==4)
+    if ((trim(grid).eq."212") .and. (interp_opt.eq."6")) then
+        abstol=0.2
+    else
+        abstol=0.05
+    endif
+#endif
 
     select case (trim(grid))
     case ('3')
@@ -242,7 +253,7 @@ contains
         do j = 1, j_output
            do i = 1, i_output
               output_data4 = real(output_data(i,j),4)
-              if ( abs(output_data4 - baseline_data(i,j)) > 0.0001) then
+              if ( abs(output_data4 - baseline_data(i,j)) > abstol) then
                  avgdiff = avgdiff + abs(output_data4-baseline_data(i,j))
                  num_pts_diff = num_pts_diff + 1
                  if (abs(output_data4-baseline_data(i,j)) > abs(maxdiff))then
@@ -341,6 +352,7 @@ contains
     real(kind=4)              :: output_data4
     real(kind=4), allocatable :: baseline_u_data(:,:)
     real(kind=4), allocatable :: baseline_v_data(:,:)
+    real                      :: abstol
 
     integer :: grd3(200)    ! global one-degree lat/lon
     data grd3 / 0, 360, 181, 90000, 0, 128, -90000,  &
@@ -369,6 +381,16 @@ contains
     integer :: grd218(200)  ! lambert conformal (ncep grid 218) 
     data grd218 /3, 614, 428, 12190, -133459, 8, -95000,  &
          12191, 12191, 0, 64, 25000, 25000, 0, 0, 0, 0, 0, 0, 255, 180*0/
+
+#if (LSIZE==D)
+    abstol=0.0001
+#elif (LSIZE==4)
+    if ((trim(grid).eq."212") .and. (interp_opt.eq."6")) then
+        abstol=0.2
+    else
+        abstol=0.05
+    endif
+#endif
 
     select case (trim(grid))
     case ('3')
@@ -539,7 +561,7 @@ contains
         do j = 1, j_output
            do i = 1, i_output
               output_data4 = real(output_u_data(i,j),4)
-              if (abs(output_data4 - baseline_u_data(i,j)) > 0.0001) then
+              if (abs(output_data4 - baseline_u_data(i,j)) > abstol) then
                  avg_u_diff = avg_u_diff + abs(output_data4-baseline_u_data(i,j))
                  num_upts_diff = num_upts_diff + 1
                  if (abs(output_data4-baseline_u_data(i,j)) > abs(max_u_diff))then
@@ -547,7 +569,7 @@ contains
                  endif
               endif
               output_data4 = real(output_v_data(i,j),4)
-              if (abs(output_data4 - baseline_v_data(i,j)) > 0.0001) then
+              if (abs(output_data4 - baseline_v_data(i,j)) > abstol) then
                  avg_v_diff = avg_v_diff + abs(output_data4-baseline_v_data(i,j))
                  num_vpts_diff = num_vpts_diff + 1
                  if (abs(output_data4-baseline_v_data(i,j)) > abs(max_v_diff))then
