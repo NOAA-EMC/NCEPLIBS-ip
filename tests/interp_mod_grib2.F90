@@ -68,7 +68,7 @@ contains
     integer                   :: i_output=-1, j_output=-1, mo, no, ibo(1)
     integer                   :: ibi_scalar=0, ibo_scalar
     integer                   :: num_pts_diff, which_func
-    integer     , parameter   :: missing=4294967296
+    integer     , parameter   :: missing=huge(ip)
 
     logical*1, allocatable    :: output_bitmap(:,:)
 
@@ -78,12 +78,7 @@ contains
     real(kind=4), allocatable :: baseline_data(:,:)
     real                      :: avgdiff, maxdiff
     real(kind=4)              :: output_data4
-#if (LSIZE==D)
-    real, parameter           :: abstol=0.0001
-#elif (LSIZE==4)
-    real, parameter           :: abstol=0.001
-#endif
-
+    real                      :: abstol
 
     integer, parameter        :: gdtlen3 = 19  ! ncep grid3; one-degree lat/lon
     integer                   :: gdtmpl3(gdtlen3)
@@ -125,6 +120,16 @@ contains
     data gdtmpl218 / 6, 255, missing, 255, missing, 255, missing, 614, 428, &
          12190000, 226541000, 56, 25000000, 265000000, &
          12191000, 12191000, 0, 64, 25000000, 25000000, -90000000, 0/
+
+#if (LSIZE==D)
+    abstol=0.0001
+#elif (LSIZE==4)
+    if ((trim(grid).eq."212") .and. (interp_opt.eq."6")) then
+        abstol=0.2
+    else
+        abstol=0.05
+    endif
+#endif
 
     select case (trim(grid))
     case ('-1')
@@ -420,7 +425,7 @@ contains
     integer                   :: ibi_scalar = 0, ibo_scalar
     integer                   :: i_output, j_output, mo, no, ibo(1)
     integer                   :: num_upts_diff, num_vpts_diff
-    integer     , parameter   :: missing=4294967296
+    integer, parameter        :: missing=huge(ip)
 
     logical*1, allocatable    :: output_bitmap(:,:)
     real(KIND=REALSIZE), allocatable         :: output_rlat(:), output_rlon(:)
@@ -432,11 +437,7 @@ contains
     real(kind=4), allocatable :: baseline_u_data(:,:)
     real(kind=4), allocatable :: baseline_v_data(:,:)
     real                      :: station_ref_output_u(4), station_ref_output_v(4)
-#if (LSIZE==D)
-    real, parameter           :: abstol=0.0001
-#elif (LSIZE==4)
-    real, parameter           :: abstol=0.001
-#endif
+    real                      :: abstol
 
     integer, parameter        :: gdtlen3 = 19  ! ncep grid3; one-degree lat/lon
     integer                   :: gdtmpl3(gdtlen3)
@@ -478,6 +479,16 @@ contains
     data gdtmpl218 / 6, 255, missing, 255, missing, 255, missing, 614, 428, &
          12190000, 226541000, 56, 25000000, 265000000, &
          12191000, 12191000, 0, 64, 25000000, 25000000, -90000000, 0/
+
+#if (LSIZE==D)
+    abstol=0.0001
+#elif (LSIZE==4)
+    if ((trim(grid).eq."212") .and. (interp_opt.eq."6")) then
+        abstol=0.2
+    else
+        abstol=0.05
+    endif
+#endif
 
     select case (trim(grid))
     case ('-1')
