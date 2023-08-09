@@ -25,9 +25,6 @@ jobs:
       matrix:
         openmp: [ ON, OFF ]
         compilers: ["CC=icc FC=ifort", "CC=icx FC=ifx"]
-        exclude:
-          - openmp: ON
-            compilers: "CC=icx FC=ifx"
 
     steps:
 
