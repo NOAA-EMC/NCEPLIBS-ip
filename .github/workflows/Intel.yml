@@ -25,6 +25,9 @@ jobs:
       matrix:
         openmp: [ ON, OFF ]
         compilers: ["CC=icc FC=ifort", "CC=icx FC=ifx"]
+        exclude:
+          - openmp: ON
+            compilers: "CC=icx FC=ifx"
 
     steps:
 
@@ -37,7 +40,7 @@ jobs:
         rm GPG-PUB-KEY-INTEL-SW-PRODUCTS.PUB
         echo "deb https://apt.repos.intel.com/oneapi all main" | sudo tee /etc/apt/sources.list.d/oneAPI.list
         sudo apt-get update
-        sudo apt-get install intel-oneapi-dev-utilities intel-oneapi-mpi-devel intel-oneapi-openmp intel-oneapi-compiler-fortran intel-oneapi-compiler-dpcpp-cpp-and-cpp-classic
+        sudo apt-get install intel-oneapi-dev-utilities-2021.9.0 intel-oneapi-mpi-devel-2021.9.0 intel-oneapi-openmp-2023.1.0 intel-oneapi-compiler-fortran-2023.1.0 intel-oneapi-compiler-dpcpp-cpp-and-cpp-classic-2023.1.0
         echo "source /opt/intel/oneapi/setvars.sh" >> ~/.bash_profile
       
     - name: cache-sp
@@ -51,9 +54,9 @@ jobs:
       if: steps.cache-sp.outputs.cache-hit != 'true'
       uses: actions/checkout@v2
       with:
-        repository: AlexanderRichert-NOAA/NCEPLIBS-sp
+        repository: NOAA-EMC/NCEPLIBS-sp
         path: sp
-        ref: add_intel_llvm
+        ref: v2.3.3
 
     - name: build-sp
       if: steps.cache-sp.outputs.cache-hit != 'true'
