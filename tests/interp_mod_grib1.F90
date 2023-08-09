@@ -1,6 +1,15 @@
 ! This is a test for the NCEPLBS-ip library.
 !
 ! Kyle Gerheiser June, 2021
+
+#if (LSIZE==D)
+#define REALSIZE 8
+#define REALSIZESTR "8"
+#elif (LSIZE==4)
+#define REALSIZE 4
+#define REALSIZESTR "4"
+#endif
+
 module interp_mod_grib1
   use ip_mod
   implicit none
@@ -53,15 +62,16 @@ contains
     integer                   :: ip, ipopt(20), output_kgds(200)
     integer                   :: km, ibi(1), mi, iret, i, j, ibi_scalar=0
     integer                   :: i_output, j_output, mo, no, ibo(1), ibo_scalar
-    integer                   :: num_pts_diff, which_func
+    integer                   :: num_pts_diff, which_func, ntol
 
     logical*1, allocatable    :: output_bitmap(:,:)
 
-    real, allocatable         :: output_rlat(:), output_rlon(:)
-    real, allocatable         :: output_data(:,:)
+    real(KIND=REALSIZE), allocatable         :: output_rlat(:), output_rlon(:)
+    real(KIND=REALSIZE), allocatable         :: output_data(:,:)
     real(kind=4), allocatable :: baseline_data(:,:)
     real                      :: avgdiff, maxdiff
     real(kind=4)              :: output_data4
+    real                      :: abstol
 
     integer :: grd3(200)    ! global one-degree lat/lon
     data grd3 / 0, 360, 181, 90000, 0, 128, -90000,  &
@@ -90,6 +100,14 @@ contains
     integer :: grd218(200)  ! lambert conformal (ncep grid 218) 
     data grd218 /3, 614, 428, 12190, -133459, 8, -95000,  &
          12191, 12191, 0, 64, 25000, 25000, 0, 0, 0, 0, 0, 0, 255, 180*0/
+
+#if (LSIZE==D)
+    abstol=0.0001
+    ntol = 0
+#elif (LSIZE==4)
+    abstol=0.05
+    ntol = 10
+#endif
 
     select case (trim(grid))
     case ('3')
@@ -189,6 +207,11 @@ contains
                  no, output_rlat, output_rlon, ibo_scalar, output_bitmap, output_data, iret)
         endif
 
+! Uncomment to generate new baseline file:
+!        open (13, file="grid"//trim(grid)//".opt"//trim(interp_opt)//".bin_"//REALSIZESTR, access="direct", recl=mo*4)
+!        write (13, rec=1) real(output_data, kind=4)
+!        close (13)
+
         if (iret /= 0) then
            print*,'- BAD STATUS FROM IPOLATES: ', iret
            stop 6
@@ -228,7 +251,7 @@ contains
         do j = 1, j_output
            do i = 1, i_output
               output_data4 = real(output_data(i,j),4)
-              if ( abs(output_data4 - baseline_data(i,j)) > 0.0001) then
+              if ( abs(output_data4 - baseline_data(i,j)) > abstol) then
                  avgdiff = avgdiff + abs(output_data4-baseline_data(i,j))
                  num_pts_diff = num_pts_diff + 1
                  if (abs(output_data4-baseline_data(i,j)) > abs(maxdiff))then
@@ -247,8 +270,8 @@ contains
         endif
         print*,'- AVG DIFFERENCE: ', avgdiff
 
-        if (num_pts_diff > 0) then
-           print *, "Expected 0 points > 0, found: ", num_pts_diff
+        if (num_pts_diff > ntol) then
+           print *, "# DIFFERING POINTS: ", num_pts_diff
            error stop
         endif
     enddo ! which_func
@@ -315,18 +338,19 @@ contains
     integer                   :: km, ibi(1), mi, iret, i, j, which_func
     integer                   :: i_output, j_output, mo, no, ibo(1)
     integer                   :: ibi_scalar=0, ibo_scalar
-    integer                   :: num_upts_diff, num_vpts_diff
+    integer                   :: num_upts_diff, num_vpts_diff, ntol
 
     logical*1, allocatable    :: output_bitmap(:,:)
 
-    real, allocatable         :: output_rlat(:), output_rlon(:)
-    real, allocatable         :: output_crot(:), output_srot(:)
-    real, allocatable         :: output_u_data(:,:), output_v_data(:,:)
+    real(KIND=REALSIZE), allocatable         :: output_rlat(:), output_rlon(:)
+    real(KIND=REALSIZE), allocatable         :: output_crot(:), output_srot(:)
+    real(KIND=REALSIZE), allocatable         :: output_u_data(:,:), output_v_data(:,:)
     real                      :: avg_u_diff, avg_v_diff
     real                      :: max_u_diff, max_v_diff
     real(kind=4)              :: output_data4
     real(kind=4), allocatable :: baseline_u_data(:,:)
     real(kind=4), allocatable :: baseline_v_data(:,:)
+    real                      :: abstol
 
     integer :: grd3(200)    ! global one-degree lat/lon
     data grd3 / 0, 360, 181, 90000, 0, 128, -90000,  &
@@ -355,6 +379,14 @@ contains
     integer :: grd218(200)  ! lambert conformal (ncep grid 218) 
     data grd218 /3, 614, 428, 12190, -133459, 8, -95000,  &
          12191, 12191, 0, 64, 25000, 25000, 0, 0, 0, 0, 0, 0, 255, 180*0/
+
+#if (LSIZE==D)
+    abstol=0.0001
+    ntol = 0
+#elif (LSIZE==4)
+    abstol=0.05
+    ntol = 10
+#endif
 
     select case (trim(grid))
     case ('3')
@@ -458,6 +490,12 @@ contains
                  ibo_scalar, output_bitmap, output_u_data, output_v_data, iret)
         endif
 
+! Uncomment to generate new baseline file:
+!        open (13, file="grid"//trim(grid)//".opt"//trim(interp_opt)//".bin_"//REALSIZESTR, access="direct", recl=mo*4)
+!        write (13, rec=1) real(output_u_data, kind=4)
+!        write (13, rec=2) real(output_v_data, kind=4)
+!        close (13)
+
         if (iret /= 0) then
            print*,'- BAD STATUS FROM IPOLATES: ', iret
            stop 6
@@ -519,7 +557,7 @@ contains
         do j = 1, j_output
            do i = 1, i_output
               output_data4 = real(output_u_data(i,j),4)
-              if (abs(output_data4 - baseline_u_data(i,j)) > 0.0001) then
+              if (abs(output_data4 - baseline_u_data(i,j)) > abstol) then
                  avg_u_diff = avg_u_diff + abs(output_data4-baseline_u_data(i,j))
                  num_upts_diff = num_upts_diff + 1
                  if (abs(output_data4-baseline_u_data(i,j)) > abs(max_u_diff))then
@@ -527,7 +565,7 @@ contains
                  endif
               endif
               output_data4 = real(output_v_data(i,j),4)
-              if (abs(output_data4 - baseline_v_data(i,j)) > 0.0001) then
+              if (abs(output_data4 - baseline_v_data(i,j)) > abstol) then
                  avg_v_diff = avg_v_diff + abs(output_data4-baseline_v_data(i,j))
                  num_vpts_diff = num_vpts_diff + 1
                  if (abs(output_data4-baseline_v_data(i,j)) > abs(max_v_diff))then
@@ -555,8 +593,8 @@ contains
         endif
         print*,'- AVG DIFFERENCE: ', avg_v_diff
 
-        if (num_vpts_diff + num_upts_diff > 0) then
-           print *, "Expected 0 points > 0, found: ", num_upts_diff + num_vpts_diff
+        if (num_vpts_diff + num_upts_diff > ntol) then
+           print *, "# DIFFERING POINTS: ", num_upts_diff + num_vpts_diff
            error stop
         endif
     enddo ! which_func

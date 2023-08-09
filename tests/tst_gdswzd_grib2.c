@@ -17,9 +17,14 @@ int main()
 {
   int *igdtmpl;
   int igdtnum, igdtlen, iopt, npts, nret;
-  double fill;
-  double *xpts, *ypts, *rlon, *rlat;
-  double *crot, *srot, *xlon, *xlat, *ylon, *ylat, *area;
+#if(LSIZE==D)
+#define REALTYPE double
+#elif(LSIZE==4)
+#define REALTYPE float
+#endif
+  REALTYPE fill;
+  REALTYPE *xpts, *ypts, *rlon, *rlat;
+  REALTYPE *crot, *srot, *xlon, *xlat, *ylon, *ylat, *area;
 
   int im = 251;
   int jm = 201;
@@ -56,17 +61,17 @@ int main()
   npts = im * jm;
   fill = -9999.0;
 
-  xpts = (double *) malloc(npts * sizeof(double));
-  ypts = (double *) malloc(npts * sizeof(double));
-  rlon = (double *) malloc(npts * sizeof(double));
-  rlat = (double *) malloc(npts * sizeof(double));
-  crot = (double *) malloc(npts * sizeof(double));
-  srot = (double *) malloc(npts * sizeof(double));
-  xlon = (double *) malloc(npts * sizeof(double));
-  xlat = (double *) malloc(npts * sizeof(double));
-  ylon = (double *) malloc(npts * sizeof(double));
-  ylat = (double *) malloc(npts * sizeof(double));
-  area = (double *) malloc(npts * sizeof(double));
+  xpts = (REALTYPE *) malloc(npts * sizeof(REALTYPE));
+  ypts = (REALTYPE *) malloc(npts * sizeof(REALTYPE));
+  rlon = (REALTYPE *) malloc(npts * sizeof(REALTYPE));
+  rlat = (REALTYPE *) malloc(npts * sizeof(REALTYPE));
+  crot = (REALTYPE *) malloc(npts * sizeof(REALTYPE));
+  srot = (REALTYPE *) malloc(npts * sizeof(REALTYPE));
+  xlon = (REALTYPE *) malloc(npts * sizeof(REALTYPE));
+  xlat = (REALTYPE *) malloc(npts * sizeof(REALTYPE));
+  ylon = (REALTYPE *) malloc(npts * sizeof(REALTYPE));
+  ylat = (REALTYPE *) malloc(npts * sizeof(REALTYPE));
+  area = (REALTYPE *) malloc(npts * sizeof(REALTYPE));
 
 
   for (int j=0; j<jm; j++) {
@@ -91,21 +96,21 @@ int main()
           exit(1);
   }
   
-  double expectedLastCornerLat = 44.539;
-  double expectedLastCornerLon = 14.802;
+  REALTYPE expectedLastCornerLat = 44.539;
+  REALTYPE expectedLastCornerLon = 14.802;
 
-  double actualFirstCornerLat = rlat[0];
-  double actualFirstCornerLon = rlon[0] - 360.0;
-
-
-  double expectedFirstCornerLat = -7.491;
-  double expectedFirstCornerLon = -144.134;
-
-  double actualLastCornerLat = rlat[nret-1];
-  double actualLastCornerLon = rlon[nret-1];
+  REALTYPE actualFirstCornerLat = rlat[0];
+  REALTYPE actualFirstCornerLon = rlon[0] - 360.0;
 
 
-  double MAX_RELATIVE_DIFF = 0.01;
+  REALTYPE expectedFirstCornerLat = -7.491;
+  REALTYPE expectedFirstCornerLon = -144.134;
+
+  REALTYPE actualLastCornerLat = rlat[nret-1];
+  REALTYPE actualLastCornerLon = rlon[nret-1];
+
+
+  REALTYPE MAX_RELATIVE_DIFF = 0.01;
 
   printf(" First corner point lat/lon = %f %f \n", actualFirstCornerLat, actualFirstCornerLon);
   printf(" Expected lat/lon           = -7.491 -144.134 \n\n");

@@ -21,32 +21,40 @@ if(${CMAKE_Fortran_COMPILER_ID} MATCHES "^(GNU)$" AND ${CMAKE_Fortran_COMPILER_V
   set(CMAKE_Fortran_FLAGS "${CMAKE_Fortran_FLAGS} -w -fallow-argument-mismatch -fallow-invalid-boz")
 endif()
 
-foreach(kind "d")
+foreach(kind ${kinds})
+  string(TOUPPER ${kind} kind_definition)
+
   # Test ipxwafs routines
   add_executable(test_ipxwafs_${kind} test_ipxwafs.F90)
   target_link_libraries(test_ipxwafs_${kind} PUBLIC ip::ip_${kind})
   target_link_libraries(test_ipxwafs_${kind} PUBLIC sp::sp_${kind})
+  target_compile_definitions(test_ipxwafs_${kind} PRIVATE "LSIZE=${kind_definition}")
   add_test(test_ipxwafs_${kind} test_ipxwafs_${kind})
 
   # Test earth_radius_mod.
   add_executable(test_earth_radius_${kind} test_earth_radius.F90)
   target_link_libraries(test_earth_radius_${kind} PUBLIC ip::ip_${kind})
   target_link_libraries(test_earth_radius_${kind} PUBLIC sp::sp_${kind})
+  target_compile_definitions(test_earth_radius_${kind} PRIVATE "LSIZE=${kind_definition}")
   add_test(test_earth_radius_${kind} test_earth_radius_${kind})
   
   # grib-2 tests
   add_library(test_library_grib2_${kind} input_data_mod_grib2.F90 interp_mod_grib2.F90)
   target_link_libraries(test_library_grib2_${kind} PUBLIC ip::ip_${kind})
   target_link_libraries(test_library_grib2_${kind} PUBLIC sp::sp_${kind})
+  target_compile_definitions(test_library_grib2_${kind} PRIVATE "LSIZE=${kind_definition}")
   
   add_executable(tst_gdswzd_grib2_${kind} tst_gdswzd_grib2.c)
   set_target_properties(tst_gdswzd_grib2_${kind} PROPERTIES LINKER_LANGUAGE C)
+  target_compile_definitions(tst_gdswzd_grib2_${kind} PRIVATE "LSIZE=${kind_definition}")
   add_executable(test_scalar_grib2_${kind} test_scalar_grib2.F90)
   add_executable(test_vector_grib2_${kind} test_vector_grib2.F90)
   
   target_link_libraries(tst_gdswzd_grib2_${kind} PRIVATE test_library_grib2_${kind})
   target_link_libraries(test_scalar_grib2_${kind} PRIVATE test_library_grib2_${kind})
   target_link_libraries(test_vector_grib2_${kind} PRIVATE test_library_grib2_${kind})
+  target_compile_definitions(test_scalar_grib2_${kind} PRIVATE "LSIZE=${kind_definition}")
+  target_compile_definitions(test_vector_grib2_${kind} PRIVATE "LSIZE=${kind_definition}")
   
   add_test(tst_gdswzd_c_grib2_${kind} tst_gdswzd_grib2_${kind})
   
@@ -68,7 +76,7 @@ foreach(kind "d")
   add_test(test_station_points_neighbor_budget_scalar_grib2_${kind} test_scalar_grib2_${kind} -1 6)
   
   # # vector tests
-  add_test(test_lambert_biliner_vector_grib2_${kind} test_vector_grib2_${kind} 218 0)
+  add_test(test_lambert_bilinear_vector_grib2_${kind} test_vector_grib2_${kind} 218 0)
   add_test(test_gaussian_neighbor_vector_grib2_${kind} test_vector_grib2_${kind} 127 2)
   add_test(test_latlon_bilinear_vector_grib2_${kind} test_vector_grib2_${kind} 3 0)
   add_test(test_mercator_bicubic_vector_grib2_${kind} test_vector_grib2_${kind} 8 1)
@@ -88,9 +96,11 @@ foreach(kind "d")
   add_library(test_library_grib1_${kind} input_data_mod_grib1.F90 interp_mod_grib1.F90)
   target_link_libraries(test_library_grib1_${kind} PUBLIC ip::ip_${kind})
   target_link_libraries(test_library_grib1_${kind} PUBLIC sp::sp_${kind})
+  target_compile_definitions(test_library_grib1_${kind} PRIVATE "LSIZE=${kind_definition}")
   
   add_executable(tst_gdswzd_grib1_${kind} tst_gdswzd_grib1.c)
   set_target_properties(tst_gdswzd_grib1_${kind} PROPERTIES LINKER_LANGUAGE C)
+  target_compile_definitions(tst_gdswzd_grib1_${kind} PRIVATE "LSIZE=${kind_definition}")
   add_executable(test_scalar_grib1_${kind} test_scalar_grib1.F90)
   add_executable(test_vector_grib1_${kind} test_vector_grib1.F90)
   
@@ -104,12 +114,12 @@ foreach(kind "d")
   add_test(test_gaussian_neighbor_scalar_grib1_${kind} test_scalar_grib1_${kind} 127 2)
   add_test(test_latlon_bilinear_scalar_grib1_${kind} test_scalar_grib1_${kind} 3 0)
   add_test(test_mercator_bicubic_scalar_grib1_${kind} test_scalar_grib1_${kind} 8 1)
-  add_test(test_polar_stereo_neighbor_budget_scalar_${kind} test_scalar_grib1_${kind} 212 6)
-  add_test(test_rotatedB_spectral_scalar_${kind} test_scalar_grib1_${kind} 205 4)
+  add_test(test_polar_stereo_neighbor_budget_scalar_grib1_${kind} test_scalar_grib1_${kind} 212 6)
+  add_test(test_rotatedB_spectral_scalar_grib1_${kind} test_scalar_grib1_${kind} 205 4)
   add_test(test_rotatedE_budget_scalar_grib1_${kind} test_scalar_grib1_${kind} 203 3)
   
   # vector tests
-  add_test(test_lambert_biliner_vector_grib1_${kind} test_vector_grib1_${kind} 218 0)
+  add_test(test_lambert_bilinear_vector_grib1_${kind} test_vector_grib1_${kind} 218 0)
   add_test(test_gaussian_neighbor_vector_grib1_${kind} test_vector_grib1_${kind} 127 2)
   add_test(test_latlon_bilinear_vector_grib1_${kind} test_vector_grib1_${kind} 3 0)
   add_test(test_mercator_bicubic_vector_grib1_${kind} test_vector_grib1_${kind} 8 1)

@@ -1,6 +1,12 @@
 ! This is a test for the NCEPLIBS-ip library.
 !
 ! Alex Richert, June 2023
+
+#if (LSIZE==D)
+#define REALSIZE 8
+#elif (LSIZE==4)
+#define REALSIZE 4
+#endif
 program test_ipxwafs
 
   implicit none
@@ -15,9 +21,9 @@ program test_ipxwafs
   logical(kind=1)  :: bitmap_thin(nthin,1)=.true.
   logical(kind=1)  :: bitmap_full(nfull,1)
   !
-  real             :: data_thin(nthin,1)
-  real             :: data_thin_contract(nthin,1)
-  real             :: data_full(nfull,1)
+  real(KIND=REALSIZE)             :: data_thin(nthin,1)
+  real(KIND=REALSIZE)             :: data_thin_contract(nthin,1)
+  real(KIND=REALSIZE)             :: data_full(nfull,1)
   real             :: ref_data(10)
   real, parameter  :: abstol=1e-6
 
@@ -35,7 +41,7 @@ program test_ipxwafs
       igdtmpl_thin(19) = 64
 
       do i=1,nthin
-        data_thin(i,1) = real(i)/nthin
+        data_thin(i,1) = real(i,KIND=REALSIZE)/nthin
       enddo
 
       if (which_func .eq. 1) then
