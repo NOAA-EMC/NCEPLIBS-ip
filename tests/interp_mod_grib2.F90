@@ -68,7 +68,7 @@ contains
     integer                   :: i_output=-1, j_output=-1, mo, no, ibo(1)
     integer                   :: ibi_scalar=0, ibo_scalar
     integer                   :: num_pts_diff, which_func, ntol
-    integer     , parameter   :: missing=huge(ip)
+    integer     , parameter   :: missing=huge(0)
 
     logical*1, allocatable    :: output_bitmap(:,:)
 
@@ -423,7 +423,7 @@ contains
     integer                   :: ibi_scalar = 0, ibo_scalar
     integer                   :: i_output, j_output, mo, no, ibo(1)
     integer                   :: num_upts_diff, num_vpts_diff, ntol
-    integer, parameter        :: missing=huge(ip)
+    integer, parameter        :: missing=huge(0)
 
     logical*1, allocatable    :: output_bitmap(:,:)
     real(KIND=REALSIZE), allocatable         :: output_rlat(:), output_rlon(:)
