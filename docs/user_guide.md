@@ -34,10 +34,11 @@ argument of these routines (variable IP). Sub-options are set via the
 IPOPT array.
 
 It should be noted that some routines may behave poorly or unpredictably when
-using 4-byte reals (-DBUILD_4=ON). For instance, there is an ATAN2 function
+using 4-byte reals (libip_4). For instance, there is an ATAN2 function
 used for polar stereo grids where for certain grids/coordinates, floating point
 differences between 4-byte output values (~1e-7) can be amplified into
-noticeable differences in output field values.
+noticeable differences in output field values. Some applications may therefore
+benefit from the use of 8-byte reals (libip_d).
 
 ### Bilinear Interpolation
 
