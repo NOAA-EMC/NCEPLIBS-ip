@@ -9,7 +9,7 @@ execute_process(COMMAND cmake -E create_symlink
   )
 
 # Set compiler flags for intel.
-if(CMAKE_Fortran_COMPILER_ID MATCHES "^(Intel)$")
+if(CMAKE_Fortran_COMPILER_ID MATCHES "^(Intel|IntelLLVM)$")
   set(CMAKE_Fortran_FLAGS "-r8 -g -traceback -check all -warn all -heap-arrays -assume byterecl ${CMAKE_Fortran_FLAGS} ")
   set(CMAKE_C_FLAGS "-std=c99")
 elseif(CMAKE_Fortran_COMPILER_ID MATCHES "^(GNU)$")
