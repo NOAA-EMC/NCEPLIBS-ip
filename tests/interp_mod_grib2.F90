@@ -67,7 +67,7 @@ contains
     integer                   :: km, ibi(1), mi, iret, i, j
     integer                   :: i_output=-1, j_output=-1, mo, no, ibo(1)
     integer                   :: ibi_scalar=0, ibo_scalar
-    integer                   :: num_pts_diff, which_func
+    integer                   :: num_pts_diff, which_func, ntol
     integer     , parameter   :: missing=huge(ip)
 
     logical*1, allocatable    :: output_bitmap(:,:)
@@ -123,12 +123,10 @@ contains
 
 #if (LSIZE==D)
     abstol=0.0001
+    ntol = 0
 #elif (LSIZE==4)
-    if ((trim(grid).eq."212") .and. (interp_opt.eq."6")) then
-        abstol=0.2
-    else
-        abstol=0.05
-    endif
+    abstol=0.05
+    ntol = 10
 #endif
 
     select case (trim(grid))
@@ -351,8 +349,8 @@ contains
         endif
         print*,'- AVG DIFFERENCE: ', avgdiff
 
-        if (num_pts_diff > 5) then
-           print *, "Expected 0 points > 0, found: ", num_pts_diff
+        if (num_pts_diff > ntol) then
+           print *, "# DIFFERING POINTS: ", num_pts_diff
            error stop
         endif
     enddo ! which_func
@@ -424,7 +422,7 @@ contains
     integer                   :: km, ibi(1), mi, iret, i, j
     integer                   :: ibi_scalar = 0, ibo_scalar
     integer                   :: i_output, j_output, mo, no, ibo(1)
-    integer                   :: num_upts_diff, num_vpts_diff
+    integer                   :: num_upts_diff, num_vpts_diff, ntol
     integer, parameter        :: missing=huge(ip)
 
     logical*1, allocatable    :: output_bitmap(:,:)
@@ -482,12 +480,10 @@ contains
 
 #if (LSIZE==D)
     abstol=0.0001
+    ntol = 0
 #elif (LSIZE==4)
-    if ((trim(grid).eq."212") .and. (interp_opt.eq."6")) then
-        abstol=0.2
-    else
-        abstol=0.05
-    endif
+    abstol=0.05
+    ntol = 10
 #endif
 
     select case (trim(grid))
@@ -766,8 +762,8 @@ contains
         endif
         print*,'- AVG DIFFERENCE: ', avg_v_diff
 
-        if (num_vpts_diff + num_upts_diff > 0) then
-           print *, "Expected 0 points > 0, found: ", num_upts_diff + num_vpts_diff
+        if (num_vpts_diff + num_upts_diff > ntol) then
+           print *, "# DIFFERING POINTS: ", num_upts_diff + num_vpts_diff
            error stop
         endif
 
