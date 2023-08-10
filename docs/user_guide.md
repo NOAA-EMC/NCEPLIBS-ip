@@ -7,6 +7,11 @@ The NCEP general interpolation library (NCEPLIBS-ip) contains Fortran
 used at NCEP. The library is particularly efficient when interpolating
 many fields at one time.
 
+NCEPLIBS-ip supports compilation with the GNU Compiler Collection 
+(gfortran), Intel Classic (ifort), and Intel LLVM (ifx) compilers.
+In the case of Intel LLVM, it is recommended to use at least version
+2023.2.1 to avoid any number of compiler issues.
+
 ## Interpolation
 
 There are currently six interpolation methods available in the
