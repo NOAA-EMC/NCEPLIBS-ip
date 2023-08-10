@@ -45,15 +45,15 @@ jobs:
       uses: actions/cache@v2
       with:
         path: ~/sp
-        key: sp-${{ runner.os }}-Intel-${{ matrix.openmp }}-test
+        key: sp-${{ runner.os }}-Intel-${{ matrix.openmp }}-test-llvm
 
     - name: checkout-sp
       if: steps.cache-sp.outputs.cache-hit != 'true'
       uses: actions/checkout@v2
       with:
-        repository: NOAA-EMC/NCEPLIBS-sp
+        repository: AlexanderRichert-NOAA/NCEPLIBS-sp
         path: sp
-        ref: v2.3.3
+        ref: add_intel_llvm
 
     - name: build-sp
       if: steps.cache-sp.outputs.cache-hit != 'true'
