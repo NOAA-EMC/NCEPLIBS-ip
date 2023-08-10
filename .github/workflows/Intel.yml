@@ -45,7 +45,7 @@ jobs:
       uses: actions/cache@v2
       with:
         path: ~/sp
-        key: sp-${{ runner.os }}-Intel-${{ matrix.openmp }}-test-llvm
+        key: sp-${{ runner.os }}-Intel-${{ matrix.compilers }}-${{ matrix.openmp }}-alextest
 
     - name: checkout-sp
       if: steps.cache-sp.outputs.cache-hit != 'true'
