@@ -1,6 +1,6 @@
 # This is a CI workflow for the NCEPLIBS-ip project.
 #
-# This workflow builds with the Intel compiler.
+# This workflow builds with the Intel Classic and OneAPI compilers.
 #
 # Ed Hartnett, 1/8/23
 name: Intel
@@ -21,13 +21,10 @@ defaults:
 jobs:
   Intel:
     runs-on: ubuntu-latest
-    env:
-      CC: icc
-      FC: ifort
-      CXX: icpc
     strategy:
       matrix:
         openmp: [ ON, OFF ]
+        compilers: ["CC=icc FC=ifort", "CC=icx FC=ifx"]
 
     steps:
 
@@ -48,15 +45,15 @@ jobs:
       uses: actions/cache@v2
       with:
         path: ~/sp
-        key: sp-${{ runner.os }}-Intel-${{ matrix.openmp }}-2.3.3-1
+        key: sp-${{ runner.os }}-Intel-${{ matrix.compilers }}-${{ matrix.openmp }}-alextest
 
     - name: checkout-sp
       if: steps.cache-sp.outputs.cache-hit != 'true'
       uses: actions/checkout@v2
       with:
-        repository: NOAA-EMC/NCEPLIBS-sp
+        repository: AlexanderRichert-NOAA/NCEPLIBS-sp
         path: sp
-        ref: v2.3.3
+        ref: add_intel_llvm
 
     - name: build-sp
       if: steps.cache-sp.outputs.cache-hit != 'true'
@@ -64,7 +61,7 @@ jobs:
         cd sp
         mkdir build
         cd build
-        cmake -DCMAKE_INSTALL_PREFIX=~/sp -DOPENMP=${{ matrix.openmp}} ..
+        ${{ matrix.compilers }} cmake -DCMAKE_INSTALL_PREFIX=~/sp -DOPENMP=${{ matrix.openmp}} ..
         make -j2
         make install
 
@@ -78,7 +75,7 @@ jobs:
         cd ip
         mkdir build 
         cd build
-        cmake -DOPENMP=${{ matrix.openmp }} -DBUILD_SHARED_LIBS=OFF -DCMAKE_PREFIX_PATH="~/sp" ..
+        ${{ matrix.compilers }} cmake -DOPENMP=${{ matrix.openmp }} -DBUILD_SHARED_LIBS=OFF -DCMAKE_PREFIX_PATH="~/sp" ..
         make -j2 VERBOSE=1
     
     - name: test
