@@ -19,6 +19,9 @@ module neighbor_budget_interp_mod
      module procedure interpolate_neighbor_budget_vector
   end interface interpolate_neighbor_budget
 
+  ! Smallest positive real value (use for equality comparisons)
+  REAL :: TINYREAL=TINY(1.0)
+
 contains
 
   !> Interpolate scalar fields (budget).
@@ -189,7 +192,7 @@ contains
        LB=MAX(ABS(IB),ABS(JB))
        WB=1
        IF(LSW.EQ.1) WB=IPOPT(2+LB)
-       IF(WB.NE.0) THEN
+       IF(ABS(WB).GT.TINYREAL) THEN
           DO N=1,NO
              XPTB(N)=XPTS(N)+IB/REAL(NB2)
              YPTB(N)=YPTS(N)+JB/REAL(NB2)
@@ -205,7 +208,7 @@ contains
           DO N=1,NO
              XI=XPTB(N)
              YI=YPTB(N)
-             IF(XI.NE.FILL.AND.YI.NE.FILL) THEN
+             IF(ABS(XI-FILL).GT.TINYREAL.AND.ABS(YI-FILL).GT.TINYREAL) THEN
                 I1=NINT(XI)
                 J1=NINT(YI)
                 N11(N)=grid_in%field_pos(i1, j1)
@@ -470,7 +473,7 @@ contains
        LB=MAX(ABS(IB),ABS(JB))
        WB=1
        IF(LSW.EQ.1) WB=IPOPT(2+LB)
-       IF(WB.NE.0) THEN
+       IF(ABS(WB).GT.TINYREAL) THEN
           DO N=1,NO
              XPTB(N)=XPTS(N)+IB/REAL(NB2)
              YPTB(N)=YPTS(N)+JB/REAL(NB2)
@@ -486,7 +489,7 @@ contains
           DO N=1,NO
              XI=XPTB(N)
              YI=YPTB(N)
-             IF(XI.NE.FILL.AND.YI.NE.FILL) THEN
+             IF(ABS(XI-FILL).GT.TINYREAL.AND.ABS(YI-FILL).GT.TINYREAL) THEN
                 I1=NINT(XI)
                 J1=NINT(YI)
                 N11(N)=grid_in%field_pos(i1, j1)

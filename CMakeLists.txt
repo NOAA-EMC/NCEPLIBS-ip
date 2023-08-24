@@ -14,7 +14,7 @@ include(GNUInstallDirs)
 
 # Handle user options.
 option(ENABLE_DOCS "Enable generation of doxygen-based documentation." OFF)
-option(OPENMP "use OpenMP threading" OFF)
+option(OPENMP "Use OpenMP threading" OFF)
 option(BUILD_SHARED_LIBS "Build shared libraries" OFF)
 option(BUILD_4 "Build the 4-byte real version of the library, libip_4.a" ON)
 option(BUILD_D "Build the 8-byte real version of the library, libip_d.a" ON)
@@ -45,6 +45,21 @@ endif()
 
 # We need the NCEPLIBS-sp library.
 find_package(sp 2.3.0 REQUIRED)
+
+# Set compiler flags.
+if(CMAKE_Fortran_COMPILER_ID MATCHES "^(Intel|IntelLLVM)$")
+  set(CMAKE_Fortran_FLAGS "-g -traceback -assume byterecl -fp-model strict -fpp -auto ${CMAKE_Fortran_FLAGS}")
+  set(CMAKE_Fortran_FLAGS_DEBUG "-O0 -check all -warn all")
+  if(CMAKE_Fortran_COMPILER_ID MATCHES "^(IntelLLVM)$")
+    # Avoid Intel OneAPI 2023.2.1 bug
+    set(CMAKE_Fortran_FLAGS_DEBUG "${CMAKE_Fortran_FLAGS_DEBUG} -check nouninit ")
+  endif()
+  set(fortran_d_flags "-r8")
+elseif(CMAKE_Fortran_COMPILER_ID MATCHES "^(GNU)$")
+  set(CMAKE_Fortran_FLAGS "-g -fbacktrace -cpp -fimplicit-none ${CMAKE_Fortran_FLAGS}")
+  set(CMAKE_Fortran_FLAGS_DEBUG "-O0 -ggdb -Wall -Wno-unused-dummy-argument -Wsurprising -Wextra -fcheck=all")
+  set(fortran_d_flags "-fdefault-real-8")
+endif()
 
 # This is the source code directiroy.
 add_subdirectory(src)

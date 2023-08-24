@@ -21,6 +21,9 @@ module bilinear_interp_mod
      module procedure interpolate_bilinear_vector
   end interface interpolate_bilinear
 
+  ! Smallest positive real value (use for equality comparisons)
+  REAL :: TINYREAL=TINY(1.0)
+
 contains
 
   !> This subprogram performs bilinear interpolation
@@ -165,7 +168,7 @@ contains
              RLATX(N)=RLAT(N)
              XIJ=XPTS(N)
              YIJ=YPTS(N)
-             IF(XIJ.NE.FILL.AND.YIJ.NE.FILL) THEN
+             IF(ABS(XIJ-FILL).GT.TINYREAL.AND.ABS(YIJ-FILL).GT.TINYREAL) THEN
                 IJX(1:2)=FLOOR(XIJ)+(/0,1/)
                 IJY(1:2)=FLOOR(YIJ)+(/0,1/)
                 XF=XIJ-IJX(1)
@@ -217,7 +220,7 @@ contains
           LO(N,K)=W.GE.PMP
           IF(LO(N,K)) THEN
              GO(N,K)=G/W
-          ELSEIF(MSPIRAL.GT.0.AND.XPTS(N).NE.FILL.AND.YPTS(N).NE.FILL) THEN
+          ELSEIF(MSPIRAL.GT.0.AND.ABS(XPTS(N)-FILL).GT.TINYREAL.AND.ABS(YPTS(N)-FILL).GT.TINYREAL) THEN
              I1=NINT(XPTS(N))
              J1=NINT(YPTS(N))
              IXS=INT(SIGN(1.,XPTS(N)-I1))
@@ -429,7 +432,7 @@ contains
              SROTX(N)=SROT(N)
              XIJ=XPTS(N)
              YIJ=YPTS(N)
-             IF(XIJ.NE.FILL.AND.YIJ.NE.FILL) THEN
+             IF(ABS(XIJ-FILL).GT.TINYREAL.AND.ABS(YIJ-FILL).GT.TINYREAL) THEN
                 IJX(1:2)=FLOOR(XIJ)+(/0,1/)
                 IJY(1:2)=FLOOR(YIJ)+(/0,1/)
                 XF=XIJ-IJX(1)

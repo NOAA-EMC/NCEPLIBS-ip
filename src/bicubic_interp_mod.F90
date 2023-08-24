@@ -19,6 +19,9 @@ module bicubic_interp_mod
      module procedure interpolate_bicubic_vector
   end interface interpolate_bicubic
 
+  ! Smallest positive real value (use for equality comparisons)
+  REAL :: TINYREAL=TINY(1.0)
+
 contains
 
   !> This subprogram performs bicubic interpolation
@@ -174,7 +177,7 @@ contains
              RLATX(N)=RLAT(N)
              XIJ=XPTS(N)
              YIJ=YPTS(N)
-             IF(XIJ.NE.FILL.AND.YIJ.NE.FILL) THEN
+             IF(ABS(XIJ-FILL).GT.TINYREAL.AND.ABS(YIJ-FILL).GT.TINYREAL) THEN
                 IJX(1:4)=FLOOR(XIJ-1)+(/0,1,2,3/)
                 IJY(1:4)=FLOOR(YIJ-1)+(/0,1,2,3/)
                 XF=XIJ-IJX(2)
@@ -439,7 +442,7 @@ contains
              SROTX(N)=SROT(N)
              XIJ=XPTS(N)
              YIJ=YPTS(N)
-             IF(XIJ.NE.FILL.AND.YIJ.NE.FILL) THEN
+             IF(ABS(XIJ-FILL).GT.TINYREAL.AND.ABS(YIJ-FILL).GT.TINYREAL) THEN
                 IJX(1:4)=FLOOR(XIJ-1)+(/0,1,2,3/)
                 IJY(1:4)=FLOOR(YIJ-1)+(/0,1,2,3/)
                 XF=XIJ-IJX(2)

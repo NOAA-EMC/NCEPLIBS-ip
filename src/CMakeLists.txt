@@ -16,17 +16,6 @@ ip_rot_equid_cylind_egrid_mod.F90 ip_rot_equid_cylind_grid_mod.F90
 constants_mod.F90 ip_grids_mod.F90 ip_grid_factory_mod.F90
 ip_interpolators_mod.F90 earth_radius_mod.F90 polfix_mod.F90)
 
-# Set compiler flags.
-if(CMAKE_Fortran_COMPILER_ID MATCHES "^(Intel|IntelLLVM)$")
-  set(CMAKE_Fortran_FLAGS "-g -traceback -warn all -auto -convert big_endian -assume byterecl -fp-model strict -fpp ${CMAKE_Fortran_FLAGS}")
-  set(CMAKE_Fortran_FLAGS_DEBUG "-O0 -check all -warn all")
-  set(fortran_d_flags "-r8")
-elseif(CMAKE_Fortran_COMPILER_ID MATCHES "^(GNU)$")
-  set(CMAKE_Fortran_FLAGS "-g  -fbacktrace -fconvert=big-endian -cpp ${CMAKE_Fortran_FLAGS}")
-  set(CMAKE_Fortran_FLAGS_DEBUG "-O0 -ggdb -Wall -fcheck=all")
-  set(fortran_d_flags "-fdefault-real-8")
-endif()
-
 # We build a version of the library with 4-byte reals (_4), and one
 # with 8-byte reals (_d).
 foreach(kind ${kinds})

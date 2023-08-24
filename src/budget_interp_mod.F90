@@ -23,6 +23,9 @@ module budget_interp_mod
      module procedure interpolate_budget_vector
   end interface interpolate_budget
 
+  ! Smallest positive real value (use for equality comparisons)
+  REAL :: TINYREAL=TINY(1.0)
+
 contains
 
   !> Performs budget interpolation from any grid to any grid (or to
@@ -195,7 +198,7 @@ contains
        ELSEIF(LSW.EQ.1) THEN
           WB=IPOPT(2+LB)
        ENDIF
-       IF(WB.NE.0) THEN
+       IF(ABS(WB).GT.TINYREAL) THEN
           !$OMP PARALLEL DO PRIVATE(N) SCHEDULE(STATIC)
           DO N=1,NO
              XPTB(N)=XPTS(N)+IB*RB2
@@ -214,7 +217,7 @@ contains
           DO N=1,NO
              XI=XPTB(N)
              YI=YPTB(N)
-             IF(XI.NE.FILL.AND.YI.NE.FILL) THEN
+             IF(ABS(XI-FILL).GT.TINYREAL.AND.ABS(YI-FILL).GT.TINYREAL) THEN
                 I1=INT(XI)
                 I2=I1+1
                 J1=INT(YI)
@@ -556,7 +559,7 @@ contains
        ELSEIF(IPOPT(2).NE.-1) THEN
           WB=IPOPT(2+LB)
        ENDIF
-       IF(WB.NE.0) THEN
+       IF(ABS(WB).GT.TINYREAL) THEN
           !$OMP PARALLEL DO PRIVATE(N) SCHEDULE(STATIC)
           DO N=1,NO
              XPTB(N)=XPTS(N)+IB*RB2
@@ -576,7 +579,7 @@ contains
           DO N=1,NO
              XI=XPTB(N)
              YI=YPTB(N)
-             IF(XI.NE.FILL.AND.YI.NE.FILL) THEN
+             IF(ABS(XI-FILL).GT.TINYREAL.AND.ABS(YI-FILL).GT.TINYREAL) THEN
                 I1=INT(XI)
                 I2=I1+1
                 WI2=XI-I1

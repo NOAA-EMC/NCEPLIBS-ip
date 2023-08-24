@@ -8,16 +8,13 @@ execute_process(COMMAND cmake -E create_symlink
   "${CMAKE_CURRENT_BINARY_DIR}/data" # New name
   )
 
-# Set compiler flags for intel.
+# Set compiler flags.
+set(CMAKE_Fortran_FLAGS "${CMAKE_Fortran_FLAGS} ${CMAKE_Fortran_FLAGS_DEBUG}")
 if(CMAKE_Fortran_COMPILER_ID MATCHES "^(Intel|IntelLLVM)$")
-  set(CMAKE_Fortran_FLAGS "-r8 -g -check all -traceback -warn all -heap-arrays -assume byterecl ${CMAKE_Fortran_FLAGS} ")
-  if(CMAKE_Fortran_COMPILER_ID MATCHES "^(IntelLLVM)$")
-    # Avoid Intel OneAPI 2023.2.1 bug
-    set(CMAKE_Fortran_FLAGS "${CMAKE_Fortran_FLAGS} -check nouninit ")
-  endif()
+  set(CMAKE_Fortran_FLAGS "-r8 -heap-arrays ${CMAKE_Fortran_FLAGS}")
   set(CMAKE_C_FLAGS "-std=c99")
 elseif(CMAKE_Fortran_COMPILER_ID MATCHES "^(GNU)$")
-  set(CMAKE_Fortran_FLAGS "-fdefault-real-8 -fno-range-check -g -fbacktrace -fcheck=all -Wall -O0 -fimplicit-none -Wsurprising -Wextra ${CMAKE_Fortran_FLAGS} ")
+  set(CMAKE_Fortran_FLAGS "-fdefault-real-8 ${CMAKE_Fortran_FLAGS}")
 endif()
 
 # Set compiler flags for GNU.
