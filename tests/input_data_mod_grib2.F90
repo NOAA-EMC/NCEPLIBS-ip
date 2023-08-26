@@ -27,7 +27,7 @@ module input_data_mod_grib2
   integer, public                :: input_gdtmpl(input_gdtlen)
   integer, public                :: vector_input_gdtmpl(input_gdtlen)
   
-  integer, parameter :: missing=4294967296
+  integer, parameter :: missing=huge(1)
 
   real(KIND=REALSIZE), allocatable, public      :: input_data(:,:)
   real(KIND=REALSIZE), allocatable, public      :: input_u_data(:,:)

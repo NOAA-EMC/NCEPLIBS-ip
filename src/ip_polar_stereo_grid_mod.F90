@@ -49,6 +49,7 @@ module ip_polar_stereo_grid_mod
   REAL :: RERTH !< Radius of the Earth.
   REAL :: H !< Local copy of h.
   REAL :: ORIENT !< Local copy of orient.
+  REAL :: TINYREAL=TINY(1.0) !< Smallest positive real value (use for equality comparisons)
 
 CONTAINS
 
@@ -102,7 +103,7 @@ CONTAINS
       HI=(-1.)**ISCAN
       HJ=(-1.)**(1-JSCAN)
 
-      IF(self%H.EQ.-1)self%ORIENT=self%ORIENT+180.
+      IF(ABS(self%H+1.).LT.TINYREAL) self%ORIENT=self%ORIENT+180.
 
       self%DXS=DX*HI
       self%DYS=DY*HJ
@@ -405,8 +406,8 @@ CONTAINS
        IF(.NOT.ELLIPTICAL)THEN
           !$OMP PARALLEL DO PRIVATE(N,DR,DR2) REDUCTION(+:NRET) SCHEDULE(STATIC)
           DO N=1,NPTS
-             IF(ABS(RLON(N)).LE.360.AND.ABS(RLAT(N)).LE.90.AND. &
-                  H*RLAT(N).NE.-90) THEN
+             IF(ABS(RLON(N)).LT.(360.+TINYREAL).AND.ABS(RLAT(N)).LT.(90.+TINYREAL).AND. &
+                  ABS(H*RLAT(N)+90).GT.TINYREAL) THEN
                 DR=DE*TAN((90-H*RLAT(N))/2/DPR)
                 DR2=DR**2
                 XPTS(N)=XP+H*SIN((RLON(N)-ORIENT)/DPR)*DR/DXS
@@ -431,8 +432,8 @@ CONTAINS
        ELSE  ! ELLIPTICAL CASE
           !$OMP PARALLEL DO PRIVATE(N,ALAT,ALONG,T,RHO) REDUCTION(+:NRET) SCHEDULE(STATIC)
           DO N=1,NPTS
-             IF(ABS(RLON(N)).LE.360.AND.ABS(RLAT(N)).LE.90.AND.  &
-                  H*RLAT(N).NE.-90) THEN
+             IF(ABS(RLON(N)).LT.(360+TINYREAL).AND.ABS(RLAT(N)).LT.(90+TINYREAL).AND.  &
+                  ABS(H*RLAT(N)+90).GT.TINYREAL) THEN
                 ALAT = H*RLAT(N)/DPR
                 ALONG = (RLON(N)-ORIENT)/DPR
                 T=TAN(PI4-ALAT*0.5)/((1.-E*SIN(ALAT))/  &

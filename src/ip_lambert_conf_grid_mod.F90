@@ -47,6 +47,7 @@ module ip_lambert_conf_grid_mod
   REAL :: DYS !< y-direction grid length adjusted for scan model. GRIB2, Section 3, octets 60-63.
   REAL :: H !<  Hemisphere flag. 1-NH, minus 1-SH.
   REAL :: RERTH !< Radius of the earth. GRIB2, Section 3, octets 15-30.
+  REAL :: TINYREAL=TINY(1.0) !< Smallest positive real value (use for equality comparisons)
 
 contains
 
@@ -269,14 +270,14 @@ contains
 
     rerth = self%rerth
 
-    IF(RLATI1.EQ.RLATI2) THEN
+    IF(ABS(RLATI1-RLATI2).LT.TINYREAL) THEN
        AN=SIN(RLATI1/DPR)
     ELSE
        AN=LOG(COS(RLATI1/DPR)/COS(RLATI2/DPR))/ &
             LOG(TAN((90-RLATI1)/2/DPR)/TAN((90-RLATI2)/2/DPR))
     ENDIF
     DE=RERTH*COS(RLATI1/DPR)*TAN((RLATI1+90)/2/DPR)**AN/AN
-    IF(H*RLAT1.EQ.90) THEN
+    IF(ABS(H*RLAT1-90).LT.TINYREAL) THEN
        XP=1
        YP=1
     ELSE
@@ -341,8 +342,8 @@ contains
     ELSEIF(IOPT.EQ.-1) THEN
        !$OMP PARALLEL DO PRIVATE(N,DR,DLON) REDUCTION(+:NRET) SCHEDULE(STATIC)
        DO N=1,NPTS
-          IF(ABS(RLON(N)).LE.360.AND.ABS(RLAT(N)).LE.90.AND. &
-               H*RLAT(N).NE.-90) THEN
+          IF(ABS(RLON(N)).LT.(360.+TINYREAL).AND.ABS(RLAT(N)).LT.(90.+TINYREAL).AND. &
+               ABS(H*RLAT(N)+90).GT.TINYREAL) THEN
              DR=H*DE*TAN((90-RLAT(N))/2/DPR)**AN
              DLON=MOD(RLON(N)-ORIENT+180+3600,360.)-180
              XPTS(N)=XP+H*SIN(AN*DLON/DPR)*DR/DXS

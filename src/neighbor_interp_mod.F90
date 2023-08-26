@@ -31,6 +31,9 @@ module neighbor_interp_mod
      module procedure interpolate_neighbor_vector
   end interface interpolate_neighbor
 
+  ! Smallest positive real value (use for equality comparisons)
+  REAL :: TINYREAL=TINY(1.0)
+
 contains
 
   !> Interpolate scalar fields (neighbor).
@@ -185,7 +188,7 @@ contains
              RLATX(N)=RLAT(N)
              XPTSX(N)=XPTS(N)
              YPTSX(N)=YPTS(N)
-             IF(XPTS(N).NE.FILL.AND.YPTS(N).NE.FILL) THEN
+             IF(ABS(XPTS(N)-FILL).GT.TINYREAL.AND.ABS(YPTS(N)-FILL).GT.TINYREAL) THEN
                 nxy(n) = grid_in%field_pos(NINT(XPTS(N)), NINT(YPTS(N)))
              ELSE
                 NXY(N)=0
@@ -449,7 +452,7 @@ contains
              YPTSX(N)=YPTS(N)
              CROTX(N)=CROT(N)
              SROTX(N)=SROT(N)
-             IF(XPTS(N).NE.FILL.AND.YPTS(N).NE.FILL) THEN
+             IF(ABS(XPTS(N)-FILL).GT.TINYREAL.AND.ABS(YPTS(N)-FILL).GT.TINYREAL) THEN
                 nxy(n) = grid_in%field_pos(NINT(XPTS(N)),NINT(YPTS(N)))
                 IF(NXY(N).GT.0) THEN
                    CALL MOVECT(RLAI(NXY(N)),RLOI(NXY(N)),RLAT(N),RLON(N),CM,SM)
