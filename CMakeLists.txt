@@ -32,7 +32,7 @@ if(BUILD_8)
   set(kinds ${kinds} "8")
 endif()
 if(NOT BUILD_4 AND NOT BUILD_D AND NOT BUILD_8)
-  message(FATAL_ERROR "At least one of BUILD_4 or BUILD_D must be turned on")
+  message(FATAL_ERROR "At least one of BUILD_4, BUILD_D, and BUILD_8 must be turned on")
 endif()
 message(STATUS "Library kinds that will be build: ${kinds}")
 
@@ -48,19 +48,6 @@ if(OPENMP)
   find_package(OpenMP REQUIRED COMPONENTS Fortran)
 endif()
 
-# Set compiler flags.
-if(CMAKE_Fortran_COMPILER_ID MATCHES "^(Intel)$")
-  set(CMAKE_Fortran_FLAGS "-g -traceback -warn all -auto -convert big_endian -assume byterecl -fp-model strict -fpp ${CMAKE_Fortran_FLAGS}")
-  set(CMAKE_Fortran_FLAGS_DEBUG "-O0 -check all -warn all")
-  set(fortran_d_flags "-r8")
-  set(fortran_8_flags "-i8 -r8")
-elseif(CMAKE_Fortran_COMPILER_ID MATCHES "^(GNU)$")
-  set(CMAKE_Fortran_FLAGS "-g  -fbacktrace -fconvert=big-endian -cpp ${CMAKE_Fortran_FLAGS}")
-  set(CMAKE_Fortran_FLAGS_DEBUG "-O0 -ggdb -Wall -fcheck=all")
-  set(fortran_d_flags "-fdefault-real-8")
-  set(fortran_8_flags "-fdefault-integer-8 -fdefault-real-8")
-endif()
-
 # We need the NCEPLIBS-sp library.
 find_package(sp 2.3.0 REQUIRED)
 
@@ -73,10 +60,12 @@ if(CMAKE_Fortran_COMPILER_ID MATCHES "^(Intel|IntelLLVM)$")
     set(CMAKE_Fortran_FLAGS_DEBUG "${CMAKE_Fortran_FLAGS_DEBUG} -check nouninit ")
   endif()
   set(fortran_d_flags "-r8")
+  set(fortran_8_flags "-i8 -r8")
 elseif(CMAKE_Fortran_COMPILER_ID MATCHES "^(GNU)$")
   set(CMAKE_Fortran_FLAGS "-g -fbacktrace -cpp -fimplicit-none ${CMAKE_Fortran_FLAGS}")
   set(CMAKE_Fortran_FLAGS_DEBUG "-O0 -ggdb -Wall -Wno-unused-dummy-argument -Wsurprising -Wextra -fcheck=all")
   set(fortran_d_flags "-fdefault-real-8")
+  set(fortran_8_flags "-fdefault-integer-8 -fdefault-real-8")
 endif()
 
 # This is the source code directiroy.

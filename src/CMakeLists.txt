@@ -16,8 +16,7 @@ ip_rot_equid_cylind_egrid_mod.F90 ip_rot_equid_cylind_grid_mod.F90
 constants_mod.F90 ip_grids_mod.F90 ip_grid_factory_mod.F90
 ip_interpolators_mod.F90 earth_radius_mod.F90 polfix_mod.F90)
 
-# We build a version of the library with 4-byte reals (_4), and one
-# with 8-byte reals (_d), and possibly one with 8 byte ints and reals (_8).
+# Build _4, _d, and/or _8 depending on options provided to CMake
 foreach(kind ${kinds})
   set(lib_name ${PROJECT_NAME}_${kind})
   set(module_dir "${CMAKE_CURRENT_BINARY_DIR}/include_${kind}")

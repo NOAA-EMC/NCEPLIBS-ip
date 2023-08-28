@@ -2,11 +2,6 @@
 !
 ! Alex Richert, June 2023
 
-#if (LSIZE==D)
-#define REALSIZE 8
-#elif (LSIZE==4)
-#define REALSIZE 4
-#endif
 program test_ipxwafs
 
   implicit none
@@ -15,15 +10,17 @@ program test_ipxwafs
   integer          :: igdtmpl_thin(19)=0
   integer          :: igdtmpl_full(19)
   integer          :: ib_thin(1)=0, ib_full(1)
-  integer          :: iret, i, which_func
+  integer          :: iret
+  integer          :: idir=1, km=1, num_opt=73, igdtlen=19
+  integer          :: i, which_func
   integer, parameter :: nthin = 3447, nfull = 5329
   !
   logical(kind=1)  :: bitmap_thin(nthin,1)=.true.
   logical(kind=1)  :: bitmap_full(nfull,1)
   !
-  real(KIND=REALSIZE)             :: data_thin(nthin,1)
-  real(KIND=REALSIZE)             :: data_thin_contract(nthin,1)
-  real(KIND=REALSIZE)             :: data_full(nfull,1)
+  real             :: data_thin(nthin,1)
+  real             :: data_thin_contract(nthin,1)
+  real             :: data_full(nfull,1)
   real             :: ref_data(10)
   real, parameter  :: abstol=1e-6
 
@@ -41,20 +38,20 @@ program test_ipxwafs
       igdtmpl_thin(19) = 64
 
       do i=1,nthin
-        data_thin(i,1) = real(i,KIND=REALSIZE)/nthin
+        data_thin(i,1) = real(i)/nthin
       enddo
 
       if (which_func .eq. 1) then
-          call ipxwafs(1, 3447, 5329, 1, 73, opt_pts, &
-             19, igdtmpl_thin, data_thin, &
+          call ipxwafs(idir, nthin, nfull, km, num_opt, opt_pts, &
+             igdtlen, igdtmpl_thin, data_thin, &
              igdtmpl_full, data_full, iret)
       elseif (which_func .eq. 2) then
-          call ipxwafs2(1, 3447, 5329, 1, 73, opt_pts, &
-             19, igdtmpl_thin, data_thin, ib_thin, bitmap_thin,  &
+          call ipxwafs2(idir, nthin, nfull, km, num_opt, opt_pts, &
+             igdtlen, igdtmpl_thin, data_thin, ib_thin, bitmap_thin,  &
              igdtmpl_full, data_full, ib_full, bitmap_full, iret)
       elseif (which_func .eq. 3) then
-          call ipxwafs3(1, 3447, 5329, 1, 73, opt_pts, &
-             19, igdtmpl_thin, data_thin, ib_thin, bitmap_thin,  &
+          call ipxwafs3(idir, nthin, nfull, km, num_opt, opt_pts, &
+             igdtlen, igdtmpl_thin, data_thin, ib_thin, bitmap_thin,  &
              igdtmpl_full, data_full, ib_full, bitmap_full, iret)
       endif
 
@@ -74,16 +71,16 @@ program test_ipxwafs
       igdtmpl_full(9)=73
       igdtmpl_full(17)=1250000
       if (which_func .eq. 1) then
-          call ipxwafs(-1, 3447, 5329, 1, 73, opt_pts, &
-             19, igdtmpl_thin, data_thin_contract, &
+          call ipxwafs(-idir, nthin, nfull, km, num_opt, opt_pts, &
+             igdtlen, igdtmpl_thin, data_thin_contract, &
              igdtmpl_full, data_full, iret)
       elseif (which_func .eq. 2) then
-          call ipxwafs2(-1, 3447, 5329, 1, 73, opt_pts, &
-             19, igdtmpl_thin, data_thin_contract, ib_thin, bitmap_thin,  &
+          call ipxwafs2(-idir, nthin, nfull, km, num_opt, opt_pts, &
+             igdtlen, igdtmpl_thin, data_thin_contract, ib_thin, bitmap_thin,  &
              igdtmpl_full, data_full, ib_full, bitmap_full, iret)
       elseif (which_func .eq. 3) then
-          call ipxwafs3(-1, 3447, 5329, 1, 73, opt_pts, &
-             19, igdtmpl_thin, data_thin_contract, ib_thin, bitmap_thin,  &
+          call ipxwafs3(-idir, nthin, nfull, km, num_opt, opt_pts, &
+             igdtlen, igdtmpl_thin, data_thin_contract, ib_thin, bitmap_thin,  &
              igdtmpl_full, data_full, ib_full, bitmap_full, iret)
       endif
       if (.not. all(abs(data_thin-data_thin_contract)<abstol)) stop 2

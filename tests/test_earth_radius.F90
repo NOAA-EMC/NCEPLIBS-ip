@@ -1,16 +1,22 @@
-#if (LSIZE==D)
-#define REALSIZE 8
-#elif (LSIZE==4)
+#if (LSIZE==4)
 #define REALSIZE 4
+#else
+#define REALSIZE 8
+#endif
+
+#if (LSIZE==8)
+#define INTSIZE 8
+#else
+#define INTSIZE 4
 #endif
 
 program test_earth_radius
   use earth_radius_mod
   implicit none
 
-  integer :: igdtlen
+  integer(KIND=INTSIZE) :: igdtlen
   parameter(igdtlen = 7)
-  integer :: igdtmpl(igdtlen)
+  integer(KIND=INTSIZE) :: igdtmpl(igdtlen)
   real(KIND=REALSIZE) :: eccen_squared
   real(KIND=REALSIZE) :: radius
   

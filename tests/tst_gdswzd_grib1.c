@@ -1,8 +1,3 @@
-#include <stdio.h>
-#include <stdlib.h>
-
-#include "iplib.h"
-
 /**************************************************************
   Unit test to ensure the 'c' wrapper routine for gdswzd
   is working.
@@ -12,20 +7,30 @@
   Tests the mixed precision version of gdswzd.
 **************************************************************/
 
-#if(LSIZE==D)
-#define REALTYPE double
-#elif(LSIZE==4)
+#include <stdio.h>
+#include <stdlib.h>
+
+#include "iplib.h"
+
+#if(LSIZE==4)
 #define REALTYPE float
+#else
+#define REALTYPE double
+#endif
+#if(LSIZE==8)
+#define INTTYPE long
+#else
+#define INTTYPE int
 #endif
 
-void gdswzd_grib1(int *, int, int, REALTYPE,
-         REALTYPE *, REALTYPE *, REALTYPE *, REALTYPE *, int *,
+void gdswzd_grib1(INTTYPE *, INTTYPE, INTTYPE, REALTYPE,
+         REALTYPE *, REALTYPE *, REALTYPE *, REALTYPE *, INTTYPE *,
          REALTYPE *, REALTYPE *, REALTYPE *, REALTYPE *, REALTYPE *, REALTYPE *, REALTYPE *);
 
 int main()
 {
-  int kgds[200];
-  int iopt, npts, nret;
+  INTTYPE kgds[200];
+  INTTYPE iopt, npts, nret;
   REALTYPE fill;
   REALTYPE *xpts, *ypts, *rlon, *rlat;
   REALTYPE *crot, *srot, *xlon, *xlat, *ylon, *ylat, *area;
