@@ -17,12 +17,12 @@ constants_mod.F90 ip_grids_mod.F90 ip_grid_factory_mod.F90
 ip_interpolators_mod.F90 earth_radius_mod.F90 polfix_mod.F90)
 
 # We build a version of the library with 4-byte reals (_4), and one
-# with 8-byte reals (_d).
+# with 8-byte reals (_d), and possibly one with 8 byte ints and reals (_8).
 foreach(kind ${kinds})
   set(lib_name ${PROJECT_NAME}_${kind})
   set(module_dir "${CMAKE_CURRENT_BINARY_DIR}/include_${kind}")
 
-  # Create the C header files for _4 or _d.
+  # Create the C header files for this kind.
   configure_file(ip2lib_${kind}.h ${CMAKE_CURRENT_BINARY_DIR}/include_${kind}/ip2lib.h COPYONLY)
   configure_file(iplib_${kind}.h ${CMAKE_CURRENT_BINARY_DIR}/include_${kind}/iplib.h COPYONLY)
 
