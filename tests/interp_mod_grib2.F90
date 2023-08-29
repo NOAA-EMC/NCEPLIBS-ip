@@ -2,14 +2,6 @@
 !
 ! Kyle Gerheiser June, 2021
 
-#if (LSIZE==D)
-#define REALSIZE 8
-#define REALSIZESTR "8"
-#elif (LSIZE==4)
-#define REALSIZE 4
-#define REALSIZESTR "4"
-#endif
-
 module interp_mod_grib2
   use ip_mod
   implicit none
@@ -63,17 +55,17 @@ contains
     character*100             :: baseline_file
 
     integer, allocatable      :: output_gdtmpl(:)
-    integer                   :: ip, ipopt(20), output_gdtlen, output_gdtnum
-    integer                   :: km, ibi(1), mi, iret, i, j
-    integer                   :: i_output=-1, j_output=-1, mo, no, ibo(1)
-    integer                   :: ibi_scalar=0, ibo_scalar
+    integer     :: ip, ipopt(20), output_gdtlen, output_gdtnum
+    integer     :: km, ibi(1), mi, iret, i, j
+    integer     :: i_output=-1, j_output=-1, mo, no, ibo(1)
+    integer     :: ibi_scalar=0, ibo_scalar
     integer                   :: num_pts_diff, which_func, ntol
     integer     , parameter   :: missing=huge(0)
 
     logical*1, allocatable    :: output_bitmap(:,:)
 
-    real(KIND=REALSIZE), allocatable         :: output_rlat(:), output_rlon(:)
-    real(KIND=REALSIZE), allocatable         :: output_data(:,:)
+    real, allocatable         :: output_rlat(:), output_rlon(:)
+    real, allocatable         :: output_data(:,:)
     real                      :: station_ref_output(4)
     real(kind=4), allocatable :: baseline_data(:,:)
     real                      :: avgdiff, maxdiff
@@ -121,12 +113,12 @@ contains
          12190000, 226541000, 56, 25000000, 265000000, &
          12191000, 12191000, 0, 64, 25000000, 25000000, -90000000, 0/
 
-#if (LSIZE==D)
-    abstol=0.0001
-    ntol = 0
-#elif (LSIZE==4)
+#if (LSIZE==4)
     abstol=0.05
     ntol = 10
+#else
+    abstol=0.0001
+    ntol = 0
 #endif
 
     select case (trim(grid))
@@ -249,8 +241,8 @@ contains
     allocate (baseline_data(i_output,j_output))
 
     if (trim(grid) .eq. '-1') then
-        output_rlat = REAL((/ 45.0, 35.0, 40.0, 35.0 /), KIND=REALSIZE)
-        output_rlon = REAL((/ -100.0, -100.0, -90.0, -120.0 /), KIND=REALSIZE)
+        output_rlat = REAL((/ 45.0, 35.0, 40.0, 35.0 /))
+        output_rlon = REAL((/ -100.0, -100.0, -90.0, -120.0 /))
     endif
 
     do which_func=1,2
@@ -267,7 +259,7 @@ contains
         endif
 
 ! Uncomment to generate new baseline file:
-!        open (13, file="grid"//trim(grid)//".opt"//trim(interp_opt)//".bin_"//REALSIZESTR, access="direct", recl=mo*4)
+!        open (13, file="grid"//trim(grid)//".opt"//trim(interp_opt)//".bin_"//"LSIZE", access="direct", recl=mo*4)
 !        write (13, rec=1) real(output_data, kind=4)
 !        close (13)
 
@@ -417,18 +409,18 @@ contains
     character*100             :: baseline_file
 
     integer, allocatable      :: output_gdtmpl(:)
-    integer                   :: ip, ipopt(20), output_gdtlen, output_gdtnum
-    integer                   :: which_func
-    integer                   :: km, ibi(1), mi, iret, i, j
-    integer                   :: ibi_scalar = 0, ibo_scalar
-    integer                   :: i_output, j_output, mo, no, ibo(1)
+    integer     :: ip, ipopt(20), output_gdtlen, output_gdtnum
+    integer     :: which_func
+    integer     :: km, ibi(1), mi, iret, i, j
+    integer     :: ibi_scalar = 0, ibo_scalar
+    integer     :: i_output, j_output, mo, no, ibo(1)
     integer                   :: num_upts_diff, num_vpts_diff, ntol
     integer, parameter        :: missing=huge(0)
 
     logical*1, allocatable    :: output_bitmap(:,:)
-    real(KIND=REALSIZE), allocatable         :: output_rlat(:), output_rlon(:)
-    real(KIND=REALSIZE), allocatable         :: output_crot(:), output_srot(:)
-    real(KIND=REALSIZE), allocatable         :: output_u_data(:,:), output_v_data(:,:)
+    real, allocatable         :: output_rlat(:), output_rlon(:)
+    real, allocatable         :: output_crot(:), output_srot(:)
+    real, allocatable         :: output_u_data(:,:), output_v_data(:,:)
     real                      :: avg_u_diff, avg_v_diff
     real                      :: max_u_diff, max_v_diff
     real(kind=4)              :: output_data4
@@ -478,12 +470,12 @@ contains
          12190000, 226541000, 56, 25000000, 265000000, &
          12191000, 12191000, 0, 64, 25000000, 25000000, -90000000, 0/
 
-#if (LSIZE==D)
-    abstol=0.0001
-    ntol = 0
-#elif (LSIZE==4)
+#if (LSIZE==4)
     abstol=0.05
     ntol = 10
+#else
+    abstol=0.0001
+    ntol = 0
 #endif
 
     select case (trim(grid))
@@ -607,8 +599,8 @@ contains
     allocate (output_bitmap(i_output,j_output))
 
     if (trim(grid) .eq. '-1') then
-        output_rlat = REAL((/ 45.0, 35.0, 40.0, 90.0 /), KIND=REALSIZE)
-        output_rlon = REAL((/ -100.0, -100.0, -90.0, 10.0 /), KIND=REALSIZE)
+        output_rlat = REAL((/ 45.0, 35.0, 40.0, 90.0 /))
+        output_rlon = REAL((/ -100.0, -100.0, -90.0, 10.0 /))
         output_srot = 0.0   ! no turning of wind
         output_crot = 1.0   ! no turning of wind
     endif
@@ -633,7 +625,7 @@ contains
         endif
 
 ! Uncomment to generate new baseline file:
-!        open (13, file="grid"//trim(grid)//".opt"//trim(interp_opt)//".bin_"//REALSIZESTR, access="direct", recl=mo*4)
+!        open (13, file="grid"//trim(grid)//".opt"//trim(interp_opt)//".bin_"//"LSIZE", access="direct", recl=mo*4)
 !        write (13, rec=1) real(output_u_data, kind=4)
 !        write (13, rec=2) real(output_v_data, kind=4)
 !        close (13)

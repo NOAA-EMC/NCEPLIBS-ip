@@ -1,6 +1,7 @@
 @PACKAGE_INIT@
 
 #  * @PROJECT_NAME@::@PROJECT_NAME@_4 - real32 library target
+#  * @PROJECT_NAME@::@PROJECT_NAME@_8 - real64 library target
 #  * @PROJECT_NAME@::@PROJECT_NAME@_d - mixed precision library target
 
 # Include targets file.  This will create IMPORTED target @PROJECT_NAME@

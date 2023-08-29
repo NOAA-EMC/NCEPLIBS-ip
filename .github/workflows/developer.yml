@@ -17,8 +17,8 @@ jobs:
   developer:
     runs-on: ubuntu-latest
     env:
-      FC: gfortran-9
-      CC: gcc-9
+      FC: gfortran-11
+      CC: gcc-11
 
     steps:
 
@@ -39,7 +39,7 @@ jobs:
         cd sp
         mkdir build
         cd build
-        cmake -DOPENMP=ON -DCMAKE_INSTALL_PREFIX=~/sp ..
+        cmake -DOPENMP=ON -DCMAKE_INSTALL_PREFIX=~/sp -DBUILD_8=ON ..
         make -j2
         make install
 
@@ -53,13 +53,13 @@ jobs:
         cd ip
         mkdir build 
         cd build
-        cmake -DENABLE_DOCS=YES -DCMAKE_PREFIX_PATH="~/" -DOPENMP=ON -DCMAKE_Fortran_FLAGS="-g -fprofile-abs-path -fprofile-arcs -ftest-coverage -O0 -fsanitize=address -Werror -Wno-unused-dummy-argument" -DCMAKE_C_FLAGS="-g -fprofile-abs-path -fprofile-arcs -ftest-coverage -O0 -fsanitize=address" -DCMAKE_BUILD_TYPE=Debug -DBUILD_SHARED_LIBS=ON ..
+        cmake -DENABLE_DOCS=YES -DCMAKE_PREFIX_PATH="~/" -DOPENMP=ON -DCMAKE_Fortran_FLAGS="-g -fprofile-abs-path -fprofile-arcs -ftest-coverage -O0 -fsanitize=address" -DCMAKE_C_FLAGS="-g -fprofile-abs-path -fprofile-arcs -ftest-coverage -O0 -fsanitize=address" -DCMAKE_BUILD_TYPE=Debug -DBUILD_SHARED_LIBS=ON -DBUILD_8=ON ..
         make -j2 VERBOSE=1
     
     - name: test
       run: |
         cd $GITHUB_WORKSPACE/ip/build
-        ctest --verbose --output-on-failure --rerun-failed
+        ctest -j2 --verbose --output-on-failure --rerun-failed
 
     - name: run-gcovr
       run: |

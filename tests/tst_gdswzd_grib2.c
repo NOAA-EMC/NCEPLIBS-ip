@@ -1,8 +1,3 @@
-#include <stdio.h>
-#include <stdlib.h>
-
-#include "ip2lib.h"
-
 /**************************************************************
   Unit test to ensure the 'c' wrapper routine for gdswzd
   is working.
@@ -12,16 +7,27 @@
   Tests the mixed precision version of gdswzd.
 **************************************************************/
 
+#include <stdio.h>
+#include <stdlib.h>
+
+#include "ip2lib.h"
+
+#if(LSIZE==4)
+#define REALTYPE float
+#else
+#define REALTYPE double
+#endif
+#if(LSIZE==8)
+#define INTTYPE long
+#else
+#define INTTYPE int
+#endif
+
 
 int main()
 {
-  int *igdtmpl;
-  int igdtnum, igdtlen, iopt, npts, nret;
-#if(LSIZE==D)
-#define REALTYPE double
-#elif(LSIZE==4)
-#define REALTYPE float
-#endif
+  INTTYPE *igdtmpl;
+  INTTYPE igdtnum, igdtlen, iopt, npts, nret;
   REALTYPE fill;
   REALTYPE *xpts, *ypts, *rlon, *rlat;
   REALTYPE *crot, *srot, *xlon, *xlat, *ylon, *ylat, *area;
@@ -32,7 +38,7 @@ int main()
   igdtnum = 1;
 
   igdtlen = 22;
-  igdtmpl = (int *) malloc(igdtlen * sizeof(int));
+  igdtmpl = (INTTYPE *) malloc(igdtlen * sizeof(INTTYPE));
 
   igdtmpl[0] = 6;
   igdtmpl[1] = 255;

@@ -61,7 +61,7 @@ jobs:
         cd sp
         mkdir build
         cd build
-        ${{ matrix.compilers }} cmake -DCMAKE_INSTALL_PREFIX=~/sp -DOPENMP=${{ matrix.openmp}} ..
+        ${{ matrix.compilers }} cmake -DCMAKE_INSTALL_PREFIX=~/sp -DOPENMP=${{ matrix.openmp}} -DBUILD_8=ON ..
         make -j2
         make install
 
@@ -75,7 +75,7 @@ jobs:
         cd ip
         mkdir build 
         cd build
-        ${{ matrix.compilers }} cmake -DOPENMP=${{ matrix.openmp }} -DBUILD_SHARED_LIBS=OFF -DCMAKE_PREFIX_PATH="~/sp" ..
+        ${{ matrix.compilers }} cmake -DOPENMP=${{ matrix.openmp }} -DBUILD_SHARED_LIBS=OFF -DCMAKE_PREFIX_PATH="~/sp" -DBUILD_8=ON ..
         make -j2 VERBOSE=1
     
     - name: test

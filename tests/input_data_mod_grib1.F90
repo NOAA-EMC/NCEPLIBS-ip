@@ -5,12 +5,6 @@
 !
 ! Kyle Gerheiser June, 2021
 
-#if (LSIZE==D)
-#define REALSIZE 8
-#elif (LSIZE==4)
-#define REALSIZE 4
-#endif
-
 module input_data_mod_grib1
   implicit none
 
@@ -32,9 +26,9 @@ module input_data_mod_grib1
   
   ! integer, parameter :: missing=b'11111111111111111111111111111111'
   
-  real(KIND=REALSIZE), allocatable, public      :: input_data(:,:)
-  real(KIND=REALSIZE), allocatable, public      :: input_u_data(:,:)
-  real(KIND=REALSIZE), allocatable, public      :: input_v_data(:,:)
+  real, allocatable, public      :: input_data(:,:)
+  real, allocatable, public      :: input_u_data(:,:)
+  real, allocatable, public      :: input_v_data(:,:)
 
   logical*1, allocatable, public :: input_bitmap(:,:)
 

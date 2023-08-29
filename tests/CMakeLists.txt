@@ -11,10 +11,8 @@ execute_process(COMMAND cmake -E create_symlink
 # Set compiler flags.
 set(CMAKE_Fortran_FLAGS "${CMAKE_Fortran_FLAGS} ${CMAKE_Fortran_FLAGS_DEBUG}")
 if(CMAKE_Fortran_COMPILER_ID MATCHES "^(Intel|IntelLLVM)$")
-  set(CMAKE_Fortran_FLAGS "-r8 -heap-arrays ${CMAKE_Fortran_FLAGS}")
+  set(CMAKE_Fortran_FLAGS " -heap-arrays ${CMAKE_Fortran_FLAGS}")
   set(CMAKE_C_FLAGS "-std=c99")
-elseif(CMAKE_Fortran_COMPILER_ID MATCHES "^(GNU)$")
-  set(CMAKE_Fortran_FLAGS "-fdefault-real-8 ${CMAKE_Fortran_FLAGS}")
 endif()
 
 # Set compiler flags for GNU.
@@ -23,6 +21,7 @@ if(${CMAKE_Fortran_COMPILER_ID} MATCHES "^(GNU)$" AND ${CMAKE_Fortran_COMPILER_V
 endif()
 
 foreach(kind ${kinds})
+  set(BUILD_FLAGS "${fortran_${kind}_flags}")
   string(TOUPPER ${kind} kind_definition)
 
   # Test ipxwafs routines
@@ -30,6 +29,7 @@ foreach(kind ${kinds})
   target_link_libraries(test_ipxwafs_${kind} PUBLIC ip::ip_${kind})
   target_link_libraries(test_ipxwafs_${kind} PUBLIC sp::sp_${kind})
   target_compile_definitions(test_ipxwafs_${kind} PRIVATE "LSIZE=${kind_definition}")
+  set_target_properties(test_ipxwafs_${kind} PROPERTIES COMPILE_FLAGS "${BUILD_FLAGS}")
   add_test(test_ipxwafs_${kind} test_ipxwafs_${kind})
 
   # Test earth_radius_mod.
@@ -37,6 +37,7 @@ foreach(kind ${kinds})
   target_link_libraries(test_earth_radius_${kind} PUBLIC ip::ip_${kind})
   target_link_libraries(test_earth_radius_${kind} PUBLIC sp::sp_${kind})
   target_compile_definitions(test_earth_radius_${kind} PRIVATE "LSIZE=${kind_definition}")
+  set_target_properties(test_earth_radius_${kind} PROPERTIES COMPILE_FLAGS "${BUILD_FLAGS}")
   add_test(test_earth_radius_${kind} test_earth_radius_${kind})
   
   # grib-2 tests
@@ -44,6 +45,7 @@ foreach(kind ${kinds})
   target_link_libraries(test_library_grib2_${kind} PUBLIC ip::ip_${kind})
   target_link_libraries(test_library_grib2_${kind} PUBLIC sp::sp_${kind})
   target_compile_definitions(test_library_grib2_${kind} PRIVATE "LSIZE=${kind_definition}")
+  set_target_properties(test_library_grib2_${kind} PROPERTIES COMPILE_FLAGS "${BUILD_FLAGS}")
   
   add_executable(tst_gdswzd_grib2_${kind} tst_gdswzd_grib2.c)
   set_target_properties(tst_gdswzd_grib2_${kind} PROPERTIES LINKER_LANGUAGE C)
@@ -56,6 +58,8 @@ foreach(kind ${kinds})
   target_link_libraries(test_vector_grib2_${kind} PRIVATE test_library_grib2_${kind})
   target_compile_definitions(test_scalar_grib2_${kind} PRIVATE "LSIZE=${kind_definition}")
   target_compile_definitions(test_vector_grib2_${kind} PRIVATE "LSIZE=${kind_definition}")
+  set_target_properties(test_scalar_grib2_${kind} PROPERTIES COMPILE_FLAGS "${BUILD_FLAGS}")
+  set_target_properties(test_vector_grib2_${kind} PROPERTIES COMPILE_FLAGS "${BUILD_FLAGS}")
   
   add_test(tst_gdswzd_c_grib2_${kind} tst_gdswzd_grib2_${kind})
   
@@ -98,12 +102,15 @@ foreach(kind ${kinds})
   target_link_libraries(test_library_grib1_${kind} PUBLIC ip::ip_${kind})
   target_link_libraries(test_library_grib1_${kind} PUBLIC sp::sp_${kind})
   target_compile_definitions(test_library_grib1_${kind} PRIVATE "LSIZE=${kind_definition}")
+  set_target_properties(test_library_grib1_${kind} PROPERTIES COMPILE_FLAGS "${BUILD_FLAGS}")
   
   add_executable(tst_gdswzd_grib1_${kind} tst_gdswzd_grib1.c)
   set_target_properties(tst_gdswzd_grib1_${kind} PROPERTIES LINKER_LANGUAGE C)
   target_compile_definitions(tst_gdswzd_grib1_${kind} PRIVATE "LSIZE=${kind_definition}")
   add_executable(test_scalar_grib1_${kind} test_scalar_grib1.F90)
   add_executable(test_vector_grib1_${kind} test_vector_grib1.F90)
+  set_target_properties(test_scalar_grib1_${kind} PROPERTIES COMPILE_FLAGS "${BUILD_FLAGS}")
+  set_target_properties(test_vector_grib1_${kind} PROPERTIES COMPILE_FLAGS "${BUILD_FLAGS}")
   
   target_link_libraries(test_scalar_grib1_${kind} PRIVATE test_library_grib1_${kind})
   target_link_libraries(test_vector_grib1_${kind} PRIVATE test_library_grib1_${kind})
