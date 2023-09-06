@@ -35,6 +35,14 @@ class Ip(CMakePackage):
         description="Set precision (_4/_d library versions)",
         when="@4.1:",
     )
+    variant(
+        "precision",
+        default=["4", "d"],
+        values=["4", "d", "8"],
+        multi=True,
+        description="Set precision (_4/_d/_8 library versions)",
+        when="@develop",
+    )
 
     depends_on("sp")
     depends_on("sp@:2.3.3", when="@:4.0")
@@ -50,9 +58,11 @@ class Ip(CMakePackage):
 
         if self.spec.satisfies("@4.1:"):
             args.append(self.define_from_variant("BUILD_SHARED_LIBS", "shared"))
-            for prec in ["4", "d"]:
-                if not self.spec.satisfies("precision=" + prec):
-                    args += ["-DBUILD_%s:BOOL=OFF" % prec.upper()]
+            args.append(self.define("BUILD_4", self.spec.satisfies("precision=4")))
+            args.append(self.define("BUILD_D", self.spec.satisfies("precision=d")))
+
+        if self.spec.satisfies("@develop"):
+            args.append(self.define("BUILD_8", self.spec.satisfies("precision=8")))
 
         return args
 
