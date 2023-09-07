@@ -47,7 +47,7 @@ var NAVTREE =
         [ "Variables", "namespacemembers_vars.html", null ]
       ] ]
     ] ],
-    [ "Data Types List", "annotated.html", [
+    [ "Data Types", "annotated.html", [
       [ "Data Types List", "annotated.html", "annotated_dup" ],
       [ "Class Hierarchy", "hierarchy.html", "hierarchy" ],
       [ "Data Fields", "functions.html", [
@@ -69,9 +69,10 @@ var NAVTREE =
 var NAVTREEINDEX =
 [
 "annotated.html",
-"ip__rot__equid__cylind__grid__mod_8F90.html",
-"namespacespectral__interp__mod.html#a54dfd0ea8368242a1053d64770bd295a",
-"structip__station__points__grid__mod_1_1ip__station__points__grid.html#a4a2a0dab09f05931d12615b0ac74bc51"
+"ip__lambert__conf__grid__mod_8F90.html#a69908d0d74739575667cc3a243c7b4d5",
+"namespaceip__rot__equid__cylind__egrid__mod.html#a557d49c609fc8c5c564a3a5f10174eec",
+"structip__grid__mod_1_1ip__grid.html#ac071b3d3eca9a5fa88ff5dc211d19179",
+"structip__rot__equid__cylind__grid__mod_1_1ip__rot__equid__cylind__grid.html#a546a9c3bb8e93ec8e8f7eaf2a14537dc"
 ];
 
 var SYNCONMSG = 'click to disable panel synchronisation';
