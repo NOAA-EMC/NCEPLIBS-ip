@@ -17,7 +17,7 @@ on:
 
 jobs:
   # This job builds with Spack using every combination of variants and runs the CTest suite each time
-  Linux:
+  Spack:
     strategy:
       matrix:
         os: ["ubuntu-latest", "macos-latest"]
