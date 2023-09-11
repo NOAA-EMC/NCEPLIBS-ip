@@ -71,8 +71,8 @@ endif()
 add_subdirectory(src)
 
 # Build tests.
+include(CTest)
 if(BUILD_TESTING)
-  include(CTest)
   add_subdirectory(tests)
 endif()
 
