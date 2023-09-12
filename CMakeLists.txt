@@ -19,7 +19,6 @@ option(BUILD_SHARED_LIBS "Build shared libraries" OFF)
 option(BUILD_4 "Build the 4-byte real version of the library, libip_4.a" ON)
 option(BUILD_D "Build the 8-byte real version of the library, libip_d.a" ON)
 option(BUILD_8 "Build the 8-byte integer version of the library, libsp_8.a" OFF)
-option(BUILD_TESTING "Build tests of the library" ON)
 
 # Figure whether user wants a _4, a _d, and/or _8.
 if(BUILD_4)
@@ -72,8 +71,8 @@ endif()
 add_subdirectory(src)
 
 # Build tests.
+include(CTest)
 if(BUILD_TESTING)
-  include(CTest)
   add_subdirectory(tests)
 endif()
 

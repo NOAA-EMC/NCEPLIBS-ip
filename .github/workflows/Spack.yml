@@ -1,0 +1,71 @@
+# This is a CI workflow for the NCEPLIBS-ip project.
+#
+# This workflow builds ip with Spack, including installing with the "--test
+# root" option to run the CTest suite. It also has a one-off job that validates
+# the recipe by ensuring that every CMake option that should be set in the
+# Spack recipe is so set.
+#
+# Alex Richert, Sep 2023
+name: Spack
+on:
+  push:
+    branches:
+    - develop
+  pull_request:
+    branches:
+    - develop
+
+jobs:
+  # This job builds with Spack using every combination of variants and runs the CTest suite each time
+  Spack:
+    strategy:
+      matrix:
+        os: ["ubuntu-latest"]
+        openmp: ["+openmp", "~openmp"]
+        sharedlibs: ["+shared", "~shared"]
+        pic: ["+pic", "~pic"]
+        precision: ["precision=d", "precision=4", "precision=8"]
+    runs-on: ${{ matrix.os }}
+
+    steps:
+    
+    - name: checkout-ip
+      uses: actions/checkout@v4
+      with: 
+        path: ip
+
+    - name: spack-build-and-test
+      run: |
+        git clone -c feature.manyFiles=true https://github.com/spack/spack
+        . spack/share/spack/setup-env.sh
+        spack env create ip-env
+        spack env activate ip-env
+        cp $GITHUB_WORKSPACE/ip/spack/package.py $SPACK_ROOT/var/spack/repos/builtin/packages/ip/package.py
+        mv $GITHUB_WORKSPACE/ip $SPACK_ENV/ip
+        spack develop --no-clone ip@develop
+        spack add ip@develop%gcc@11 ${{ matrix.openmp }} ${{ matrix.sharedlibs }} ${{ matrix.pic }} ${{ matrix.precision }} target=x86_64
+        spack external find cmake gmake
+        spack concretize
+        # Run installation and run CTest suite
+        spack install --verbose --fail-fast --test root
+        # Run 'spack load' to check for obvious errors in setup_run_environment
+        spack load ip
+
+  # This job validates the Spack recipe by making sure each cmake build option is represented
+  recipe-check:
+    runs-on: ubuntu-latest
+
+    steps:
+    
+    - name: checkout-ip
+      uses: actions/checkout@v4
+      with: 
+        path: ip
+
+    - name: recipe-check
+      run: |
+        echo "If this jobs fails, look at the most recently output CMake option below and make sure that option appears in spack/package.py"
+        for opt in $(grep -ioP '^option\(\K(?!(ENABLE_DOCS))[^ ]+' $GITHUB_WORKSPACE/ip/CMakeLists.txt) ; do
+          echo "Checking for presence of '$opt' CMake option in package.py"
+          grep -cP "define.+\b${opt}\b" $GITHUB_WORKSPACE/ip/spack/package.py
+        done
