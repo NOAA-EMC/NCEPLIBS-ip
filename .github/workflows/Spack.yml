@@ -44,10 +44,10 @@ jobs:
         mv $GITHUB_WORKSPACE/ip $SPACK_ENV/ip
         spack develop --no-clone ip@develop
         spack add ip@develop%gcc@11 ${{ matrix.openmp }} ${{ matrix.sharedlibs }} ${{ matrix.pic }} ${{ matrix.precision }} target=x86_64
-        spack external find cmake gmake
+        #spack external find cmake gmake
         spack concretize
         # Run installation and run CTest suite
-        spack --debug install --verbose --fail-fast --test root
+        spack install --verbose --fail-fast --test root
         # Run 'spack load' to check for obvious errors in setup_run_environment
         spack load ip
 
