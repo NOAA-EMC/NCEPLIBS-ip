@@ -88,4 +88,4 @@ class Ip(CMakePackage):
 
     def check(self):
         with working_dir(self.build_directory):
-            make("test -j%s" % make_jobs)
+            make("test")
