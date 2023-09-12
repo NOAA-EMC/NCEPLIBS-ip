@@ -85,3 +85,9 @@ class Ip(CMakePackage):
             )
             env.set("IP_LIB" + suffix, lib[0])
             env.set("IP_INC" + suffix, join_path(self.prefix, "include_" + suffix))
+
+    @run_after("build")
+    @on_package_attributes(run_tests=True)
+    def check_build(self):
+        with working_dir(self.build_directory):
+            make("test")
