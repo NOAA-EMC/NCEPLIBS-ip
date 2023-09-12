@@ -13,9 +13,12 @@ class Ip(CMakePackage):
 
     homepage = "https://noaa-emc.github.io/NCEPLIBS-ip"
     url = "https://github.com/NOAA-EMC/NCEPLIBS-ip/archive/refs/tags/v3.3.3.tar.gz"
+    git = "https://github.com/NOAA-EMC/NCEPLIBS-ip"
 
-    maintainers("t-brown", "AlexanderRichert-NOAA", "edwardhartnett", "Hang-Lei-NOAA")
+    maintainers("AlexanderRichert-NOAA", "edwardhartnett", "Hang-Lei-NOAA")
 
+    version("develop", branch="develop")
+    version("4.2.0", sha256="9b9f47106822044ff224c6dfd9f140c146dffc833904f2a0c5db7b5d8932e39e")
     version("4.1.0", sha256="b83ca037d9a5ad3eb0fb1acfe665c38b51e01f6bd73ce9fb8bb2a14f5f63cdbe")
     version("4.0.0", sha256="a2ef0cc4e4012f9cb0389fab6097407f4c623eb49772d96eb80c44f804aa86b8")
     version(
@@ -41,7 +44,7 @@ class Ip(CMakePackage):
         values=["4", "d", "8"],
         multi=True,
         description="Set precision (_4/_d/_8 library versions)",
-        when="@develop",
+        when="@4.2:",
     )
 
     depends_on("sp")
@@ -56,12 +59,15 @@ class Ip(CMakePackage):
             self.define_from_variant("CMAKE_POSITION_INDEPENDENT_CODE", "pic"),
         ]
 
+        if self.spec.satisfies("@4:"):
+            args.append(self.define("BUILD_TESTING", self.run_tests))
+
         if self.spec.satisfies("@4.1:"):
             args.append(self.define_from_variant("BUILD_SHARED_LIBS", "shared"))
             args.append(self.define("BUILD_4", self.spec.satisfies("precision=4")))
             args.append(self.define("BUILD_D", self.spec.satisfies("precision=d")))
 
-        if self.spec.satisfies("@develop"):
+        if self.spec.satisfies("@4.2:"):
             args.append(self.define("BUILD_8", self.spec.satisfies("precision=8")))
 
         return args
