@@ -20,11 +20,11 @@ jobs:
   Spack:
     strategy:
       matrix:
-        os: ["ubuntu-latest", "macos-latest"]
-        openmp: ["+openmp"] #, "~openmp"]
-        sharedlibs: ["+shared"] #, "~shared"]
-        pic: ["+pic"] #, "~pic"]
-        precision: ["precision=d"] #, "precision=4", "precision=8"]
+        os: ["ubuntu-latest"]
+        openmp: ["+openmp", "~openmp"]
+        sharedlibs: ["+shared", "~shared"]
+        pic: ["+pic"], "~pic"]
+        precision: ["precision=d", "precision=4", "precision=8"]
     runs-on: ${{ matrix.os }}
 
     steps:
@@ -44,7 +44,7 @@ jobs:
         mv $GITHUB_WORKSPACE/ip $SPACK_ENV/ip
         spack develop --no-clone ip@develop
         spack add ip@develop%gcc@11 ${{ matrix.openmp }} ${{ matrix.sharedlibs }} ${{ matrix.pic }} ${{ matrix.precision }} target=x86_64
-        #spack external find cmake gmake
+        spack external find cmake gmake
         spack concretize
         # Run installation and run CTest suite
         spack install --verbose --fail-fast --test root
