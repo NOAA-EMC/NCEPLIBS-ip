@@ -90,4 +90,4 @@ class Ip(CMakePackage):
     @on_package_attributes(run_tests=True)
     def check_build(self):
         with working_dir(self.build_directory):
-            make("test")
+            make("test -j%s" % make_jobs)
