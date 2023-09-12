@@ -87,5 +87,6 @@ class Ip(CMakePackage):
             env.set("IP_INC" + suffix, join_path(self.prefix, "include_" + suffix))
 
     def check(self):
+        print("here")
         with working_dir(self.builder.build_directory):
-            make("test")
+            make("test -j1")
