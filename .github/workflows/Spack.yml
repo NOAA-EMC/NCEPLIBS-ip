@@ -20,11 +20,12 @@ jobs:
   Spack:
     strategy:
       matrix:
+        os: ["ubuntu-latest"]
         openmp: ["+openmp", "~openmp"]
         sharedlibs: ["+shared", "~shared"]
-        pic: ["+pic"], "~pic"]
+        pic: ["+pic", "~pic"]
         precision: ["precision=d", "precision=4", "precision=8"]
-    runs-on: ubuntu-latest
+    runs-on: ${{ matrix.os }}
 
     steps:
     
