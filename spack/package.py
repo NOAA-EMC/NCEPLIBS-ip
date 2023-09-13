@@ -32,16 +32,16 @@ class Ip(CMakePackage):
     variant("shared", default=False, description="Build shared library", when="@4.1:")
     variant(
         "precision",
-        default=["4", "d"],
-        values=["4", "d"],
+        default=("4", "d"),
+        values=("4", "d"),
         multi=True,
         description="Set precision (_4/_d library versions)",
-        when="@4.1:",
+        when="@4.1",
     )
     variant(
         "precision",
-        default=["4", "d"],
-        values=["4", "d", "8"],
+        default=("4", "d"),
+        values=("4", "d", "8"),
         multi=True,
         description="Set precision (_4/_d/_8 library versions)",
         when="@4.2:",
@@ -49,9 +49,9 @@ class Ip(CMakePackage):
 
     depends_on("sp")
     depends_on("sp@:2.3.3", when="@:4.0")
-    depends_on("sp precision=4", when="@4.1: precision=4")
-    depends_on("sp precision=d", when="@4.1: precision=d")
-    depends_on("sp precision=8", when="@4.1: precision=8")
+    depends_on("sp precision=4", when="precision=4")
+    depends_on("sp precision=d", when="precision=d")
+    depends_on("sp precision=8", when="precision=8")
 
     def cmake_args(self):
         args = [
@@ -61,13 +61,13 @@ class Ip(CMakePackage):
 
         if self.spec.satisfies("@4:"):
             args.append(self.define("BUILD_TESTING", self.run_tests))
+        else:
+            args.append(self.define("ENABLE_TESTS", "NO"))
 
         if self.spec.satisfies("@4.1:"):
             args.append(self.define_from_variant("BUILD_SHARED_LIBS", "shared"))
             args.append(self.define("BUILD_4", self.spec.satisfies("precision=4")))
             args.append(self.define("BUILD_D", self.spec.satisfies("precision=d")))
-
-        if self.spec.satisfies("@4.2:"):
             args.append(self.define("BUILD_8", self.spec.satisfies("precision=8")))
 
         return args
@@ -76,7 +76,7 @@ class Ip(CMakePackage):
         suffixes = (
             self.spec.variants["precision"].value
             if self.spec.satisfies("@4.1:")
-            else ["4", "8", "d"]
+            else ("4", "8", "d")
         )
         shared = False if self.spec.satisfies("@:4.0") else self.spec.satisfies("+shared")
         for suffix in suffixes:
