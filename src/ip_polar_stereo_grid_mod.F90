@@ -13,7 +13,7 @@
 module ip_polar_stereo_grid_mod
   use ip_grid_descriptor_mod
   use ip_grid_mod
-  use constants_mod, only: DPR, PI, PI2, PI4, RERTH_WGS84, E2_WGS84
+  use ip_constants_mod, only: DPR, PI, PI2, PI4, RERTH_WGS84, E2_WGS84
   use earth_radius_mod
   implicit none
 
