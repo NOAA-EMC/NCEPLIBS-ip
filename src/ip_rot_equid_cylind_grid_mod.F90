@@ -20,7 +20,7 @@ module ip_rot_equid_cylind_grid_mod
   use iso_fortran_env, only: real64
   use ip_grid_descriptor_mod
   use ip_grid_mod
-  use constants_mod, only: DPR, PI
+  use ip_constants_mod, only: DPR, PI
   use earth_radius_mod
   implicit none
 

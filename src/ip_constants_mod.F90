@@ -6,7 +6,7 @@
 !> @brief Module containing common constants.
 !!
 !! @author Kyle Gerheiser, George Gayno, Alex Richert
-module constants_mod
+module ip_constants_mod
   implicit none
 
   public
@@ -18,5 +18,5 @@ module constants_mod
   real, parameter :: RERTH_WGS84=6.378137E6 !< Radius of the Earth defined by WGS-84
   real, parameter :: E2_WGS84 = 0.00669437999013 !< Eccentricity squared of Earth defined by WGS-84
   
-end module constants_mod
+end module ip_constants_mod
 
