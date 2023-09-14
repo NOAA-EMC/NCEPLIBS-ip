@@ -13,7 +13,7 @@ ip_station_points_grid_mod.F90 ip_gaussian_grid_mod.F90
 ip_equid_cylind_grid_mod.F90 ip_lambert_conf_grid_mod.F90
 ip_mercator_grid_mod.F90 ip_polar_stereo_grid_mod.F90
 ip_rot_equid_cylind_egrid_mod.F90 ip_rot_equid_cylind_grid_mod.F90
-constants_mod.F90 ip_grids_mod.F90 ip_grid_factory_mod.F90
+ip_constants_mod.F90 ip_grids_mod.F90 ip_grid_factory_mod.F90
 ip_interpolators_mod.F90 earth_radius_mod.F90 polfix_mod.F90)
 
 # Build _4, _d, and/or _8 depending on options provided to CMake
