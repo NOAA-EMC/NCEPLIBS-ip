@@ -3,12 +3,11 @@
 # Mark Potts, Kyle Gerheiser, Ed Hartnett, Eric Engle
 
 # These are the source code filees.
-set(fortran_src gdswzd_c.F90 gdswzd_mod.F90 ip2lib_4.h 
-ip2lib_d.h ipolates.F90 ipolatev.F90 ipxetas.F90 ipxwafs.F90
-ipxwafs2.F90 ipxwafs3.F90 movect.F90 bilinear_interp_mod.F90
-bicubic_interp_mod.F90 neighbor_interp_mod.F90 budget_interp_mod.F90
-spectral_interp_mod.F90 neighbor_budget_interp_mod.F90 ip_mod.F90
-ip_grid_descriptor_mod.F90 ip_grid_mod.F90
+set(fortran_src gdswzd_c.F90 gdswzd_mod.F90 ipolates.F90 ipolatev.F90
+ipxetas.F90 ipxwafs.F90 ipxwafs2.F90 ipxwafs3.F90 movect.F90
+bilinear_interp_mod.F90 bicubic_interp_mod.F90 neighbor_interp_mod.F90
+budget_interp_mod.F90 spectral_interp_mod.F90 neighbor_budget_interp_mod.F90
+ip_mod.F90 ip_grid_descriptor_mod.F90 ip_grid_mod.F90
 ip_station_points_grid_mod.F90 ip_gaussian_grid_mod.F90
 ip_equid_cylind_grid_mod.F90 ip_lambert_conf_grid_mod.F90
 ip_mercator_grid_mod.F90 ip_polar_stereo_grid_mod.F90
@@ -22,7 +21,6 @@ foreach(kind ${kinds})
   set(module_dir "${CMAKE_CURRENT_BINARY_DIR}/include_${kind}")
 
   # Create the C header files for this kind.
-  configure_file(ip2lib_${kind}.h ${CMAKE_CURRENT_BINARY_DIR}/include_${kind}/ip2lib.h COPYONLY)
   configure_file(iplib_${kind}.h ${CMAKE_CURRENT_BINARY_DIR}/include_${kind}/iplib.h COPYONLY)
 
   # Compiled with preprocessor definition LSIZE=D, not d
@@ -57,7 +55,6 @@ foreach(kind ${kinds})
   list(APPEND LIB_TARGETS ${lib_name})
   
   install(DIRECTORY ${module_dir} DESTINATION ${CMAKE_INSTALL_PREFIX})
-  install(FILES ip2lib_${kind}.h DESTINATION ${CMAKE_INSTALL_PREFIX}/include_${kind} RENAME ip2lib.h)
   install(FILES iplib_${kind}.h DESTINATION ${CMAKE_INSTALL_PREFIX}/include_${kind} RENAME iplib.h)
 endforeach()
 
