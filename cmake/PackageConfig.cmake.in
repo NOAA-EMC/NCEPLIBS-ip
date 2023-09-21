@@ -9,16 +9,25 @@ include("${CMAKE_CURRENT_LIST_DIR}/@PROJECT_NAME@-targets.cmake")
 
 include(CMakeFindDependencyMacro)
 
-# ON/OFF implies ip was compiled with/without OPENMP
+find_dependency(sp CONFIG)
+
 if(@OPENMP@)
   find_dependency(OpenMP COMPONENTS Fortran)
 endif()
 
-find_dependency(sp CONFIG)
+# The target name needs to be one that's built, even if the dependent
+# build does not use that version.
+if(@BUILD_4@)
+  set(precision 4)
+elseif(@BUILD_D@)
+  set(precision d)
+elseif(@BUILD_8@)
+  set(precision 8)
+endif()
 
-get_target_property(@PROJECT_NAME@_BUILD_TYPES @PROJECT_NAME@::@PROJECT_NAME@_4 IMPORTED_CONFIGURATIONS)
+get_target_property(@PROJECT_NAME@_BUILD_TYPES @PROJECT_NAME@::@PROJECT_NAME@_${precision} IMPORTED_CONFIGURATIONS)
 
 check_required_components("@PROJECT_NAME@")
 
-get_target_property(location @PROJECT_NAME@::@PROJECT_NAME@_4 LOCATION)
+get_target_property(location @PROJECT_NAME@::@PROJECT_NAME@_${precision} LOCATION)
 message(STATUS "Found @PROJECT_NAME@: ${location} (found version \"@PROJECT_VERSION@\")")
