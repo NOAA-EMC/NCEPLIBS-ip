@@ -9,6 +9,8 @@
 #include <stdio.h>
 #include <stdlib.h>
 
+#include "iplib.h"
+
 #if(LSIZE==4)
 #define REALTYPE float
 #else
@@ -19,10 +21,6 @@
 #else
 #define INTTYPE int
 #endif
-
-void gdswzd_grib1(INTTYPE *, INTTYPE, INTTYPE, REALTYPE,
-         REALTYPE *, REALTYPE *, REALTYPE *, REALTYPE *, INTTYPE *,
-         REALTYPE *, REALTYPE *, REALTYPE *, REALTYPE *, REALTYPE *, REALTYPE *, REALTYPE *);
 
 int main()
 {
@@ -77,8 +75,8 @@ int main()
 
   gdswzd_grib1(kgds, iopt, npts, fill,
          xpts, ypts, rlon, rlat,
-         &nret,
-         crot, srot, xlon, xlat, ylon, ylat, area);
+         &nret, crot, srot, xlon,
+         xlat, ylon, ylat, area);
 
   int expextedPointsReturned = 50451;
   
