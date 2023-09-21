@@ -10,7 +10,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-#include "ip2lib.h"
+#include "iplib.h"
 
 #if(LSIZE==4)
 #define REALTYPE float

@@ -4,13 +4,10 @@
   Call gdswzd for a rotated lat/lon grid with "B" stagger
   and print out the corner point lat/lons and the number
   of valid grid points returned.
-  Tests the mixed precision version of gdswzd.
 **************************************************************/
 
 #include <stdio.h>
 #include <stdlib.h>
-
-#include "iplib.h"
 
 #if(LSIZE==4)
 #define REALTYPE float
