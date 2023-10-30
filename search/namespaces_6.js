@@ -1,4 +1,4 @@
 var searchData=
 [
-  ['polfix_5fmod_0',['polfix_mod',['../namespacepolfix__mod.html',1,'']]]
+  ['spectral_5finterp_5fmod_312',['spectral_interp_mod',['../namespacespectral__interp__mod.html',1,'']]]
 ];
