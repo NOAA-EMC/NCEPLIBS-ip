@@ -1,0 +1,47 @@
+! This is a test from the NCEPLIBS-sp project.
+!
+! This test tests the splaplac() subrroutine.
+!
+! Alex Richert, Oct 2023
+PROGRAM TEST_SPLAPLAC
+  IMPLICIT NONE
+
+  INTEGER I, M, J, QSIZE, QD2SIZE
+  REAL, ALLOCATABLE :: ENN1(:), Q(:), QD2(:), QREF(:), REF(:), QD2REF(:)
+  REAL :: TOL=1E-7
+
+  M=2
+
+  DO I=0,1
+    QSIZE=(M+1)*((I+1)*M+2)
+    QD2SIZE=(M+1)*((I+1)*M+2)
+    ALLOCATE(QD2REF(QD2SIZE))
+    IF (I.EQ.0) THEN
+      QD2REF=(/0.0,0.0,-0.25,-0.333,-0.417,-0.5,-0.583,-0.667, &
+        -0.75,-0.833,-0.917,-1.0/)
+    ELSEIF (I.EQ.1) THEN
+      QD2REF=(/0.0,0.0,-0.167,-0.222,-0.278,-0.333,-0.389,-0.444, &
+        -0.5,-0.556,-0.611,-0.667,-0.722,-0.778,-0.833,-0.889,-0.944,-1.0/)
+    ENDIF
+    ALLOCATE(ENN1((M+1)*((I+1)*M+2)/2))
+    ENN1=1.0
+    ALLOCATE(Q(QSIZE))
+    ALLOCATE(QREF(QSIZE))
+    ALLOCATE(QD2(QD2SIZE))
+    DO J=1,QSIZE
+      Q(J) = REAL(J)/REAL(QSIZE)
+    ENDDO
+    QREF=Q
+    CALL SPLAPLAC(I,M,ENN1,Q,QD2,1)
+    IF (.NOT.ALL(ABS(QD2-QD2REF).LT.1E-2)) STOP 1
+    Q=-999.9
+    CALL SPLAPLAC(I,M,ENN1,Q,QD2,-1)
+    IF (.NOT.ALL(ABS(Q(3:)-QREF(3:)).LT.TOL)) STOP 2
+    DEALLOCATE(QD2REF)
+    DEALLOCATE(ENN1)
+    DEALLOCATE(Q)
+    DEALLOCATE(QREF)
+    DEALLOCATE(QD2)
+  ENDDO !DO I
+
+END PROGRAM TEST_SPLAPLAC

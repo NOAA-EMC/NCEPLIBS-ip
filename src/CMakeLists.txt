@@ -1,6 +1,6 @@
 # This is the CMake file for the src directory of NCEPLIBS-ip.
 #
-# Mark Potts, Kyle Gerheiser, Ed Hartnett, Eric Engle
+# Alex Richert, Mark Potts, Kyle Gerheiser, Ed Hartnett, Eric Engle
 
 # These are the source code filees.
 set(fortran_src gdswzd_c.F90 gdswzd_mod.F90 ipolates.F90 ipolatev.F90
@@ -13,7 +13,19 @@ ip_equid_cylind_grid_mod.F90 ip_lambert_conf_grid_mod.F90
 ip_mercator_grid_mod.F90 ip_polar_stereo_grid_mod.F90
 ip_rot_equid_cylind_egrid_mod.F90 ip_rot_equid_cylind_grid_mod.F90
 ip_constants_mod.F90 ip_grids_mod.F90 ip_grid_factory_mod.F90
-ip_interpolators_mod.F90 earth_radius_mod.F90 polfix_mod.F90)
+ip_interpolators_mod.F90 earth_radius_mod.F90 polfix_mod.F90
+fftpack.F lapack_gen.F ncpus.F spanaly.f spdz2uv.f speps.f spfft1.f spffte.f
+spfftpt.f splaplac.f splat.F splegend.f sppad.f spsynth.f sptezd.f sptez.f
+sptezmd.f sptezm.f sptezmv.f sptezv.f sptgpm.f sptgpmv.f sptgps.f sptgpsv.f
+sptgpt.f sptgptv.f sptrand.f sptran.f sptranf0.f sptranf1.f sptranf.f sptranfv.f
+sptranv.f sptrun.f sptrung.f sptrungv.f sptrunm.f sptrunmv.f sptruns.f
+sptrunsv.f sptrunv.f spuv2dz.f spwget.f)
+
+if(BUILD_DEPRECATED)
+  set(fortran_src ${fortran_src} spfft.f spgradq.f spgradx.f spgrady.f sptgpmd.f
+  sptgpsd.f sptgptd.f sptgptsd.f sptgptvd.f sptrund.f sptrunl.f spvar.f)
+endif()
+
 
 # Build _4, _d, and/or _8 depending on options provided to CMake
 foreach(kind ${kinds})
@@ -48,9 +60,6 @@ foreach(kind ${kinds})
   if(OpenMP_Fortran_FOUND)
     target_link_libraries(${lib_name} PUBLIC OpenMP::OpenMP_Fortran)
   endif()
-
-  # Link to sp library.
-  target_link_libraries(${lib_name} PUBLIC sp::sp_${kind})
   
   list(APPEND LIB_TARGETS ${lib_name})
   

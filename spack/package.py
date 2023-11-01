@@ -48,12 +48,12 @@ class Ip(CMakePackage):
         description="Set precision (_4/_d/_8 library versions)",
         when="@4.2:",
     )
-
-    depends_on("sp")
-    depends_on("sp@:2.3.3", when="@:4.0")
-    depends_on("sp precision=4", when="@4.1: precision=4")
-    depends_on("sp precision=d", when="@4.1: precision=d")
-    depends_on("sp precision=8", when="@4.1: precision=8")
+    variant(
+        "deprecated",
+        default=False,
+        description="Build deprecated spectral interpolation functions",
+        when="@5.0:",
+    )
 
     def cmake_args(self):
         args = [
@@ -72,13 +72,16 @@ class Ip(CMakePackage):
         if self.spec.satisfies("@4.2:"):
             args.append(self.define("BUILD_8", self.spec.satisfies("precision=8")))
 
+        if self.spec.satisfies("@5:"):
+            args.append(self.define_from_variant("BUILD_DEPRECATED", "deprecated"))
+
         return args
 
     def setup_run_environment(self, env):
         suffixes = (
             self.spec.variants["precision"].value
             if self.spec.satisfies("@4.1:")
-            else ["4", "8", "d"]
+            else ("4", "8", "d")
         )
         shared = False if self.spec.satisfies("@:4.0") else self.spec.satisfies("+shared")
         for suffix in suffixes:
