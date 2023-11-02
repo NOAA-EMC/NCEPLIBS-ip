@@ -1,5 +1,3 @@
-@mainpage
-
 ## Introduction
 
 The NCEP general interpolation library (NCEPLIBS-ip) contains Fortran 90
