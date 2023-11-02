@@ -13,12 +13,12 @@ project(ip VERSION ${pVersion} LANGUAGES C Fortran)
 include(GNUInstallDirs)
 
 # Handle user options.
-option(ENABLE_DOCS "Enable generation of Doxygen-based documentation." OFF)
+option(ENABLE_DOCS "Enable generation of Doxygen-based documentation" OFF)
 option(OPENMP "Use OpenMP threading" OFF)
 option(BUILD_SHARED_LIBS "Build shared libraries" OFF)
-option(BUILD_4 "Build the 4-byte real version of the library, libip_4.a" ON)
-option(BUILD_D "Build the 8-byte real version of the library, libip_d.a" ON)
-option(BUILD_8 "Build the 8-byte integer version of the library, libip_8.a" OFF)
+option(BUILD_4 "Build the 4-byte real version of the library, libip_4.{a,so}" ON)
+option(BUILD_D "Build the 8-byte real version of the library, libip_d.{a,so}" ON)
+option(BUILD_8 "Build the 8-byte integer version of the library, libip_8.{a,so}" OFF)
 option(BUILD_DEPRECATED "Build deprecated spectral interpolation functions" OFF)
 option(TEST_TIME_LIMIT "Set timeout for tests" OFF)
 
