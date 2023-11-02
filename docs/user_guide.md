@@ -329,7 +329,6 @@ Spectral transform utilities
 
    Name        | Function
    ----        | ------------------------------------------------------------------
-   spgget()    | Get grid-space constants
    spwget()    | Get wave-space constants
    splat()     | Compute latitude functions
    speps()     | Compute utility spectral fields
