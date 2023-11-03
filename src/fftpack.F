@@ -282,7 +282,7 @@ C> @author Paul N. Swarztrauber, National Center for Atmospheric Research, Bould
       SUBROUTINE RFFTF (N,R,WSAVE)
       DIMENSION       R(1)       ,WSAVE(1)
       IF (N .EQ. 1) RETURN
-      CALL RFFTF1 (N,R,WSAVE,WSAVE(N+1),WSAVE(2*N+1))
+      CALL RFFTF1 (N,R,WSAVE,WSAVE(N+1),INT(WSAVE(2*N+1)))
       RETURN
       END
       
@@ -296,7 +296,7 @@ C> @author Paul N. Swarztrauber, National Center for Atmospheric Research, Bould
       SUBROUTINE RFFTB (N,R,WSAVE)
       DIMENSION       R(1)       ,WSAVE(1)
       IF (N .EQ. 1) RETURN
-      CALL RFFTB1 (N,R,WSAVE,WSAVE(N+1),WSAVE(2*N+1))
+      CALL RFFTB1 (N,R,WSAVE,WSAVE(N+1),INT(WSAVE(2*N+1)))
       RETURN
       END
 
@@ -307,7 +307,7 @@ C> @param WSAVE
 C>
 C> @author Paul N. Swarztrauber, National Center for Atmospheric Research, Boulder, CO
       SUBROUTINE RFFTI (N,WSAVE)
-      DIMENSION       WSAVE(1)
+      INTEGER  ::     WSAVE(1)
       IF (N .EQ. 1) RETURN
       CALL RFFTI1 (N,WSAVE(N+1),WSAVE(2*N+1))
       RETURN
