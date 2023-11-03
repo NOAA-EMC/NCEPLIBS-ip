@@ -2,7 +2,6 @@
 !
 ! Kyle Gerheiser June, 2021
 
-module interp_mod_grib2
   use ip_mod
   implicit none
 
@@ -41,11 +40,14 @@ contains
     ! file.  Any differences are written to standard output.
     !-------------------------------------------------------------------------
 
-    use input_data_mod_grib2, only : input_data, &
-         input_gdtnum, &
-         input_gdtlen, &
-         input_gdtmpl, &
-         input_bitmap, &
+#if(LSIZE==4)
+    use input_data_mod_grib2_4, &
+#elif(LSIZE==D)
+    use input_data_mod_grib2_d, &
+#elif(LSIZE==8)
+    use input_data_mod_grib2_8, &
+#endif
+      only : input_data, input_gdtnum, input_gdtlen, input_gdtmpl, input_bitmap, &
          i_input, j_input
 
     implicit none
@@ -395,12 +397,15 @@ contains
     ! Differences are printed to standard output.
     !-------------------------------------------------------------------------
 
-    use input_data_mod_grib2, only : input_u_data, input_v_data, &
-         vector_input_gdtmpl, &
-         input_gdtlen, &
-         input_gdtnum, &
-         input_bitmap, &
-         i_input, j_input
+#if(LSIZE==4)
+    use input_data_mod_grib2_4, &
+#elif(LSIZE==D)
+    use input_data_mod_grib2_d, &
+#elif(LSIZE==8)
+    use input_data_mod_grib2_8, &
+#endif
+      only : input_u_data, input_v_data, vector_input_gdtmpl, input_gdtlen, &
+         input_gdtnum, input_bitmap, i_input, j_input
 
     implicit none
 
@@ -773,5 +778,3 @@ contains
     stop 7
 
   end subroutine interp_vector
-
-end module interp_mod_grib2

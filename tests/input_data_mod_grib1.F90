@@ -1,11 +1,3 @@
-! This is test code from the NCEPLIBS-ip project.
-!
-! This is a helper module for tests which load some GRIB1 input data
-! to be interpolated.
-!
-! Kyle Gerheiser June, 2021
-
-module input_data_mod_grib1
   implicit none
 
   !------------------------------------------------------------------------
@@ -143,5 +135,3 @@ contains
 
     return
   end subroutine read_vector_input_data
-
-end module input_data_mod_grib1

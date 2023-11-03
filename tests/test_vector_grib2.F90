@@ -2,8 +2,16 @@
 !
 ! Kyle Gerheiser June, 2021
 program test_vector_grib2
-  use input_data_mod_grib2
-  use interp_mod_grib2
+#if(LSIZE==4)
+  use input_data_mod_grib2_4
+  use interp_mod_grib2_4
+#elif(LSIZE==D)
+  use input_data_mod_grib2_d
+  use interp_mod_grib2_d
+#elif(LSIZE==8)
+  use input_data_mod_grib2_8
+  use interp_mod_grib2_8
+#endif
   implicit none
 
   integer :: num_args, len, status
