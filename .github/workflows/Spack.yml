@@ -21,9 +21,7 @@ jobs:
     strategy:
       matrix:
         os: ["ubuntu-latest"]
-        variants: ["+openmp +shared +pic precision=d"]
-        variants: ["+openmp ~shared ~pic precision=4"]
-        variants: ["~openmp ~shared +pic precision=8"]
+        variants: ["+openmp +shared +pic precision=d", "+openmp ~shared ~pic precision=4", "~openmp ~shared +pic precision=8"]
     runs-on: ${{ matrix.os }}
 
     steps:
