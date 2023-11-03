@@ -51,7 +51,7 @@ endif()
 
 # Set compiler flags.
 if(CMAKE_Fortran_COMPILER_ID MATCHES "^(Intel|IntelLLVM)$")
-  set(CMAKE_Fortran_FLAGS "-g -traceback -assume byterecl -fp-model strict -fpp -auto ${CMAKE_Fortran_FLAGS}")
+  set(CMAKE_Fortran_FLAGS "-g -traceback -convert big_endian -assume byterecl -fp-model strict -fpp -auto ${CMAKE_Fortran_FLAGS}")
   set(CMAKE_Fortran_FLAGS_DEBUG "-O0 -check all -warn all")
   if(CMAKE_Fortran_COMPILER_ID MATCHES "^(IntelLLVM)$")
     # Avoid Intel OneAPI 2023.2.1 bug
@@ -60,10 +60,13 @@ if(CMAKE_Fortran_COMPILER_ID MATCHES "^(Intel|IntelLLVM)$")
   set(fortran_d_flags "-r8")
   set(fortran_8_flags "-i8 -r8")
 elseif(CMAKE_Fortran_COMPILER_ID MATCHES "^(GNU)$")
-  set(CMAKE_Fortran_FLAGS "-g -fbacktrace -cpp -fallow-argument-mismatch ${CMAKE_Fortran_FLAGS}")
+  set(CMAKE_Fortran_FLAGS "-g -fbacktrace -cpp -fconvert=big-endian ${CMAKE_Fortran_FLAGS}")
   set(CMAKE_Fortran_FLAGS_DEBUG "-O0 -ggdb -Wall -Wno-unused-dummy-argument -Wsurprising -Wextra -fcheck=all")
   set(fortran_d_flags "-fdefault-real-8")
   set(fortran_8_flags "-fdefault-integer-8 -fdefault-real-8")
+  if(${CMAKE_Fortran_COMPILER_VERSION} VERSION_GREATER_EQUAL 10)
+    set(CMAKE_Fortran_FLAGS "-w -fallow-argument-mismatch -fallow-invalid-boz ${CMAKE_Fortran_FLAGS}")
+  endif()
 endif()
 
 # This is the source code directiroy.
