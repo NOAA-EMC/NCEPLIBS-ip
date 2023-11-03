@@ -255,12 +255,13 @@ ipxwafs() |  expand or contract wafs grids
 ipxwafs2() |  expand or contract wafs grids
 ipxwafs3() |  expand or contract wafs grids
 
-## Spectral Interpolation & Transformation
+## Spectral Transformation & Processing
 
-The spectral transform subroutines can handle both scalar and two-dimensional
-vector fields. Each vector field will be represented in spectral space
-appropriately by its respective spherical divergence and curl (vorticity), thus
-avoiding the pole problems associated with representing components separately.
+The library's spectral processing subroutines can handle both scalar and
+two-dimensional vector fields. Each vector field will be represented in spectral
+space appropriately by its respective spherical divergence and curl (vorticity),
+thus avoiding the pole problems associated with representing components
+separately.
 
 Some of the functions performed by the library are spectral interpolations
 between two grids, spectral truncations in place on a grid, and basic spectral
@@ -747,7 +748,7 @@ Example 2.  Read a grib 2 file of u/v wind data on a global regular
  end program example_2
 \endcode
 
-## Examples: Spectral Interpolation & Transformation
+## Examples: Spectral Processing & Transformation
 
 Example 1. Interpolate heights and winds from a latlon grid
            to two antipodal polar stereographic grids.
