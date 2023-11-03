@@ -50,7 +50,7 @@ jobs:
         spack load ip
         if [[ "${{ matrix.variants }}" =~ "+shared" ]]; then suffix="so" ; else suffix="a"; fi
         libvar=IP_LIB${precision}
-        ls ${!libvar} | grep -cE "/libsp_${precision}\."$suffix'$'
+        ls ${!libvar} | grep -cE "/libip_${precision}\."$suffix'$'
 
   # This job validates the Spack recipe by making sure each cmake build option is represented
   recipe-check:
@@ -66,7 +66,7 @@ jobs:
     - name: recipe-check
       run: |
         echo "If this jobs fails, look at the most recently output CMake option below and make sure that option appears in spack/package.py"
-        for opt in $(grep -ioP '^option\(\K(?!(ENABLE_DOCS))[^ ]+' $GITHUB_WORKSPACE/ip/CMakeLists.txt) ; do
+        for opt in $(grep -ioP '^option\(\K(?!(ENABLE_DOCS|TEST_TIME_LIMIT))[^ ]+' $GITHUB_WORKSPACE/ip/CMakeLists.txt) ; do
           echo "Checking for presence of '$opt' CMake option in package.py"
           grep -cP "define.+\b${opt}\b" $GITHUB_WORKSPACE/ip/spack/package.py
         done
