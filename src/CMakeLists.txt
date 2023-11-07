@@ -26,6 +26,9 @@ if(BUILD_DEPRECATED)
   sptgpsd.f sptgptd.f sptgptsd.f sptgptvd.f sptrund.f sptrunl.f spvar.f)
 endif()
 
+set_source_files_properties(fftpack.F PROPERTIES COMPILE_FLAGS -fcheck=no-bounds)
+set_source_files_properties(sptranf.f PROPERTIES COMPILE_FLAGS -fcheck=no-bounds)
+set_source_files_properties(sptranfv.f PROPERTIES COMPILE_FLAGS -fcheck=no-bounds)
 
 # Build _4, _d, and/or _8 depending on options provided to CMake
 foreach(kind ${kinds})
