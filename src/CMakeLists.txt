@@ -26,8 +26,6 @@ if(BUILD_DEPRECATED)
   sptgpsd.f sptgptd.f sptgptsd.f sptgptvd.f sptrund.f sptrunl.f spvar.f)
 endif()
 
-set_source_files_properties(fftpack.F PROPERTIES COMPILE_FLAGS -fno-sanitize=all)
-
 
 # Build _4, _d, and/or _8 depending on options provided to CMake
 foreach(kind ${kinds})
