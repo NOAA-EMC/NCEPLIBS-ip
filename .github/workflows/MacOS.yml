@@ -25,33 +25,6 @@ jobs:
         
     steps:
       
-    - name: cache-sp
-      id: cache-sp
-      uses: actions/cache@v2
-      with:
-        path: ~/sp
-        key: sp-${{ matrix.openmp }}-MacOS-2.3.3-1
-
-    - name: checkout-sp
-      if: steps.cache-sp.outputs.cache-hit != 'true'
-      uses: actions/checkout@v2
-      with:
-        repository: NOAA-EMC/NCEPLIBS-sp
-        path: sp
-        ref: v2.3.3
-
-    - name: build-sp
-      if: steps.cache-sp.outputs.cache-hit != 'true'
-      run: |
-        cd sp
-        mkdir build
-        cd build
-        cmake -DOPENMP=${{ matrix.openmp }} -DCMAKE_INSTALL_PREFIX=~/sp -DBUILD_SHARED_LIBS=${{ matrix.sharedlibs }} -DBUILD_8=ON ..
-        make -j2
-        make install
-        ls -l ~/sp
-        ls -l ~/sp/lib
-
     - name: checkout
       uses: actions/checkout@v2
       with: 
@@ -62,7 +35,7 @@ jobs:
         cd ip
         mkdir build 
         cd build
-        cmake -DOPENMP=${{ matrix.openmp }}  -DCMAKE_PREFIX_PATH="~/sp" -DBUILD_SHARED_LIBS=${{ matrix.sharedlibs }} -DCMAKE_INSTALL_PREFIX=~/install -DBUILD_8=ON ..
+        cmake -DOPENMP=${{ matrix.openmp }} -DBUILD_SHARED_LIBS=${{ matrix.sharedlibs }} -DCMAKE_INSTALL_PREFIX=~/install -DBUILD_8=ON ..
         make -j2 VERBOSE=2
         make install
         ls -l ~/install
