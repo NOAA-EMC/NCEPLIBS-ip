@@ -54,7 +54,7 @@ jobs:
     - name: upload-test-coverage
       uses: actions/upload-artifact@v2
       with:
-        name: test-coverage
+        name: ip-test-coverage
         path: |
               ip/build/*.html 
               ip/build/*.css
