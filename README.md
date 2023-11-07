@@ -38,7 +38,7 @@ This package requires the [NCEPLIBS-sp](https://github.com/NOAA-EMC/NCEPLIBS-sp)
 ```
 mkdir build
 cd build
-cmake -DCMAKE_INSTALL_PREFIX=/path/to/install /path/to/NCEPLIBS-ip2
+cmake -DCMAKE_INSTALL_PREFIX=/path/to/install /path/to/NCEPLIBS-ip
 make -j2
 make test (or ctest --verbose)
 make install
