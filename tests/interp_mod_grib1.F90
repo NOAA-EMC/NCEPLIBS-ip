@@ -1,8 +1,3 @@
-! This is a test for the NCEPLBS-ip library.
-!
-! Kyle Gerheiser June, 2021
-
-module interp_mod_grib1
   use ip_mod
   implicit none
 
@@ -40,10 +35,14 @@ contains
     ! The interpolated data is compared against a baseline binary
     ! file.  Any differences are written to standard output.
     !-------------------------------------------------------------------------
-    use input_data_mod_grib1, only : input_data, &
-         input_kgds, &
-         input_bitmap, &
-         i_input, j_input
+#if(LSIZE==4)
+    use input_data_mod_grib1_4, &
+#elif(LSIZE==D)
+    use input_data_mod_grib1_d, &
+#elif(LSIZE==8)
+    use input_data_mod_grib1_8, &
+#endif
+      only: input_data, input_kgds, input_bitmap, i_input, j_input
 
     implicit none
 
@@ -315,9 +314,14 @@ contains
     ! Differences are printed to standard output.
     !-------------------------------------------------------------------------
 
-    use input_data_mod_grib1, only : input_u_data, input_v_data, &
-         vector_input_kgds, &
-         input_bitmap, &
+#if(LSIZE==4)
+    use input_data_mod_grib1_4, &
+#elif(LSIZE==D)
+    use input_data_mod_grib1_d, &
+#elif(LSIZE==8)
+    use input_data_mod_grib1_8, &
+#endif
+      only: input_u_data, input_v_data, vector_input_kgds, input_bitmap, &
          i_input, j_input
 
     implicit none
@@ -603,5 +607,3 @@ contains
     stop 7
 
   end subroutine interp_vector
-
-end module interp_mod_grib1

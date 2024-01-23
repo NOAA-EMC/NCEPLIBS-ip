@@ -2,8 +2,16 @@
 !
 ! Kyle Gerheiser June, 2021
 program test_scalar_grib1
-  use input_data_mod_grib1
-  use interp_mod_grib1
+#if(LSIZE==4)
+  use input_data_mod_grib1_4
+  use interp_mod_grib1_4
+#elif(LSIZE==D)
+  use input_data_mod_grib1_d
+  use interp_mod_grib1_d
+#elif(LSIZE==8)
+  use input_data_mod_grib1_8
+  use interp_mod_grib1_8
+#endif
   implicit none
 
   integer :: num_args, len, status

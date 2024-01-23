@@ -28,21 +28,6 @@ jobs:
         sudo apt-get install doxygen
         python3 -m pip install gcovr
 
-    - name: checkout-sp
-      uses: actions/checkout@v2
-      with:
-        repository: NOAA-EMC/NCEPLIBS-sp
-        path: sp
-
-    - name: build-sp
-      run: |
-        cd sp
-        mkdir build
-        cd build
-        cmake -DOPENMP=ON -DCMAKE_INSTALL_PREFIX=~/sp -DBUILD_8=ON ..
-        make -j2
-        make install
-
     - name: checkout
       uses: actions/checkout@v2
       with: 
@@ -53,7 +38,7 @@ jobs:
         cd ip
         mkdir build 
         cd build
-        cmake -DENABLE_DOCS=YES -DCMAKE_PREFIX_PATH="~/" -DOPENMP=ON -DCMAKE_Fortran_FLAGS="-g -fprofile-abs-path -fprofile-arcs -ftest-coverage -O0 -fsanitize=address" -DCMAKE_C_FLAGS="-g -fprofile-abs-path -fprofile-arcs -ftest-coverage -O0 -fsanitize=address" -DCMAKE_BUILD_TYPE=Debug -DBUILD_SHARED_LIBS=ON -DBUILD_8=ON ..
+        cmake -DENABLE_DOCS=YES -DOPENMP=ON -DCMAKE_Fortran_FLAGS="-g -fprofile-abs-path -fprofile-arcs -ftest-coverage -O0 -fsanitize=address" -DCMAKE_C_FLAGS="-g -fprofile-abs-path -fprofile-arcs -ftest-coverage -O0 -fsanitize=address" -DCMAKE_BUILD_TYPE=Debug -DBUILD_SHARED_LIBS=ON -DBUILD_8=ON ..
         make -j2 VERBOSE=1
     
     - name: test
@@ -69,7 +54,7 @@ jobs:
     - name: upload-test-coverage
       uses: actions/upload-artifact@v2
       with:
-        name: test-coverage
+        name: ip-test-coverage
         path: |
               ip/build/*.html 
               ip/build/*.css

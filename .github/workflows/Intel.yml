@@ -37,33 +37,8 @@ jobs:
         rm GPG-PUB-KEY-INTEL-SW-PRODUCTS.PUB
         echo "deb https://apt.repos.intel.com/oneapi all main" | sudo tee /etc/apt/sources.list.d/oneAPI.list
         sudo apt-get update
-        sudo apt-get install intel-oneapi-dev-utilities intel-oneapi-mpi-devel intel-oneapi-openmp intel-oneapi-compiler-fortran intel-oneapi-compiler-dpcpp-cpp-and-cpp-classic
+        sudo apt-get install intel-oneapi-openmp intel-oneapi-compiler-fortran-2023.2.1 intel-oneapi-compiler-dpcpp-cpp-and-cpp-classic-2023.2.1
         echo "source /opt/intel/oneapi/setvars.sh" >> ~/.bash_profile
-      
-    - name: cache-sp
-      id: cache-sp
-      uses: actions/cache@v2
-      with:
-        path: ~/sp
-        key: sp-${{ runner.os }}-Intel-${{ matrix.compilers }}-${{ matrix.openmp }}
-
-    - name: checkout-sp
-      if: steps.cache-sp.outputs.cache-hit != 'true'
-      uses: actions/checkout@v2
-      with:
-        repository: NOAA-EMC/NCEPLIBS-sp
-        path: sp
-        ref: develop
-
-    - name: build-sp
-      if: steps.cache-sp.outputs.cache-hit != 'true'
-      run: |
-        cd sp
-        mkdir build
-        cd build
-        ${{ matrix.compilers }} cmake -DCMAKE_INSTALL_PREFIX=~/sp -DOPENMP=${{ matrix.openmp}} -DBUILD_8=ON ..
-        make -j2
-        make install
 
     - name: checkout
       uses: actions/checkout@v2
@@ -75,7 +50,7 @@ jobs:
         cd ip
         mkdir build 
         cd build
-        ${{ matrix.compilers }} cmake -DOPENMP=${{ matrix.openmp }} -DBUILD_SHARED_LIBS=OFF -DCMAKE_PREFIX_PATH="~/sp" -DBUILD_8=ON ..
+        ${{ matrix.compilers }} cmake -DOPENMP=${{ matrix.openmp }} -DBUILD_SHARED_LIBS=OFF -DBUILD_8=ON ..
         make -j2 VERBOSE=1
     
     - name: test
