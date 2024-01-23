@@ -5,7 +5,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=9"/>
 <meta name="generator" content="Doxygen 1.9.1"/>
 <meta name="viewport" content="width=device-width, initial-scale=1"/>
-<title>NCEPLIBS-ip: Main Page</title>
+<title>NCEPLIBS-ip: Introduction</title>
 <link href="tabs.css" rel="stylesheet" type="text/css"/>
 <script type="text/javascript" src="jquery.js"></script>
 <script type="text/javascript" src="dynsections.js"></script>
@@ -26,7 +26,7 @@
  <tr style="height: 56px;">
   <td id="projectalign" style="padding-left: 0.5em;">
    <div id="projectname">NCEPLIBS-ip
-   &#160;<span id="projectnumber">4.4.0</span>
+   &#160;<span id="projectnumber">5.0.0</span>
    </div>
   </td>
  </tr>
@@ -83,18 +83,19 @@ $(document).ready(function(){initNavTree('index.html',''); initResizable(); });
 
 <div class="PageDoc"><div class="header">
   <div class="headertitle">
-<div class="title">NCEPLIBS-ip Documentation</div>  </div>
+<div class="title">Introduction </div>  </div>
 </div><!--header-->
 <div class="contents">
 <!----!>
-<b>Previous versions:</b></h3> <a href="ver-4.3.0/index.html">4.3.0</a>, <a href="ver-4.2.0/index.html">4.2.0</a>, <a href="ver-4.1.0/index.html">4.1.0</a>, <a href="ver-4.0.0/index.html">4.0.0</a>
+<b>Previous versions:</b></h3> <a href="ver-4.4.0/index.html">4.4.0</a>, <a href="ver-4.3.0/index.html">4.3.0</a>, <a href="ver-4.2.0/index.html">4.2.0</a>, <a href="ver-4.1.0/index.html">4.1.0</a>, <a href="ver-4.0.0/index.html">4.0.0</a>
 <!----!>
-<div class="textblock"><h2><a class="anchor" id="autotoc_md0"></a>
-Introduction</h2>
-<p>The NCEP general interpolation library (NCEPLIBS-ip) contains Fortran 90 subprograms to be used for interpolating between nearly all grids used at NCEP. The library is particularly efficient when interpolating many fields at one time.</p>
-<p>NCEPLIBS-ip supports compilation with the GNU Compiler Collection (gfortran), Intel Classic (ifort), and Intel OneAPI (ifx) compilers. In the case of Intel LLVM, it is recommended to use at least version 2023.2.1 to avoid any number of compiler issues.</p>
-<h2><a class="anchor" id="autotoc_md1"></a>
-Interpolation</h2>
+<div class="textblock"><p><a class="anchor" id="md__home_runner_work_NCEPLIBS_ip_NCEPLIBS_ip_ip_docs_user_guide"></a> The NCEP general interpolation library (NCEPLIBS-ip) contains Fortran 90 subprograms to be used for interpolating between nearly all grids used at NCEP. The library is particularly efficient when interpolating many fields at one time. It also contains functionality for interpolating, transforming, and otherwise manipulating spectral data (these functions were formerly contained in the NCEPLIBS-sp library).</p>
+<p>NCEPLIBS-ip supports compilation with the GNU Compiler Collection (gfortran), Intel Classic (ifort), and Intel OneAPI (ifx) compilers. In the case of Intel OneAPI (IntelLLVM), it is recommended to use at least version 2023.2.1 to avoid any number of compiler issues.</p>
+<dl class="section note"><dt>Note</dt><dd>Some routines may behave poorly or unpredictably when using 4-byte reals (libip_4). For instance, there is an ATAN2 function used for polar stereo grids where for certain regions of certain grids, floating point differences between 4-byte output values (~1e-7) can be amplified into sizable differences in output field values. Some applications may therefore benefit from the use of 8-byte reals (libip_d or libip_8).</dd></dl>
+<h1><a class="anchor" id="autotoc_md1"></a>
+Interpolation</h1>
+<h2><a class="anchor" id="autotoc_md2"></a>
+Interpolation Methods</h2>
 <p>There are currently six interpolation methods available in the library:</p><ul>
 <li>bilinear</li>
 <li>bicubic</li>
@@ -106,9 +107,8 @@ Interpolation</h2>
 <p>Some of the methods have interpolation sub-options. A few methods have restrictions on the type of input or output grids.</p>
 <p>Several methods can perform interpolation on fields with bitmaps (i.e. some points on the input grid may be undefined). In this case, the bitmap is interpolated to the output grid. Only valid input points are used to interpolate to valid output points. An output bitmap will also be created to locate invalid data where the output grid extends outside the domain of the input grid.</p>
 <p>The driver routines for interpolating scalars and vectors may be found in <a class="el" href="namespaceipolates__mod.html" title="Top-level driver for scalar interpolation interpolation routine ipolates().">ipolates_mod</a>. The interpolation method is chosen via the first argument of these routines (variable IP). Sub-options are set via the IPOPT array.</p>
-<p>It should be noted that some routines may behave poorly or unpredictably when using 4-byte reals (libip_4). For instance, there is an ATAN2 function used for polar stereo grids where for certain grids/coordinates, floating point differences between 4-byte output values (~1e-7) can be amplified into noticeable differences in output field values. Some applications may therefore benefit from the use of 8-byte reals (libip_d).</p>
-<h3><a class="anchor" id="autotoc_md2"></a>
-Bilinear Interpolation</h3>
+<h3><a class="anchor" id="autotoc_md3"></a>
+Bilinear Interpolation Method</h3>
 <p>Bilinear interpolation is chosen by setting IP=0.</p>
 <p>This method has two sub-options:</p>
 <ol type="1">
@@ -116,8 +116,8 @@ Bilinear Interpolation</h3>
 <li>If valid input data is not found near an a spiral search may be performed. The spiral search is only an option for scalar data.</li>
 </ol>
 <p>The bilinear method has no restrictions and can interpolate with bitmaps.</p>
-<h3><a class="anchor" id="autotoc_md3"></a>
-Bicubic Interpolation</h3>
+<h3><a class="anchor" id="autotoc_md4"></a>
+Bicubic Interpolation Method</h3>
 <p>Bicubic interpolation is chosen by setting IP=1.</p>
 <p>This method has two sub-options:</p>
 <ol type="1">
@@ -125,14 +125,14 @@ Bicubic Interpolation</h3>
 <li>The percent of valid input data required to make output data, which defaults to 50%.</li>
 </ol>
 <p>The bicubic method cannot interpolate data with bitmaps.</p>
-<h3><a class="anchor" id="autotoc_md4"></a>
-Neighbor Interpolation</h3>
+<h3><a class="anchor" id="autotoc_md5"></a>
+Neighbor Interpolation Method</h3>
 <p>Neighbor interpolation is chosen by setting IP=2.</p>
 <p>Neighbor interpolation means that the output value is set to the nearest input value. It would be appropriate for interpolating integer fields such as vegetation index.</p>
 <p>This method has one sub-option: If valid input data is not found near an an output point, a spiral search is optionally performed.</p>
 <p>The neighbor method has no restrictions and can interpolate with bitmaps.</p>
-<h3><a class="anchor" id="autotoc_md5"></a>
-Budget interpolation</h3>
+<h3><a class="anchor" id="autotoc_md6"></a>
+Budget Interpolation Method</h3>
 <p>Budget interpolation is chosen by setting IP=3.</p>
 <p>Budget interpolation means a low-order interpolation method that quasi-conserves area averages. It would be appropriate for interpolating budget fields such as precipitation.</p>
 <p>This method assumes that the field really represents box averages where each box extends halfway to its neighboring grid point in each direction. The method actually averages bilinearly interpolated values in a square array of points distributed within each output grid box.</p>
@@ -145,9 +145,9 @@ Budget interpolation</h3>
 <li>In cases where there is no or insufficient valid input data, a spiral search may be invoked to search for the nearest valid data. search square (scalar interpolation only).</li>
 </ol>
 <p>This method can interpolate data with bitmaps.</p>
-<h3><a class="anchor" id="autotoc_md6"></a>
-Spectral Interpolation</h3>
-<p>Spectral interpolation is chosen by setting IP=4.</p>
+<h3><a class="anchor" id="autotoc_md7"></a>
+Spectral Interpolation Method</h3>
+<p>The spectral interpolation scheme is chosen by setting IP=4.</p>
 <p>This method has two sub-options:</p>
 <ol type="1">
 <li>set the spectral shape (triangular or rhomboidal)</li>
@@ -155,8 +155,8 @@ Spectral Interpolation</h3>
 </ol>
 <p>The input grid must be a global cylindrical grid (either Gaussian or equidistant). This method cannot interpolate data with bitmaps.</p>
 <p>Unless the output grid is a global cylindrical grid, a polar stereographic grid centered at the pole, or a Mercator grid, this method can be quite expensive.</p>
-<h3><a class="anchor" id="autotoc_md7"></a>
-Neighbor-Budget Interpolation</h3>
+<h3><a class="anchor" id="autotoc_md8"></a>
+Neighbor-Budget Interpolation Method</h3>
 <p>Neighbor-budget interpolation is chosen by setting IP=6.</p>
 <p>This method computes weighted averages of neighbor points arranged in a square box centered around each output grid point and stretching nearly halfway to each of the neighboring grid points. The main difference with the budget interpolation (IP=3) is neighbor vs bilinear interpolation of the square box of points.</p>
 <p>There are the following sub-options:</p>
@@ -165,11 +165,11 @@ Neighbor-Budget Interpolation</h3>
 <li>The respective averaging weights for the radius points are adjustable. The default is for all weights equal to 1, giving an unweighted average.</li>
 <li>The percent of valid input data required to make output data is adjustable. The default is 50%.</li>
 </ol>
-<h2><a class="anchor" id="autotoc_md8"></a>
+<h2><a class="anchor" id="autotoc_md9"></a>
 Vectors and Scalars</h2>
 <p>The library can handle two-dimensional vector fields as well as scalar fields. The input and output vectors are rotated if necessary so that they are either resolved relative to their defined grid in the direction of increasing x and y coordinates or resolved relative to eastward and northward directions on the earth. The rotation is determined by the grid definitions.</p>
 <p>Vectors are generally interpolated (by all methods except spectral interpolation) by moving the relevant input vectors along a great circle to the output point, keeping their orientations with respect to the great circle constant, before independently interpolating the respective components. This ensures that vector interpolation will be consistent over the whole globe including the poles.</p>
-<h2><a class="anchor" id="autotoc_md9"></a>
+<h2><a class="anchor" id="autotoc_md10"></a>
 Grids</h2>
 <p>The input and output grids are defined by their respective GRIB2 grid definition template and template number as decoced by the NCEP G2 library. There are six map projections recognized by the library:</p>
 <table class="markdownTable">
@@ -192,11 +192,11 @@ Grids</h2>
 <p>For vector interpolation, the vector rotations parameters must also be passed. On the other hand, for non-negative output data representation types, the number of output grid points and their latitudes and longitudes (and the vector rotation parameters for vector interpolation) are all returned by the interpolation subprograms.</p>
 <p>If an output equidistant cylindrical grid contains multiple pole points, then the pole points are forced to be self-consistent. That is, scalar fields are obliged to be constant at the pole and vector components are obliged to exhibit a wavenumber one variation at the pole.</p>
 <p>Generally, only regular grids can be interpolated in this library. However, the thinned WAFS grids may be expanded to a regular grid (or vice versa) using subprograms <a class="el" href="ipxwafs_8F90.html#a1465ea191950f7464bb3374abed94c12" title="Expand or contract wafs grids.">ipxwafs()</a>, <a class="el" href="ipxwafs2_8F90.html#ab602c9c04957836c0b8860560d442894" title="Expand or contract wafs grids using linear interpolation and account for bitmapped data.">ipxwafs2()</a>, or <a class="el" href="ipxwafs3_8F90.html#aae7be3c77cbe16d0219c86e443e6ec1d" title="Expand or contract wafs grids using neighbor interpolation and accout for bitmapped data.">ipxwafs3()</a>. Eta data (with Arakawa "E" staggering) on the "H" or "V" grid may be expanded to a filled regular grid (or vice versa) using subprogram <a class="el" href="ipxetas_8F90.html#a89ff34ee39b0da1895e9d8552bb462e1" title="Expand or contract eta grids using linear interpolation.">ipxetas()</a>.</p>
-<h2><a class="anchor" id="autotoc_md10"></a>
+<h2><a class="anchor" id="autotoc_md11"></a>
 Return Codes</h2>
 <p>The return code issued by an interpolation subprogram determines whether it ran successfully or how it failed. Check nonzero return codes against the docblock of the respective subprogram.</p>
-<h2><a class="anchor" id="autotoc_md11"></a>
-Entry point list</h2>
+<h2><a class="anchor" id="autotoc_md12"></a>
+Entry point list: interpolation</h2>
 <p>Scalar and vecotr field interpolation subprograms can be found in the relevant module documentation:</p>
 <table class="markdownTable">
 <tr class="markdownTableHead">
@@ -258,416 +258,811 @@ Entry point list</h2>
 <tr class="markdownTableRowOdd">
 <td class="markdownTableBodyNone"><a class="el" href="ipxwafs3_8F90.html#aae7be3c77cbe16d0219c86e443e6ec1d" title="Expand or contract wafs grids using neighbor interpolation and accout for bitmapped data.">ipxwafs3()</a>   </td><td class="markdownTableBodyNone">expand or contract wafs grids   </td></tr>
 </table>
-<h2><a class="anchor" id="autotoc_md12"></a>
-How to invoke ip2lib: examples</h2>
-<pre>
-***********************************************************************
-Example 1. Read a grib 2 file of scalar data on a global regular
-            1-deg lat/lon grid and call ipolates to interpolate
-            it to NCEP standard grid 218, a lambert conformal grid.
-            Uses the NCEP G2 library to degrib the data.
-***********************************************************************
-
- program example_1
-
-use <a class="el" href="namespaceip__mod.html" title="Top-level module for the ip library which re-exports public routines such as ipolates,...">ip_mod</a>
- use grib_mod  ! ncep grib 2 library
-
- implicit none
-
- character(len=100)      :: input_file
-
- integer                 :: iunit, iret, lugi
- integer                 :: mi, mo, no
- integer, allocatable    :: ibi(:), ibo(:)
- integer                 :: ip, ipopt(20)
- integer                 :: j, jdisc, jpdtn, jgdtn, k, km
- integer                 :: jids(200), jgdt(200), jpdt(200)
- integer                 :: idim_input, jdim_input
- integer                 :: idim_output, jdim_output
-
- logical                 :: unpack
- logical*1, allocatable  :: input_bitmap(:,:), output_bitmap(:,:)
-
- real, allocatable       :: input_data(:,:)
- real, allocatable       :: output_rlat(:), output_rlon(:)
- real, allocatable       :: output_data(:,:)
-
- type(gribfield)         :: gfld_input
-
-!---------------------------------------------------------------------------
-! the output grid specs. this is ncep grid 218, a lambert conformal
-! grid. the grid definition information is stored in section 3
-! of a grib 2 message.
-!---------------------------------------------------------------------------
-
- integer, parameter :: igdtnum218 = 30 ! grid definition template number.
-                                       ! "30" is lambert conformal.
- integer, parameter :: igdtlen218 = 22 ! number of array elements needed
-                                       ! for a lambert conf. grid definition
-                                       ! template.
- integer     :: igdtmpl218(igdtlen218) ! the grid definition template.
-                                       ! the entries are:
-                                       ! 1 -shape of earth, oct 15
-                                       ! 2 -scale factor, spherical earth, oct 16
-                                       ! 3 -scaled value, spherical earth, octs 17-20
-                                       ! 4 -scale factor, major axis of
-                                       !    elliptical earth, oct 21
-                                       ! 5 -scaled value of major axis of
-                                       !    elliptical earth, octs 22-25
-                                       ! 6 -scale factor, minor axis of
-                                       !    elliptical earth, oct 26
-                                       ! 7 -scaled value of minor axis of
-                                       !    elliptical earth, octs 27-30
-                                       ! 8 -number points along x-axis, octs 31-34
-                                       ! 9 -number points along y-axis, octs 35-38
-                                       ! 10-latitude of first point, octs 39-42
-                                       ! 11-longitude of first point, octs 43-46
-                                       ! 12-resolution and component flags, oct 47
-                                       ! 13-latitude where grid lengths specified, 
-                                       !    octs 48-51
-                                       ! 14-longitude parallel to y-axis, octs 52-55
-                                       ! 15-x-direction grid length, octs 56-59
-                                       ! 16-y-direction grid length, octs 60-63
-                                       ! 17-projection center flag, oct 64
-                                       ! 18-scanning mode, oct 65
-                                       ! 19-first tangent latitude from pole, octs 66-69
-                                       ! 20-second tangent latitude from pole, octs 70-73
-                                       ! 21-latitude of south pole, octs 74-77
-                                       ! 22-longitude of south pole, octs 78-81
-
- integer, parameter :: missing=b'11111111111111111111111111111111'
- data igdtmpl218 / 6, 255, missing, 255, missing, 255, missing, 614, 428, &amp;
-                  12190000, 226541000, 56, 25000000, 265000000, &amp;
-                  12191000, 12191000, 0, 64, 25000000, 25000000, -90000000, 0/
-
-!---------------------------------------------------------------------------
-! open the grib 2 file containing data to be interpolated. for this
-! example, there are two data records.
-!---------------------------------------------------------------------------
-
- iunit=9
- input_file="${path}/input.data.grib2"
- call baopenr (iunit, input_file, iret)
-
-!---------------------------------------------------------------------------
-! prep for call to g2 library to degrib data. the data are on a regular
-! lat/lon grid with i/j dimension of 360/181. 
-!---------------------------------------------------------------------------
-
- idim_input = 360  ! the i/j dimensions of input grid
- jdim_input = 181
- mi         = idim_input * jdim_input   ! total number of pts, input grid
-
- jdisc   = -1         ! search for any discipline
- jpdtn   = -1         ! search for any product definition template number
- jgdtn   =  0         ! search for grid definition template number 0 - regular lat/lon grid
- jids    = -9999      ! array of values in identification section, set to wildcard
- jgdt    = -9999      ! array of values in grid definition template 3.m
- jgdt(8) = idim_input ! search for grid with i/j of 360/181
- jgdt(9) = jdim_input
- jpdt    = -9999      ! array of values in product definition template 4.n
- unpack  = .true.     ! unpack data
- lugi    = 0          ! no index file
-
- nullify(gfld_inputidsect)
- nullify(gfld_inputlocal)
- nullify(gfld_inputlist_opt)
- nullify(gfld_inputigdtmpl)  ! holds the grid definition template information
- nullify(gfld_inputipdtmpl)
- nullify(gfld_inputcoord_list)
- nullify(gfld_inputidrtmpl)
- nullify(gfld_inputbmap)     ! holds the bitmap
- nullify(gfld_inputfld)      ! holds the data
-
-!---------------------------------------------------------------------------
-! degrib the data.  non-zero "iret" indicates a problem during degrib.
-!---------------------------------------------------------------------------
-
- km = 2                  ! number of records to interpolate
-
- allocate(ibi(km))
- allocate(input_bitmap(mi,km))
- allocate(input_data(mi,km))
-
- do j = 0, (km-1)    ! number of records to skip
-
-   call getgb2(iunit, lugi, j, jdisc, jids, jpdtn, jpdt, jgdtn, jgdt, &amp;
-               unpack, k, gfld_input, iret)
-
-   if (iret /= 0) stop
-
-!---------------------------------------------------------------------------
-! does input data have a bitmap?
-!---------------------------------------------------------------------------
-
-   if (gfld_inputibmap==0) then  ! input data has bitmap
-     ibi(k)            = 1        ! tell ipolates to use bitmap
-     input_bitmap(:,k) = gfld_inputbmap
-   else                           ! no bitmap, data everywhere
-     ibi(k)            = 0        ! tell ipolates there is no bitmap
-     input_bitmap(:,k) = .true.
-   endif
-
-   input_data(:,k) = gfld_inputfld  ! the input data field
-
- enddo
-
- call baclose (iunit, iret)
-
-!---------------------------------------------------------------------------
-! setup arguments for ipolates (scalar interpolation) call.
-!---------------------------------------------------------------------------
-
- ip       = 0                         ! bilinear interpolation
- ipopt    = 0                         ! options for bilinear:
- ipopt(1) = 75                        ! set minimum mask to 75%
-
-!---------------------------------------------------------------------------
-! the i/j dimensions of the output grid.
-!---------------------------------------------------------------------------
-
- idim_output = igdtmpl218(8)
- jdim_output = igdtmpl218(9)
- mo          = idim_output * jdim_output ! total number of output pts
-
-!---------------------------------------------------------------------------
-! will hold the latitude, longitude, data and bitmap on the output grid,
-! which are computed in ipolates.
-!---------------------------------------------------------------------------
-
- allocate (ibo(km))              ! bitmap flags on output grid
- allocate (output_rlat(mo))
- allocate (output_rlon(mo))
- allocate (output_data(mo,km))
- allocate (output_bitmap(mo,km))
-
-!---------------------------------------------------------------------------
-! call ipolates to interpolate scalar data.  non-zero "iret" indicates
-! a problem.
-!---------------------------------------------------------------------------
-
- call ipolates(ip, ipopt, gfld_inputigdtnum, gfld_inputigdtmpl, &amp;
-               gfld_inputigdtlen, igdtnum218, igdtmpl218, igdtlen218, &amp;
-               mi, mo, km, ibi, input_bitmap, input_data, no, output_rlat, &amp;
-               output_rlon, ibo, output_bitmap, output_data, iret)
-
- if (iret /= 0) stop
-
-!---------------------------------------------------------------------------
-! write interpolated data to file.  if ipolates computed a bitmap (ibo==1) 
-! for the output grid, one may mask out this data with a flag value.
-!---------------------------------------------------------------------------
-
- open (10, file="./output.bin", access='direct', recl=idim_output*jdim_output*4)
-
- do k = 1, km
-   if(ibo(k)==1) where (.not. output_bitmap(:,k)) output_data(:,k) = -999.
-   write(10, rec=k) output_data(:,k)
- enddo
- write(10, rec=km+1) output_rlat
- write(10, rec=km+2) output_rlon
-
- close(10)
-
- end program example_1
-
-***********************************************************************
-Example 2.  Read a grib 2 file of u/v wind data on a global regular
-            1-deg lat/lon grid and call ipolatev to interpolate
-            it to four random station points.  Uses the NCEP
-            G2 library to degrib the data.
-***********************************************************************
-
- program example_2
-
- use grib_mod  ! ncep grib 2 library
-
- implicit none
-
- character(len=100)      :: input_file
-
- integer                 :: iunit, iret, lugi
- integer                 :: mi, mo, no
- integer                 :: ibi, ibo
- integer                 :: ip, ipopt(20)
- integer                 :: j, jdisc, jpdtn, jgdtn, k, km
- integer                 :: jids(200), jgdt(200), jpdt(200)
- integer                 :: idim_input, jdim_input
-
- logical                 :: unpack
- logical*1, allocatable  :: input_bitmap(:), output_bitmap(:)
-
- real, allocatable       :: input_u_data(:), input_v_data(:)
- real, allocatable       :: output_rlat(:), output_rlon(:)
- real, allocatable       :: output_crot(:), output_srot(:)
- real, allocatable       :: output_u_data(:), output_v_data(:)
-
- type(gribfield)         :: gfld_input
-
-!---------------------------------------------------------------------------
-! the output "grid" is a series of random station points.  in this case,
-! set the grid definition template number of a negative number.
-! the grid definition template array information is not used, so set
-! to a flag value.
-!---------------------------------------------------------------------------
-
- integer, parameter      :: igdtnumo = -1 
- integer, parameter      :: igdtleno =  1
- integer                 :: igdtmplo(igdtleno)
-
- data igdtmplo / -9999 /
-
-!---------------------------------------------------------------------------
-! open the grib 2 file containing data to be interpolated.  for this
-! example, there is one record of u-wind and v-wind.
-!---------------------------------------------------------------------------
-
- iunit=9
- input_file="./reg_tests/copygb2/data/uv_wind.grb2"
- call baopenr (iunit, input_file, iret)
-
-!---------------------------------------------------------------------------
-! prep for call to g2 library to degrib data. the data are on a regular
-! lat/lon grid with i/j dimension of 360/181.  
-!---------------------------------------------------------------------------
-
- idim_input = 360  ! the i/j dimensions of input grid
- jdim_input = 181
- mi         = idim_input * jdim_input   ! total number of pts, input grid
-
- jdisc   = -1         ! search for any discipline
- jpdtn   = -1         ! search for any product definition template number
- jgdtn   =  0         ! search for grid definition template number 0 - regular lat/lon grid
- jids    = -9999      ! array of values in identification section, set to wildcard
- jgdt    = -9999      ! array of values in grid definition template 3.m
- jgdt(8) = idim_input ! search for grid with i/j of 360/181
- jgdt(9) = jdim_input
- jpdt    = -9999      ! array of values in product definition template 4.n
- unpack  = .true.     ! unpack data
- lugi    = 0          ! no index file
-
- nullify(gfld_inputidsect)
- nullify(gfld_inputlocal)
- nullify(gfld_inputlist_opt)
- nullify(gfld_inputigdtmpl)  ! holds the grid definition template information
- nullify(gfld_inputipdtmpl)
- nullify(gfld_inputcoord_list)
- nullify(gfld_inputidrtmpl)
- nullify(gfld_inputbmap)     ! holds the bitmap
- nullify(gfld_inputfld)      ! holds the data
-
-!---------------------------------------------------------------------------
-! degrib the data.  non-zero "iret" indicates a problem during degrib.
-!---------------------------------------------------------------------------
-
- allocate(input_bitmap(mi))
- allocate(input_u_data(mi))
- allocate(input_v_data(mi))
-
-!---------------------------------------------------------------------------
-! read u-wind record.
-!---------------------------------------------------------------------------
-
- j = 0
- call getgb2(iunit, lugi, j, jdisc, jids, jpdtn, jpdt, jgdtn, jgdt, &amp;
-             unpack, k, gfld_input, iret)
-
- if (iret /= 0) stop
-
-!---------------------------------------------------------------------------
-! does input data have a bitmap?
-!---------------------------------------------------------------------------
-
- if (gfld_inputibmap==0) then  ! input data has bitmap
-   ibi          = 1             ! tell ipolates to use bitmap
-   input_bitmap = gfld_inputbmap
- else                           ! no bitmap, data everywhere
-   ibi          = 0             ! tell ipolates there is no bitmap
-   input_bitmap = .true.
- endif
-
- input_u_data = gfld_inputfld  ! the input u-wind data
-
-!---------------------------------------------------------------------------
-! read v-wind record.
-!---------------------------------------------------------------------------
-
- j = 1
- call getgb2(iunit, lugi, j, jdisc, jids, jpdtn, jpdt, jgdtn, jgdt, &amp;
-             unpack, k, gfld_input, iret)
-
- if (iret /= 0) stop
-
- input_v_data = gfld_inputfld  ! the input v-wind data
-
- call baclose (iunit, iret)
-
-!---------------------------------------------------------------------------
-! setup arguments for ipolatev (vector interpolation) call.
-!---------------------------------------------------------------------------
-
- km       = 1                         ! number of records to interpolate
- ip       = 0                         ! bilinear interpolation
- ipopt    = 0                         ! options for bilinear:
- ipopt(1) = 75                        ! set minimum mask to 75%
-
-!---------------------------------------------------------------------------
-! interpolate to four random station points.
-!---------------------------------------------------------------------------
-
- mo = 4
- no = mo
-
-!---------------------------------------------------------------------------
-! when interpolating to random station points, need to pass to ipolatev
-! their latitude, longitude and the sines and cosines of the vector
-! rotation angles.  the vector rotation is defined:
-!
-! ugrid=crot*uearth-sort*vearth
-! vgrid=srot*uearth+cort*vearth
-!---------------------------------------------------------------------------
-
- allocate (output_rlat(mo))
- allocate (output_rlon(mo))
- allocate (output_srot(mo))
- allocate (output_crot(mo))
- allocate (output_u_data(mo))
- allocate (output_v_data(mo))
- allocate (output_bitmap(mo))
-
- output_rlat(1) = 45.0
- output_rlon(1) = -100.0
- output_rlat(2) = 35.0
- output_rlon(2) = -100.0
- output_rlat(3) = 40.0
- output_rlon(3) = -90.0
- output_rlat(4) = 35.0
- output_rlon(4) = -120.0
-
- output_srot = 0.0   ! no turning of wind
- output_crot = 1.0
-
-!---------------------------------------------------------------------------
-! call ipolatev to interpolate vector data.  non-zero "iret" indicates
-! a problem.
-!---------------------------------------------------------------------------
-
- call ipolatev(ip, ipopt, gfld_inputigdtnum, gfld_inputigdtmpl, &amp;
-               gfld_inputigdtlen, igdtnumo, igdtmplo, igdtleno, &amp;
-               mi, mo, km, ibi, input_bitmap, input_u_data, input_v_data, &amp;
-               no, output_rlat, output_rlon, output_crot, output_srot, &amp;
-               ibo, output_bitmap, output_u_data, output_v_data, iret)
-
- if (iret /= 0) stop
-
- do k = 1, mo
-   print*,'station point ',k,' latitude ',output_rlat(k),' longitude ', &amp;
-   output_rlon(k), ' u-wind ', output_u_data(k), ' v-wind ', output_v_data(k)
- enddo
-
- end program example_2
-</pre> </div></div><!-- PageDoc -->
+<h1><a class="anchor" id="autotoc_md13"></a>
+Spectral Transformation &amp; Processing</h1>
+<p>The library's spectral processing subroutines can handle both scalar and two-dimensional vector fields. Each vector field will be represented in spectral space appropriately by its respective spherical divergence and curl (vorticity), thus avoiding the pole problems associated with representing components separately.</p>
+<p>Some of the functions performed by the library are spectral interpolations between two grids, spectral truncations in place on a grid, and basic spectral transforms between grid and wave space. Only global Gaussian or global equidistant cylindrical grids are allowed for transforming into wave space. There are no such restricitions on grids for transforming from wave space. However, there are special fast entry points for transforming wave space to polar stereographic and Mercator grids as well as the aforementioned cylindrical grids.</p>
+<p>The indexing of the cylindrical transform grids is totally general. The grids may run north to south or south to north; they may run east to west or west to east; they may start at any longitude as long as the prime meridian is on the grid; they may be dimensioned in any order (e.g. (i,j,k), (k,j,i), (i,k,nfield,j), etc.). Furthermore, the transform may be performed on only some of the latitudes at one time as long as both hemisphere counterparts are transformed at the same time (as in the global spectral model). The grid indexing will default to the customary global indexing, i.e. north to south, east to west, prime meridian as first longitude, and (i,j,k) order.</p>
+<p>The wave space may be either triangular or rhomboidal in shape. Its internal indexing is strictly "IBM order", i.e. zonal wavenumber is the slower index with the real and imaginary components always paired together. The imaginary components of all the zonally symmetric modes should always be zero, as should the global mean of any divergence and vorticity fields. The stride between the start of successive wave fields is general, defaulting to the computed length of each field.</p>
+<h2><a class="anchor" id="autotoc_md14"></a>
+Entry Point List: Spectral Interpolation &amp; Transformation</h2>
+<p>Spectral interpolations or truncations between grid and grid</p>
+<table class="markdownTable">
+<tr class="markdownTableHead">
+<th class="markdownTableHeadNone">Name   </th><th class="markdownTableHeadNone">Function    </th></tr>
+<tr class="markdownTableRowOdd">
+<td class="markdownTableBodyNone"><a class="el" href="sptrun_8f.html#a1f04574fbd5018f73b68bd2cd0ffc473" title="This subprogram spectrally truncates scalar fields on a global cylindrical grid, returning the fields...">sptrun()</a>   </td><td class="markdownTableBodyNone">Spectrally truncate gridded scalar fields    </td></tr>
+<tr class="markdownTableRowEven">
+<td class="markdownTableBodyNone"><a class="el" href="sptrunv_8f.html#a9aa39c13dd38585b3afb30cb2486817f" title="This subprogram spectrally truncates vector fields on a global cylindrical grid, returning the fields...">sptrunv()</a>   </td><td class="markdownTableBodyNone">Spectrally truncate gridded vector fields    </td></tr>
+<tr class="markdownTableRowOdd">
+<td class="markdownTableBodyNone"><a class="el" href="sptrung_8f.html#af41b64dad4789617a315515ef885912c" title="This subprogram spectrally truncates scalar fields on a global cylindrical grid, returning the fields...">sptrung()</a>   </td><td class="markdownTableBodyNone">Spectrally interpolate scalars to stations    </td></tr>
+<tr class="markdownTableRowEven">
+<td class="markdownTableBodyNone"><a class="el" href="sptrungv_8f.html#ab7bbe6ecde57394b15e5d4925cb07164" title="THIS SUBPROGRAM SPECTRALLY TRUNCATES VECTORS FIELDS ON A GLOBAL CYLINDRICAL GRID, RETURNING THE FIELD...">sptrungv()</a>   </td><td class="markdownTableBodyNone">Spectrally interpolate vectors to stations    </td></tr>
+<tr class="markdownTableRowOdd">
+<td class="markdownTableBodyNone"><a class="el" href="sptruns_8f.html#a34f156e2049105d012e445f8aa215444" title="This subprogram spectrally truncates scalar fields on a global cylindrical grid, returning the fields...">sptruns()</a>   </td><td class="markdownTableBodyNone">Spectrally interpolate scalars to polar stereo    </td></tr>
+<tr class="markdownTableRowEven">
+<td class="markdownTableBodyNone"><a class="el" href="sptrunsv_8f.html#a1373b651b9dea586e33d3033aae68656" title="This subprogram spectrally truncates vector fields on a global cylindrical grid, returning the fields...">sptrunsv()</a>   </td><td class="markdownTableBodyNone">Spectrally interpolate vectors to polar stereo    </td></tr>
+<tr class="markdownTableRowOdd">
+<td class="markdownTableBodyNone"><a class="el" href="sptrunm_8f.html#a2a4e579890d3cf7f6a26091f544b6cb6" title="This subprogram spectrally truncates scalar fields on a global cylindrical grid, returning the fields...">sptrunm()</a>   </td><td class="markdownTableBodyNone">Spectrally interpolate scalars to Mercator    </td></tr>
+<tr class="markdownTableRowEven">
+<td class="markdownTableBodyNone"><a class="el" href="sptrunmv_8f.html#a8b405d0621112d6852a3bb99602ac2fd" title="THIS SUBPROGRAM SPECTRALLY TRUNCATES VECTOR FIELDS ON A GLOBAL CYLINDRICAL GRID, RETURNING THE FIELDS...">sptrunmv()</a>   </td><td class="markdownTableBodyNone">Spectrally interpolate vectors to Mercator   </td></tr>
+</table>
+<p>Spectral transforms between wave and grid</p>
+<table class="markdownTable">
+<tr class="markdownTableHead">
+<th class="markdownTableHeadNone">Name   </th><th class="markdownTableHeadNone">Function    </th></tr>
+<tr class="markdownTableRowOdd">
+<td class="markdownTableBodyNone"><a class="el" href="sptran_8f.html#af7610e42f0dcd199b8cf80f851dcfed0" title="This subprogram performs a spherical transform between spectral coefficients of scalar quantities and...">sptran()</a>   </td><td class="markdownTableBodyNone">Perform a scalar spherical transform    </td></tr>
+<tr class="markdownTableRowEven">
+<td class="markdownTableBodyNone"><a class="el" href="sptranv_8f.html#a7d6aaa3ed70df1dfaf8dd4443b7190c1" title="This subprogram performs a spherical transform between spectral coefficients of divergences and curls...">sptranv()</a>   </td><td class="markdownTableBodyNone">Perform a vector spherical transform    </td></tr>
+<tr class="markdownTableRowOdd">
+<td class="markdownTableBodyNone"><a class="el" href="sptrand_8f.html#ae810abad32bcbdfb8345a30e50bcc1ef" title="This subprogram performs a spherical transform between spectral coefficients of scalar fields and the...">sptrand()</a>   </td><td class="markdownTableBodyNone">Perform a gradient spherical transform    </td></tr>
+<tr class="markdownTableRowEven">
+<td class="markdownTableBodyNone"><a class="el" href="sptgpt_8f.html#a1b8d333bcc601e5b7e8d3dd1369f54b1" title="This subprogram performs a spherical transform from spectral coefficients of scalar quantities to spe...">sptgpt()</a>   </td><td class="markdownTableBodyNone">Transform spectral scalar to station points    </td></tr>
+<tr class="markdownTableRowOdd">
+<td class="markdownTableBodyNone"><a class="el" href="sptgptv_8f.html#a9af8a22564d132a887a5237f30710f13" title="This subprogram performs a spherical transform from spectral coefficients of divergences and curls to...">sptgptv()</a>   </td><td class="markdownTableBodyNone">Transform spectral vector to station points    </td></tr>
+<tr class="markdownTableRowEven">
+<td class="markdownTableBodyNone"><a class="el" href="sptgptd_8f.html#a64d1fe761662182ca3495531152d1cd3" title="This subprogram performs a spherical transform from spectral coefficients of scalar fields to specifi...">sptgptd()</a>   </td><td class="markdownTableBodyNone">Transform spectral to station point gradients    </td></tr>
+<tr class="markdownTableRowOdd">
+<td class="markdownTableBodyNone"><a class="el" href="sptgps_8f.html#af06a2dccfa311014fc9f671b14f247b2" title="This subprogram performs a spherical transform from spectral coefficients of scalar quantities to sca...">sptgps()</a>   </td><td class="markdownTableBodyNone">Transform spectral scalar to polar stereo    </td></tr>
+<tr class="markdownTableRowEven">
+<td class="markdownTableBodyNone"><a class="el" href="sptgpsv_8f.html#af2bf2335047ec277730564dbfa859079" title="This subprogram performs a spherical transform from spectral coefficients of divergences and curls to...">sptgpsv()</a>   </td><td class="markdownTableBodyNone">Transform spectral vector to polar stereo    </td></tr>
+<tr class="markdownTableRowOdd">
+<td class="markdownTableBodyNone"><a class="el" href="sptgpsd_8f.html#ad6d10c3360c47558a8116b2f5666ed30" title="This subprogram performs a spherical transform from spectral coefficients of scalar fields to gradien...">sptgpsd()</a>   </td><td class="markdownTableBodyNone">Transform spectral to polar stereo gradients    </td></tr>
+<tr class="markdownTableRowEven">
+<td class="markdownTableBodyNone"><a class="el" href="sptgpm_8f.html#a6cffaeaa602eaae5c03166f48065158d" title="This subprogram performs a spherical transform from spectral coefficients of scalar quantities to sca...">sptgpm()</a>   </td><td class="markdownTableBodyNone">Transform spectral scalar to Mercator    </td></tr>
+<tr class="markdownTableRowOdd">
+<td class="markdownTableBodyNone"><a class="el" href="sptgpmv_8f.html#a15de3accfd448d116324872c8fb1bb17" title="This subprogram performs a spherical transform from spectral coefficients of divergences and curls to...">sptgpmv()</a>   </td><td class="markdownTableBodyNone">Transform spectral vector to Mercator    </td></tr>
+<tr class="markdownTableRowEven">
+<td class="markdownTableBodyNone"><a class="el" href="sptgpmd_8f.html#af71718c75a2b24b74fa7e1e4318d0539" title="This subprogram performs a spherical transform from spectral coefficients of scalar fields to gradien...">sptgpmd()</a>   </td><td class="markdownTableBodyNone">Transform spectral to Mercator gradients   </td></tr>
+</table>
+<p>Spectral transform utilities</p>
+<table class="markdownTable">
+<tr class="markdownTableHead">
+<th class="markdownTableHeadNone">Name   </th><th class="markdownTableHeadNone">Function    </th></tr>
+<tr class="markdownTableRowOdd">
+<td class="markdownTableBodyNone"><a class="el" href="spwget_8f.html#a9b6ce78350f7adf2fed874a18312c7a6" title="This subprogram gets wave-space constants.">spwget()</a>   </td><td class="markdownTableBodyNone">Get wave-space constants    </td></tr>
+<tr class="markdownTableRowEven">
+<td class="markdownTableBodyNone"><a class="el" href="splat_8F.html#aa6db21451bb67635e7e4426546140e11" title="Computes cosines of colatitude and Gaussian weights for one of the following specific global sets of ...">splat()</a>   </td><td class="markdownTableBodyNone">Compute latitude functions    </td></tr>
+<tr class="markdownTableRowOdd">
+<td class="markdownTableBodyNone"><a class="el" href="speps_8f.html#a0ab523ec5e1393ffca970897e63a9131" title="Computes constant fields indexed in the spectral domain in &quot;IBM ORDER&quot; (Zonal wavenumber is the slowe...">speps()</a>   </td><td class="markdownTableBodyNone">Compute utility spectral fields    </td></tr>
+<tr class="markdownTableRowEven">
+<td class="markdownTableBodyNone"><a class="el" href="splegend_8f.html#a9c68adc80e97c43ac983b955dd6cabac" title="Evaluates the orthonormal associated Legendre polynomials in the spectral domain at a given latitude.">splegend()</a>   </td><td class="markdownTableBodyNone">Compute Legendre polynomials    </td></tr>
+<tr class="markdownTableRowOdd">
+<td class="markdownTableBodyNone"><a class="el" href="spanaly_8f.html#a5cc846d796d393d7499cde0f3d1d6e6a" title="Analyzes spectral coefficients from Fourier coefficients for a latitude pair (Northern and Southern h...">spanaly()</a>   </td><td class="markdownTableBodyNone">Analyze spectral from Fourier    </td></tr>
+<tr class="markdownTableRowEven">
+<td class="markdownTableBodyNone"><a class="el" href="spsynth_8f.html#aa6a8113a459918728c876673520126bf" title="Synthesizes Fourier coefficients from spectral coefficients for a latitude pair (Northern and Souther...">spsynth()</a>   </td><td class="markdownTableBodyNone">Synthesize Fourier from spectral    </td></tr>
+<tr class="markdownTableRowOdd">
+<td class="markdownTableBodyNone"><a class="el" href="spdz2uv_8f.html#ae3a4a74c49f78a25425b610743dc0692" title="Computes the wind components from divergence and vorticity in spectral space.">spdz2uv()</a>   </td><td class="markdownTableBodyNone">Compute winds from divergence and vorticity    </td></tr>
+<tr class="markdownTableRowEven">
+<td class="markdownTableBodyNone"><a class="el" href="spuv2dz_8f.html#a27edc2d10e0a76a45e4aaae58bf018b9" title="Computes the divergence and vorticity from wind components in spectral space.">spuv2dz()</a>   </td><td class="markdownTableBodyNone">Compute divergence and vorticity from winds    </td></tr>
+<tr class="markdownTableRowOdd">
+<td class="markdownTableBodyNone"><a class="el" href="spgradq_8f.html#a0bb358cf2a405ce9f17c6e5dfde65849" title="Computes the horizontal vector gradient of a scalar field in spectral space.">spgradq()</a>   </td><td class="markdownTableBodyNone">Compute gradient in spectral space    </td></tr>
+<tr class="markdownTableRowEven">
+<td class="markdownTableBodyNone"><a class="el" href="splaplac_8f.html#a64338955857a3cf58283146940e7ae42" title="Computes the laplacian or the inverse laplacian of a scalar field in spectral space.">splaplac()</a>   </td><td class="markdownTableBodyNone">Compute Laplacian in spectral space   </td></tr>
+</table>
+<h1><a class="anchor" id="autotoc_md15"></a>
+Examples: Interpolation Routines</h1>
+<p>Example 1. Read a grib 2 file of scalar data on a global regular 1-deg lat/lon grid and call ipolates to interpolate it to NCEP standard grid 218, a lambert conformal grid. Uses the NCEP G2 library to degrib the data.</p>
+<div class="fragment"><div class="line"> <span class="keyword">program</span> example_1</div>
+<div class="line"> </div>
+<div class="line"><span class="keywordtype">use </span><a class="code" href="namespaceip__mod.html">ip_mod</a></div>
+<div class="line"> <span class="keywordtype">use </span>grib_mod  <span class="comment">! ncep grib 2 library</span></div>
+<div class="line"> </div>
+<div class="line"> <span class="keywordtype">implicit none</span></div>
+<div class="line"> </div>
+<div class="line"> <span class="keywordtype">character(len=100)</span>      :: input_file</div>
+<div class="line"> </div>
+<div class="line"> <span class="keywordtype">integer</span>                 :: iunit, iret, lugi</div>
+<div class="line"> <span class="keywordtype">integer</span>                 :: mi, mo, no</div>
+<div class="line"> <span class="keywordtype">integer</span>, <span class="keywordtype">allocatable</span>    :: ibi(:), ibo(:)</div>
+<div class="line"> <span class="keywordtype">integer</span>                 :: ip, ipopt(20)</div>
+<div class="line"> <span class="keywordtype">integer</span>                 :: j, jdisc, jpdtn, jgdtn, k, km</div>
+<div class="line"> <span class="keywordtype">integer</span>                 :: jids(200), jgdt(200), jpdt(200)</div>
+<div class="line"> <span class="keywordtype">integer</span>                 :: idim_input, jdim_input</div>
+<div class="line"> <span class="keywordtype">integer</span>                 :: idim_output, jdim_output</div>
+<div class="line"> </div>
+<div class="line"> <span class="keywordtype">logical</span>                 :: unpack</div>
+<div class="line"> <span class="keywordtype">logical*1</span>, <span class="keywordtype">allocatable</span>  :: input_bitmap(:,:), output_bitmap(:,:)</div>
+<div class="line"> </div>
+<div class="line"><span class="keywordtype"> real</span>, <span class="keywordtype">allocatable</span>       :: input_data(:,:)</div>
+<div class="line"><span class="keywordtype"> real</span>, <span class="keywordtype">allocatable</span>       :: output_rlat(:), output_rlon(:)</div>
+<div class="line"><span class="keywordtype"> real</span>, <span class="keywordtype">allocatable</span>       :: output_data(:,:)</div>
+<div class="line"> </div>
+<div class="line"> <span class="keywordtype">type</span>(gribfield)         :: gfld_input</div>
+<div class="line"> </div>
+<div class="line"><span class="comment">!---------------------------------------------------------------------------</span></div>
+<div class="line"><span class="comment">! the output grid specs. this is ncep grid 218, a lambert conformal</span></div>
+<div class="line"><span class="comment">! grid. the grid definition information is stored in section 3</span></div>
+<div class="line"><span class="comment">! of a grib 2 message.</span></div>
+<div class="line"><span class="comment">!---------------------------------------------------------------------------</span></div>
+<div class="line"> </div>
+<div class="line"> <span class="keywordtype">integer</span>, <span class="keywordtype">parameter</span> :: igdtnum218 = 30 <span class="comment">! grid definition template number.</span></div>
+<div class="line">                                       <span class="comment">! &quot;30&quot; is lambert conformal.</span></div>
+<div class="line"> <span class="keywordtype">integer</span>, <span class="keywordtype">parameter</span> :: igdtlen218 = 22 <span class="comment">! number of array elements needed</span></div>
+<div class="line">                                       <span class="comment">! for a lambert conf. grid definition</span></div>
+<div class="line">                                       <span class="comment">! template.</span></div>
+<div class="line"> <span class="keywordtype">integer</span>     :: igdtmpl218(igdtlen218) <span class="comment">! the grid definition template.</span></div>
+<div class="line">                                       <span class="comment">! the entries are:</span></div>
+<div class="line">                                       <span class="comment">! 1 -shape of earth, oct 15</span></div>
+<div class="line">                                       <span class="comment">! 2 -scale factor, spherical earth, oct 16</span></div>
+<div class="line">                                       <span class="comment">! 3 -scaled value, spherical earth, octs 17-20</span></div>
+<div class="line">                                       <span class="comment">! 4 -scale factor, major axis of</span></div>
+<div class="line">                                       <span class="comment">!    elliptical earth, oct 21</span></div>
+<div class="line">                                       <span class="comment">! 5 -scaled value of major axis of</span></div>
+<div class="line">                                       <span class="comment">!    elliptical earth, octs 22-25</span></div>
+<div class="line">                                       <span class="comment">! 6 -scale factor, minor axis of</span></div>
+<div class="line">                                       <span class="comment">!    elliptical earth, oct 26</span></div>
+<div class="line">                                       <span class="comment">! 7 -scaled value of minor axis of</span></div>
+<div class="line">                                       <span class="comment">!    elliptical earth, octs 27-30</span></div>
+<div class="line">                                       <span class="comment">! 8 -number points along x-axis, octs 31-34</span></div>
+<div class="line">                                       <span class="comment">! 9 -number points along y-axis, octs 35-38</span></div>
+<div class="line">                                       <span class="comment">! 10-latitude of first point, octs 39-42</span></div>
+<div class="line">                                       <span class="comment">! 11-longitude of first point, octs 43-46</span></div>
+<div class="line">                                       <span class="comment">! 12-resolution and component flags, oct 47</span></div>
+<div class="line">                                       <span class="comment">! 13-latitude where grid lengths specified, </span></div>
+<div class="line">                                       <span class="comment">!    octs 48-51</span></div>
+<div class="line">                                       <span class="comment">! 14-longitude parallel to y-axis, octs 52-55</span></div>
+<div class="line">                                       <span class="comment">! 15-x-direction grid length, octs 56-59</span></div>
+<div class="line">                                       <span class="comment">! 16-y-direction grid length, octs 60-63</span></div>
+<div class="line">                                       <span class="comment">! 17-projection center flag, oct 64</span></div>
+<div class="line">                                       <span class="comment">! 18-scanning mode, oct 65</span></div>
+<div class="line">                                       <span class="comment">! 19-first tangent latitude from pole, octs 66-69</span></div>
+<div class="line">                                       <span class="comment">! 20-second tangent latitude from pole, octs 70-73</span></div>
+<div class="line">                                       <span class="comment">! 21-latitude of south pole, octs 74-77</span></div>
+<div class="line">                                       <span class="comment">! 22-longitude of south pole, octs 78-81</span></div>
+<div class="line"> </div>
+<div class="line"> <span class="keywordtype">integer</span>, <span class="keywordtype">parameter</span> :: missing=b<span class="stringliteral">&#39;11111111111111111111111111111111&#39;</span></div>
+<div class="line"> <span class="keyword">data</span> igdtmpl218 / 6, 255, missing, 255, missing, 255, missing, 614, 428, &amp;</div>
+<div class="line">                  12190000, 226541000, 56, 25000000, 265000000, &amp;</div>
+<div class="line">                  12191000, 12191000, 0, 64, 25000000, 25000000, -90000000, 0/</div>
+<div class="line"> </div>
+<div class="line"><span class="comment">!---------------------------------------------------------------------------</span></div>
+<div class="line"><span class="comment">! open the grib 2 file containing data to be interpolated. for this</span></div>
+<div class="line"><span class="comment">! example, there are two data records.</span></div>
+<div class="line"><span class="comment">!---------------------------------------------------------------------------</span></div>
+<div class="line"> </div>
+<div class="line"> iunit=9</div>
+<div class="line"> input_file=<span class="stringliteral">&quot;${path}/input.data.grib2&quot;</span></div>
+<div class="line"> <span class="keyword">call </span>baopenr (iunit, input_file, iret)</div>
+<div class="line"> </div>
+<div class="line"><span class="comment">!---------------------------------------------------------------------------</span></div>
+<div class="line"><span class="comment">! prep for call to g2 library to degrib data. the data are on a regular</span></div>
+<div class="line"><span class="comment">! lat/lon grid with i/j dimension of 360/181. </span></div>
+<div class="line"><span class="comment">!---------------------------------------------------------------------------</span></div>
+<div class="line"> </div>
+<div class="line"> idim_input = 360  <span class="comment">! the i/j dimensions of input grid</span></div>
+<div class="line"> jdim_input = 181</div>
+<div class="line"> mi         = idim_input * jdim_input   <span class="comment">! total number of pts, input grid</span></div>
+<div class="line"> </div>
+<div class="line"> jdisc   = -1         <span class="comment">! search for any discipline</span></div>
+<div class="line"> jpdtn   = -1         <span class="comment">! search for any product definition template number</span></div>
+<div class="line"> jgdtn   =  0         <span class="comment">! search for grid definition template number 0 - regular lat/lon grid</span></div>
+<div class="line"> jids    = -9999      <span class="comment">! array of values in identification section, set to wildcard</span></div>
+<div class="line"> jgdt    = -9999      <span class="comment">! array of values in grid definition template 3.m</span></div>
+<div class="line"> jgdt(8) = idim_input <span class="comment">! search for grid with i/j of 360/181</span></div>
+<div class="line"> jgdt(9) = jdim_input</div>
+<div class="line"> jpdt    = -9999      <span class="comment">! array of values in product definition template 4.n</span></div>
+<div class="line"> unpack  = .true.     <span class="comment">! unpack data</span></div>
+<div class="line"> lugi    = 0          <span class="comment">! no index file</span></div>
+<div class="line"> </div>
+<div class="line"> <span class="keyword">nullify</span>(gfld_input%idsect)</div>
+<div class="line"> <span class="keyword">nullify</span>(gfld_input%local)</div>
+<div class="line"> <span class="keyword">nullify</span>(gfld_input%list_opt)</div>
+<div class="line"> <span class="keyword">nullify</span>(gfld_input%igdtmpl)  <span class="comment">! holds the grid definition template information</span></div>
+<div class="line"> <span class="keyword">nullify</span>(gfld_input%ipdtmpl)</div>
+<div class="line"> <span class="keyword">nullify</span>(gfld_input%coord_list)</div>
+<div class="line"> <span class="keyword">nullify</span>(gfld_input%idrtmpl)</div>
+<div class="line"> <span class="keyword">nullify</span>(gfld_input%bmap)     <span class="comment">! holds the bitmap</span></div>
+<div class="line"> <span class="keyword">nullify</span>(gfld_input%fld)      <span class="comment">! holds the data</span></div>
+<div class="line"> </div>
+<div class="line"><span class="comment">!---------------------------------------------------------------------------</span></div>
+<div class="line"><span class="comment">! degrib the data.  non-zero &quot;iret&quot; indicates a problem during degrib.</span></div>
+<div class="line"><span class="comment">!---------------------------------------------------------------------------</span></div>
+<div class="line"> </div>
+<div class="line"> km = 2                  <span class="comment">! number of records to interpolate</span></div>
+<div class="line"> </div>
+<div class="line"> <span class="keyword">allocate</span>(ibi(km))</div>
+<div class="line"> <span class="keyword">allocate</span>(input_bitmap(mi,km))</div>
+<div class="line"> <span class="keyword">allocate</span>(input_data(mi,km))</div>
+<div class="line"> </div>
+<div class="line"> <span class="keywordflow">do</span> j = 0, (km-1)    <span class="comment">! number of records to skip</span></div>
+<div class="line"> </div>
+<div class="line">   <span class="keyword">call </span>getgb2(iunit, lugi, j, jdisc, jids, jpdtn, jpdt, jgdtn, jgdt, &amp;</div>
+<div class="line">               unpack, k, gfld_input, iret)</div>
+<div class="line"> </div>
+<div class="line">   <span class="keywordflow">if</span> (iret /= 0) stop</div>
+<div class="line"> </div>
+<div class="line"><span class="comment">!---------------------------------------------------------------------------</span></div>
+<div class="line"><span class="comment">! does input data have a bitmap?</span></div>
+<div class="line"><span class="comment">!---------------------------------------------------------------------------</span></div>
+<div class="line"> </div>
+<div class="line">   <span class="keywordflow">if</span> (gfld_input%ibmap==0) <span class="keywordflow">then</span>  <span class="comment">! input data has bitmap</span></div>
+<div class="line">     ibi(k)            = 1        <span class="comment">! tell ipolates to use bitmap</span></div>
+<div class="line">     input_bitmap(:,k) = gfld_input%bmap</div>
+<div class="line">   <span class="keywordflow">else</span>                           <span class="comment">! no bitmap, data everywhere</span></div>
+<div class="line">     ibi(k)            = 0        <span class="comment">! tell ipolates there is no bitmap</span></div>
+<div class="line">     input_bitmap(:,k) = .true.</div>
+<div class="line"><span class="keywordflow">   endif</span></div>
+<div class="line"> </div>
+<div class="line">   input_data(:,k) = gfld_input%fld  <span class="comment">! the input data field</span></div>
+<div class="line"> </div>
+<div class="line"><span class="keywordflow"> enddo</span></div>
+<div class="line"> </div>
+<div class="line"> <span class="keyword">call </span>baclose (iunit, iret)</div>
+<div class="line"> </div>
+<div class="line"><span class="comment">!---------------------------------------------------------------------------</span></div>
+<div class="line"><span class="comment">! setup arguments for ipolates (scalar interpolation) call.</span></div>
+<div class="line"><span class="comment">!---------------------------------------------------------------------------</span></div>
+<div class="line"> </div>
+<div class="line"> ip       = 0                         <span class="comment">! bilinear interpolation</span></div>
+<div class="line"> ipopt    = 0                         <span class="comment">! options for bilinear:</span></div>
+<div class="line"> ipopt(1) = 75                        <span class="comment">! set minimum mask to 75%</span></div>
+<div class="line"> </div>
+<div class="line"><span class="comment">!---------------------------------------------------------------------------</span></div>
+<div class="line"><span class="comment">! the i/j dimensions of the output grid.</span></div>
+<div class="line"><span class="comment">!---------------------------------------------------------------------------</span></div>
+<div class="line"> </div>
+<div class="line"> idim_output = igdtmpl218(8)</div>
+<div class="line"> jdim_output = igdtmpl218(9)</div>
+<div class="line"> mo          = idim_output * jdim_output <span class="comment">! total number of output pts</span></div>
+<div class="line"> </div>
+<div class="line"><span class="comment">!---------------------------------------------------------------------------</span></div>
+<div class="line"><span class="comment">! will hold the latitude, longitude, data and bitmap on the output grid,</span></div>
+<div class="line"><span class="comment">! which are computed in ipolates.</span></div>
+<div class="line"><span class="comment">!---------------------------------------------------------------------------</span></div>
+<div class="line"> </div>
+<div class="line"> <span class="keyword">allocate</span> (ibo(km))              <span class="comment">! bitmap flags on output grid</span></div>
+<div class="line"> <span class="keyword">allocate</span> (output_rlat(mo))</div>
+<div class="line"> <span class="keyword">allocate</span> (output_rlon(mo))</div>
+<div class="line"> <span class="keyword">allocate</span> (output_data(mo,km))</div>
+<div class="line"> <span class="keyword">allocate</span> (output_bitmap(mo,km))</div>
+<div class="line"> </div>
+<div class="line"><span class="comment">!---------------------------------------------------------------------------</span></div>
+<div class="line"><span class="comment">! call ipolates to interpolate scalar data.  non-zero &quot;iret&quot; indicates</span></div>
+<div class="line"><span class="comment">! a problem.</span></div>
+<div class="line"><span class="comment">!---------------------------------------------------------------------------</span></div>
+<div class="line"> </div>
+<div class="line"> <span class="keyword">call </span>ipolates(ip, ipopt, gfld_input%igdtnum, gfld_input%igdtmpl, &amp;</div>
+<div class="line">               gfld_input%igdtlen, igdtnum218, igdtmpl218, igdtlen218, &amp;</div>
+<div class="line">               mi, mo, km, ibi, input_bitmap, input_data, no, output_rlat, &amp;</div>
+<div class="line">               output_rlon, ibo, output_bitmap, output_data, iret)</div>
+<div class="line"> </div>
+<div class="line"> <span class="keywordflow">if</span> (iret /= 0) stop</div>
+<div class="line"> </div>
+<div class="line"><span class="comment">!---------------------------------------------------------------------------</span></div>
+<div class="line"><span class="comment">! write interpolated data to file.  if ipolates computed a bitmap (ibo==1) </span></div>
+<div class="line"><span class="comment">! for the output grid, one may mask out this data with a flag value.</span></div>
+<div class="line"><span class="comment">!---------------------------------------------------------------------------</span></div>
+<div class="line"> </div>
+<div class="line"> <span class="keyword">open</span> (10, file=<span class="stringliteral">&quot;./output.bin&quot;</span>, access=<span class="stringliteral">&#39;direct&#39;</span>, recl=idim_output*jdim_output*4)</div>
+<div class="line"> </div>
+<div class="line"> <span class="keywordflow">do</span> k = 1, km</div>
+<div class="line">   <span class="keywordflow">if</span>(ibo(k)==1) <span class="keywordflow">where</span> (.not. output_bitmap(:,k)) output_data(:,k) = -999.</div>
+<div class="line">   <span class="keyword">write</span>(10, rec=k) output_data(:,k)</div>
+<div class="line"><span class="keywordflow"> enddo</span></div>
+<div class="line"> <span class="keyword">write</span>(10, rec=km+1) output_rlat</div>
+<div class="line"> <span class="keyword">write</span>(10, rec=km+2) output_rlon</div>
+<div class="line"> </div>
+<div class="line"> <span class="keyword">close</span>(10)</div>
+<div class="line"> </div>
+<div class="line"> <span class="keyword">end program </span>example_1</div>
+<div class="ttc" id="anamespaceip__mod_html"><div class="ttname"><a href="namespaceip__mod.html">ip_mod</a></div><div class="ttdoc">Top-level module for the ip library which re-exports public routines such as ipolates,...</div><div class="ttdef"><b>Definition:</b> <a href="ip__mod_8F90_source.html#l00006">ip_mod.F90:6</a></div></div>
+</div><!-- fragment --><p>Example 2. Read a grib 2 file of u/v wind data on a global regular 1-deg lat/lon grid and call ipolatev to interpolate it to four random station points. Uses the NCEP G2 library to degrib the data.</p>
+<div class="fragment"><div class="line"> <span class="keyword">program</span> example_2</div>
+<div class="line"> </div>
+<div class="line"> <span class="keywordtype">use </span>grib_mod  <span class="comment">! ncep grib 2 library</span></div>
+<div class="line"> </div>
+<div class="line"> <span class="keywordtype">implicit none</span></div>
+<div class="line"> </div>
+<div class="line"> <span class="keywordtype">character(len=100)</span>      :: input_file</div>
+<div class="line"> </div>
+<div class="line"> <span class="keywordtype">integer</span>                 :: iunit, iret, lugi</div>
+<div class="line"> <span class="keywordtype">integer</span>                 :: mi, mo, no</div>
+<div class="line"> <span class="keywordtype">integer</span>                 :: ibi, ibo</div>
+<div class="line"> <span class="keywordtype">integer</span>                 :: ip, ipopt(20)</div>
+<div class="line"> <span class="keywordtype">integer</span>                 :: j, jdisc, jpdtn, jgdtn, k, km</div>
+<div class="line"> <span class="keywordtype">integer</span>                 :: jids(200), jgdt(200), jpdt(200)</div>
+<div class="line"> <span class="keywordtype">integer</span>                 :: idim_input, jdim_input</div>
+<div class="line"> </div>
+<div class="line"> <span class="keywordtype">logical</span>                 :: unpack</div>
+<div class="line"> <span class="keywordtype">logical*1</span>, <span class="keywordtype">allocatable</span>  :: input_bitmap(:), output_bitmap(:)</div>
+<div class="line"> </div>
+<div class="line"><span class="keywordtype"> real</span>, <span class="keywordtype">allocatable</span>       :: input_u_data(:), input_v_data(:)</div>
+<div class="line"><span class="keywordtype"> real</span>, <span class="keywordtype">allocatable</span>       :: output_rlat(:), output_rlon(:)</div>
+<div class="line"><span class="keywordtype"> real</span>, <span class="keywordtype">allocatable</span>       :: output_crot(:), output_srot(:)</div>
+<div class="line"><span class="keywordtype"> real</span>, <span class="keywordtype">allocatable</span>       :: output_u_data(:), output_v_data(:)</div>
+<div class="line"> </div>
+<div class="line"> <span class="keywordtype">type</span>(gribfield)         :: gfld_input</div>
+<div class="line"> </div>
+<div class="line"><span class="comment">!---------------------------------------------------------------------------</span></div>
+<div class="line"><span class="comment">! the output &quot;grid&quot; is a series of random station points.  in this case,</span></div>
+<div class="line"><span class="comment">! set the grid definition template number of a negative number.</span></div>
+<div class="line"><span class="comment">! the grid definition template array information is not used, so set</span></div>
+<div class="line"><span class="comment">! to a flag value.</span></div>
+<div class="line"><span class="comment">!---------------------------------------------------------------------------</span></div>
+<div class="line"> </div>
+<div class="line"> <span class="keywordtype">integer</span>, <span class="keywordtype">parameter</span>      :: igdtnumo = -1 </div>
+<div class="line"> <span class="keywordtype">integer</span>, <span class="keywordtype">parameter</span>      :: igdtleno =  1</div>
+<div class="line"> <span class="keywordtype">integer</span>                 :: igdtmplo(igdtleno)</div>
+<div class="line"> </div>
+<div class="line"> <span class="keyword">data</span> igdtmplo / -9999 /</div>
+<div class="line"> </div>
+<div class="line"><span class="comment">!---------------------------------------------------------------------------</span></div>
+<div class="line"><span class="comment">! open the grib 2 file containing data to be interpolated.  for this</span></div>
+<div class="line"><span class="comment">! example, there is one record of u-wind and v-wind.</span></div>
+<div class="line"><span class="comment">!---------------------------------------------------------------------------</span></div>
+<div class="line"> </div>
+<div class="line"> iunit=9</div>
+<div class="line"> input_file=<span class="stringliteral">&quot;./reg_tests/copygb2/data/uv_wind.grb2&quot;</span></div>
+<div class="line"> <span class="keyword">call </span>baopenr (iunit, input_file, iret)</div>
+<div class="line"> </div>
+<div class="line"><span class="comment">!---------------------------------------------------------------------------</span></div>
+<div class="line"><span class="comment">! prep for call to g2 library to degrib data. the data are on a regular</span></div>
+<div class="line"><span class="comment">! lat/lon grid with i/j dimension of 360/181.  </span></div>
+<div class="line"><span class="comment">!---------------------------------------------------------------------------</span></div>
+<div class="line"> </div>
+<div class="line"> idim_input = 360  <span class="comment">! the i/j dimensions of input grid</span></div>
+<div class="line"> jdim_input = 181</div>
+<div class="line"> mi         = idim_input * jdim_input   <span class="comment">! total number of pts, input grid</span></div>
+<div class="line"> </div>
+<div class="line"> jdisc   = -1         <span class="comment">! search for any discipline</span></div>
+<div class="line"> jpdtn   = -1         <span class="comment">! search for any product definition template number</span></div>
+<div class="line"> jgdtn   =  0         <span class="comment">! search for grid definition template number 0 - regular lat/lon grid</span></div>
+<div class="line"> jids    = -9999      <span class="comment">! array of values in identification section, set to wildcard</span></div>
+<div class="line"> jgdt    = -9999      <span class="comment">! array of values in grid definition template 3.m</span></div>
+<div class="line"> jgdt(8) = idim_input <span class="comment">! search for grid with i/j of 360/181</span></div>
+<div class="line"> jgdt(9) = jdim_input</div>
+<div class="line"> jpdt    = -9999      <span class="comment">! array of values in product definition template 4.n</span></div>
+<div class="line"> unpack  = .true.     <span class="comment">! unpack data</span></div>
+<div class="line"> lugi    = 0          <span class="comment">! no index file</span></div>
+<div class="line"> </div>
+<div class="line"> <span class="keyword">nullify</span>(gfld_input%idsect)</div>
+<div class="line"> <span class="keyword">nullify</span>(gfld_input%local)</div>
+<div class="line"> <span class="keyword">nullify</span>(gfld_input%list_opt)</div>
+<div class="line"> <span class="keyword">nullify</span>(gfld_input%igdtmpl)  <span class="comment">! holds the grid definition template information</span></div>
+<div class="line"> <span class="keyword">nullify</span>(gfld_input%ipdtmpl)</div>
+<div class="line"> <span class="keyword">nullify</span>(gfld_input%coord_list)</div>
+<div class="line"> <span class="keyword">nullify</span>(gfld_input%idrtmpl)</div>
+<div class="line"> <span class="keyword">nullify</span>(gfld_input%bmap)     <span class="comment">! holds the bitmap</span></div>
+<div class="line"> <span class="keyword">nullify</span>(gfld_input%fld)      <span class="comment">! holds the data</span></div>
+<div class="line"> </div>
+<div class="line"><span class="comment">!---------------------------------------------------------------------------</span></div>
+<div class="line"><span class="comment">! degrib the data.  non-zero &quot;iret&quot; indicates a problem during degrib.</span></div>
+<div class="line"><span class="comment">!---------------------------------------------------------------------------</span></div>
+<div class="line"> </div>
+<div class="line"> <span class="keyword">allocate</span>(input_bitmap(mi))</div>
+<div class="line"> <span class="keyword">allocate</span>(input_u_data(mi))</div>
+<div class="line"> <span class="keyword">allocate</span>(input_v_data(mi))</div>
+<div class="line"> </div>
+<div class="line"><span class="comment">!---------------------------------------------------------------------------</span></div>
+<div class="line"><span class="comment">! read u-wind record.</span></div>
+<div class="line"><span class="comment">!---------------------------------------------------------------------------</span></div>
+<div class="line"> </div>
+<div class="line"> j = 0</div>
+<div class="line"> <span class="keyword">call </span>getgb2(iunit, lugi, j, jdisc, jids, jpdtn, jpdt, jgdtn, jgdt, &amp;</div>
+<div class="line">             unpack, k, gfld_input, iret)</div>
+<div class="line"> </div>
+<div class="line"> <span class="keywordflow">if</span> (iret /= 0) stop</div>
+<div class="line"> </div>
+<div class="line"><span class="comment">!---------------------------------------------------------------------------</span></div>
+<div class="line"><span class="comment">! does input data have a bitmap?</span></div>
+<div class="line"><span class="comment">!---------------------------------------------------------------------------</span></div>
+<div class="line"> </div>
+<div class="line"> <span class="keywordflow">if</span> (gfld_input%ibmap==0) <span class="keywordflow">then</span>  <span class="comment">! input data has bitmap</span></div>
+<div class="line">   ibi          = 1             <span class="comment">! tell ipolates to use bitmap</span></div>
+<div class="line">   input_bitmap = gfld_input%bmap</div>
+<div class="line"> <span class="keywordflow">else</span>                           <span class="comment">! no bitmap, data everywhere</span></div>
+<div class="line">   ibi          = 0             <span class="comment">! tell ipolates there is no bitmap</span></div>
+<div class="line">   input_bitmap = .true.</div>
+<div class="line"><span class="keywordflow"> endif</span></div>
+<div class="line"> </div>
+<div class="line"> input_u_data = gfld_input%fld  <span class="comment">! the input u-wind data</span></div>
+<div class="line"> </div>
+<div class="line"><span class="comment">!---------------------------------------------------------------------------</span></div>
+<div class="line"><span class="comment">! read v-wind record.</span></div>
+<div class="line"><span class="comment">!---------------------------------------------------------------------------</span></div>
+<div class="line"> </div>
+<div class="line"> j = 1</div>
+<div class="line"> <span class="keyword">call </span>getgb2(iunit, lugi, j, jdisc, jids, jpdtn, jpdt, jgdtn, jgdt, &amp;</div>
+<div class="line">             unpack, k, gfld_input, iret)</div>
+<div class="line"> </div>
+<div class="line"> <span class="keywordflow">if</span> (iret /= 0) stop</div>
+<div class="line"> </div>
+<div class="line"> input_v_data = gfld_input%fld  <span class="comment">! the input v-wind data</span></div>
+<div class="line"> </div>
+<div class="line"> <span class="keyword">call </span>baclose (iunit, iret)</div>
+<div class="line"> </div>
+<div class="line"><span class="comment">!---------------------------------------------------------------------------</span></div>
+<div class="line"><span class="comment">! setup arguments for ipolatev (vector interpolation) call.</span></div>
+<div class="line"><span class="comment">!---------------------------------------------------------------------------</span></div>
+<div class="line"> </div>
+<div class="line"> km       = 1                         <span class="comment">! number of records to interpolate</span></div>
+<div class="line"> ip       = 0                         <span class="comment">! bilinear interpolation</span></div>
+<div class="line"> ipopt    = 0                         <span class="comment">! options for bilinear:</span></div>
+<div class="line"> ipopt(1) = 75                        <span class="comment">! set minimum mask to 75%</span></div>
+<div class="line"> </div>
+<div class="line"><span class="comment">!---------------------------------------------------------------------------</span></div>
+<div class="line"><span class="comment">! interpolate to four random station points.</span></div>
+<div class="line"><span class="comment">!---------------------------------------------------------------------------</span></div>
+<div class="line"> </div>
+<div class="line"> mo = 4</div>
+<div class="line"> no = mo</div>
+<div class="line"> </div>
+<div class="line"><span class="comment">!---------------------------------------------------------------------------</span></div>
+<div class="line"><span class="comment">! when interpolating to random station points, need to pass to ipolatev</span></div>
+<div class="line"><span class="comment">! their latitude, longitude and the sines and cosines of the vector</span></div>
+<div class="line"><span class="comment">! rotation angles.  the vector rotation is defined:</span></div>
+<div class="line"><span class="comment">!</span></div>
+<div class="line"><span class="comment">! ugrid=crot*uearth-sort*vearth</span></div>
+<div class="line"><span class="comment">! vgrid=srot*uearth+cort*vearth</span></div>
+<div class="line"><span class="comment">!---------------------------------------------------------------------------</span></div>
+<div class="line"> </div>
+<div class="line"> <span class="keyword">allocate</span> (output_rlat(mo))</div>
+<div class="line"> <span class="keyword">allocate</span> (output_rlon(mo))</div>
+<div class="line"> <span class="keyword">allocate</span> (output_srot(mo))</div>
+<div class="line"> <span class="keyword">allocate</span> (output_crot(mo))</div>
+<div class="line"> <span class="keyword">allocate</span> (output_u_data(mo))</div>
+<div class="line"> <span class="keyword">allocate</span> (output_v_data(mo))</div>
+<div class="line"> <span class="keyword">allocate</span> (output_bitmap(mo))</div>
+<div class="line"> </div>
+<div class="line"> output_rlat(1) = 45.0</div>
+<div class="line"> output_rlon(1) = -100.0</div>
+<div class="line"> output_rlat(2) = 35.0</div>
+<div class="line"> output_rlon(2) = -100.0</div>
+<div class="line"> output_rlat(3) = 40.0</div>
+<div class="line"> output_rlon(3) = -90.0</div>
+<div class="line"> output_rlat(4) = 35.0</div>
+<div class="line"> output_rlon(4) = -120.0</div>
+<div class="line"> </div>
+<div class="line"> output_srot = 0.0   <span class="comment">! no turning of wind</span></div>
+<div class="line"> output_crot = 1.0</div>
+<div class="line"> </div>
+<div class="line"><span class="comment">!---------------------------------------------------------------------------</span></div>
+<div class="line"><span class="comment">! call ipolatev to interpolate vector data.  non-zero &quot;iret&quot; indicates</span></div>
+<div class="line"><span class="comment">! a problem.</span></div>
+<div class="line"><span class="comment">!---------------------------------------------------------------------------</span></div>
+<div class="line"> </div>
+<div class="line"> <span class="keyword">call </span>ipolatev(ip, ipopt, gfld_input%igdtnum, gfld_input%igdtmpl, &amp;</div>
+<div class="line">               gfld_input%igdtlen, igdtnumo, igdtmplo, igdtleno, &amp;</div>
+<div class="line">               mi, mo, km, ibi, input_bitmap, input_u_data, input_v_data, &amp;</div>
+<div class="line">               no, output_rlat, output_rlon, output_crot, output_srot, &amp;</div>
+<div class="line">               ibo, output_bitmap, output_u_data, output_v_data, iret)</div>
+<div class="line"> </div>
+<div class="line"> <span class="keywordflow">if</span> (iret /= 0) stop</div>
+<div class="line"> </div>
+<div class="line"> <span class="keywordflow">do</span> k = 1, mo</div>
+<div class="line">   print*,<span class="stringliteral">&#39;station point &#39;</span>,k,<span class="stringliteral">&#39; latitude &#39;</span>,output_rlat(k),<span class="stringliteral">&#39; longitude &#39;</span>, &amp;</div>
+<div class="line">   output_rlon(k), <span class="stringliteral">&#39; u-wind &#39;</span>, output_u_data(k), <span class="stringliteral">&#39; v-wind &#39;</span>, output_v_data(k)</div>
+<div class="line"><span class="keywordflow"> enddo</span></div>
+<div class="line"> </div>
+<div class="line"> <span class="keyword">end program </span>example_2</div>
+</div><!-- fragment --><h1><a class="anchor" id="autotoc_md16"></a>
+Examples: Spectral Processing &amp; Transformation</h1>
+<p>Example 1. Interpolate heights and winds from a latlon grid to two antipodal polar stereographic grids. Subprograms GETGB and PUTGB from w3lib are referenced.</p>
+<div class="fragment"><div class="line"><span class="comment">c  unit number 11 is the input latlon grib file</span></div>
+<div class="line"><span class="comment">c  unit number 31 is the input latlon grib index file</span></div>
+<div class="line"><span class="comment">c  unit number 51 is the output northern polar stereographic grib file</span></div>
+<div class="line"><span class="comment">c  unit number 52 is the output southern polar stereographic grib file</span></div>
+<div class="line"><span class="comment">c  nominal spectral truncation is r40</span></div>
+<div class="line"><span class="comment">c  maximum input gridsize is 360x181</span></div>
+<div class="line"><span class="comment">c  maximum number of levels wanted is 12</span></div>
+<div class="line">      parameter(lug=11,lui=31,lun=51,lus=52)</div>
+<div class="line">      parameter(iromb=1,maxwv=40,jf=360*181,kx=12)</div>
+<div class="line">      <span class="keywordtype">integer</span> kp5(kx),kp6(kx),kp7(kx)</div>
+<div class="line">      <span class="keywordtype">integer</span> kpo(kx)</div>
+<div class="line">      <span class="keyword">data</span> kpo/1000,850,700,500,400,300,250,200,150,100,70,50/</div>
+<div class="line"><span class="comment">c height</span></div>
+<div class="line">      km=12</div>
+<div class="line">      kp5=7</div>
+<div class="line">      kp6=100</div>
+<div class="line">      kp7=kpo</div>
+<div class="line">      <span class="keyword">call </span>gs65(lug,lui,lun,lus,jf,km,kp5,kp6,kp7,iromb,maxwv)</div>
+<div class="line"><span class="comment">c winds</span></div>
+<div class="line">      km=12</div>
+<div class="line">      kp5=33</div>
+<div class="line">      kp6=100</div>
+<div class="line">      kp7=kpo</div>
+<div class="line">      <span class="keyword">call </span>gv65(lug,lui,lun,lus,jf,km,kp5,kp6,kp7,iromb,maxwv)</div>
+<div class="line"><span class="comment">c</span></div>
+<div class="line">      stop</div>
+<div class="line">      <span class="keyword">end</span></div>
+<div class="line"><span class="comment">c</span></div>
+<div class="line">      <span class="keyword">subroutine </span>gs65(lug,lui,lun,lus,jf,km,kp5,kp6,kp7,iromb,maxwv)</div>
+<div class="line"><span class="comment">c  interpolates a scalar field using spectral transforms.</span></div>
+<div class="line">      <span class="keywordtype">integer</span> kp5(km),kp6(km),kp7(km)</div>
+<div class="line"><span class="comment">c  output grids are 65x65 (381 km true at latitide 60).</span></div>
+<div class="line"><span class="comment">c  nh grid oriented at 280E; sh grid oriented at 100E.</span></div>
+<div class="line">      parameter(nph=32,nps=2*nph+1,npq=nps*nps)</div>
+<div class="line">      parameter(true=60.,xmesh=381.e3,orient=280.)</div>
+<div class="line">      parameter(rerth=6.3712e6)</div>
+<div class="line">      parameter(pi=3.14159265358979,dpr=180./pi) </div>
+<div class="line"><span class="keywordtype">      real</span> gn(npq,km),gs(npq,km)</div>
+<div class="line">      <span class="keywordtype">integer</span> jpds(25),jgds(22),kpds(25,km),kgds(22,km)</div>
+<div class="line">      <span class="keywordtype">logical</span> lb(jf)</div>
+<div class="line"><span class="keywordtype">      real</span> f(jf,km)</div>
+<div class="line"><span class="comment">c</span></div>
+<div class="line">      g2=((1.+sin(abs(true)/dpr))*rerth/xmesh)**2</div>
+<div class="line">      r2=2*nph**2</div>
+<div class="line">      rlatn1=dpr*asin((g2-r2)/(g2+r2))</div>
+<div class="line">      rlonn1=mod(orient+315,360.)</div>
+<div class="line">      rlats1=-rlatn1</div>
+<div class="line">      rlons1=mod(rlonn1+270,360.)</div>
+<div class="line">      jpds=-1</div>
+<div class="line">      <span class="keywordflow">do</span> k=1,km</div>
+<div class="line">        jpds(5)=kp5(k)</div>
+<div class="line">        jpds(6)=kp6(k)</div>
+<div class="line">        jpds(7)=kp7(k)</div>
+<div class="line">        j=0</div>
+<div class="line">        <span class="keyword">call </span>getgb(lug,lui,jf,j,jpds,jgds,kf,j,kpds(1,k),kgds(1,k),</div>
+<div class="line">     &amp;             lb,f(1,k),iret)</div>
+<div class="line">        <span class="keywordflow">if</span>(iret.ne.0) <span class="keyword">call </span>exit(1)</div>
+<div class="line">        <span class="keywordflow">if</span>(mod(kpds(4,k)/64,2).eq.1) <span class="keyword">call </span>exit(2)</div>
+<div class="line"><span class="keywordflow">      enddo</span></div>
+<div class="line">      idrt=kgds(1,1)</div>
+<div class="line">      imax=kgds(2,1)</div>
+<div class="line">      jmax=kgds(3,1)</div>
+<div class="line"><span class="comment">c</span></div>
+<div class="line">      <span class="keyword">call </span><a class="code" href="sptruns_8f.html#a34f156e2049105d012e445f8aa215444">sptruns</a>(iromb,maxwv,idrt,imax,jmax,km,nps,</div>
+<div class="line">     &amp;             0,0,0,jf,0,0,0,0,true,xmesh,orient,f,gn,gs)</div>
+<div class="line"><span class="comment">c</span></div>
+<div class="line">      <span class="keywordflow">do</span> k=1,km</div>
+<div class="line">        kpds(3,k)=27</div>
+<div class="line">        kgds(1,k)=5</div>
+<div class="line">        kgds(2,k)=nps</div>
+<div class="line">        kgds(3,k)=nps</div>
+<div class="line">        kgds(4,k)=nint(rlatn1*1.e3)</div>
+<div class="line">        kgds(5,k)=nint(rlonn1*1.e3)</div>
+<div class="line">        kgds(6,k)=8</div>
+<div class="line">        kgds(7,k)=nint(orient*1.e3)</div>
+<div class="line">        kgds(8,k)=nint(xmesh)</div>
+<div class="line">        kgds(9,k)=nint(xmesh)</div>
+<div class="line">        kgds(10,k)=0</div>
+<div class="line">        kgds(11,k)=64</div>
+<div class="line">        <span class="keyword">call </span>putgb(lun,npq,kpds(1,k),kgds(1,k),lb,gn(1,k),iret)</div>
+<div class="line"><span class="keywordflow">      enddo</span></div>
+<div class="line">      <span class="keywordflow">do</span> k=1,km</div>
+<div class="line">        kpds(3,k)=28</div>
+<div class="line">        kgds(1,k)=5</div>
+<div class="line">        kgds(2,k)=nps</div>
+<div class="line">        kgds(3,k)=nps</div>
+<div class="line">        kgds(4,k)=nint(rlats1*1.e3)</div>
+<div class="line">        kgds(5,k)=nint(rlons1*1.e3)</div>
+<div class="line">        kgds(6,k)=8</div>
+<div class="line">        kgds(7,k)=nint(mod(orient+180,360.)*1.e3)</div>
+<div class="line">        kgds(8,k)=nint(xmesh)</div>
+<div class="line">        kgds(9,k)=nint(xmesh)</div>
+<div class="line">        kgds(10,k)=128</div>
+<div class="line">        kgds(11,k)=64</div>
+<div class="line">        <span class="keyword">call </span>putgb(lus,npq,kpds(1,k),kgds(1,k),lb,gs(1,k),iret)</div>
+<div class="line"><span class="keywordflow">      enddo</span></div>
+<div class="line"><span class="comment">c</span></div>
+<div class="line">      <span class="keyword">end</span></div>
+<div class="line"><span class="comment">c</span></div>
+<div class="line">      <span class="keyword">subroutine </span>gv65(lug,lui,lun,lus,jf,km,kp5,kp6,kp7,iromb,maxwv)</div>
+<div class="line"><span class="comment">c  interpolates a vector field using spectral transforms.</span></div>
+<div class="line">      <span class="keywordtype">integer</span> kp5(km),kp6(km),kp7(km)</div>
+<div class="line"><span class="comment">c  output grids are 65x65 (381 km true at latitide 60).</span></div>
+<div class="line"><span class="comment">c  nh grid oriented at 280E; sh grid oriented at 100E.</span></div>
+<div class="line"><span class="comment">c  winds are rotated to be relative to grid coordinates.</span></div>
+<div class="line">      parameter(nph=32,nps=2*nph+1,npq=nps*nps)</div>
+<div class="line">      parameter(true=60.,xmesh=381.e3,orient=280.)</div>
+<div class="line">      parameter(rerth=6.3712e6)</div>
+<div class="line">      parameter(pi=3.14159265358979,dpr=180./pi) </div>
+<div class="line"><span class="keywordtype">      real</span> un(npq,km),vn(npq,km),us(npq,km),vs(npq,km)</div>
+<div class="line">      <span class="keywordtype">integer</span> jpds(25),jgds(22),kpds(25,km),kgds(22,km)</div>
+<div class="line">      <span class="keywordtype">logical</span> lb(jf)</div>
+<div class="line"><span class="keywordtype">      real</span> u(jf,km),v(jf,km)</div>
+<div class="line"><span class="comment">c</span></div>
+<div class="line">      g2=((1.+sin(abs(true)/dpr))*rerth/xmesh)**2</div>
+<div class="line">      r2=2*nph**2</div>
+<div class="line">      rlatn1=dpr*asin((g2-r2)/(g2+r2))</div>
+<div class="line">      rlonn1=mod(orient+315,360.)</div>
+<div class="line">      rlats1=-rlatn1</div>
+<div class="line">      rlons1=mod(rlonn1+270,360.)</div>
+<div class="line">      jpds=-1</div>
+<div class="line">      <span class="keywordflow">do</span> k=1,km</div>
+<div class="line">        jpds(5)=kp5(k)</div>
+<div class="line">        jpds(6)=kp6(k)</div>
+<div class="line">        jpds(7)=kp7(k)</div>
+<div class="line">        j=0</div>
+<div class="line">        <span class="keyword">call </span>getgb(lug,lui,jf,j,jpds,jgds,kf,j,kpds(1,k),kgds(1,k),</div>
+<div class="line">     &amp;             lb,u(1,k),iret)</div>
+<div class="line">        <span class="keywordflow">if</span>(iret.ne.0) <span class="keyword">call </span>exit(1)</div>
+<div class="line">        <span class="keywordflow">if</span>(mod(kpds(4,k)/64,2).eq.1) <span class="keyword">call </span>exit(2)</div>
+<div class="line">        jpds=kpds(:,k)</div>
+<div class="line">        jgds=kgds(:,k)</div>
+<div class="line">        jpds(5)=jpds(5)+1</div>
+<div class="line">        j=0</div>
+<div class="line">        <span class="keyword">call </span>getgb(lug,lui,jf,j,jpds,jgds,kf,j,kpds(1,k),kgds(1,k),</div>
+<div class="line">     &amp;             lb,v(1,k),iret)</div>
+<div class="line">        <span class="keywordflow">if</span>(iret.ne.0) <span class="keyword">call </span>exit(1)</div>
+<div class="line">        <span class="keywordflow">if</span>(mod(kpds(4,k)/64,2).eq.1) <span class="keyword">call </span>exit(2)</div>
+<div class="line"><span class="keywordflow">      enddo</span></div>
+<div class="line">      idrt=kgds(1,1)</div>
+<div class="line">      imax=kgds(2,1)</div>
+<div class="line">      jmax=kgds(3,1)</div>
+<div class="line"><span class="comment">c</span></div>
+<div class="line">      <span class="keyword">call </span><a class="code" href="sptrunsv_8f.html#a1373b651b9dea586e33d3033aae68656">sptrunsv</a>(iromb,maxwv,idrt,imax,jmax,km,nps,</div>
+<div class="line">     &amp;              0,0,0,jf,0,0,0,0,true,xmesh,orient,u,v,</div>
+<div class="line">     &amp;              .true.,un,vn,us,vs,.false.,dum,dum,dum,dum,</div>
+<div class="line">     &amp;              .false.,dum,dum,dum,dum)</div>
+<div class="line"><span class="comment">c</span></div>
+<div class="line">      <span class="keywordflow">do</span> k=1,km</div>
+<div class="line">        kpds(3,k)=27</div>
+<div class="line">        kgds(1,k)=5</div>
+<div class="line">        kgds(2,k)=nps</div>
+<div class="line">        kgds(3,k)=nps</div>
+<div class="line">        kgds(4,k)=nint(rlatn1*1.e3)</div>
+<div class="line">        kgds(5,k)=nint(rlonn1*1.e3)</div>
+<div class="line">        kgds(6,k)=8</div>
+<div class="line">        kgds(7,k)=nint(orient*1.e3)</div>
+<div class="line">        kgds(8,k)=nint(xmesh)</div>
+<div class="line">        kgds(9,k)=nint(xmesh)</div>
+<div class="line">        kgds(10,k)=0</div>
+<div class="line">        kgds(11,k)=64</div>
+<div class="line">        kpds(5,k)=kp5(k)</div>
+<div class="line">        <span class="keyword">call </span>putgb(lun,npq,kpds(1,k),kgds(1,k),lb,un(1,k),iret)</div>
+<div class="line"><span class="keywordflow">      enddo</span></div>
+<div class="line">      <span class="keywordflow">do</span> k=1,km</div>
+<div class="line">        kpds(3,k)=27</div>
+<div class="line">        kgds(1,k)=5</div>
+<div class="line">        kgds(2,k)=nps</div>
+<div class="line">        kgds(3,k)=nps</div>
+<div class="line">        kgds(4,k)=nint(rlatn1*1.e3)</div>
+<div class="line">        kgds(5,k)=nint(rlonn1*1.e3)</div>
+<div class="line">        kgds(6,k)=8</div>
+<div class="line">        kgds(7,k)=nint(orient*1.e3)</div>
+<div class="line">        kgds(8,k)=nint(xmesh)</div>
+<div class="line">        kgds(9,k)=nint(xmesh)</div>
+<div class="line">        kgds(10,k)=0</div>
+<div class="line">        kgds(11,k)=64</div>
+<div class="line">        kpds(5,k)=kp5(k)+1</div>
+<div class="line">        <span class="keyword">call </span>putgb(lun,npq,kpds(1,k),kgds(1,k),lb,vn(1,k),iret)</div>
+<div class="line"><span class="keywordflow">      enddo</span></div>
+<div class="line">      <span class="keywordflow">do</span> k=1,km</div>
+<div class="line">        kpds(3,k)=28</div>
+<div class="line">        kgds(1,k)=5</div>
+<div class="line">        kgds(2,k)=nps</div>
+<div class="line">        kgds(3,k)=nps</div>
+<div class="line">        kgds(4,k)=nint(rlats1*1.e3)</div>
+<div class="line">        kgds(5,k)=nint(rlons1*1.e3)</div>
+<div class="line">        kgds(6,k)=8</div>
+<div class="line">        kgds(7,k)=nint(mod(orient+180,360.)*1.e3)</div>
+<div class="line">        kgds(8,k)=nint(xmesh)</div>
+<div class="line">        kgds(9,k)=nint(xmesh)</div>
+<div class="line">        kgds(10,k)=128</div>
+<div class="line">        kgds(11,k)=64</div>
+<div class="line">        kpds(5,k)=kp5(k)</div>
+<div class="line">        <span class="keyword">call </span>putgb(lus,npq,kpds(1,k),kgds(1,k),lb,us(1,k),iret)</div>
+<div class="line"><span class="keywordflow">      enddo</span></div>
+<div class="line">      <span class="keywordflow">do</span> k=1,km</div>
+<div class="line">        kpds(3,k)=28</div>
+<div class="line">        kgds(1,k)=5</div>
+<div class="line">        kgds(2,k)=nps</div>
+<div class="line">        kgds(3,k)=nps</div>
+<div class="line">        kgds(4,k)=nint(rlats1*1.e3)</div>
+<div class="line">        kgds(5,k)=nint(rlons1*1.e3)</div>
+<div class="line">        kgds(6,k)=8</div>
+<div class="line">        kgds(7,k)=nint(mod(orient+180,360.)*1.e3)</div>
+<div class="line">        kgds(8,k)=nint(xmesh)</div>
+<div class="line">        kgds(9,k)=nint(xmesh)</div>
+<div class="line">        kgds(10,k)=128</div>
+<div class="line">        kgds(11,k)=64</div>
+<div class="line">        kpds(5,k)=kp5(k)+1</div>
+<div class="line">        <span class="keyword">call </span>putgb(lus,npq,kpds(1,k),kgds(1,k),lb,vs(1,k),iret)</div>
+<div class="line"><span class="keywordflow">      enddo</span></div>
+<div class="line"><span class="comment">c</span></div>
+<div class="line">      <span class="keyword">end</span></div>
+<div class="ttc" id="asptruns_8f_html_a34f156e2049105d012e445f8aa215444"><div class="ttname"><a href="sptruns_8f.html#a34f156e2049105d012e445f8aa215444">sptruns</a></div><div class="ttdeci">subroutine sptruns(IROMB, MAXWV, IDRTI, IMAXI, JMAXI, KMAX, NPS, IPRIME, ISKIPI, JSKIPI, KSKIPI, KGSKIP, NISKIP, NJSKIP, JCPU, TRUE, XMESH, ORIENT, GRIDI, GN, GS)</div><div class="ttdoc">This subprogram spectrally truncates scalar fields on a global cylindrical grid, returning the fields...</div><div class="ttdef"><b>Definition:</b> <a href="sptruns_8f_source.html#l00071">sptruns.f:75</a></div></div>
+<div class="ttc" id="asptrunsv_8f_html_a1373b651b9dea586e33d3033aae68656"><div class="ttname"><a href="sptrunsv_8f.html#a1373b651b9dea586e33d3033aae68656">sptrunsv</a></div><div class="ttdeci">subroutine sptrunsv(IROMB, MAXWV, IDRTI, IMAXI, JMAXI, KMAX, NPS, IPRIME, ISKIPI, JSKIPI, KSKIPI, KGSKIP, NISKIP, NJSKIP, JCPU, TRUE, XMESH, ORIENT, GRIDUI, GRIDVI, LUV, UN, VN, US, VS, LDZ, DN, ZN, DS, ZS, LPS, PN, SN, PS, SS)</div><div class="ttdoc">This subprogram spectrally truncates vector fields on a global cylindrical grid, returning the fields...</div><div class="ttdef"><b>Definition:</b> <a href="sptrunsv_8f_source.html#l00088">sptrunsv.f:94</a></div></div>
+</div><!-- fragment --><p>Example 2. Spectrally truncate winds in place on a latlon grid.</p>
+<div class="fragment"><div class="line"><span class="comment">c  unit number 11 is the input latlon grib file</span></div>
+<div class="line"><span class="comment">c  unit number 31 is the input latlon grib index file</span></div>
+<div class="line"><span class="comment">c  unit number 51 is the output latlon grib file</span></div>
+<div class="line"><span class="comment">c  nominal spectral truncation is r40</span></div>
+<div class="line"><span class="comment">c  maximum input gridsize is 360x181</span></div>
+<div class="line"><span class="comment">c  maximum number of levels wanted is 12</span></div>
+<div class="line">      parameter(lug=11,lui=31,luo=51)</div>
+<div class="line">      parameter(iromb=1,maxwv=40,jf=360*181,kx=12)</div>
+<div class="line">      <span class="keywordtype">integer</span> kp5(kx),kp6(kx),kp7(kx)</div>
+<div class="line">      <span class="keywordtype">integer</span> kpo(kx)</div>
+<div class="line">      <span class="keyword">data</span> kpo/1000,850,700,500,400,300,250,200,150,100,70,50/</div>
+<div class="line"><span class="comment">c winds</span></div>
+<div class="line">      km=12</div>
+<div class="line">      kp5=33</div>
+<div class="line">      kp6=100</div>
+<div class="line">      kp7=kpo</div>
+<div class="line">      <span class="keyword">call </span>gvr40(lug,lui,luo,jf,km,kp5,kp6,kp7,iromb,maxwv)</div>
+<div class="line"><span class="comment">c</span></div>
+<div class="line">      stop</div>
+<div class="line">      <span class="keyword">end</span></div>
+<div class="line"><span class="comment">c</span></div>
+<div class="line">      <span class="keyword">subroutine </span>gvr40(lug,lui,luo,jf,km,kp5,kp6,kp7,iromb,maxwv)</div>
+<div class="line"><span class="comment">c  interpolates a vector field using spectral transforms.</span></div>
+<div class="line">      <span class="keywordtype">integer</span> kp5(km),kp6(km),kp7(km)</div>
+<div class="line">      <span class="keywordtype">integer</span> jpds(25),jgds(22),kpds(25,km),kgds(22,km)</div>
+<div class="line">      <span class="keywordtype">logical</span> lb(jf)</div>
+<div class="line"><span class="keywordtype">      real</span> u(jf,km),v(jf,km)</div>
+<div class="line"><span class="comment">c</span></div>
+<div class="line">      jpds=-1</div>
+<div class="line">      <span class="keywordflow">do</span> k=1,km</div>
+<div class="line">        jpds(5)=kp5(k)</div>
+<div class="line">        jpds(6)=kp6(k)</div>
+<div class="line">        jpds(7)=kp7(k)</div>
+<div class="line">        j=0</div>
+<div class="line">        <span class="keyword">call </span>getgb(lug,lui,jf,j,jpds,jgds,kf,j,kpds(1,k),kgds(1,k),</div>
+<div class="line">     &amp;             lb,u(1,k),iret)</div>
+<div class="line">        <span class="keywordflow">if</span>(iret.ne.0) <span class="keyword">call </span>exit(1)</div>
+<div class="line">        <span class="keywordflow">if</span>(mod(kpds(4,k)/64,2).eq.1) <span class="keyword">call </span>exit(2)</div>
+<div class="line">        jpds=kpds(:,k)</div>
+<div class="line">        jgds=kgds(:,k)</div>
+<div class="line">        jpds(5)=jpds(5)+1</div>
+<div class="line">        j=0</div>
+<div class="line">        <span class="keyword">call </span>getgb(lug,lui,jf,j,jpds,jgds,kf,j,kpds(1,k),kgds(1,k),</div>
+<div class="line">     &amp;             lb,v(1,k),iret)</div>
+<div class="line">        <span class="keywordflow">if</span>(iret.ne.0) <span class="keyword">call </span>exit(1)</div>
+<div class="line">        <span class="keywordflow">if</span>(mod(kpds(4,k)/64,2).eq.1) <span class="keyword">call </span>exit(2)</div>
+<div class="line"><span class="keywordflow">      enddo</span></div>
+<div class="line">      idrt=kgds(1,1)</div>
+<div class="line">      imax=kgds(2,1)</div>
+<div class="line">      jmax=kgds(3,1)</div>
+<div class="line"><span class="comment">c</span></div>
+<div class="line">      <span class="keyword">call </span><a class="code" href="sptrunv_8f.html#a9aa39c13dd38585b3afb30cb2486817f">sptrunv</a>(iromb,maxwv,idrt,imax,jmax,idrt,imax,jmax,km,</div>
+<div class="line">     &amp;             0,0,0,jf,0,0,jf,0,u,v,.true.,u,v,</div>
+<div class="line">     &amp;             .false.,dum,dum,.false.,dum,dum)</div>
+<div class="line"><span class="comment">c</span></div>
+<div class="line">      <span class="keywordflow">do</span> k=1,km</div>
+<div class="line">        kpds(5,k)=kp5(k)</div>
+<div class="line">        <span class="keyword">call </span>putgb(luo,kf,kpds(1,k),kgds(1,k),lb,u(1,k),iret)</div>
+<div class="line"><span class="keywordflow">      enddo</span></div>
+<div class="line">      <span class="keywordflow">do</span> k=1,km</div>
+<div class="line">        kpds(5,k)=kp5(k)+1</div>
+<div class="line">        <span class="keyword">call </span>putgb(luo,kf,kpds(1,k),kgds(1,k),lb,v(1,k),iret)</div>
+<div class="line"><span class="keywordflow">      enddo</span></div>
+<div class="line"><span class="comment">c</span></div>
+<div class="line">      <span class="keyword">end</span></div>
+<div class="ttc" id="asptrunv_8f_html_a9aa39c13dd38585b3afb30cb2486817f"><div class="ttname"><a href="sptrunv_8f.html#a9aa39c13dd38585b3afb30cb2486817f">sptrunv</a></div><div class="ttdeci">subroutine sptrunv(IROMB, MAXWV, IDRTI, IMAXI, JMAXI, IDRTO, IMAXO, JMAXO, KMAX, IPRIME, ISKIPI, JSKIPI, KSKIPI, ISKIPO, JSKIPO, KSKIPO, JCPU, GRIDUI, GRIDVI, LUV, GRIDUO, GRIDVO, LDZ, GRIDDO, GRIDZO, LPS, GRIDPO, GRIDSO)</div><div class="ttdoc">This subprogram spectrally truncates vector fields on a global cylindrical grid, returning the fields...</div><div class="ttdef"><b>Definition:</b> <a href="sptrunv_8f_source.html#l00090">sptrunv.f:96</a></div></div>
+</div><!-- fragment --><p>Example 3. Compute latlon temperatures from spectral temperatures and compute latlon winds from spectral divergence and vorticity.</p>
+<div class="fragment"><div class="line"><span class="comment">c  unit number 11 is the input sigma file</span></div>
+<div class="line"><span class="comment">c  unit number 51 is the output latlon file</span></div>
+<div class="line"><span class="comment">c  nominal spectral truncation is t62</span></div>
+<div class="line"><span class="comment">c  output gridsize is 144x73</span></div>
+<div class="line"><span class="comment">c  number of levels is 28</span></div>
+<div class="line">      parameter(iromb=0,maxwv=62)</div>
+<div class="line">      parameter(idrt=0,im=144,jm=73)</div>
+<div class="line">      parameter(levs=28)</div>
+<div class="line">      parameter(mx=(maxwv+1)*((iromb+1)*maxwv+2)/2)</div>
+<div class="line"><span class="keywordtype">      real</span> t(mx,levs),d(mx,levs),z(mx,levs)</div>
+<div class="line"><span class="keywordtype">      real</span> tg(im,jm,km),ug(im,jm,km),vg(im,jm,km)</div>
+<div class="line"><span class="comment">c  temperature</span></div>
+<div class="line">      <span class="keywordflow">do</span> k=1,4</div>
+<div class="line">        <span class="keyword">read</span>(11)</div>
+<div class="line"><span class="keywordflow">      enddo</span></div>
+<div class="line">      <span class="keywordflow">do</span> k=1,levs</div>
+<div class="line">        <span class="keyword">read</span>(11) (t(m,k),m=1,mx)</div>
+<div class="line"><span class="keywordflow">      enddo</span></div>
+<div class="line">      <span class="keyword">call </span><a class="code" href="sptran_8f.html#af7610e42f0dcd199b8cf80f851dcfed0">sptran</a>(iromb,maxwv,idrt,im,jm,levs,0,0,0,0,0,0,0,0,1,</div>
+<div class="line">     &amp;            t,tg(1,1,1),tg(1,jm,1),1)</div>
+<div class="line">      <span class="keyword">call </span><a class="code" href="sptran_8f.html#af7610e42f0dcd199b8cf80f851dcfed0">sptran</a>(</div>
+<div class="line">      <span class="keywordflow">do</span> k=1,levs</div>
+<div class="line">        <span class="keyword">write</span>(51) ((tg(i,j,k),i=1,im),j=1,jm)</div>
+<div class="line"><span class="keywordflow">      enddo</span></div>
+<div class="line"><span class="comment">c  winds</span></div>
+<div class="line">      <span class="keywordflow">do</span> k=1,levs</div>
+<div class="line">        <span class="keyword">read</span>(11) (d(m,k),m=1,mx)</div>
+<div class="line">        <span class="keyword">read</span>(11) (z(m,k),m=1,mx)</div>
+<div class="line"><span class="keywordflow">      enddo</span></div>
+<div class="line">      <span class="keyword">call </span><a class="code" href="sptranv_8f.html#a7d6aaa3ed70df1dfaf8dd4443b7190c1">sptranv</a>(iromb,maxwv,idrt,im,jm,levs,0,0,0,0,0,0,0,0,1,</div>
+<div class="line">     &amp;             d,z,ug(1,1,1),ug(1,jm,1),vg(1,1,1),vg(1,jm,1),1)</div>
+<div class="line">      <span class="keywordflow">do</span> k=1,levs</div>
+<div class="line">        <span class="keyword">write</span>(51) ((ug(i,j,k),i=1,im),j=1,jm)</div>
+<div class="line">        <span class="keyword">write</span>(51) ((vg(i,j,k),i=1,im),j=1,jm)</div>
+<div class="line"><span class="keywordflow">      enddo</span></div>
+<div class="line">      <span class="keyword">end</span></div>
+<div class="ttc" id="asptran_8f_html_af7610e42f0dcd199b8cf80f851dcfed0"><div class="ttname"><a href="sptran_8f.html#af7610e42f0dcd199b8cf80f851dcfed0">sptran</a></div><div class="ttdeci">subroutine sptran(IROMB, MAXWV, IDRT, IMAX, JMAX, KMAX, IPRIME, ISKIP, JNSKIP, JSSKIP, KWSKIP, KGSKIP, JBEG, JEND, JCPU, WAVE, GRIDN, GRIDS, IDIR)</div><div class="ttdoc">This subprogram performs a spherical transform between spectral coefficients of scalar quantities and...</div><div class="ttdef"><b>Definition:</b> <a href="sptran_8f_source.html#l00084">sptran.f:88</a></div></div>
+<div class="ttc" id="asptranv_8f_html_a7d6aaa3ed70df1dfaf8dd4443b7190c1"><div class="ttname"><a href="sptranv_8f.html#a7d6aaa3ed70df1dfaf8dd4443b7190c1">sptranv</a></div><div class="ttdeci">subroutine sptranv(IROMB, MAXWV, IDRT, IMAX, JMAX, KMAX, IPRIME, ISKIP, JNSKIP, JSSKIP, KWSKIP, KGSKIP, JBEG, JEND, JCPU, WAVED, WAVEZ, GRIDUN, GRIDUS, GRIDVN, GRIDVS, IDIR)</div><div class="ttdoc">This subprogram performs a spherical transform between spectral coefficients of divergences and curls...</div><div class="ttdef"><b>Definition:</b> <a href="sptranv_8f_source.html#l00087">sptranv.f:91</a></div></div>
+</div><!-- fragment --> </div></div><!-- PageDoc -->
 </div><!-- contents -->
 </div><!-- doc-content -->
 <!-- start footer part -->

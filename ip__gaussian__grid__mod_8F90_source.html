@@ -26,7 +26,7 @@
  <tr style="height: 56px;">
   <td id="projectalign" style="padding-left: 0.5em;">
    <div id="projectname">NCEPLIBS-ip
-   &#160;<span id="projectnumber">4.4.0</span>
+   &#160;<span id="projectnumber">5.0.0</span>
    </div>
   </td>
  </tr>
@@ -276,7 +276,7 @@ $(document).ready(function(){initNavTree('ip__gaussian__grid__mod_8F90_source.ht
 <div class="line"><a name="l00260"></a><span class="lineno">  260</span>&#160; </div>
 <div class="line"><a name="l00261"></a><span class="lineno">  261</span>&#160;    <span class="keyword">ALLOCATE</span>(alat_temp(jg))</div>
 <div class="line"><a name="l00262"></a><span class="lineno">  262</span>&#160;    <span class="keyword">ALLOCATE</span>(blat_temp(jg))</div>
-<div class="line"><a name="l00263"></a><span class="lineno">  263</span>&#160;    <span class="keyword">CALL </span>splat(4,jg,alat_temp,blat_temp)</div>
+<div class="line"><a name="l00263"></a><span class="lineno">  263</span>&#160;    <span class="keyword">CALL </span><a class="code" href="splat_8F.html#aa6db21451bb67635e7e4426546140e11">splat</a>(4,jg,alat_temp,blat_temp)</div>
 <div class="line"><a name="l00264"></a><span class="lineno">  264</span>&#160;    <span class="keyword">ALLOCATE</span>(alat(0:jg+1))</div>
 <div class="line"><a name="l00265"></a><span class="lineno">  265</span>&#160;    <span class="keyword">ALLOCATE</span>(<a class="code" href="namespaceip__gaussian__grid__mod.html#ae2697b9c4dbe4945276633d1951e79fc">blat</a>(0:jg+1))</div>
 <div class="line"><a name="l00266"></a><span class="lineno">  266</span>&#160;    <span class="comment">!$OMP PARALLEL DO PRIVATE(JA) SCHEDULE(STATIC)</span></div>
@@ -438,6 +438,7 @@ $(document).ready(function(){initNavTree('ip__gaussian__grid__mod_8F90_source.ht
 <div class="ttc" id="anamespaceip__gaussian__grid__mod_html_af5c4024263aa3eaef5801849ae32c15a"><div class="ttname"><a href="namespaceip__gaussian__grid__mod.html#af5c4024263aa3eaef5801849ae32c15a">ip_gaussian_grid_mod::j1</a></div><div class="ttdeci">integer j1</div><div class="ttdoc">'j' index of first grid point within the global array of latitudes.</div><div class="ttdef"><b>Definition:</b> <a href="ip__gaussian__grid__mod_8F90_source.html#l00043">ip_gaussian_grid_mod.F90:43</a></div></div>
 <div class="ttc" id="anamespaceip__grid__descriptor__mod_html"><div class="ttname"><a href="namespaceip__grid__descriptor__mod.html">ip_grid_descriptor_mod</a></div><div class="ttdoc">Users derived type grid descriptor objects to abstract away the raw GRIB1 and GRIB2 grid definitions.</div><div class="ttdef"><b>Definition:</b> <a href="ip__grid__descriptor__mod_8F90_source.html#l00015">ip_grid_descriptor_mod.F90:15</a></div></div>
 <div class="ttc" id="anamespaceip__grid__mod_html"><div class="ttname"><a href="namespaceip__grid__mod.html">ip_grid_mod</a></div><div class="ttdoc">Abstract ip_grid type.</div><div class="ttdef"><b>Definition:</b> <a href="ip__grid__mod_8F90_source.html#l00010">ip_grid_mod.F90:10</a></div></div>
+<div class="ttc" id="asplat_8F_html_aa6db21451bb67635e7e4426546140e11"><div class="ttname"><a href="splat_8F.html#aa6db21451bb67635e7e4426546140e11">splat</a></div><div class="ttdeci">subroutine splat(IDRT, JMAX, SLAT, WLAT)</div><div class="ttdoc">Computes cosines of colatitude and Gaussian weights for one of the following specific global sets of ...</div><div class="ttdef"><b>Definition:</b> <a href="splat_8F_source.html#l00045">splat.F:46</a></div></div>
 <div class="ttc" id="astructip__gaussian__grid__mod_1_1ip__gaussian__grid_html"><div class="ttname"><a href="structip__gaussian__grid__mod_1_1ip__gaussian__grid.html">ip_gaussian_grid_mod::ip_gaussian_grid</a></div><div class="ttdef"><b>Definition:</b> <a href="ip__gaussian__grid__mod_8F90_source.html#l00024">ip_gaussian_grid_mod.F90:24</a></div></div>
 <div class="ttc" id="astructip__grid__descriptor__mod_1_1grib1__descriptor_html"><div class="ttname"><a href="structip__grid__descriptor__mod_1_1grib1__descriptor.html">ip_grid_descriptor_mod::grib1_descriptor</a></div><div class="ttdoc">Descriptor representing a grib1 grib descriptor section (GDS) with an integer array.</div><div class="ttdef"><b>Definition:</b> <a href="ip__grid__descriptor__mod_8F90_source.html#l00038">ip_grid_descriptor_mod.F90:38</a></div></div>
 <div class="ttc" id="astructip__grid__mod_1_1ip__grid_html"><div class="ttname"><a href="structip__grid__mod_1_1ip__grid.html">ip_grid_mod::ip_grid</a></div><div class="ttdoc">Abstract grid that holds fields and methods common to all grids.</div><div class="ttdef"><b>Definition:</b> <a href="ip__grid__mod_8F90_source.html#l00052">ip_grid_mod.F90:52</a></div></div>

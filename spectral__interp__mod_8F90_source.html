@@ -26,7 +26,7 @@
  <tr style="height: 56px;">
   <td id="projectalign" style="padding-left: 0.5em;">
    <div id="projectname">NCEPLIBS-ip
-   &#160;<span id="projectnumber">4.4.0</span>
+   &#160;<span id="projectnumber">5.0.0</span>
    </div>
   </td>
  </tr>
@@ -343,7 +343,7 @@ $(document).ready(function(){initNavTree('spectral__interp__mod_8F90_source.html
 <div class="line"><a name="l00408"></a><span class="lineno">  408</span>&#160;             <span class="keywordflow">IF</span>(jmo.EQ.jgo) ispec=1</div>
 <div class="line"><a name="l00409"></a><span class="lineno">  409</span>&#160;<span class="keywordflow">          ENDIF</span></div>
 <div class="line"><a name="l00410"></a><span class="lineno">  410</span>&#160;          <span class="keywordflow">IF</span>(ispec.EQ.1) <span class="keywordflow">THEN</span></div>
-<div class="line"><a name="l00411"></a><span class="lineno">  411</span>&#160;             <span class="keyword">CALL </span>sptrun(iromb,maxwv,idrti,imaxi,jmaxi,idrto,imo,jmo, &amp;</div>
+<div class="line"><a name="l00411"></a><span class="lineno">  411</span>&#160;             <span class="keyword">CALL </span><a class="code" href="sptrun_8f.html#a1f04574fbd5018f73b68bd2cd0ffc473">sptrun</a>(iromb,maxwv,idrti,imaxi,jmaxi,idrto,imo,jmo, &amp;</div>
 <div class="line"><a name="l00412"></a><span class="lineno">  412</span>&#160;                  km,iprime,iskipi,jskipi,mi,0,0,mo,0,gi,go)</div>
 <div class="line"><a name="l00413"></a><span class="lineno">  413</span>&#160;<span class="keywordflow">          ENDIF</span></div>
 <div class="line"><a name="l00414"></a><span class="lineno">  414</span>&#160;          <span class="comment">!  SPECIAL CASE OF POLAR STEREOGRAPHIC GRID</span></div>
@@ -366,11 +366,11 @@ $(document).ready(function(){initNavTree('spectral__interp__mod_8F90_source.html
 <div class="line"><a name="l00431"></a><span class="lineno">  431</span>&#160;          yp=1+cos((rlon1-orient)/dpr)*dr/xmesh</div>
 <div class="line"><a name="l00432"></a><span class="lineno">  432</span>&#160;          <span class="keywordflow">IF</span>(nint(xp).EQ.ip.AND.nint(yp).EQ.ip) <span class="keywordflow">THEN</span></div>
 <div class="line"><a name="l00433"></a><span class="lineno">  433</span>&#160;             <span class="keywordflow">IF</span>(iproj.EQ.0) <span class="keywordflow">THEN</span></div>
-<div class="line"><a name="l00434"></a><span class="lineno">  434</span>&#160;                <span class="keyword">CALL </span>sptruns(iromb,maxwv,idrti,imaxi,jmaxi,km,nps, &amp;</div>
+<div class="line"><a name="l00434"></a><span class="lineno">  434</span>&#160;                <span class="keyword">CALL </span><a class="code" href="sptruns_8f.html#a34f156e2049105d012e445f8aa215444">sptruns</a>(iromb,maxwv,idrti,imaxi,jmaxi,km,nps, &amp;</div>
 <div class="line"><a name="l00435"></a><span class="lineno">  435</span>&#160;                     iprime,iskipi,jskipi,mi,mo,0,0,0, &amp;</div>
 <div class="line"><a name="l00436"></a><span class="lineno">  436</span>&#160;                     slat,xmesh,orient,gi,go,go2)</div>
 <div class="line"><a name="l00437"></a><span class="lineno">  437</span>&#160;             <span class="keywordflow">ELSE</span></div>
-<div class="line"><a name="l00438"></a><span class="lineno">  438</span>&#160;                <span class="keyword">CALL </span>sptruns(iromb,maxwv,idrti,imaxi,jmaxi,km,nps, &amp;</div>
+<div class="line"><a name="l00438"></a><span class="lineno">  438</span>&#160;                <span class="keyword">CALL </span><a class="code" href="sptruns_8f.html#a34f156e2049105d012e445f8aa215444">sptruns</a>(iromb,maxwv,idrti,imaxi,jmaxi,km,nps, &amp;</div>
 <div class="line"><a name="l00439"></a><span class="lineno">  439</span>&#160;                     iprime,iskipi,jskipi,mi,mo,0,0,0, &amp;</div>
 <div class="line"><a name="l00440"></a><span class="lineno">  440</span>&#160;                     slat,xmesh,orient,gi,go2,go)</div>
 <div class="line"><a name="l00441"></a><span class="lineno">  441</span>&#160;<span class="keywordflow">             ENDIF</span></div>
@@ -394,7 +394,7 @@ $(document).ready(function(){initNavTree('spectral__interp__mod_8F90_source.html
 <div class="line"><a name="l00459"></a><span class="lineno">  459</span>&#160;          dlono=hi*(mod(hi*(rlon2-rlon1)-1+3600,360.)+1)/(ni-1)</div>
 <div class="line"><a name="l00460"></a><span class="lineno">  460</span>&#160;          dlato=hj*dy/(rerth*cos(rlati/dpr))*dpr</div>
 <div class="line"><a name="l00461"></a><span class="lineno">  461</span>&#160;          <span class="keywordflow">IF</span>(nscano.EQ.0) <span class="keywordflow">THEN</span></div>
-<div class="line"><a name="l00462"></a><span class="lineno">  462</span>&#160;             <span class="keyword">CALL </span>sptrunm(iromb,maxwv,idrti,imaxi,jmaxi,km,ni,nj, &amp;</div>
+<div class="line"><a name="l00462"></a><span class="lineno">  462</span>&#160;             <span class="keyword">CALL </span><a class="code" href="sptrunm_8f.html#a2a4e579890d3cf7f6a26091f544b6cb6">sptrunm</a>(iromb,maxwv,idrti,imaxi,jmaxi,km,ni,nj, &amp;</div>
 <div class="line"><a name="l00463"></a><span class="lineno">  463</span>&#160;                  iprime,iskipi,jskipi,mi,mo,0,0,0, &amp;</div>
 <div class="line"><a name="l00464"></a><span class="lineno">  464</span>&#160;                  rlat1,rlon1,dlato,dlono,gi,go)</div>
 <div class="line"><a name="l00465"></a><span class="lineno">  465</span>&#160;             ispec=1</div>
@@ -402,7 +402,7 @@ $(document).ready(function(){initNavTree('spectral__interp__mod_8F90_source.html
 <div class="line"><a name="l00467"></a><span class="lineno">  467</span>&#160;<span class="keywordflow">       ENDIF</span></div>
 <div class="line"><a name="l00468"></a><span class="lineno">  468</span>&#160;       <span class="comment">!  GENERAL SLOW CASE</span></div>
 <div class="line"><a name="l00469"></a><span class="lineno">  469</span>&#160;       <span class="keywordflow">IF</span>(ispec.EQ.0) <span class="keywordflow">THEN</span></div>
-<div class="line"><a name="l00470"></a><span class="lineno">  470</span>&#160;          <span class="keyword">CALL </span>sptrung(iromb,maxwv,idrti,imaxi,jmaxi,km,no, &amp;</div>
+<div class="line"><a name="l00470"></a><span class="lineno">  470</span>&#160;          <span class="keyword">CALL </span><a class="code" href="sptrung_8f.html#af41b64dad4789617a315515ef885912c">sptrung</a>(iromb,maxwv,idrti,imaxi,jmaxi,km,no, &amp;</div>
 <div class="line"><a name="l00471"></a><span class="lineno">  471</span>&#160;               iprime,iskipi,jskipi,mi,mo,0,0,0,rlat,rlon,gi,go)</div>
 <div class="line"><a name="l00472"></a><span class="lineno">  472</span>&#160;<span class="keywordflow">       ENDIF</span></div>
 <div class="line"><a name="l00473"></a><span class="lineno">  473</span>&#160;       <span class="keywordflow">DO</span> k=1,km</div>
@@ -563,7 +563,7 @@ $(document).ready(function(){initNavTree('spectral__interp__mod_8F90_source.html
 <div class="line"><a name="l00697"></a><span class="lineno">  697</span>&#160;             <span class="keywordflow">IF</span>(jmo.EQ.jgo) ispec=1</div>
 <div class="line"><a name="l00698"></a><span class="lineno">  698</span>&#160;<span class="keywordflow">          ENDIF</span></div>
 <div class="line"><a name="l00699"></a><span class="lineno">  699</span>&#160;          <span class="keywordflow">IF</span>(ispec.EQ.1) <span class="keywordflow">THEN</span></div>
-<div class="line"><a name="l00700"></a><span class="lineno">  700</span>&#160;             <span class="keyword">CALL </span>sptrun(iromb,maxwv,idrti,imaxi,jmaxi,idrto,imo,jmo, &amp;</div>
+<div class="line"><a name="l00700"></a><span class="lineno">  700</span>&#160;             <span class="keyword">CALL </span><a class="code" href="sptrun_8f.html#a1f04574fbd5018f73b68bd2cd0ffc473">sptrun</a>(iromb,maxwv,idrti,imaxi,jmaxi,idrto,imo,jmo, &amp;</div>
 <div class="line"><a name="l00701"></a><span class="lineno">  701</span>&#160;                  km,iprime,iskipi,jskipi,mi,0,0,mo,0,gi,go)</div>
 <div class="line"><a name="l00702"></a><span class="lineno">  702</span>&#160;<span class="keywordflow">          ENDIF</span></div>
 <div class="line"><a name="l00703"></a><span class="lineno">  703</span>&#160;          <span class="comment">!  SPECIAL CASE OF POLAR STEREOGRAPHIC GRID</span></div>
@@ -584,11 +584,11 @@ $(document).ready(function(){initNavTree('spectral__interp__mod_8F90_source.html
 <div class="line"><a name="l00718"></a><span class="lineno">  718</span>&#160;          yp=1+cos((rlon1-orient)/dpr)*dr/xmesh</div>
 <div class="line"><a name="l00719"></a><span class="lineno">  719</span>&#160;          <span class="keywordflow">IF</span>(nint(xp).EQ.ip.AND.nint(yp).EQ.ip) <span class="keywordflow">THEN</span></div>
 <div class="line"><a name="l00720"></a><span class="lineno">  720</span>&#160;             <span class="keywordflow">IF</span>(iproj.EQ.0) <span class="keywordflow">THEN</span></div>
-<div class="line"><a name="l00721"></a><span class="lineno">  721</span>&#160;                <span class="keyword">CALL </span>sptruns(iromb,maxwv,idrti,imaxi,jmaxi,km,nps, &amp;</div>
+<div class="line"><a name="l00721"></a><span class="lineno">  721</span>&#160;                <span class="keyword">CALL </span><a class="code" href="sptruns_8f.html#a34f156e2049105d012e445f8aa215444">sptruns</a>(iromb,maxwv,idrti,imaxi,jmaxi,km,nps, &amp;</div>
 <div class="line"><a name="l00722"></a><span class="lineno">  722</span>&#160;                     iprime,iskipi,jskipi,mi,mo,0,0,0, &amp;</div>
 <div class="line"><a name="l00723"></a><span class="lineno">  723</span>&#160;                     60.,xmesh,orient,gi,go,go2)</div>
 <div class="line"><a name="l00724"></a><span class="lineno">  724</span>&#160;             <span class="keywordflow">ELSE</span></div>
-<div class="line"><a name="l00725"></a><span class="lineno">  725</span>&#160;                <span class="keyword">CALL </span>sptruns(iromb,maxwv,idrti,imaxi,jmaxi,km,nps, &amp;</div>
+<div class="line"><a name="l00725"></a><span class="lineno">  725</span>&#160;                <span class="keyword">CALL </span><a class="code" href="sptruns_8f.html#a34f156e2049105d012e445f8aa215444">sptruns</a>(iromb,maxwv,idrti,imaxi,jmaxi,km,nps, &amp;</div>
 <div class="line"><a name="l00726"></a><span class="lineno">  726</span>&#160;                     iprime,iskipi,jskipi,mi,mo,0,0,0, &amp;</div>
 <div class="line"><a name="l00727"></a><span class="lineno">  727</span>&#160;                     60.,xmesh,orient,gi,go2,go)</div>
 <div class="line"><a name="l00728"></a><span class="lineno">  728</span>&#160;<span class="keywordflow">             ENDIF</span></div>
@@ -611,7 +611,7 @@ $(document).ready(function(){initNavTree('spectral__interp__mod_8F90_source.html
 <div class="line"><a name="l00745"></a><span class="lineno">  745</span>&#160;          dlono=hi*(mod(hi*(rlon2-rlon1)-1+3600,360.)+1)/(ni-1)</div>
 <div class="line"><a name="l00746"></a><span class="lineno">  746</span>&#160;          dlato=hj*dy/(rerth*cos(rlati/dpr))*dpr</div>
 <div class="line"><a name="l00747"></a><span class="lineno">  747</span>&#160;          <span class="keywordflow">IF</span>(nscano.EQ.0) <span class="keywordflow">THEN</span></div>
-<div class="line"><a name="l00748"></a><span class="lineno">  748</span>&#160;             <span class="keyword">CALL </span>sptrunm(iromb,maxwv,idrti,imaxi,jmaxi,km,ni,nj, &amp;</div>
+<div class="line"><a name="l00748"></a><span class="lineno">  748</span>&#160;             <span class="keyword">CALL </span><a class="code" href="sptrunm_8f.html#a2a4e579890d3cf7f6a26091f544b6cb6">sptrunm</a>(iromb,maxwv,idrti,imaxi,jmaxi,km,ni,nj, &amp;</div>
 <div class="line"><a name="l00749"></a><span class="lineno">  749</span>&#160;                  iprime,iskipi,jskipi,mi,mo,0,0,0, &amp;</div>
 <div class="line"><a name="l00750"></a><span class="lineno">  750</span>&#160;                  rlat1,rlon1,dlato,dlono,gi,go)</div>
 <div class="line"><a name="l00751"></a><span class="lineno">  751</span>&#160;             ispec=1</div>
@@ -619,7 +619,7 @@ $(document).ready(function(){initNavTree('spectral__interp__mod_8F90_source.html
 <div class="line"><a name="l00753"></a><span class="lineno">  753</span>&#160;<span class="keywordflow">       ENDIF</span></div>
 <div class="line"><a name="l00754"></a><span class="lineno">  754</span>&#160;       <span class="comment">!  GENERAL SLOW CASE</span></div>
 <div class="line"><a name="l00755"></a><span class="lineno">  755</span>&#160;       <span class="keywordflow">IF</span>(ispec.EQ.0) <span class="keywordflow">THEN</span></div>
-<div class="line"><a name="l00756"></a><span class="lineno">  756</span>&#160;          <span class="keyword">CALL </span>sptrung(iromb,maxwv,idrti,imaxi,jmaxi,km,no, &amp;</div>
+<div class="line"><a name="l00756"></a><span class="lineno">  756</span>&#160;          <span class="keyword">CALL </span><a class="code" href="sptrung_8f.html#af41b64dad4789617a315515ef885912c">sptrung</a>(iromb,maxwv,idrti,imaxi,jmaxi,km,no, &amp;</div>
 <div class="line"><a name="l00757"></a><span class="lineno">  757</span>&#160;               iprime,iskipi,jskipi,mi,mo,0,0,0,rlat,rlon,gi,go)</div>
 <div class="line"><a name="l00758"></a><span class="lineno">  758</span>&#160;<span class="keywordflow">       ENDIF</span></div>
 <div class="line"><a name="l00759"></a><span class="lineno">  759</span>&#160;       <span class="keywordflow">DO</span> k=1,km</div>
@@ -798,7 +798,7 @@ $(document).ready(function(){initNavTree('spectral__interp__mod_8F90_source.html
 <div class="line"><a name="l01041"></a><span class="lineno"> 1041</span>&#160;             <span class="keywordflow">IF</span>(jmo.EQ.jgo) ispec=1</div>
 <div class="line"><a name="l01042"></a><span class="lineno"> 1042</span>&#160;<span class="keywordflow">          ENDIF</span></div>
 <div class="line"><a name="l01043"></a><span class="lineno"> 1043</span>&#160;          <span class="keywordflow">IF</span>(ispec.EQ.1) <span class="keywordflow">THEN</span></div>
-<div class="line"><a name="l01044"></a><span class="lineno"> 1044</span>&#160;             <span class="keyword">CALL </span>sptrunv(iromb,maxwv,idrti,imaxi,jmaxi,idrto,imo,jmo, &amp;</div>
+<div class="line"><a name="l01044"></a><span class="lineno"> 1044</span>&#160;             <span class="keyword">CALL </span><a class="code" href="sptrunv_8f.html#a9aa39c13dd38585b3afb30cb2486817f">sptrunv</a>(iromb,maxwv,idrti,imaxi,jmaxi,idrto,imo,jmo, &amp;</div>
 <div class="line"><a name="l01045"></a><span class="lineno"> 1045</span>&#160;                  km,iprime,iskipi,jskipi,mi,0,0,mo,0,ui,vi, &amp;</div>
 <div class="line"><a name="l01046"></a><span class="lineno"> 1046</span>&#160;                  .true.,uo,vo,.false.,dum,dum,.false.,dum,dum)</div>
 <div class="line"><a name="l01047"></a><span class="lineno"> 1047</span>&#160;<span class="keywordflow">          ENDIF</span></div>
@@ -823,13 +823,13 @@ $(document).ready(function(){initNavTree('spectral__interp__mod_8F90_source.html
 <div class="line"><a name="l01066"></a><span class="lineno"> 1066</span>&#160;          yp=1+cos((rlon1-orient)/dpr)*dr/xmesh</div>
 <div class="line"><a name="l01067"></a><span class="lineno"> 1067</span>&#160;          <span class="keywordflow">IF</span>(nint(xp).EQ.ip.AND.nint(yp).EQ.ip) <span class="keywordflow">THEN</span></div>
 <div class="line"><a name="l01068"></a><span class="lineno"> 1068</span>&#160;             <span class="keywordflow">IF</span>(iproj.EQ.0) <span class="keywordflow">THEN</span></div>
-<div class="line"><a name="l01069"></a><span class="lineno"> 1069</span>&#160;                <span class="keyword">CALL </span>sptrunsv(iromb,maxwv,idrti,imaxi,jmaxi,km,nps, &amp;</div>
+<div class="line"><a name="l01069"></a><span class="lineno"> 1069</span>&#160;                <span class="keyword">CALL </span><a class="code" href="sptrunsv_8f.html#a1373b651b9dea586e33d3033aae68656">sptrunsv</a>(iromb,maxwv,idrti,imaxi,jmaxi,km,nps, &amp;</div>
 <div class="line"><a name="l01070"></a><span class="lineno"> 1070</span>&#160;                     iprime,iskipi,jskipi,mi,mo,0,0,0, &amp;</div>
 <div class="line"><a name="l01071"></a><span class="lineno"> 1071</span>&#160;                     slat,xmesh,orient,ui,vi,.true.,uo,vo,uo2,vo2, &amp;</div>
 <div class="line"><a name="l01072"></a><span class="lineno"> 1072</span>&#160;                     .false.,dum,dum,dum,dum, &amp;</div>
 <div class="line"><a name="l01073"></a><span class="lineno"> 1073</span>&#160;                     .false.,dum,dum,dum,dum)</div>
 <div class="line"><a name="l01074"></a><span class="lineno"> 1074</span>&#160;             <span class="keywordflow">ELSE</span></div>
-<div class="line"><a name="l01075"></a><span class="lineno"> 1075</span>&#160;                <span class="keyword">CALL </span>sptrunsv(iromb,maxwv,idrti,imaxi,jmaxi,km,nps, &amp;</div>
+<div class="line"><a name="l01075"></a><span class="lineno"> 1075</span>&#160;                <span class="keyword">CALL </span><a class="code" href="sptrunsv_8f.html#a1373b651b9dea586e33d3033aae68656">sptrunsv</a>(iromb,maxwv,idrti,imaxi,jmaxi,km,nps, &amp;</div>
 <div class="line"><a name="l01076"></a><span class="lineno"> 1076</span>&#160;                     iprime,iskipi,jskipi,mi,mo,0,0,0, &amp;</div>
 <div class="line"><a name="l01077"></a><span class="lineno"> 1077</span>&#160;                     slat,xmesh,orient,ui,vi,.true.,uo2,vo2,uo,vo, &amp;</div>
 <div class="line"><a name="l01078"></a><span class="lineno"> 1078</span>&#160;                     .false.,dum,dum,dum,dum, &amp;</div>
@@ -855,7 +855,7 @@ $(document).ready(function(){initNavTree('spectral__interp__mod_8F90_source.html
 <div class="line"><a name="l01098"></a><span class="lineno"> 1098</span>&#160;          dlono=hi*(mod(hi*(rlon2-rlon1)-1+3600,360.)+1)/(ni-1)</div>
 <div class="line"><a name="l01099"></a><span class="lineno"> 1099</span>&#160;          dlato=hj*dy/(rerth*cos(rlati/dpr))*dpr</div>
 <div class="line"><a name="l01100"></a><span class="lineno"> 1100</span>&#160;          <span class="keywordflow">IF</span>(nscano.EQ.0) <span class="keywordflow">THEN</span></div>
-<div class="line"><a name="l01101"></a><span class="lineno"> 1101</span>&#160;             <span class="keyword">CALL </span>sptrunmv(iromb,maxwv,idrti,imaxi,jmaxi,km,ni,nj, &amp;</div>
+<div class="line"><a name="l01101"></a><span class="lineno"> 1101</span>&#160;             <span class="keyword">CALL </span><a class="code" href="sptrunmv_8f.html#a8b405d0621112d6852a3bb99602ac2fd">sptrunmv</a>(iromb,maxwv,idrti,imaxi,jmaxi,km,ni,nj, &amp;</div>
 <div class="line"><a name="l01102"></a><span class="lineno"> 1102</span>&#160;                  iprime,iskipi,jskipi,mi,mo,0,0,0, &amp;</div>
 <div class="line"><a name="l01103"></a><span class="lineno"> 1103</span>&#160;                  rlat1,rlon1,dlato,dlono,ui,vi, &amp;</div>
 <div class="line"><a name="l01104"></a><span class="lineno"> 1104</span>&#160;                  .true.,uo,vo,.false.,dum,dum,.false.,dum,dum)</div>
@@ -864,7 +864,7 @@ $(document).ready(function(){initNavTree('spectral__interp__mod_8F90_source.html
 <div class="line"><a name="l01107"></a><span class="lineno"> 1107</span>&#160;<span class="keywordflow">       ENDIF</span></div>
 <div class="line"><a name="l01108"></a><span class="lineno"> 1108</span>&#160;       <span class="comment">!  GENERAL SLOW CASE</span></div>
 <div class="line"><a name="l01109"></a><span class="lineno"> 1109</span>&#160;       <span class="keywordflow">IF</span>(ispec.EQ.0) <span class="keywordflow">THEN</span></div>
-<div class="line"><a name="l01110"></a><span class="lineno"> 1110</span>&#160;          <span class="keyword">CALL </span>sptrungv(iromb,maxwv,idrti,imaxi,jmaxi,km,no, &amp;</div>
+<div class="line"><a name="l01110"></a><span class="lineno"> 1110</span>&#160;          <span class="keyword">CALL </span><a class="code" href="sptrungv_8f.html#ab7bbe6ecde57394b15e5d4925cb07164">sptrungv</a>(iromb,maxwv,idrti,imaxi,jmaxi,km,no, &amp;</div>
 <div class="line"><a name="l01111"></a><span class="lineno"> 1111</span>&#160;               iprime,iskipi,jskipi,mi,mo,0,0,0,rlat,rlon, &amp;</div>
 <div class="line"><a name="l01112"></a><span class="lineno"> 1112</span>&#160;               ui,vi,.true.,uo,vo,.false.,x,x,.false.,x,x)</div>
 <div class="line"><a name="l01113"></a><span class="lineno"> 1113</span>&#160;          <span class="keywordflow">DO</span> k=1,km</div>
@@ -1031,7 +1031,7 @@ $(document).ready(function(){initNavTree('spectral__interp__mod_8F90_source.html
 <div class="line"><a name="l01358"></a><span class="lineno"> 1358</span>&#160;             <span class="keywordflow">IF</span>(jmo.EQ.jgo) ispec=1</div>
 <div class="line"><a name="l01359"></a><span class="lineno"> 1359</span>&#160;<span class="keywordflow">          ENDIF</span></div>
 <div class="line"><a name="l01360"></a><span class="lineno"> 1360</span>&#160;          <span class="keywordflow">IF</span>(ispec.EQ.1) <span class="keywordflow">THEN</span></div>
-<div class="line"><a name="l01361"></a><span class="lineno"> 1361</span>&#160;             <span class="keyword">CALL </span>sptrunv(iromb,maxwv,idrti,imaxi,jmaxi,idrto,imo,jmo, &amp;</div>
+<div class="line"><a name="l01361"></a><span class="lineno"> 1361</span>&#160;             <span class="keyword">CALL </span><a class="code" href="sptrunv_8f.html#a9aa39c13dd38585b3afb30cb2486817f">sptrunv</a>(iromb,maxwv,idrti,imaxi,jmaxi,idrto,imo,jmo, &amp;</div>
 <div class="line"><a name="l01362"></a><span class="lineno"> 1362</span>&#160;                  km,iprime,iskipi,jskipi,mi,0,0,mo,0,ui,vi, &amp;</div>
 <div class="line"><a name="l01363"></a><span class="lineno"> 1363</span>&#160;                  .true.,uo,vo,.false.,dum,dum,.false.,dum,dum)</div>
 <div class="line"><a name="l01364"></a><span class="lineno"> 1364</span>&#160;<span class="keywordflow">          ENDIF</span></div>
@@ -1054,13 +1054,13 @@ $(document).ready(function(){initNavTree('spectral__interp__mod_8F90_source.html
 <div class="line"><a name="l01381"></a><span class="lineno"> 1381</span>&#160;          yp=1+cos((rlon1-orient)/dpr)*dr/xmesh</div>
 <div class="line"><a name="l01382"></a><span class="lineno"> 1382</span>&#160;          <span class="keywordflow">IF</span>(nint(xp).EQ.ip.AND.nint(yp).EQ.ip) <span class="keywordflow">THEN</span></div>
 <div class="line"><a name="l01383"></a><span class="lineno"> 1383</span>&#160;             <span class="keywordflow">IF</span>(iproj.EQ.0) <span class="keywordflow">THEN</span></div>
-<div class="line"><a name="l01384"></a><span class="lineno"> 1384</span>&#160;                <span class="keyword">CALL </span>sptrunsv(iromb,maxwv,idrti,imaxi,jmaxi,km,nps, &amp;</div>
+<div class="line"><a name="l01384"></a><span class="lineno"> 1384</span>&#160;                <span class="keyword">CALL </span><a class="code" href="sptrunsv_8f.html#a1373b651b9dea586e33d3033aae68656">sptrunsv</a>(iromb,maxwv,idrti,imaxi,jmaxi,km,nps, &amp;</div>
 <div class="line"><a name="l01385"></a><span class="lineno"> 1385</span>&#160;                     iprime,iskipi,jskipi,mi,mo,0,0,0, &amp;</div>
 <div class="line"><a name="l01386"></a><span class="lineno"> 1386</span>&#160;                     60.,xmesh,orient,ui,vi,.true.,uo,vo,uo2,vo2, &amp;</div>
 <div class="line"><a name="l01387"></a><span class="lineno"> 1387</span>&#160;                     .false.,dum,dum,dum,dum, &amp;</div>
 <div class="line"><a name="l01388"></a><span class="lineno"> 1388</span>&#160;                     .false.,dum,dum,dum,dum)</div>
 <div class="line"><a name="l01389"></a><span class="lineno"> 1389</span>&#160;             <span class="keywordflow">ELSE</span></div>
-<div class="line"><a name="l01390"></a><span class="lineno"> 1390</span>&#160;                <span class="keyword">CALL </span>sptrunsv(iromb,maxwv,idrti,imaxi,jmaxi,km,nps, &amp;</div>
+<div class="line"><a name="l01390"></a><span class="lineno"> 1390</span>&#160;                <span class="keyword">CALL </span><a class="code" href="sptrunsv_8f.html#a1373b651b9dea586e33d3033aae68656">sptrunsv</a>(iromb,maxwv,idrti,imaxi,jmaxi,km,nps, &amp;</div>
 <div class="line"><a name="l01391"></a><span class="lineno"> 1391</span>&#160;                     iprime,iskipi,jskipi,mi,mo,0,0,0, &amp;</div>
 <div class="line"><a name="l01392"></a><span class="lineno"> 1392</span>&#160;                     60.,xmesh,orient,ui,vi,.true.,uo2,vo2,uo,vo, &amp;</div>
 <div class="line"><a name="l01393"></a><span class="lineno"> 1393</span>&#160;                     .false.,dum,dum,dum,dum, &amp;</div>
@@ -1085,7 +1085,7 @@ $(document).ready(function(){initNavTree('spectral__interp__mod_8F90_source.html
 <div class="line"><a name="l01412"></a><span class="lineno"> 1412</span>&#160;          dlono=hi*(mod(hi*(rlon2-rlon1)-1+3600,360.)+1)/(ni-1)</div>
 <div class="line"><a name="l01413"></a><span class="lineno"> 1413</span>&#160;          dlato=hj*dy/(rerth*cos(rlati/dpr))*dpr</div>
 <div class="line"><a name="l01414"></a><span class="lineno"> 1414</span>&#160;          <span class="keywordflow">IF</span>(nscano.EQ.0) <span class="keywordflow">THEN</span></div>
-<div class="line"><a name="l01415"></a><span class="lineno"> 1415</span>&#160;             <span class="keyword">CALL </span>sptrunmv(iromb,maxwv,idrti,imaxi,jmaxi,km,ni,nj, &amp;</div>
+<div class="line"><a name="l01415"></a><span class="lineno"> 1415</span>&#160;             <span class="keyword">CALL </span><a class="code" href="sptrunmv_8f.html#a8b405d0621112d6852a3bb99602ac2fd">sptrunmv</a>(iromb,maxwv,idrti,imaxi,jmaxi,km,ni,nj, &amp;</div>
 <div class="line"><a name="l01416"></a><span class="lineno"> 1416</span>&#160;                  iprime,iskipi,jskipi,mi,mo,0,0,0, &amp;</div>
 <div class="line"><a name="l01417"></a><span class="lineno"> 1417</span>&#160;                  rlat1,rlon1,dlato,dlono,ui,vi, &amp;</div>
 <div class="line"><a name="l01418"></a><span class="lineno"> 1418</span>&#160;                  .true.,uo,vo,.false.,dum,dum,.false.,dum,dum)</div>
@@ -1094,7 +1094,7 @@ $(document).ready(function(){initNavTree('spectral__interp__mod_8F90_source.html
 <div class="line"><a name="l01421"></a><span class="lineno"> 1421</span>&#160;<span class="keywordflow">       ENDIF</span></div>
 <div class="line"><a name="l01422"></a><span class="lineno"> 1422</span>&#160;       <span class="comment">!  GENERAL SLOW CASE</span></div>
 <div class="line"><a name="l01423"></a><span class="lineno"> 1423</span>&#160;       <span class="keywordflow">IF</span>(ispec.EQ.0) <span class="keywordflow">THEN</span></div>
-<div class="line"><a name="l01424"></a><span class="lineno"> 1424</span>&#160;          <span class="keyword">CALL </span>sptrungv(iromb,maxwv,idrti,imaxi,jmaxi,km,no, &amp;</div>
+<div class="line"><a name="l01424"></a><span class="lineno"> 1424</span>&#160;          <span class="keyword">CALL </span><a class="code" href="sptrungv_8f.html#ab7bbe6ecde57394b15e5d4925cb07164">sptrungv</a>(iromb,maxwv,idrti,imaxi,jmaxi,km,no, &amp;</div>
 <div class="line"><a name="l01425"></a><span class="lineno"> 1425</span>&#160;               iprime,iskipi,jskipi,mi,mo,0,0,0,rlat,rlon, &amp;</div>
 <div class="line"><a name="l01426"></a><span class="lineno"> 1426</span>&#160;               ui,vi,.true.,uo,vo,.false.,x,x,.false.,x,x)</div>
 <div class="line"><a name="l01427"></a><span class="lineno"> 1427</span>&#160;          <span class="keywordflow">DO</span> k=1,km</div>
@@ -1139,6 +1139,14 @@ $(document).ready(function(){initNavTree('spectral__interp__mod_8F90_source.html
 <div class="ttc" id="anamespacespectral__interp__mod_html_ab9fb87d87f2f9d578a5ade6b512ff366"><div class="ttname"><a href="namespacespectral__interp__mod.html#ab9fb87d87f2f9d578a5ade6b512ff366">spectral_interp_mod::polates4_grib1</a></div><div class="ttdeci">subroutine polates4_grib1(IPOPT, KGDSI, KGDSO, MI, MO, KM, IBI, GI, NO, RLAT, RLON, IBO, LO, GO, IRET)</div><div class="ttdoc">Interpolate scalar fields (spectral).</div><div class="ttdef"><b>Definition:</b> <a href="spectral__interp__mod_8F90_source.html#l00559">spectral_interp_mod.F90:561</a></div></div>
 <div class="ttc" id="anamespacespectral__interp__mod_html_acb61ad529b7decc2a6ff58dd12fbadd0"><div class="ttname"><a href="namespacespectral__interp__mod.html#acb61ad529b7decc2a6ff58dd12fbadd0">spectral_interp_mod::interpolate_spectral_vector</a></div><div class="ttdeci">subroutine interpolate_spectral_vector(IPOPT, grid_in, grid_out, MI, MO, KM, IBI, UI, VI, NO, RLAT, RLON, CROT, SROT, IBO, LO, UO, VO, IRET)</div><div class="ttdoc">Interpolate spectral vector.</div><div class="ttdef"><b>Definition:</b> <a href="spectral__interp__mod_8F90_source.html#l00121">spectral_interp_mod.F90:124</a></div></div>
 <div class="ttc" id="anamespacespectral__interp__mod_html_af4ce7638750e787dd69c7fe3ff2335cc"><div class="ttname"><a href="namespacespectral__interp__mod.html#af4ce7638750e787dd69c7fe3ff2335cc">spectral_interp_mod::polatev4_grib1</a></div><div class="ttdeci">subroutine polatev4_grib1(IPOPT, KGDSI, KGDSO, MI, MO, KM, IBI, UI, VI, NO, RLAT, RLON, CROT, SROT, IBO, LO, UO, VO, IRET)</div><div class="ttdoc">Interpolate vector fields (spectral).</div><div class="ttdef"><b>Definition:</b> <a href="spectral__interp__mod_8F90_source.html#l01221">spectral_interp_mod.F90:1223</a></div></div>
+<div class="ttc" id="asptrun_8f_html_a1f04574fbd5018f73b68bd2cd0ffc473"><div class="ttname"><a href="sptrun_8f.html#a1f04574fbd5018f73b68bd2cd0ffc473">sptrun</a></div><div class="ttdeci">subroutine sptrun(IROMB, MAXWV, IDRTI, IMAXI, JMAXI, IDRTO, IMAXO, JMAXO, KMAX, IPRIME, ISKIPI, JSKIPI, KSKIPI, ISKIPO, JSKIPO, KSKIPO, JCPU, GRIDI, GRIDO)</div><div class="ttdoc">This subprogram spectrally truncates scalar fields on a global cylindrical grid, returning the fields...</div><div class="ttdef"><b>Definition:</b> <a href="sptrun_8f_source.html#l00055">sptrun.f:58</a></div></div>
+<div class="ttc" id="asptrung_8f_html_af41b64dad4789617a315515ef885912c"><div class="ttname"><a href="sptrung_8f.html#af41b64dad4789617a315515ef885912c">sptrung</a></div><div class="ttdeci">subroutine sptrung(IROMB, MAXWV, IDRTI, IMAXI, JMAXI, KMAX, NMAX, IPRIME, ISKIPI, JSKIPI, KSKIPI, KGSKIP, NRSKIP, NGSKIP, JCPU, RLAT, RLON, GRIDI, GP)</div><div class="ttdoc">This subprogram spectrally truncates scalar fields on a global cylindrical grid, returning the fields...</div><div class="ttdef"><b>Definition:</b> <a href="sptrung_8f_source.html#l00065">sptrung.f:68</a></div></div>
+<div class="ttc" id="asptrungv_8f_html_ab7bbe6ecde57394b15e5d4925cb07164"><div class="ttname"><a href="sptrungv_8f.html#ab7bbe6ecde57394b15e5d4925cb07164">sptrungv</a></div><div class="ttdeci">subroutine sptrungv(IROMB, MAXWV, IDRTI, IMAXI, JMAXI, KMAX, NMAX, IPRIME, ISKIPI, JSKIPI, KSKIPI, KGSKIP, NRSKIP, NGSKIP, JCPU, RLAT, RLON, GRIDUI, GRIDVI, LUV, UP, VP, LDZ, DP, ZP, LPS, PP, SP)</div><div class="ttdoc">THIS SUBPROGRAM SPECTRALLY TRUNCATES VECTORS FIELDS ON A GLOBAL CYLINDRICAL GRID, RETURNING THE FIELD...</div><div class="ttdef"><b>Definition:</b> <a href="sptrungv_8f_source.html#l00081">sptrungv.f:85</a></div></div>
+<div class="ttc" id="asptrunm_8f_html_a2a4e579890d3cf7f6a26091f544b6cb6"><div class="ttname"><a href="sptrunm_8f.html#a2a4e579890d3cf7f6a26091f544b6cb6">sptrunm</a></div><div class="ttdeci">subroutine sptrunm(IROMB, MAXWV, IDRTI, IMAXI, JMAXI, KMAX, MI, MJ, IPRIME, ISKIPI, JSKIPI, KSKIPI, KGSKIP, NISKIP, NJSKIP, JCPU, RLAT1, RLON1, DLAT, DLON, GRIDI, GM)</div><div class="ttdoc">This subprogram spectrally truncates scalar fields on a global cylindrical grid, returning the fields...</div><div class="ttdef"><b>Definition:</b> <a href="sptrunm_8f_source.html#l00076">sptrunm.f:80</a></div></div>
+<div class="ttc" id="asptrunmv_8f_html_a8b405d0621112d6852a3bb99602ac2fd"><div class="ttname"><a href="sptrunmv_8f.html#a8b405d0621112d6852a3bb99602ac2fd">sptrunmv</a></div><div class="ttdeci">subroutine sptrunmv(IROMB, MAXWV, IDRTI, IMAXI, JMAXI, KMAX, MI, MJ, IPRIME, ISKIPI, JSKIPI, KSKIPI, KGSKIP, NISKIP, NJSKIP, JCPU, RLAT1, RLON1, DLAT, DLON, GRIDUI, GRIDVI, LUV, UM, VM, LDZ, DM, ZM, LPS, PM, SM)</div><div class="ttdoc">THIS SUBPROGRAM SPECTRALLY TRUNCATES VECTOR FIELDS ON A GLOBAL CYLINDRICAL GRID, RETURNING THE FIELDS...</div><div class="ttdef"><b>Definition:</b> <a href="sptrunmv_8f_source.html#l00092">sptrunmv.f:96</a></div></div>
+<div class="ttc" id="asptruns_8f_html_a34f156e2049105d012e445f8aa215444"><div class="ttname"><a href="sptruns_8f.html#a34f156e2049105d012e445f8aa215444">sptruns</a></div><div class="ttdeci">subroutine sptruns(IROMB, MAXWV, IDRTI, IMAXI, JMAXI, KMAX, NPS, IPRIME, ISKIPI, JSKIPI, KSKIPI, KGSKIP, NISKIP, NJSKIP, JCPU, TRUE, XMESH, ORIENT, GRIDI, GN, GS)</div><div class="ttdoc">This subprogram spectrally truncates scalar fields on a global cylindrical grid, returning the fields...</div><div class="ttdef"><b>Definition:</b> <a href="sptruns_8f_source.html#l00071">sptruns.f:75</a></div></div>
+<div class="ttc" id="asptrunsv_8f_html_a1373b651b9dea586e33d3033aae68656"><div class="ttname"><a href="sptrunsv_8f.html#a1373b651b9dea586e33d3033aae68656">sptrunsv</a></div><div class="ttdeci">subroutine sptrunsv(IROMB, MAXWV, IDRTI, IMAXI, JMAXI, KMAX, NPS, IPRIME, ISKIPI, JSKIPI, KSKIPI, KGSKIP, NISKIP, NJSKIP, JCPU, TRUE, XMESH, ORIENT, GRIDUI, GRIDVI, LUV, UN, VN, US, VS, LDZ, DN, ZN, DS, ZS, LPS, PN, SN, PS, SS)</div><div class="ttdoc">This subprogram spectrally truncates vector fields on a global cylindrical grid, returning the fields...</div><div class="ttdef"><b>Definition:</b> <a href="sptrunsv_8f_source.html#l00088">sptrunsv.f:94</a></div></div>
+<div class="ttc" id="asptrunv_8f_html_a9aa39c13dd38585b3afb30cb2486817f"><div class="ttname"><a href="sptrunv_8f.html#a9aa39c13dd38585b3afb30cb2486817f">sptrunv</a></div><div class="ttdeci">subroutine sptrunv(IROMB, MAXWV, IDRTI, IMAXI, JMAXI, IDRTO, IMAXO, JMAXO, KMAX, IPRIME, ISKIPI, JSKIPI, KSKIPI, ISKIPO, JSKIPO, KSKIPO, JCPU, GRIDUI, GRIDVI, LUV, GRIDUO, GRIDVO, LDZ, GRIDDO, GRIDZO, LPS, GRIDPO, GRIDSO)</div><div class="ttdoc">This subprogram spectrally truncates vector fields on a global cylindrical grid, returning the fields...</div><div class="ttdef"><b>Definition:</b> <a href="sptrunv_8f_source.html#l00090">sptrunv.f:96</a></div></div>
 <div class="ttc" id="astructip__grid__descriptor__mod_1_1grib1__descriptor_html"><div class="ttname"><a href="structip__grid__descriptor__mod_1_1grib1__descriptor.html">ip_grid_descriptor_mod::grib1_descriptor</a></div><div class="ttdoc">Descriptor representing a grib1 grib descriptor section (GDS) with an integer array.</div><div class="ttdef"><b>Definition:</b> <a href="ip__grid__descriptor__mod_8F90_source.html#l00038">ip_grid_descriptor_mod.F90:38</a></div></div>
 <div class="ttc" id="astructip__grid__descriptor__mod_1_1grib2__descriptor_html"><div class="ttname"><a href="structip__grid__descriptor__mod_1_1grib2__descriptor.html">ip_grid_descriptor_mod::grib2_descriptor</a></div><div class="ttdoc">Grib-2 descriptor containing a grib2 GDT represented by an integer array.</div><div class="ttdef"><b>Definition:</b> <a href="ip__grid__descriptor__mod_8F90_source.html#l00047">ip_grid_descriptor_mod.F90:47</a></div></div>
 <div class="ttc" id="astructip__grid__mod_1_1ip__grid_html"><div class="ttname"><a href="structip__grid__mod_1_1ip__grid.html">ip_grid_mod::ip_grid</a></div><div class="ttdoc">Abstract grid that holds fields and methods common to all grids.</div><div class="ttdef"><b>Definition:</b> <a href="ip__grid__mod_8F90_source.html#l00052">ip_grid_mod.F90:52</a></div></div>

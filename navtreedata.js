@@ -25,21 +25,28 @@
 var NAVTREE =
 [
   [ "NCEPLIBS-ip", "index.html", [
-    [ "Modules", "namespaces.html", [
-      [ "Introduction", "index.html#autotoc_md0", null ],
+    [ "Introduction", "index.html", [
       [ "Interpolation", "index.html#autotoc_md1", [
-        [ "Bilinear Interpolation", "index.html#autotoc_md2", null ],
-        [ "Bicubic Interpolation", "index.html#autotoc_md3", null ],
-        [ "Neighbor Interpolation", "index.html#autotoc_md4", null ],
-        [ "Budget interpolation", "index.html#autotoc_md5", null ],
-        [ "Spectral Interpolation", "index.html#autotoc_md6", null ],
-        [ "Neighbor-Budget Interpolation", "index.html#autotoc_md7", null ]
+        [ "Interpolation Methods", "index.html#autotoc_md2", [
+          [ "Bilinear Interpolation Method", "index.html#autotoc_md3", null ],
+          [ "Bicubic Interpolation Method", "index.html#autotoc_md4", null ],
+          [ "Neighbor Interpolation Method", "index.html#autotoc_md5", null ],
+          [ "Budget Interpolation Method", "index.html#autotoc_md6", null ],
+          [ "Spectral Interpolation Method", "index.html#autotoc_md7", null ],
+          [ "Neighbor-Budget Interpolation Method", "index.html#autotoc_md8", null ]
+        ] ],
+        [ "Vectors and Scalars", "index.html#autotoc_md9", null ],
+        [ "Grids", "index.html#autotoc_md10", null ],
+        [ "Return Codes", "index.html#autotoc_md11", null ],
+        [ "Entry point list: interpolation", "index.html#autotoc_md12", null ]
       ] ],
-      [ "Vectors and Scalars", "index.html#autotoc_md8", null ],
-      [ "Grids", "index.html#autotoc_md9", null ],
-      [ "Return Codes", "index.html#autotoc_md10", null ],
-      [ "Entry point list", "index.html#autotoc_md11", null ],
-      [ "How to invoke ip2lib: examples", "index.html#autotoc_md12", null ],
+      [ "Spectral Transformation & Processing", "index.html#autotoc_md13", [
+        [ "Entry Point List: Spectral Interpolation & Transformation", "index.html#autotoc_md14", null ]
+      ] ],
+      [ "Examples: Interpolation Routines", "index.html#autotoc_md15", null ],
+      [ "Examples: Spectral Processing & Transformation", "index.html#autotoc_md16", null ]
+    ] ],
+    [ "Modules", "namespaces.html", [
       [ "Modules List", "namespaces.html", "namespaces_dup" ],
       [ "Module Members", "namespacemembers.html", [
         [ "All", "namespacemembers.html", null ],
@@ -69,9 +76,9 @@ var NAVTREE =
 var NAVTREEINDEX =
 [
 "annotated.html",
-"ip__rot__equid__cylind__grid__mod_8F90.html#ab43075e39d4e2dde4110e608931a392d",
-"namespacespectral__interp__mod.html#acb61ad529b7decc2a6ff58dd12fbadd0",
-"structip__station__points__grid__mod_1_1ip__station__points__grid.html#a69fac68e7a40d5c3106a47bf1851891e"
+"ip__rot__equid__cylind__egrid__mod_8F90.html#a134acf8ab7f40ff49ce8e03daad900e6",
+"namespaceip__station__points__grid__mod.html#a8da297b45242279a497dbd7062a33197",
+"structip__gaussian__grid__mod_1_1ip__gaussian__grid.html#a3794a22c4866631c6b5bc6a8871e3e44"
 ];
 
 var SYNCONMSG = 'click to disable panel synchronisation';
