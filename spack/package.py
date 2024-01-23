@@ -55,6 +55,12 @@ class Ip(CMakePackage):
         when="@5.0:",
     )
 
+    depends_on("sp", when="@:4")
+    depends_on("sp@:2.3.3", when="@:4.0")
+    depends_on("sp precision=4", when="@4.1:4 precision=4")
+    depends_on("sp precision=d", when="@4.1:4 precision=d")
+    depends_on("sp precision=8", when="@4.1:4 precision=8")
+
     def cmake_args(self):
         args = [
             self.define_from_variant("OPENMP", "openmp"),
