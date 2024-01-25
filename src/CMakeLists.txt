@@ -26,9 +26,24 @@ if(BUILD_DEPRECATED)
   sptgpsd.f sptgptd.f sptgptsd.f sptgptvd.f sptrund.f sptrunl.f spvar.f)
 endif()
 
-set_source_files_properties(fftpack.F PROPERTIES COMPILE_FLAGS -fcheck=no-bounds)
-set_source_files_properties(sptranf.f PROPERTIES COMPILE_FLAGS -fcheck=no-bounds)
-set_source_files_properties(sptranfv.f PROPERTIES COMPILE_FLAGS -fcheck=no-bounds)
+# Set compiler flags.
+if(CMAKE_BUILD_TYPE MATCHES "Debug")
+  # Bounds checking is turned on for all files for the "Debug" build in the
+  # main CMakeLists.txt.
+  # Need to turn off bounds checking for fftpack.F, sptranf.f, and sptranfv.f
+  # in order to pass tests.
+  foreach(filename fftpack.F sptranf.f sptranfv.f)
+    if(CMAKE_Fortran_COMPILER_ID MATCHES "^(Intel|IntelLLVM)$")
+      set_source_files_properties(${filename} PROPERTIES COMPILE_FLAGS -check=nobounds)
+    elseif(CMAKE_Fortran_COMPILER_ID MATCHES "^(GNU)$")
+      if(${CMAKE_Fortran_COMPILER_VERSION} VERSION_GREATER_EQUAL 6)
+        set_source_files_properties(${filename} PROPERTIES COMPILE_FLAGS -fcheck=no-bounds)
+      else()
+        set_source_files_properties(${filename} PROPERTIES COMPILE_FLAGS -fno-bounds-check)
+      endif()
+    endif()
+  endforeach()
+endif()
 
 # Build _4, _d, and/or _8 depending on options provided to CMake
 foreach(kind ${kinds})
