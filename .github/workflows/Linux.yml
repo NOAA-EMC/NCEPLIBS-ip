@@ -33,6 +33,7 @@ jobs:
 
     - name: build
       run: |
+        sudo apt install libopenblas-dev
         cd ip
         mkdir build 
         cd build
