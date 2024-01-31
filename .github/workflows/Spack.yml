@@ -48,7 +48,7 @@ jobs:
         spack config add "packages:lapack:buildable:false"
         spack concretize
         # Run installation and run CTest suite
-        spack install --verbose --fail-fast --test root
+        spack install --fail-fast --test root
         # Run 'spack load' and check that key build options were respected
         spack load ip
         if [[ "${{ matrix.variants }}" =~ "+shared" ]]; then suffix="so" ; else suffix="a"; fi
