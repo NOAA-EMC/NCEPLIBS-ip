@@ -13,6 +13,8 @@ if(@OPENMP@)
   find_dependency(OpenMP COMPONENTS Fortran)
 endif()
 
+find_dependency(LAPACK)
+
 # The target name needs to be one that's built, even if the dependent
 # build does not use that version.
 if(@BUILD_4@)
