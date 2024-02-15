@@ -37,10 +37,10 @@ jobs:
         cd ip
         mkdir build 
         cd build
-        cmake -DCMAKE_PREFIX_PATH="~/" -DOPENMP=${{ matrix.openmp }} ${{ matrix.options }} -DCMAKE_INSTALL_PREFIX=~/install ..
+        cmake -DCMAKE_PREFIX_PATH="~/" -DOPENMP=${{ matrix.openmp }} ${{ matrix.options }} -DCMAKE_INSTALL_PREFIX=~/install -DBLA_VENDOR=OpenBLAS ..
         make -j2 VERBOSE=1
         make install
-        cat ~/install/lib/cmake/ip/ip-config.cmake
+        # Ensure that manual setting of '-DBLA_VENDOR=...' is reflected in output CMake config
         if [ $(grep -c "BLA_VENDOR OpenBLAS" ~/install/lib/cmake/ip/ip-config.cmake) -eq 0 ]; then
           echo "OpenBLAS not set as BLA_VENDOR in ip-config.cmake!"
           exit 1
