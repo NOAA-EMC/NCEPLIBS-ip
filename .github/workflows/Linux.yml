@@ -33,7 +33,7 @@ jobs:
 
     - name: build
       run: |
-        sudo apt install libopenblas-dev
+        sudo apt install libopenblas-serial-dev
         cd ip
         mkdir build 
         cd build
