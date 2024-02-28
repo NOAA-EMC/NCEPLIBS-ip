@@ -90,7 +90,7 @@ C> @author Iredell @date 96-02-29
       REAL CLAT(JB:JE),SLAT(JB:JE),WLAT(JB:JE)
       REAL PLN((MAXWV+1)*((IROMB+1)*MAXWV+2)/2,JB:JE)
       REAL PLNTOP(MAXWV+1,JB:JE)
-      INTEGER MP(2)
+      INTEGER MP
       REAL W((MAXWV+1)*((IROMB+1)*MAXWV+2)/2*2,2)
       REAL WTOP(2*(MAXWV+1),2)
       REAL G(IMAX,2,2)

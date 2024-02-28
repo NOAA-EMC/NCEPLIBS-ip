@@ -16,6 +16,7 @@ module ip_gaussian_grid_mod
   use ip_grid_mod
   use earth_radius_mod
   use ip_constants_mod
+  use sp_mod
   implicit none
 
   private

@@ -74,7 +74,7 @@ C>   JMAX (IDRT=256,IROMB=1)      |4*MAXWV+1           |5*MAXWV/2*2+1
      &                   ISKIPO,JSKIPO,KSKIPO,JCPU,GRID,
      &                   GRIDMN,GRIDX,GRIDY)
 
-      REAL GRID(*),GRIDX(*),GRIDY(*)
+      REAL GRID(*),GRIDX(*),GRIDY(*),GRIDMN(*)
       REAL W((MAXWV+1)*((IROMB+1)*MAXWV+2)/2*2+1,KMAX)
 C - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 C  TRANSFORM INPUT GRID TO WAVE

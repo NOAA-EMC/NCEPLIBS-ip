@@ -11,6 +11,7 @@ module spectral_interp_mod
   use ip_grid_descriptor_mod
   use ip_grid_factory_mod
   use earth_radius_mod
+  use sp_mod
   implicit none
 
   private
@@ -916,11 +917,11 @@ contains
     INTEGER                         :: K, MAXWV, N, NI, NJ, NPS
     !
     REAL                            :: DLAT, DLON, DLATO, DLONO, DE, DR, DY
-    REAL                            :: DUM, E2, H, HI, HJ
+    REAL                            :: DUM, E2, H, HI, HJ, DUMM(1)
     REAL                            :: ORIENT, RERTH, SLAT
     REAL                            :: RLAT1, RLON1, RLAT2, RLON2, RLATI
     REAL                            :: UROT, VROT, UO2(MO,KM),VO2(MO,KM)
-    REAL                            :: XMESH, X, XP, YP, XPTS(MO),YPTS(MO)
+    REAL                            :: XMESH, XP, YP, XPTS(MO),YPTS(MO)
 
     type(grib2_descriptor) :: desc_in, desc_out
     class(ip_grid), allocatable :: grid_in, grid_out
@@ -1043,7 +1044,7 @@ contains
           IF(ISPEC.EQ.1) THEN
              CALL SPTRUNV(IROMB,MAXWV,IDRTI,IMAXI,JMAXI,IDRTO,IMO,JMO, &
                   KM,IPRIME,ISKIPI,JSKIPI,MI,0,0,MO,0,UI,VI, &
-                  .TRUE.,UO,VO,.FALSE.,DUM,DUM,.FALSE.,DUM,DUM)
+                  .TRUE.,UO,VO,.FALSE.,DUMM,DUMM,.FALSE.,DUMM,DUMM)
           ENDIF
           !  SPECIAL CASE OF POLAR STEREOGRAPHIC GRID
        ELSEIF(IGDTNUMO.EQ.20.AND. &
@@ -1069,14 +1070,14 @@ contains
                 CALL SPTRUNSV(IROMB,MAXWV,IDRTI,IMAXI,JMAXI,KM,NPS, &
                      IPRIME,ISKIPI,JSKIPI,MI,MO,0,0,0, &
                      SLAT,XMESH,ORIENT,UI,VI,.TRUE.,UO,VO,UO2,VO2, &
-                     .FALSE.,DUM,DUM,DUM,DUM, &
-                     .FALSE.,DUM,DUM,DUM,DUM)
+                     .FALSE.,DUMM,DUMM,DUMM,DUMM, &
+                     .FALSE.,DUMM,DUMM,DUMM,DUMM)
              ELSE
                 CALL SPTRUNSV(IROMB,MAXWV,IDRTI,IMAXI,JMAXI,KM,NPS, &
                      IPRIME,ISKIPI,JSKIPI,MI,MO,0,0,0, &
                      SLAT,XMESH,ORIENT,UI,VI,.TRUE.,UO2,VO2,UO,VO, &
-                     .FALSE.,DUM,DUM,DUM,DUM, &
-                     .FALSE.,DUM,DUM,DUM,DUM)
+                     .FALSE.,DUMM,DUMM,DUMM,DUMM, &
+                     .FALSE.,DUMM,DUMM,DUMM,DUMM)
              ENDIF
              ISPEC=1
           ENDIF
@@ -1101,7 +1102,7 @@ contains
              CALL SPTRUNMV(IROMB,MAXWV,IDRTI,IMAXI,JMAXI,KM,NI,NJ, &
                   IPRIME,ISKIPI,JSKIPI,MI,MO,0,0,0, &
                   RLAT1,RLON1,DLATO,DLONO,UI,VI, &
-                  .TRUE.,UO,VO,.FALSE.,DUM,DUM,.FALSE.,DUM,DUM)
+                  .TRUE.,UO,VO,.FALSE.,DUMM,DUMM,.FALSE.,DUMM,DUMM)
              ISPEC=1
           ENDIF
        ENDIF
@@ -1109,7 +1110,7 @@ contains
        IF(ISPEC.EQ.0) THEN
           CALL SPTRUNGV(IROMB,MAXWV,IDRTI,IMAXI,JMAXI,KM,NO, &
                IPRIME,ISKIPI,JSKIPI,MI,MO,0,0,0,RLAT,RLON, &
-               UI,VI,.TRUE.,UO,VO,.FALSE.,X,X,.FALSE.,X,X)
+               UI,VI,.TRUE.,UO,VO,.FALSE.,DUMM,DUMM,.FALSE.,DUMM,DUMM)
           DO K=1,KM
              IBO(K)=0
              DO N=1,NO
@@ -1246,11 +1247,11 @@ contains
     INTEGER                         :: K, MAXWV, N, NI, NJ, NO, NPS
     !
     REAL                            :: DLAT, DLON, DLATO, DLONO, DE, DR, DY
-    REAL                            :: DUM, H, HI, HJ
+    REAL                            :: DUM, H, HI, HJ, DUMM(1)
     REAL                            :: ORIENT
     REAL                            :: RLAT1, RLON1, RLAT2, RLON2, RLATI
     REAL                            :: UROT, VROT, UO2(MO,KM),VO2(MO,KM)
-    REAL                            :: XMESH, X, XP, YP, XPTS(MO),YPTS(MO)
+    REAL                            :: XMESH, XP, YP, XPTS(MO),YPTS(MO)
 
     type(grib1_descriptor) :: desc_in, desc_out
     class(ip_grid), allocatable :: grid_in, grid_out
@@ -1360,7 +1361,7 @@ contains
           IF(ISPEC.EQ.1) THEN
              CALL SPTRUNV(IROMB,MAXWV,IDRTI,IMAXI,JMAXI,IDRTO,IMO,JMO, &
                   KM,IPRIME,ISKIPI,JSKIPI,MI,0,0,MO,0,UI,VI, &
-                  .TRUE.,UO,VO,.FALSE.,DUM,DUM,.FALSE.,DUM,DUM)
+                  .TRUE.,UO,VO,.FALSE.,DUMM,DUMM,.FALSE.,DUMM,DUMM)
           ENDIF
           !  SPECIAL CASE OF POLAR STEREOGRAPHIC GRID
        ELSEIF(KGDSO(1).EQ.5.AND. &
@@ -1384,14 +1385,14 @@ contains
                 CALL SPTRUNSV(IROMB,MAXWV,IDRTI,IMAXI,JMAXI,KM,NPS, &
                      IPRIME,ISKIPI,JSKIPI,MI,MO,0,0,0, &
                      60.,XMESH,ORIENT,UI,VI,.TRUE.,UO,VO,UO2,VO2, &
-                     .FALSE.,DUM,DUM,DUM,DUM, &
-                     .FALSE.,DUM,DUM,DUM,DUM)
+                     .FALSE.,DUMM,DUMM,DUMM,DUMM, &
+                     .FALSE.,DUMM,DUMM,DUMM,DUMM)
              ELSE
                 CALL SPTRUNSV(IROMB,MAXWV,IDRTI,IMAXI,JMAXI,KM,NPS, &
                      IPRIME,ISKIPI,JSKIPI,MI,MO,0,0,0, &
                      60.,XMESH,ORIENT,UI,VI,.TRUE.,UO2,VO2,UO,VO, &
-                     .FALSE.,DUM,DUM,DUM,DUM, &
-                     .FALSE.,DUM,DUM,DUM,DUM)
+                     .FALSE.,DUMM,DUMM,DUMM,DUMM, &
+                     .FALSE.,DUMM,DUMM,DUMM,DUMM)
              ENDIF
              ISPEC=1
           ENDIF
@@ -1415,7 +1416,7 @@ contains
              CALL SPTRUNMV(IROMB,MAXWV,IDRTI,IMAXI,JMAXI,KM,NI,NJ, &
                   IPRIME,ISKIPI,JSKIPI,MI,MO,0,0,0, &
                   RLAT1,RLON1,DLATO,DLONO,UI,VI, &
-                  .TRUE.,UO,VO,.FALSE.,DUM,DUM,.FALSE.,DUM,DUM)
+                  .TRUE.,UO,VO,.FALSE.,DUMM,DUMM,.FALSE.,DUMM,DUMM)
              ISPEC=1
           ENDIF
        ENDIF
@@ -1423,7 +1424,7 @@ contains
        IF(ISPEC.EQ.0) THEN
           CALL SPTRUNGV(IROMB,MAXWV,IDRTI,IMAXI,JMAXI,KM,NO, &
                IPRIME,ISKIPI,JSKIPI,MI,MO,0,0,0,RLAT,RLON, &
-               UI,VI,.TRUE.,UO,VO,.FALSE.,X,X,.FALSE.,X,X)
+               UI,VI,.TRUE.,UO,VO,.FALSE.,DUMM,DUMM,.FALSE.,DUMM,DUMM)
           DO K=1,KM
              IBO(K)=0
              DO N=1,NO

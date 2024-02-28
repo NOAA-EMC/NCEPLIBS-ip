@@ -4,9 +4,11 @@
 !
 ! Kyle Gerheiser
 program test_ncpus
+  use sp_mod
+
   implicit none
 
-  integer :: n, ncpus
+  integer :: n
 
   n = ncpus()
 #ifndef OPENMP

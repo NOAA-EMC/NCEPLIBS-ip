@@ -33,6 +33,7 @@ C> @author Iredell @date 96-02-20
         IMPLICIT NONE
         INTEGER,INTENT(IN):: IMAX,INCW,INCG,KMAX,IDIR
         COMPLEX,INTENT(INOUT):: W(INCW,KMAX)
+        REAL:: WREAL(INCW,KMAX)
         REAL,INTENT(INOUT):: G(INCG,KMAX)
         REAL:: AUX1(25000+INT(0.82*IMAX))
         REAL:: AUX2(20000+INT(0.57*IMAX))
@@ -40,20 +41,22 @@ C> @author Iredell @date 96-02-20
 C - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
         NAUX1=25000+INT(0.82*IMAX)
         NAUX2=20000+INT(0.57*IMAX)
+        WREAL=REAL(W)
 C - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 C  FOURIER TO PHYSICAL TRANSFORM.
         SELECT CASE(IDIR)
           CASE(1:)
-            CALL SCRFT(1,W,INCW,G,INCG,IMAX,KMAX,-1,1.,
+            CALL SCRFT(1,REAL(W),INCW,G,INCG,IMAX,KMAX,-1,1.,
      &                 AUX1,NAUX1,AUX2,NAUX2,0.,0)
-            CALL SCRFT(0,W,INCW,G,INCG,IMAX,KMAX,-1,1.,
+            CALL SCRFT(0,REAL(W),INCW,G,INCG,IMAX,KMAX,-1,1.,
      &                 AUX1,NAUX1,AUX2,NAUX2,0.,0)
 C - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 C  PHYSICAL TO FOURIER TRANSFORM.
           CASE(:-1)
-            CALL SRCFT(1,G,INCG,W,INCW,IMAX,KMAX,+1,1./IMAX,
+            CALL SRCFT(1,G,INCG,WREAL,INCW,IMAX,KMAX,+1,1./IMAX,
      &               AUX1,NAUX1,AUX2,NAUX2,0.,0)
-            CALL SRCFT(0,G,INCG,W,INCW,IMAX,KMAX,+1,1./IMAX,
+            CALL SRCFT(0,G,INCG,WREAL,INCW,IMAX,KMAX,+1,1./IMAX,
      &               AUX1,NAUX1,AUX2,NAUX2,0.,0)
         END SELECT
+        W=CMPLX(WREAL,0.0)
       END SUBROUTINE
