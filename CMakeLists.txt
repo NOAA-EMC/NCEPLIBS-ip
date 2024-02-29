@@ -49,6 +49,8 @@ if(OPENMP)
   find_package(OpenMP REQUIRED COMPONENTS Fortran)
 endif()
 
+find_package(LAPACK REQUIRED)
+
 # Set compiler flags.
 if(CMAKE_Fortran_COMPILER_ID MATCHES "^(Intel|IntelLLVM)$")
   set(CMAKE_Fortran_FLAGS "-g -traceback -assume byterecl -fp-model strict -fpp -auto ${CMAKE_Fortran_FLAGS}")

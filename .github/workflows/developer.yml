@@ -25,7 +25,7 @@ jobs:
     - name: Install Dependencies
       run: |
         sudo apt-get update
-        sudo apt-get install doxygen
+        sudo apt-get install doxygen libopenblas-dev
         python3 -m pip install gcovr
 
     - name: checkout

@@ -64,7 +64,7 @@ C> @author Iredell @date 96-02-20
      $ 146.870307625, 150.011882457, 153.153458019, 156.295034268 /
       REAL:: DLT,D1=1.
       REAL AWORK((JMAX+1)/2,((JMAX+1)/2)),BWORK(((JMAX+1)/2))
-      INTEGER:: JHE,JHO,J0=0
+      INTEGER:: JHE,JHO,J0=0, INFO
       INTEGER IPVT((JMAX+1)/2)
       PARAMETER(PI=3.14159265358979,C=(1.-(2./PI)**2)*0.25)
 C - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -133,8 +133,14 @@ C  EQUALLY-SPACED LATITUDES INCLUDING POLES
           BWORK(JS)=-D1/(4*(JS-1)**2-1)
         ENDDO
 
-        call ludcmp(awork,jho,jhe,ipvt)
-        call lubksb(awork,jho,jhe,ipvt,bwork)
+        ! Call LAPACK routines
+#if (LSIZE==4)
+        CALL SGETRF(JHO, JHO, AWORK, JHE, IPVT, INFO)
+        CALL SGETRS('N', JHO, 1, AWORK, JHE, IPVT, BWORK, JHO, INFO)
+#else
+        CALL DGETRF(JHO, JHO, AWORK, JHE, IPVT, INFO)
+        CALL DGETRS('N', JHO, 1, AWORK, JHE, IPVT, BWORK, JHO, INFO)
+#endif
 
         WLAT(1)=0.
         DO J=1,JHO
@@ -170,8 +176,14 @@ C  EQUALLY-SPACED LATITUDES EXCLUDING POLES
           BWORK(JS)=-D1/(4*(JS-1)**2-1)
         ENDDO
 
-        call ludcmp(awork,jho,jhe,ipvt,d)
-        call lubksb(awork,jho,jhe,ipvt,bwork)
+        ! Call LAPACK routines
+#if (LSIZE==4)
+        CALL SGETRF(JHO, JHO, AWORK, JHE, IPVT, INFO)
+        CALL SGETRS('N', JHO, 1, AWORK, JHE, IPVT, BWORK, JHO, INFO)
+#else
+        CALL DGETRF(JHO, JHO, AWORK, JHE, IPVT, INFO)
+        CALL DGETRS('N', JHO, 1, AWORK, JHE, IPVT, BWORK, JHO, INFO)
+#endif
 
         WLAT(1)=0.
         DO J=1,JHO

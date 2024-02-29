@@ -14,7 +14,7 @@ ip_mercator_grid_mod.F90 ip_polar_stereo_grid_mod.F90
 ip_rot_equid_cylind_egrid_mod.F90 ip_rot_equid_cylind_grid_mod.F90
 ip_constants_mod.F90 ip_grids_mod.F90 ip_grid_factory_mod.F90
 ip_interpolators_mod.F90 earth_radius_mod.F90 polfix_mod.F90
-fftpack.F lapack_gen.F ncpus.F spanaly.f spdz2uv.f speps.f spfft1.f spffte.f
+fftpack.F ncpus.F spanaly.f spdz2uv.f speps.f spfft1.f spffte.f
 spfftpt.f splaplac.f splat.F splegend.f sppad.f spsynth.f sptezd.f sptez.f
 sptezmd.f sptezm.f sptezmv.f sptezv.f sptgpm.f sptgpmv.f sptgps.f sptgpsv.f
 sptgpt.f sptgptv.f sptrand.f sptran.f sptranf0.f sptranf1.f sptranf.f sptranfv.f
@@ -77,6 +77,7 @@ foreach(kind ${kinds})
   if(OpenMP_Fortran_FOUND)
     target_link_libraries(${lib_name} PUBLIC OpenMP::OpenMP_Fortran)
   endif()
+  target_link_libraries(${lib_name} PUBLIC LAPACK::LAPACK)
   
   list(APPEND LIB_TARGETS ${lib_name})
   
