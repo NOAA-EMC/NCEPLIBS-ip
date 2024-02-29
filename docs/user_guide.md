@@ -19,6 +19,11 @@ where for certain regions of certain grids, floating point differences between
 field values. Some applications may therefore benefit from the use of 8-byte
 reals (libip_d or libip_8).
 
+NCEPLIBS-ip uses several BLAS/LAPACK routines in the splat() subroutine, and
+therefore requires an external BLAS/LAPACK provider. In practice, this should
+generally be OpenBLAS, which is the [spack-stack](https://github.com/JCSDA/spack-stack)
+BLAS/LAPACK provider.
+
 ## Interpolation
 
 ### Interpolation Methods
