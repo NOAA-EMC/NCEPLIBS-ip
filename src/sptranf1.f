@@ -60,7 +60,7 @@ C> @author Iredell @date 96-02-29
       IF(IDIR.GT.0) THEN
         DO J=JB,JE
           CALL SPSYNTH(IROMB,MAXWV,IMAX,IMAX+2,KW,KWTOP,1,
-     &                 CLAT(J),PLN(1,J),PLNTOP(1,J),MP,
+     &                 CLAT(J),PLN(1,J),PLNTOP(1,J),(/MP/),
      &                 W,WTOP,F)
           CALL SPFFTE(IMAX,(IMAX+2)/2,IMAX,2,F,G(1,1,J),+1,AFFT)
         ENDDO
@@ -68,7 +68,7 @@ C> @author Iredell @date 96-02-29
         DO J=JB,JE
           CALL SPFFTE(IMAX,(IMAX+2)/2,IMAX,2,F,G(1,1,J),-1,AFFT)
           CALL SPANALY(IROMB,MAXWV,IMAX,IMAX+2,KW,KWTOP,1,
-     &                 WLAT(J),CLAT(J),PLN(1,J),PLNTOP(1,J),MP,
+     &                 WLAT(J),CLAT(J),PLN(1,J),PLNTOP(1,J),(/MP/),
      &                 F,W,WTOP)
         ENDDO
       ENDIF

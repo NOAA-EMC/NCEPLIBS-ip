@@ -4,6 +4,7 @@
 !
 ! Kyle Gerheiser
 program test_sptezv
+  use sp_mod
   use iso_fortran_env, only: real64
   implicit none
 

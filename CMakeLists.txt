@@ -67,7 +67,7 @@ elseif(CMAKE_Fortran_COMPILER_ID MATCHES "^(GNU)$")
   set(fortran_d_flags "-fdefault-real-8")
   set(fortran_8_flags "-fdefault-integer-8 -fdefault-real-8")
   if(${CMAKE_Fortran_COMPILER_VERSION} VERSION_GREATER_EQUAL 10)
-    set(CMAKE_Fortran_FLAGS "-w -fallow-argument-mismatch -fallow-invalid-boz ${CMAKE_Fortran_FLAGS}")
+    set(CMAKE_Fortran_FLAGS "-w ${CMAKE_Fortran_FLAGS}")
   endif()
 endif()
 
