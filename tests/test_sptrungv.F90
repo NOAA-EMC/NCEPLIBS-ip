@@ -4,6 +4,7 @@
 !
 ! Alex Richert, Oct 2023
 program test_sptrungv
+  use sp_mod
   implicit none
 
   !
@@ -21,7 +22,7 @@ program test_sptrungv
   REAL*4                          :: RDRLAT(MO),RDRLON(MO)
   REAL*4                          :: RDUI(MI,KM),RDVI(MI,KM)
   REAL*4                          :: RDUOREF(MO,KM),RDVOREF(MO,KM)
-  REAL                            :: X=0.0
+  REAL                            :: X(1)=0.0
   REAL                            :: TOL=1e-2
 
   OPEN (12, file="data/sptrungv.uv.in", access='direct', recl=MI*KM*4, convert='little_endian')

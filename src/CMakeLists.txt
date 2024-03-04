@@ -14,35 +14,22 @@ ip_mercator_grid_mod.F90 ip_polar_stereo_grid_mod.F90
 ip_rot_equid_cylind_egrid_mod.F90 ip_rot_equid_cylind_grid_mod.F90
 ip_constants_mod.F90 ip_grids_mod.F90 ip_grid_factory_mod.F90
 ip_interpolators_mod.F90 earth_radius_mod.F90 polfix_mod.F90
-fftpack.F ncpus.F spanaly.f spdz2uv.f speps.f spfft1.f spffte.f
-spfftpt.f splaplac.f splat.F splegend.f sppad.f spsynth.f sptezd.f sptez.f
-sptezmd.f sptezm.f sptezmv.f sptezv.f sptgpm.f sptgpmv.f sptgps.f sptgpsv.f
-sptgpt.f sptgptv.f sptrand.f sptran.f sptranf0.f sptranf1.f sptranf.f sptranfv.f
-sptranv.f sptrun.f sptrung.f sptrungv.f sptrunm.f sptrunmv.f sptruns.f
-sptrunsv.f sptrunv.f spuv2dz.f spwget.f)
-
-if(BUILD_DEPRECATED)
-  set(fortran_src ${fortran_src} spfft.f spgradq.f spgradx.f spgrady.f sptgpmd.f
-  sptgpsd.f sptgptd.f sptgptsd.f sptgptvd.f sptrund.f sptrunl.f spvar.f)
-endif()
+sp_mod.F)
 
 # Set compiler flags.
 if(CMAKE_BUILD_TYPE MATCHES "Debug")
   # Bounds checking is turned on for all files for the "Debug" build in the
   # main CMakeLists.txt.
-  # Need to turn off bounds checking for fftpack.F, sptranf.f, and sptranfv.f
-  # in order to pass tests.
-  foreach(filename fftpack.F sptranf.f sptranfv.f)
-    if(CMAKE_Fortran_COMPILER_ID MATCHES "^(Intel|IntelLLVM)$")
-      set_source_files_properties(${filename} PROPERTIES COMPILE_FLAGS -check=nobounds)
-    elseif(CMAKE_Fortran_COMPILER_ID MATCHES "^(GNU)$")
-      if(${CMAKE_Fortran_COMPILER_VERSION} VERSION_GREATER_EQUAL 6)
-        set_source_files_properties(${filename} PROPERTIES COMPILE_FLAGS -fcheck=no-bounds)
-      else()
-        set_source_files_properties(${filename} PROPERTIES COMPILE_FLAGS -fno-bounds-check)
-      endif()
+  # Need to turn off bounds checking because of fftpack.F, sptranf.f, and sptranfv.f.
+  if(CMAKE_Fortran_COMPILER_ID MATCHES "^(Intel|IntelLLVM)$")
+    set_source_files_properties(sp_mod.F PROPERTIES COMPILE_FLAGS -check=nobounds)
+  elseif(CMAKE_Fortran_COMPILER_ID MATCHES "^(GNU)$")
+    if(${CMAKE_Fortran_COMPILER_VERSION} VERSION_GREATER_EQUAL 6)
+      set_source_files_properties(sp_mod.F PROPERTIES COMPILE_FLAGS -fcheck=no-bounds)
+    else()
+      set_source_files_properties(sp_mod.F PROPERTIES COMPILE_FLAGS -fno-bounds-check)
     endif()
-  endforeach()
+  endif()
 endif()
 
 # Build _4, _d, and/or _8 depending on options provided to CMake
@@ -68,6 +55,9 @@ foreach(kind ${kinds})
 
   # Set compiler flags.
   target_compile_definitions(${lib_name} PRIVATE "LSIZE=${kind_definition}")
+  if(BUILD_DEPRECATED)
+    target_compile_definitions(${lib_name} PRIVATE BUILD_DEPRECATED)
+  endif()
   set_target_properties(${lib_name} PROPERTIES COMPILE_FLAGS "${fortran_${kind}_flags}")
   set_target_properties(${lib_name} PROPERTIES Fortran_MODULE_DIRECTORY "${module_dir}")
   target_include_directories(${lib_name}

@@ -33,8 +33,10 @@ C> @author Paul N. Swarztrauber, National Center for Atmospheric Research, Bould
      &                 table,n1,wrk,n2,z,nz)
  
       implicit none
-      integer init,ldx,ldy,n,m,isign,n1,n2,nz,i,j
-      real x(2*ldx,*),y(ldy,*),scale,table(44002),wrk,z
+      integer init,ldx,ldy,n,m,isign,n1,n2,i,j
+      real x(2*ldx,*),y(ldy,*),scale,table(44002),wrk(*)
+      real, optional :: z
+      integer, optional :: nz
  
       IF (init.ne.0) THEN
         CALL rffti(n,table)
@@ -79,8 +81,10 @@ C> @author Paul N. Swarztrauber, National Center for Atmospheric Research, Bould
      &                 table,n1,wrk,n2,z,nz)
  
       implicit none
-      integer init,ldx,ldy,n,m,isign,n1,n2,nz,i,j
-      real x(2*ldx,*),y(ldy,*),scale,table(44002),wrk,z
+      integer init,ldx,ldy,n,m,isign,n1,n2,i,j
+      real x(2*ldx,*),y(ldy,*),scale,table(44002),wrk(*)
+      real, optional :: z
+      integer, optional :: nz
  
       IF (init.ne.0) THEN
         CALL rffti(n,table)
@@ -159,8 +163,10 @@ C> @author Paul N. Swarztrauber, National Center for Atmospheric Research, Bould
      &                 table,n1,wrk,n2,z,nz)
  
       implicit none
-      integer init,ldx,ldy,n,m,isign,n1,n2,nz,i,j
-      real x(ldx,*),y(2*ldy,*),scale,table(44002),wrk,z
+      integer init,ldx,ldy,n,m,isign,n1,n2,i,j
+      real x(ldx,*),y(2*ldy,*),scale,table(44002),wrk(*)
+      real, optional :: z
+      integer, optional :: nz
  
       IF (init.ne.0) THEN
         CALL rffti(n,table)
@@ -208,8 +214,10 @@ C> @author Paul N. Swarztrauber, National Center for Atmospheric Research, Bould
      &                 table,n1,wrk,n2,z,nz)
  
       implicit none
-      integer init,ldx,ldy,n,m,isign,n1,n2,nz,i,j
-      real x(ldx,*),y(2*ldy,*),scale,table(44002),wrk,z
+      integer init,ldx,ldy,n,m,isign,n1,n2,i,j
+      real x(ldx,*),y(2*ldy,*),scale,table(44002),wrk(*)
+      real, optional :: z
+      integer, optional :: nz
  
       IF (init.ne.0) THEN
         CALL rffti(n,table)
@@ -280,7 +288,7 @@ C> @param WSAVE
 C>
 C> @author Paul N. Swarztrauber, National Center for Atmospheric Research, Boulder, CO
       SUBROUTINE RFFTF (N,R,WSAVE)
-      DIMENSION       R(1)       ,WSAVE(1)
+      DIMENSION       R(*)       ,WSAVE(*)
       IF (N .EQ. 1) RETURN
       CALL RFFTF1 (N,R,WSAVE,WSAVE(N+1),WSAVE(2*N+1))
       RETURN
@@ -294,7 +302,7 @@ C> @param WSAVE
 C>
 C> @author Paul N. Swarztrauber, National Center for Atmospheric Research, Boulder, CO
       SUBROUTINE RFFTB (N,R,WSAVE)
-      DIMENSION       R(1)       ,WSAVE(1)
+      DIMENSION       R(*)       ,WSAVE(*)
       IF (N .EQ. 1) RETURN
       CALL RFFTB1 (N,R,WSAVE,WSAVE(N+1),WSAVE(2*N+1))
       RETURN
@@ -307,7 +315,7 @@ C> @param WSAVE
 C>
 C> @author Paul N. Swarztrauber, National Center for Atmospheric Research, Boulder, CO
       SUBROUTINE RFFTI (N,WSAVE)
-      DIMENSION       WSAVE(1)
+      DIMENSION       WSAVE(*)
       IF (N .EQ. 1) RETURN
       CALL RFFTI1 (N,WSAVE(N+1),WSAVE(2*N+1))
       RETURN
@@ -323,7 +331,7 @@ C> @param IFAC
 C>
 C> @author Paul N. Swarztrauber, National Center for Atmospheric Research, Boulder, CO
       SUBROUTINE RFFTB1 (N,C,CH,WA,IFAC)
-      DIMENSION       CH(1)      ,C(1)       ,WA(1)      ,IFAC(*)
+      REAL       CH(*)      ,C(*)       ,WA(*)      ,IFAC(*)
       NF = IFAC(2)
       NA = 0
       L1 = 1
@@ -392,7 +400,7 @@ C> @param IFAC
 C>
 C> @author Paul N. Swarztrauber, National Center for Atmospheric Research, Boulder, CO
       SUBROUTINE RFFTF1 (N,C,CH,WA,IFAC)
-      DIMENSION       CH(1)      ,C(1)       ,WA(1)      ,IFAC(*)
+      REAL       CH(*)      ,C(*)       ,WA(*)      ,IFAC(*)
       NF = IFAC(2)
       NA = 1
       L2 = N
@@ -459,7 +467,7 @@ C> @param IFAC
 C>
 C> @author Paul N. Swarztrauber, National Center for Atmospheric Research, Boulder, CO
       SUBROUTINE RFFTI1 (N,WA,IFAC)
-      DIMENSION       WA(1)      ,IFAC(*)    ,NTRYH(4)
+      REAL       WA(*)      ,IFAC(*)    ,NTRYH(4)
       DATA NTRYH(1),NTRYH(2),NTRYH(3),NTRYH(4)/4,2,3,5/
       NL = N
       NF = 0
@@ -529,7 +537,7 @@ C>
 C> @author Paul N. Swarztrauber, National Center for Atmospheric Research, Boulder, CO
       SUBROUTINE RADB2 (IDO,L1,CC,CH,WA1)
       DIMENSION       CC(IDO,2,L1)           ,CH(IDO,L1,2)           ,
-     1                WA1(1)
+     1                WA1(*)
       DO 101 K=1,L1
          CH(1,K,1) = CC(1,1,K)+CC(IDO,2,K)
          CH(1,K,2) = CC(1,1,K)-CC(IDO,2,K)
@@ -568,7 +576,7 @@ C>
 C> @author Paul N. Swarztrauber, National Center for Atmospheric Research, Boulder, CO
       SUBROUTINE RADB3 (IDO,L1,CC,CH,WA1,WA2)
       DIMENSION       CC(IDO,3,L1)           ,CH(IDO,L1,3)           ,
-     1                WA1(1)     ,WA2(1)
+     1                WA1(*)     ,WA2(*)
       DATA TAUR,TAUI /-.5,.866025403784439/
       DO 101 K=1,L1
          TR2 = CC(IDO,2,K)+CC(IDO,2,K)
@@ -618,7 +626,7 @@ C>
 C> @author Paul N. Swarztrauber, National Center for Atmospheric Research, Boulder, CO
       SUBROUTINE RADB4 (IDO,L1,CC,CH,WA1,WA2,WA3)
       DIMENSION       CC(IDO,4,L1)           ,CH(IDO,L1,4)           ,
-     1                WA1(1)     ,WA2(1)     ,WA3(1)
+     1                WA1(*)     ,WA2(*)     ,WA3(*)
       DATA SQRT2 /1.414213562373095/
       DO 101 K=1,L1
          TR1 = CC(1,1,K)-CC(IDO,4,K)
@@ -689,7 +697,7 @@ C>
 C> @author Paul N. Swarztrauber, National Center for Atmospheric Research, Boulder, CO
       SUBROUTINE RADB5 (IDO,L1,CC,CH,WA1,WA2,WA3,WA4)
       DIMENSION       CC(IDO,5,L1)           ,CH(IDO,L1,5)           ,
-     1                WA1(1)     ,WA2(1)     ,WA3(1)     ,WA4(1)
+     1                WA1(*)     ,WA2(*)     ,WA3(*)     ,WA4(*)
       DATA TR11,TI11,TR12,TI12 /.309016994374947,.951056516295154,
      1-.809016994374947,.587785252292473/
       DO 101 K=1,L1
@@ -768,7 +776,7 @@ C> @author Paul N. Swarztrauber, National Center for Atmospheric Research, Bould
       SUBROUTINE RADBG (IDO,IP,L1,IDL1,CC,C1,C2,CH,CH2,WA)
       DIMENSION       CH(IDO,L1,IP)          ,CC(IDO,IP,L1)          ,
      1                C1(IDO,L1,IP)          ,C2(IDL1,IP),
-     2                CH2(IDL1,IP)           ,WA(1)
+     2                CH2(IDL1,IP)           ,WA(*)
       DATA TPI/6.28318530717959/
       ARG = TPI/FLOAT(IP)
       DCP = COS(ARG)
@@ -945,7 +953,7 @@ C>
 C> @author Paul N. Swarztrauber, National Center for Atmospheric Research, Boulder, CO
       SUBROUTINE RADF2 (IDO,L1,CC,CH,WA1)
       DIMENSION       CH(IDO,2,L1)           ,CC(IDO,L1,2)           ,
-     1                WA1(1)
+     1                WA1(*)
       DO 101 K=1,L1
          CH(1,1,K) = CC(1,K,1)+CC(1,K,2)
          CH(IDO,2,K) = CC(1,K,1)-CC(1,K,2)
@@ -983,7 +991,7 @@ C>
 C> @author Paul N. Swarztrauber, National Center for Atmospheric Research, Boulder, CO
       SUBROUTINE RADF3 (IDO,L1,CC,CH,WA1,WA2)
       DIMENSION       CH(IDO,3,L1)           ,CC(IDO,L1,3)           ,
-     1                WA1(1)     ,WA2(1)
+     1                WA1(*)     ,WA2(*)
       DATA TAUR,TAUI /-.5,.866025403784439/
       DO 101 K=1,L1
          CR2 = CC(1,K,2)+CC(1,K,3)
@@ -1030,7 +1038,7 @@ C>
 C> @author Paul N. Swarztrauber, National Center for Atmospheric Research, Boulder, CO
       SUBROUTINE RADF4 (IDO,L1,CC,CH,WA1,WA2,WA3)
       DIMENSION       CC(IDO,L1,4)           ,CH(IDO,4,L1)           ,
-     1                WA1(1)     ,WA2(1)     ,WA3(1)
+     1                WA1(*)     ,WA2(*)     ,WA3(*)
       DATA HSQT2 /.7071067811865475/
       DO 101 K=1,L1
          TR1 = CC(1,K,2)+CC(1,K,4)
@@ -1097,7 +1105,7 @@ C>
 C> @author Paul N. Swarztrauber, National Center for Atmospheric Research, Boulder, CO
       SUBROUTINE RADF5 (IDO,L1,CC,CH,WA1,WA2,WA3,WA4)
       DIMENSION       CC(IDO,L1,5)           ,CH(IDO,5,L1)           ,
-     1                WA1(1)     ,WA2(1)     ,WA3(1)     ,WA4(1)
+     1                WA1(*)     ,WA2(*)     ,WA3(*)     ,WA4(*)
       DATA TR11,TI11,TR12,TI12 /.309016994374947,.951056516295154,
      1-.809016994374947,.587785252292473/
       DO 101 K=1,L1
@@ -1172,7 +1180,7 @@ C> @author Paul N. Swarztrauber, National Center for Atmospheric Research, Bould
       SUBROUTINE RADFG (IDO,IP,L1,IDL1,CC,C1,C2,CH,CH2,WA)
       DIMENSION       CH(IDO,L1,IP)          ,CC(IDO,IP,L1)          ,
      1                C1(IDO,L1,IP)          ,C2(IDL1,IP),
-     2                CH2(IDL1,IP)           ,WA(1)
+     2                CH2(IDL1,IP)           ,WA(*)
       DATA TPI/6.28318530717959/
       ARG = TPI/FLOAT(IP)
       DCP = COS(ARG)

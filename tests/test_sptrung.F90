@@ -4,6 +4,7 @@
 !
 ! Alex Richert, Oct 2023
 program test_sptrung
+  use sp_mod
   implicit none
 
   INTEGER                         :: I
