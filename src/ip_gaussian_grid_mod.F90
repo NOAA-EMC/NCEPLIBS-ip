@@ -22,7 +22,7 @@ module ip_gaussian_grid_mod
     private
     public :: ip_gaussian_grid
 
-    type, extends(ip_grid) :: ip_gaussian_grid
+    type,extends(ip_grid) :: ip_gaussian_grid
         integer :: jh !< Scan mode flag in 'j' direction. When '1' points scan from N to S. When "-1" points scan from S to N.
         real :: dlon !< "i"-direction increment. GRIB2 Section 3, octets 64-67.
         real :: rlat1 !<  Latitude of first grid point. GRIB2 Section 3, octets 47-50.
@@ -38,15 +38,15 @@ module ip_gaussian_grid_mod
         procedure :: init_grib2
         !> Calculates Earth coordinates (iopt = 1) or grid coorindates (iopt = -1)
         !> for Gaussian grids. @return N/A
-        procedure :: gdswzd => gdswzd_gaussian
-    end type ip_gaussian_grid
+        procedure :: gdswzd=>gdswzd_gaussian
+    endtype ip_gaussian_grid
 
     integer :: j1 !< 'j' index of first grid point within the global array of latitudes.
     integer :: jh !< Scan mode flag in 'j' direction. When '1' points scan from N to S. When "-1" points scan from S to N.
-    real, allocatable :: blat(:) !< Gaussian latitude for each parallel.
+    real,allocatable :: blat(:) !< Gaussian latitude for each parallel.
     real :: dlon !< "i"-direction increment. GRIB2 Section 3, octets 64-67.
     real :: rerth !< Radius of the earth. GRIB2 Section 3, octets 15-30.
-    real, allocatable :: ylat_row(:) !< dy/dlat for each row in 1/degrees.
+    real,allocatable :: ylat_row(:) !< dy/dlat for each row in 1/degrees.
 
 contains
 
@@ -57,48 +57,48 @@ contains
     !>
     !> @author Kyle Gerheiser
     !> @date July 2021
-    subroutine init_grib1(self, g1_desc)
-        class(ip_gaussian_grid), intent(inout) :: self
-        type(grib1_descriptor), intent(in) :: g1_desc
+    subroutine init_grib1(self,g1_desc)
+        class(ip_gaussian_grid),intent(inout) :: self
+        type(grib1_descriptor),intent(in) :: g1_desc
 
-        integer :: iscan, jg
+        integer :: iscan,jg
 
-        associate (kgds => g1_desc%gds)
-            self%rerth = 6.3712e6
-            self%eccen_squared = 0.0
+        associate(kgds=>g1_desc%gds)
+            self%rerth=6.3712e6
+            self%eccen_squared=0.0
 
-            self%im = kgds(2)
-            self%jm = kgds(3)
-            self%rlat1 = kgds(4)*1.e-3
-            self%rlon1 = kgds(5)*1.e-3
-            self%rlon2 = kgds(8)*1.e-3
-            self%jg = kgds(10)*2
-            iscan = mod(kgds(11)/128, 2)
-            self%jscan = mod(kgds(11)/64, 2)
-            self%hi = (-1.)**iscan
-            self%jh = (-1)**self%jscan
-            self%dlon = self%hi*(mod(self%hi*(self%rlon2-self%rlon1)-1+3600, 360.)+1)/(self%im-1)
+            self%im=kgds(2)
+            self%jm=kgds(3)
+            self%rlat1=kgds(4)*1.e-3
+            self%rlon1=kgds(5)*1.e-3
+            self%rlon2=kgds(8)*1.e-3
+            self%jg=kgds(10)*2
+            iscan=mod(kgds(11)/128,2)
+            self%jscan=mod(kgds(11)/64,2)
+            self%hi=(-1.)**iscan
+            self%jh=(-1)**self%jscan
+            self%dlon=self%hi*(mod(self%hi*(self%rlon2-self%rlon1)-1+3600,360.)+1)/(self%im-1)
 
-            self%iwrap = 0
-            self%jwrap1 = 0
-            self%jwrap2 = 0
-            self%nscan = mod(kgds(11)/32, 2)
-            self%nscan_field_pos = self%nscan
-            self%kscan = 0
+            self%iwrap=0
+            self%jwrap1=0
+            self%jwrap2=0
+            self%nscan=mod(kgds(11)/32,2)
+            self%nscan_field_pos=self%nscan
+            self%kscan=0
 
-            self%iwrap = nint(360/abs(self%dlon))
-            if (self%im .lt. self%iwrap) self%iwrap = 0
+            self%iwrap=nint(360/abs(self%dlon))
+            if(self%im.lt.self%iwrap) self%iwrap=0
 
-            if (self%iwrap .gt. 0 .and. mod(self%iwrap, 2) .eq. 0) then
-                jg = kgds(10)*2
-                if (self%jm .eq. self%jg) then
-                    self%jwrap1 = 1
-                    self%jwrap2 = 2*self%jm+1
-                end if
-            end if
+            if(self%iwrap.gt.0.and.mod(self%iwrap,2).eq.0) then
+                jg=kgds(10)*2
+                if(self%jm.eq.self%jg) then
+                    self%jwrap1=1
+                    self%jwrap2=2*self%jm+1
+                endif
+            endif
 
-        end associate
-    end subroutine init_grib1
+        endassociate
+    endsubroutine init_grib1
 
     !> Initializes a gaussian grid given a grib2_descriptor object.
     !> @param[inout] self The grid to initialize
@@ -106,46 +106,46 @@ contains
     !>
     !> @author Kyle Gerheiser
     !> @date July 2021
-    subroutine init_grib2(self, g2_desc)
-        class(ip_gaussian_grid), intent(inout) :: self
-        type(grib2_descriptor), intent(in) :: g2_desc
+    subroutine init_grib2(self,g2_desc)
+        class(ip_gaussian_grid),intent(inout) :: self
+        type(grib2_descriptor),intent(in) :: g2_desc
 
-        integer :: iscale, iscan, jg
+        integer :: iscale,iscan,jg
 
-        associate (igdtmpl => g2_desc%gdt_tmpl, igdtlen => g2_desc%gdt_len)
-            call earth_radius(igdtmpl, igdtlen, self%rerth, self%eccen_squared)
+        associate(igdtmpl=>g2_desc%gdt_tmpl,igdtlen=>g2_desc%gdt_len)
+            call earth_radius(igdtmpl,igdtlen,self%rerth,self%eccen_squared)
 
-            self%im = igdtmpl(8)
-            self%jm = igdtmpl(9)
-            iscale = igdtmpl(10)*igdtmpl(11)
-            if (iscale .eq. 0) iscale = 10**6
-            self%rlat1 = float(igdtmpl(12))/float(iscale)
-            self%rlon1 = float(igdtmpl(13))/float(iscale)
-            self%rlon2 = float(igdtmpl(16))/float(iscale)
-            self%jg = igdtmpl(18)*2
-            iscan = mod(igdtmpl(19)/128, 2)
-            self%jscan = mod(igdtmpl(19)/64, 2)
-            self%hi = (-1.)**iscan
-            self%jh = (-1)**self%jscan
-            self%dlon = self%hi*(mod(self%hi*(self%rlon2-self%rlon1)-1+3600, 360.)+1)/(self%im-1)
+            self%im=igdtmpl(8)
+            self%jm=igdtmpl(9)
+            iscale=igdtmpl(10)*igdtmpl(11)
+            if(iscale.eq.0) iscale=10**6
+            self%rlat1=float(igdtmpl(12))/float(iscale)
+            self%rlon1=float(igdtmpl(13))/float(iscale)
+            self%rlon2=float(igdtmpl(16))/float(iscale)
+            self%jg=igdtmpl(18)*2
+            iscan=mod(igdtmpl(19)/128,2)
+            self%jscan=mod(igdtmpl(19)/64,2)
+            self%hi=(-1.)**iscan
+            self%jh=(-1)**self%jscan
+            self%dlon=self%hi*(mod(self%hi*(self%rlon2-self%rlon1)-1+3600,360.)+1)/(self%im-1)
 
-            self%iwrap = nint(360/abs(self%dlon))
-            if (self%im .lt. self%iwrap) self%iwrap = 0
-            self%jwrap1 = 0
-            self%jwrap2 = 0
-            if (self%iwrap .gt. 0 .and. mod(self%iwrap, 2) .eq. 0) then
-                jg = igdtmpl(18)*2
-                if (self%jm .eq. jg) then
-                    self%jwrap1 = 1
-                    self%jwrap2 = 2*self%jm+1
-                end if
-            end if
-            self%nscan = mod(igdtmpl(19)/32, 2)
-            self%nscan_field_pos = self%nscan
-            self%kscan = 0
-        end associate
+            self%iwrap=nint(360/abs(self%dlon))
+            if(self%im.lt.self%iwrap) self%iwrap=0
+            self%jwrap1=0
+            self%jwrap2=0
+            if(self%iwrap.gt.0.and.mod(self%iwrap,2).eq.0) then
+                jg=igdtmpl(18)*2
+                if(self%jm.eq.jg) then
+                    self%jwrap1=1
+                    self%jwrap2=2*self%jm+1
+                endif
+            endif
+            self%nscan=mod(igdtmpl(19)/32,2)
+            self%nscan_field_pos=self%nscan
+            self%kscan=0
+        endassociate
 
-    end subroutine init_grib2
+    endsubroutine init_grib2
 
     !> Calculates Earth coordinates (iopt = 1) or grid coorindates (iopt = -1)
     !> for Gaussian grids.
@@ -191,175 +191,175 @@ contains
     !>
     !> @author Mark Iredell, George Gayno, Kyle Gerheiser
     !> @date July 2021
-    subroutine gdswzd_gaussian(self, iopt, npts, fill, &
-                               xpts, ypts, rlon, rlat, nret, &
-                               crot, srot, xlon, xlat, ylon, ylat, area)
+    subroutine gdswzd_gaussian(self,iopt,npts,fill, &
+                               xpts,ypts,rlon,rlat,nret, &
+                               crot,srot,xlon,xlat,ylon,ylat,area)
         implicit none
         !
-        class(ip_gaussian_grid), intent(in) :: self
-        integer, intent(in) :: iopt, npts
-        integer, intent(out) :: nret
+        class(ip_gaussian_grid),intent(in) :: self
+        integer,intent(in) :: iopt,npts
+        integer,intent(out) :: nret
         !
-        real, intent(in) :: fill
-        real, intent(inout) :: rlon(npts), rlat(npts)
-        real, intent(inout) :: xpts(npts), ypts(npts)
-        real, optional, intent(out) :: crot(npts), srot(npts)
-        real, optional, intent(out) :: xlon(npts), xlat(npts)
-        real, optional, intent(out) :: ylon(npts), ylat(npts), area(npts)
+        real,intent(in) :: fill
+        real,intent(inout) :: rlon(npts),rlat(npts)
+        real,intent(inout) :: xpts(npts),ypts(npts)
+        real,optional,intent(out) :: crot(npts),srot(npts)
+        real,optional,intent(out) :: xlon(npts),xlat(npts)
+        real,optional,intent(out) :: ylon(npts),ylat(npts),area(npts)
         !
-        integer                        :: jscan, im, jm
-        integer                        :: j, ja, jg
+        integer                        :: jscan,im,jm
+        integer                        :: j,ja,jg
         integer                        :: n
         !
-        logical                        :: lrot, lmap, larea
+        logical                        :: lrot,lmap,larea
         !
-        real, allocatable   :: alat(:), alat_jscan(:)
-        real, allocatable   :: alat_temp(:), blat_temp(:)
-        real                           :: hi, rlata, rlatb, rlat1, rlon1, rlon2
-        real                           :: xmax, xmin, ymax, ymin, yptsa, yptsb
+        real,allocatable   :: alat(:),alat_jscan(:)
+        real,allocatable   :: alat_temp(:),blat_temp(:)
+        real                           :: hi,rlata,rlatb,rlat1,rlon1,rlon2
+        real                           :: xmax,xmin,ymax,ymin,yptsa,yptsb
         real                           :: wb
 
-        if (present(crot)) crot = fill
-        if (present(srot)) srot = fill
-        if (present(xlon)) xlon = fill
-        if (present(xlat)) xlat = fill
-        if (present(ylon)) ylon = fill
-        if (present(ylat)) ylat = fill
-        if (present(area)) area = fill
+        if(present(crot)) crot=fill
+        if(present(srot)) srot=fill
+        if(present(xlon)) xlon=fill
+        if(present(xlat)) xlat=fill
+        if(present(ylon)) ylon=fill
+        if(present(ylat)) ylat=fill
+        if(present(area)) area=fill
 
-        if (present(crot) .and. present(srot)) then
-            lrot = .true.
+        if(present(crot).and.present(srot)) then
+            lrot=.true.
         else
-            lrot = .false.
-        end if
-        if (present(xlon) .and. present(xlat) .and. present(ylon) .and. present(ylat)) then
-            lmap = .true.
+            lrot=.false.
+        endif
+        if(present(xlon).and.present(xlat).and.present(ylon).and.present(ylat)) then
+            lmap=.true.
         else
-            lmap = .false.
-        end if
-        if (present(area)) then
-            larea = .true.
+            lmap=.false.
+        endif
+        if(present(area)) then
+            larea=.true.
         else
-            larea = .false.
-        end if
+            larea=.false.
+        endif
 
-        im = self%im
-        jm = self%jm
+        im=self%im
+        jm=self%jm
 
-        rlat1 = self%rlat1
-        rlon1 = self%rlon1
-        rlon2 = self%rlon2
+        rlat1=self%rlat1
+        rlon1=self%rlon1
+        rlon2=self%rlon2
 
-        jg = self%jg
-        jscan = self%jscan
-        hi = self%hi
+        jg=self%jg
+        jscan=self%jscan
+        hi=self%hi
 
-        jh = self%jh
-        dlon = self%dlon
-        rerth = self%rerth
+        jh=self%jh
+        dlon=self%dlon
+        rerth=self%rerth
 
-        allocate (alat_temp(jg))
-        allocate (blat_temp(jg))
-        call splat(4, jg, alat_temp, blat_temp)
-        allocate (alat(0:jg+1))
-        allocate (blat(0:jg+1))
+        allocate(alat_temp(jg))
+        allocate(blat_temp(jg))
+        call splat(4,jg,alat_temp,blat_temp)
+        allocate(alat(0:jg+1))
+        allocate(blat(0:jg+1))
         !$omp parallel do private(ja) schedule(static)
-        do ja = 1, jg
-            alat(ja) = real(dpr*asin(alat_temp(ja)))
-            blat(ja) = blat_temp(ja)
-        end do
+        do ja=1,jg
+            alat(ja)=real(dpr*asin(alat_temp(ja)))
+            blat(ja)=blat_temp(ja)
+        enddo
         !$omp end parallel do
-        deallocate (alat_temp, blat_temp)
-        alat(0) = 180.-alat(1)
-        alat(jg+1) = -alat(0)
-        blat(0) = -blat(1)
-        blat(jg+1) = blat(0)
-        j1 = 1
-        do while (j1 .lt. jg .and. rlat1 .lt. (alat(j1)+alat(j1+1))/2)
-            j1 = j1+1
-        end do
-        if (lmap) then
-            allocate (alat_jscan(jg))
-            do ja = 1, jg
-                alat_jscan(j1+jh*(ja-1)) = alat(ja)
-            end do
-            allocate (ylat_row(0:jg+1))
-            do ja = 2, (jg-1)
-                ylat_row(ja) = 2.0/(alat_jscan(ja+1)-alat_jscan(ja-1))
-            end do
-            ylat_row(1) = 1.0/(alat_jscan(2)-alat_jscan(1))
-            ylat_row(0) = ylat_row(1)
-            ylat_row(jg) = 1.0/(alat_jscan(jg)-alat_jscan(jg-1))
-            ylat_row(jg+1) = ylat_row(jg)
-            deallocate (alat_jscan)
-        end if
-        xmin = 0
-        xmax = im+1
-        if (im .eq. nint(360/abs(dlon))) xmax = im+2
-        ymin = 0.5
-        ymax = jm+0.5
-        nret = 0
+        deallocate(alat_temp,blat_temp)
+        alat(0)=180.-alat(1)
+        alat(jg+1)=-alat(0)
+        blat(0)=-blat(1)
+        blat(jg+1)=blat(0)
+        j1=1
+        do while(j1.lt.jg.and.rlat1.lt.(alat(j1)+alat(j1+1))/2)
+            j1=j1+1
+        enddo
+        if(lmap) then
+            allocate(alat_jscan(jg))
+            do ja=1,jg
+                alat_jscan(j1+jh*(ja-1))=alat(ja)
+            enddo
+            allocate(ylat_row(0:jg+1))
+            do ja=2,(jg-1)
+                ylat_row(ja)=2.0/(alat_jscan(ja+1)-alat_jscan(ja-1))
+            enddo
+            ylat_row(1)=1.0/(alat_jscan(2)-alat_jscan(1))
+            ylat_row(0)=ylat_row(1)
+            ylat_row(jg)=1.0/(alat_jscan(jg)-alat_jscan(jg-1))
+            ylat_row(jg+1)=ylat_row(jg)
+            deallocate(alat_jscan)
+        endif
+        xmin=0
+        xmax=im+1
+        if(im.eq.nint(360/abs(dlon))) xmax=im+2
+        ymin=0.5
+        ymax=jm+0.5
+        nret=0
 
         !  TRANSLATE GRID COORDINATES TO EARTH COORDINATES
-        if (iopt .eq. 0 .or. iopt .eq. 1) then
-            !$omp parallel do private(n, j, wb, rlata, rlatb) reduction(+:nret) schedule(static)
-            do n = 1, npts
-                if (xpts(n) .ge. xmin .and. xpts(n) .le. xmax .and. &
-                    ypts(n) .ge. ymin .and. ypts(n) .le. ymax) then
-                    rlon(n) = mod(rlon1+dlon*(xpts(n)-1)+3600, 360.)
-                    j = int(ypts(n))
-                    wb = ypts(n)-j
-                    rlata = alat(j1+jh*(j-1))
-                    rlatb = alat(j1+jh*j)
-                    rlat(n) = rlata+wb*(rlatb-rlata)
-                    nret = nret+1
-                    if (lrot) call gaussian_vect_rot(crot(n), srot(n))
-                    if (lmap) call gaussian_map_jacob(ypts(n), &
-                                                      xlon(n), xlat(n), ylon(n), ylat(n))
-                    if (larea) call gaussian_grid_area(ypts(n), area(n))
+        if(iopt.eq.0.or.iopt.eq.1) then
+            !$omp parallel do private(n,j,wb,rlata,rlatb) reduction(+:nret) schedule(static)
+            do n=1,npts
+                if(xpts(n).ge.xmin.and.xpts(n).le.xmax.and. &
+                   ypts(n).ge.ymin.and.ypts(n).le.ymax) then
+                    rlon(n)=mod(rlon1+dlon*(xpts(n)-1)+3600,360.)
+                    j=int(ypts(n))
+                    wb=ypts(n)-j
+                    rlata=alat(j1+jh*(j-1))
+                    rlatb=alat(j1+jh*j)
+                    rlat(n)=rlata+wb*(rlatb-rlata)
+                    nret=nret+1
+                    if(lrot) call gaussian_vect_rot(crot(n),srot(n))
+                    if(lmap) call gaussian_map_jacob(ypts(n), &
+                                                     xlon(n),xlat(n),ylon(n),ylat(n))
+                    if(larea) call gaussian_grid_area(ypts(n),area(n))
                 else
-                    rlon(n) = fill
-                    rlat(n) = fill
-                end if
-            end do
+                    rlon(n)=fill
+                    rlat(n)=fill
+                endif
+            enddo
             !$omp end parallel do
 
             !  TRANSLATE EARTH COORDINATES TO GRID COORDINATES
-        elseif (iopt .eq. -1) then
-            !$omp parallel do private(n, ja, yptsa, yptsb, wb) reduction(+:nret) schedule(static)
-            do n = 1, npts
-                xpts(n) = fill
-                ypts(n) = fill
-                if (abs(rlon(n)) .le. 360 .and. abs(rlat(n)) .le. 90) then
-                    xpts(n) = 1+hi*mod(hi*(rlon(n)-rlon1)+3600, 360.)/dlon
-                    ja = min(int((jg+1)/180.*(90-rlat(n))), jg)
-                    if (rlat(n) .gt. alat(ja)) ja = max(ja-2, 0)
-                    if (rlat(n) .lt. alat(ja+1)) ja = min(ja+2, jg)
-                    if (rlat(n) .gt. alat(ja)) ja = ja-1
-                    if (rlat(n) .lt. alat(ja+1)) ja = ja+1
-                    yptsa = 1+jh*(ja-j1)
-                    yptsb = 1+jh*(ja+1-j1)
-                    wb = (alat(ja)-rlat(n))/(alat(ja)-alat(ja+1))
-                    ypts(n) = yptsa+wb*(yptsb-yptsa)
-                    if (xpts(n) .ge. xmin .and. xpts(n) .le. xmax .and. &
-                        ypts(n) .ge. ymin .and. ypts(n) .le. ymax) then
-                        nret = nret+1
-                        if (lrot) call gaussian_vect_rot(crot(n), srot(n))
-                        if (lmap) call gaussian_map_jacob(ypts(n), &
-                                                          xlon(n), xlat(n), ylon(n), ylat(n))
-                        if (larea) call gaussian_grid_area(ypts(n), area(n))
+        elseif(iopt.eq.-1) then
+            !$omp parallel do private(n,ja,yptsa,yptsb,wb) reduction(+:nret) schedule(static)
+            do n=1,npts
+                xpts(n)=fill
+                ypts(n)=fill
+                if(abs(rlon(n)).le.360.and.abs(rlat(n)).le.90) then
+                    xpts(n)=1+hi*mod(hi*(rlon(n)-rlon1)+3600,360.)/dlon
+                    ja=min(int((jg+1)/180.*(90-rlat(n))),jg)
+                    if(rlat(n).gt.alat(ja)) ja=max(ja-2,0)
+                    if(rlat(n).lt.alat(ja+1)) ja=min(ja+2,jg)
+                    if(rlat(n).gt.alat(ja)) ja=ja-1
+                    if(rlat(n).lt.alat(ja+1)) ja=ja+1
+                    yptsa=1+jh*(ja-j1)
+                    yptsb=1+jh*(ja+1-j1)
+                    wb=(alat(ja)-rlat(n))/(alat(ja)-alat(ja+1))
+                    ypts(n)=yptsa+wb*(yptsb-yptsa)
+                    if(xpts(n).ge.xmin.and.xpts(n).le.xmax.and. &
+                       ypts(n).ge.ymin.and.ypts(n).le.ymax) then
+                        nret=nret+1
+                        if(lrot) call gaussian_vect_rot(crot(n),srot(n))
+                        if(lmap) call gaussian_map_jacob(ypts(n), &
+                                                         xlon(n),xlat(n),ylon(n),ylat(n))
+                        if(larea) call gaussian_grid_area(ypts(n),area(n))
                     else
-                        xpts(n) = fill
-                        ypts(n) = fill
-                    end if
-                end if
-            end do
+                        xpts(n)=fill
+                        ypts(n)=fill
+                    endif
+                endif
+            enddo
             !$omp end parallel do
-        end if
-        deallocate (alat, blat)
-        if (allocated(ylat_row)) deallocate (ylat_row)
+        endif
+        deallocate(alat,blat)
+        if(allocated(ylat_row)) deallocate(ylat_row)
 
-    end subroutine gdswzd_gaussian
+    endsubroutine gdswzd_gaussian
 
     !> Computes the vector rotation sines and cosines for a gaussian
     !> cylindrical grid.
@@ -373,15 +373,15 @@ contains
     !>
     !> @author George Gayno
     !> @date July 2021
-    subroutine gaussian_vect_rot(crot, srot)
+    subroutine gaussian_vect_rot(crot,srot)
         implicit none
 
-        real, intent(out) :: crot, srot
+        real,intent(out) :: crot,srot
 
-        crot = 1.0
-        srot = 0.0
+        crot=1.0
+        srot=0.0
 
-    end subroutine gaussian_vect_rot
+    endsubroutine gaussian_vect_rot
 
     !> Computes the map jacobians for a gaussian cylindrical grid.
     !>
@@ -393,18 +393,18 @@ contains
     !>
     !> @author George Gayno
     !> @date July 2021
-    subroutine gaussian_map_jacob(ypts, xlon, xlat, ylon, ylat)
+    subroutine gaussian_map_jacob(ypts,xlon,xlat,ylon,ylat)
         implicit none
 
-        real, intent(in) :: ypts
-        real, intent(out) :: xlon, xlat, ylon, ylat
+        real,intent(in) :: ypts
+        real,intent(out) :: xlon,xlat,ylon,ylat
 
-        xlon = 1/dlon
-        xlat = 0.
-        ylon = 0.
-        ylat = ylat_row(nint(ypts))
+        xlon=1/dlon
+        xlat=0.
+        ylon=0.
+        ylat=ylat_row(nint(ypts))
 
-    end subroutine gaussian_map_jacob
+    endsubroutine gaussian_map_jacob
 
     !> Computes the grid box area for a gaussian cylindrical grid.
     !>
@@ -413,23 +413,23 @@ contains
     !>
     !> @author Mark Iredell, George Gayno
     !> @date July 2021
-    subroutine gaussian_grid_area(ypts, area)
+    subroutine gaussian_grid_area(ypts,area)
         implicit none
 
-        real, intent(in) :: ypts
-        real, intent(out) :: area
+        real,intent(in) :: ypts
+        real,intent(out) :: area
 
         integer                        :: j
 
-        real                           :: wb, wlat, wlata, wlatb
+        real                           :: wb,wlat,wlata,wlatb
 
-        j = int(ypts)
-        wb = ypts-j
-        wlata = blat(j1+jh*(j-1))
-        wlatb = blat(j1+jh*j)
-        wlat = wlata+wb*(wlatb-wlata)
-        area = real(rerth**2*wlat*dlon/dpr)
+        j=int(ypts)
+        wb=ypts-j
+        wlata=blat(j1+jh*(j-1))
+        wlatb=blat(j1+jh*j)
+        wlat=wlata+wb*(wlatb-wlata)
+        area=real(rerth**2*wlat*dlon/dpr)
 
-    end subroutine gaussian_grid_area
-end module ip_gaussian_grid_mod
+    endsubroutine gaussian_grid_area
+endmodule ip_gaussian_grid_mod
 

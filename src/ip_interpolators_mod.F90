@@ -14,19 +14,19 @@ module ip_interpolators_mod
     implicit none
 
     !> @param Constant to choose BILINEAR interpolation method
-    integer, parameter, public :: bilinear_interp_id = 0
+    integer,parameter,public :: bilinear_interp_id=0
     !> @param Constant to choose BICUBIC interpolation method
-    integer, parameter, public :: bicubic_interp_id = 1
+    integer,parameter,public :: bicubic_interp_id=1
     !> @param Constant to choose NEIGBOR interpolation method
-    integer, parameter, public :: neighbor_interp_id = 2
+    integer,parameter,public :: neighbor_interp_id=2
     !> @param Constant to choose BUDGET interpolation method
-    integer, parameter, public :: budget_interp_id = 3
+    integer,parameter,public :: budget_interp_id=3
     !> @param Constant to choose SPECTRAL interpolation method
-    integer, parameter, public :: spectral_interp_id = 4
+    integer,parameter,public :: spectral_interp_id=4
     !> @param Constant to choose NEIGBOR_BUDGET interpolation method
-    integer, parameter, public :: neighbor_budget_interp_id = 6
+    integer,parameter,public :: neighbor_budget_interp_id=6
 
 contains
 
-end module ip_interpolators_mod
+endmodule ip_interpolators_mod
 

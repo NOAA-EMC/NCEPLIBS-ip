@@ -21,7 +21,7 @@ module ip_lambert_conf_grid_mod
     private
     public :: ip_lambert_conf_grid
 
-    type, extends(ip_grid) :: ip_lambert_conf_grid
+    type,extends(ip_grid) :: ip_lambert_conf_grid
         real :: rlat1 !< La1― latitude of first grid point. GRIB2, Section 3.30, octet 39-42.
         real :: rlon1 !< Lo1― longitude of first grid point. GRIB2, Section 3.30, octet 43-46.
         real :: rlati1 !< First latitude from the pole at which the secant cone cuts the sphere. GRIB2, Section 3, octets 66-69.
@@ -38,8 +38,8 @@ module ip_lambert_conf_grid_mod
         procedure :: init_grib2
         !> Calculates Earth coordinates (iopt = 1) or grid coorindates (iopt = -1)
         !> for Gaussian grids. @return N/A
-        procedure :: gdswzd => gdswzd_lambert_conf
-    end type ip_lambert_conf_grid
+        procedure :: gdswzd=>gdswzd_lambert_conf
+    endtype ip_lambert_conf_grid
 
     integer :: irot !< vector rotation flag. When "1", vectors are grid relative. When "0", vectors are earth relative. GRIB2, Section 3, octet 55.
     real :: an !< Cone factor
@@ -47,7 +47,7 @@ module ip_lambert_conf_grid_mod
     real :: dys !< y-direction grid length adjusted for scan model. GRIB2, Section 3, octets 60-63.
     real :: h !<  Hemisphere flag. 1-NH, minus 1-SH.
     real :: rerth !< Radius of the earth. GRIB2, Section 3, octets 15-30.
-    real :: tinyreal = tiny(1.0) !< Smallest positive real value (use for equality comparisons)
+    real :: tinyreal=tiny(1.0) !< Smallest positive real value (use for equality comparisons)
 
 contains
 
@@ -57,51 +57,51 @@ contains
   !! @param[in] g1_desc A grib1_descriptor
   !!
   !! @author Iredell @date 96-04-10
-    subroutine init_grib1(self, g1_desc)
-        class(ip_lambert_conf_grid), intent(inout) :: self
-        type(grib1_descriptor), intent(in) :: g1_desc
+    subroutine init_grib1(self,g1_desc)
+        class(ip_lambert_conf_grid),intent(inout) :: self
+        type(grib1_descriptor),intent(in) :: g1_desc
 
-        real :: dx, dy, hi, hj
-        integer :: iproj, iscan, jscan
+        real :: dx,dy,hi,hj
+        integer :: iproj,iscan,jscan
 
-        associate (kgds => g1_desc%gds)
-            self%rerth = 6.3712e6
-            self%eccen_squared = 0.0
+        associate(kgds=>g1_desc%gds)
+            self%rerth=6.3712e6
+            self%eccen_squared=0.0
 
-            self%im = kgds(2)
-            self%jm = kgds(3)
+            self%im=kgds(2)
+            self%jm=kgds(3)
 
-            self%rlat1 = kgds(4)*1.e-3
-            self%rlon1 = kgds(5)*1.e-3
+            self%rlat1=kgds(4)*1.e-3
+            self%rlon1=kgds(5)*1.e-3
 
-            self%irot = mod(kgds(6)/8, 2)
-            self%orient = kgds(7)*1.e-3
+            self%irot=mod(kgds(6)/8,2)
+            self%orient=kgds(7)*1.e-3
 
-            dx = kgds(8)
-            dy = kgds(9)
+            dx=kgds(8)
+            dy=kgds(9)
 
-            iproj = mod(kgds(10)/128, 2)
-            iscan = mod(kgds(11)/128, 2)
-            jscan = mod(kgds(11)/64, 2)
+            iproj=mod(kgds(10)/128,2)
+            iscan=mod(kgds(11)/128,2)
+            jscan=mod(kgds(11)/64,2)
 
-            self%rlati1 = kgds(12)*1.e-3
-            self%rlati2 = kgds(13)*1.e-3
-            self%h = (-1.)**iproj
+            self%rlati1=kgds(12)*1.e-3
+            self%rlati2=kgds(13)*1.e-3
+            self%h=(-1.)**iproj
 
-            hi = (-1.)**iscan
-            hj = (-1.)**(1-jscan)
-            self%dxs = dx*hi
-            self%dys = dy*hj
+            hi=(-1.)**iscan
+            hj=(-1.)**(1-jscan)
+            self%dxs=dx*hi
+            self%dys=dy*hj
 
-            self%iwrap = 0
-            self%jwrap1 = 0
-            self%jwrap2 = 0
-            self%nscan = mod(kgds(11)/32, 2)
-            self%nscan_field_pos = self%nscan
-            self%kscan = 0
-        end associate
+            self%iwrap=0
+            self%jwrap1=0
+            self%jwrap2=0
+            self%nscan=mod(kgds(11)/32,2)
+            self%nscan_field_pos=self%nscan
+            self%kscan=0
+        endassociate
 
-    end subroutine init_grib1
+    endsubroutine init_grib1
 
     !> Initializes a Lambert Conformal grid given a grib2_descriptor object.
   !!
@@ -109,49 +109,49 @@ contains
   !! @param[in] g2_desc A grib2_descriptor
   !!
   !! @author Iredell @date 96-04-10
-    subroutine init_grib2(self, g2_desc)
-        class(ip_lambert_conf_grid), intent(inout) :: self
-        type(grib2_descriptor), intent(in) :: g2_desc
+    subroutine init_grib2(self,g2_desc)
+        class(ip_lambert_conf_grid),intent(inout) :: self
+        type(grib2_descriptor),intent(in) :: g2_desc
 
-        real :: dx, dy, hi, hj
-        integer :: iproj, iscan, jscan
+        real :: dx,dy,hi,hj
+        integer :: iproj,iscan,jscan
 
-        associate (igdtmpl => g2_desc%gdt_tmpl, igdtlen => g2_desc%gdt_len)
-            call earth_radius(igdtmpl, igdtlen, self%rerth, self%eccen_squared)
+        associate(igdtmpl=>g2_desc%gdt_tmpl,igdtlen=>g2_desc%gdt_len)
+            call earth_radius(igdtmpl,igdtlen,self%rerth,self%eccen_squared)
 
-            self%im = igdtmpl(8)
-            self%jm = igdtmpl(9)
+            self%im=igdtmpl(8)
+            self%jm=igdtmpl(9)
 
-            self%rlat1 = float(igdtmpl(10))*1.0e-6
-            self%rlon1 = float(igdtmpl(11))*1.0e-6
+            self%rlat1=float(igdtmpl(10))*1.0e-6
+            self%rlon1=float(igdtmpl(11))*1.0e-6
 
-            self%irot = mod(igdtmpl(12)/8, 2)
-            self%orient = float(igdtmpl(14))*1.0e-6
+            self%irot=mod(igdtmpl(12)/8,2)
+            self%orient=float(igdtmpl(14))*1.0e-6
 
-            dx = float(igdtmpl(15))*1.0e-3
-            dy = float(igdtmpl(16))*1.0e-3
+            dx=float(igdtmpl(15))*1.0e-3
+            dy=float(igdtmpl(16))*1.0e-3
 
-            iproj = mod(igdtmpl(17)/128, 2)
-            iscan = mod(igdtmpl(18)/128, 2)
-            jscan = mod(igdtmpl(18)/64, 2)
+            iproj=mod(igdtmpl(17)/128,2)
+            iscan=mod(igdtmpl(18)/128,2)
+            jscan=mod(igdtmpl(18)/64,2)
 
-            self%rlati1 = float(igdtmpl(19))*1.0e-6
-            self%rlati2 = float(igdtmpl(20))*1.0e-6
+            self%rlati1=float(igdtmpl(19))*1.0e-6
+            self%rlati2=float(igdtmpl(20))*1.0e-6
 
-            self%h = (-1.)**iproj
-            hi = (-1.)**iscan
-            hj = (-1.)**(1-jscan)
-            self%dxs = dx*hi
-            self%dys = dy*hj
+            self%h=(-1.)**iproj
+            hi=(-1.)**iscan
+            hj=(-1.)**(1-jscan)
+            self%dxs=dx*hi
+            self%dys=dy*hj
 
-            self%nscan = mod(igdtmpl(18)/32, 2)
-            self%nscan_field_pos = self%nscan
-            self%iwrap = 0
-            self%jwrap1 = 0
-            self%jwrap2 = 0
-            self%kscan = 0
-        end associate
-    end subroutine init_grib2
+            self%nscan=mod(igdtmpl(18)/32,2)
+            self%nscan_field_pos=self%nscan
+            self%iwrap=0
+            self%jwrap1=0
+            self%jwrap2=0
+            self%kscan=0
+        endassociate
+    endsubroutine init_grib2
 
     !> GDS wizard for lambert conformal conical.
     !>
@@ -215,158 +215,158 @@ contains
     !> (proportional to the square of the map factor)
     !>
     !> @author Iredell @date 96-04-10
-    subroutine gdswzd_lambert_conf(self, iopt, npts, fill, &
-                                   xpts, ypts, rlon, rlat, nret, &
-                                   crot, srot, xlon, xlat, ylon, ylat, area)
+    subroutine gdswzd_lambert_conf(self,iopt,npts,fill, &
+                                   xpts,ypts,rlon,rlat,nret, &
+                                   crot,srot,xlon,xlat,ylon,ylat,area)
         implicit none
         !
-        class(ip_lambert_conf_grid), intent(in) :: self
-        integer, intent(in) :: iopt, npts
-        integer, intent(out) :: nret
+        class(ip_lambert_conf_grid),intent(in) :: self
+        integer,intent(in) :: iopt,npts
+        integer,intent(out) :: nret
         !
-        real, intent(in) :: fill
-        real, intent(inout) :: rlon(npts), rlat(npts)
-        real, intent(inout) :: xpts(npts), ypts(npts)
-        real, optional, intent(out) :: crot(npts), srot(npts)
-        real, optional, intent(out) :: xlon(npts), xlat(npts)
-        real, optional, intent(out) :: ylon(npts), ylat(npts), area(npts)
+        real,intent(in) :: fill
+        real,intent(inout) :: rlon(npts),rlat(npts)
+        real,intent(inout) :: xpts(npts),ypts(npts)
+        real,optional,intent(out) :: crot(npts),srot(npts)
+        real,optional,intent(out) :: xlon(npts),xlat(npts)
+        real,optional,intent(out) :: ylon(npts),ylat(npts),area(npts)
         !
-        integer                       :: im, jm, n
+        integer                       :: im,jm,n
         !
-        logical                       :: lrot, lmap, larea
+        logical                       :: lrot,lmap,larea
         !
-        real                          :: antr, di, dj
+        real                          :: antr,di,dj
         real                          :: dlon1
-        real                          :: de, de2, dr2
-        real                          :: orient, rlat1, rlon1
-        real                          :: rlati1, rlati2
-        real                          :: xmax, xmin, ymax, ymin, xp, yp
-        real                          :: dlon, dr
+        real                          :: de,de2,dr2
+        real                          :: orient,rlat1,rlon1
+        real                          :: rlati1,rlati2
+        real                          :: xmax,xmin,ymax,ymin,xp,yp
+        real                          :: dlon,dr
         ! - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-        if (present(crot)) crot = fill
-        if (present(srot)) srot = fill
-        if (present(xlon)) xlon = fill
-        if (present(xlat)) xlat = fill
-        if (present(ylon)) ylon = fill
-        if (present(ylat)) ylat = fill
-        if (present(area)) area = fill
+        if(present(crot)) crot=fill
+        if(present(srot)) srot=fill
+        if(present(xlon)) xlon=fill
+        if(present(xlat)) xlat=fill
+        if(present(ylon)) ylon=fill
+        if(present(ylat)) ylat=fill
+        if(present(area)) area=fill
 
-        im = self%im
-        jm = self%jm
+        im=self%im
+        jm=self%jm
 
-        rlat1 = self%rlat1
-        rlon1 = self%rlon1
+        rlat1=self%rlat1
+        rlon1=self%rlon1
 
-        irot = self%irot
-        orient = self%orient
+        irot=self%irot
+        orient=self%orient
 
-        rlati1 = self%rlati1
-        rlati2 = self%rlati2
+        rlati1=self%rlati1
+        rlati2=self%rlati2
 
-        h = self%h
-        dxs = self%dxs
-        dys = self%dys
+        h=self%h
+        dxs=self%dxs
+        dys=self%dys
 
-        rerth = self%rerth
+        rerth=self%rerth
 
-        if (abs(rlati1-rlati2) .lt. tinyreal) then
-            an = sin(rlati1/dpr)
+        if(abs(rlati1-rlati2).lt.tinyreal) then
+            an=sin(rlati1/dpr)
         else
-            an = log(cos(rlati1/dpr)/cos(rlati2/dpr))/ &
-                 log(tan((90-rlati1)/2/dpr)/tan((90-rlati2)/2/dpr))
-        end if
-        de = rerth*cos(rlati1/dpr)*tan((rlati1+90)/2/dpr)**an/an
-        if (abs(h*rlat1-90) .lt. tinyreal) then
-            xp = 1
-            yp = 1
+            an=log(cos(rlati1/dpr)/cos(rlati2/dpr))/ &
+                log(tan((90-rlati1)/2/dpr)/tan((90-rlati2)/2/dpr))
+        endif
+        de=rerth*cos(rlati1/dpr)*tan((rlati1+90)/2/dpr)**an/an
+        if(abs(h*rlat1-90).lt.tinyreal) then
+            xp=1
+            yp=1
         else
-            dr = de/tan((rlat1+90)/2/dpr)**an
-            dlon1 = mod(rlon1-orient+180+3600, 360.)-180
-            xp = 1-sin(an*dlon1/dpr)*dr/dxs
-            yp = 1+cos(an*dlon1/dpr)*dr/dys
-        end if
-        antr = 1/(2*an)
-        de2 = de**2
-        xmin = 0
-        xmax = im+1
-        ymin = 0
-        ymax = jm+1
-        nret = 0
-        if (present(crot) .and. present(srot)) then
-            lrot = .true.
+            dr=de/tan((rlat1+90)/2/dpr)**an
+            dlon1=mod(rlon1-orient+180+3600,360.)-180
+            xp=1-sin(an*dlon1/dpr)*dr/dxs
+            yp=1+cos(an*dlon1/dpr)*dr/dys
+        endif
+        antr=1/(2*an)
+        de2=de**2
+        xmin=0
+        xmax=im+1
+        ymin=0
+        ymax=jm+1
+        nret=0
+        if(present(crot).and.present(srot)) then
+            lrot=.true.
         else
-            lrot = .false.
-        end if
-        if (present(xlon) .and. present(xlat) .and. present(ylon) .and. present(ylat)) then
-            lmap = .true.
+            lrot=.false.
+        endif
+        if(present(xlon).and.present(xlat).and.present(ylon).and.present(ylat)) then
+            lmap=.true.
         else
-            lmap = .false.
-        end if
-        if (present(area)) then
-            larea = .true.
+            lmap=.false.
+        endif
+        if(present(area)) then
+            larea=.true.
         else
-            larea = .false.
-        end if
+            larea=.false.
+        endif
         ! - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
         ! TRANSLATE GRID COORDINATES TO EARTH COORDINATES
-        if (iopt .eq. 0 .or. iopt .eq. 1) then
-            !$omp parallel do private(n, di, dj, dr2, dr, dlon) reduction(+:nret) schedule(static)
-            do n = 1, npts
-                if (xpts(n) .ge. xmin .and. xpts(n) .le. xmax .and. &
-                    ypts(n) .ge. ymin .and. ypts(n) .le. ymax) then
-                    di = h*(xpts(n)-xp)*dxs
-                    dj = h*(ypts(n)-yp)*dys
-                    dr2 = di**2+dj**2
-                    dr = sqrt(dr2)
-                    if (dr2 .lt. de2*1.e-6) then
-                        rlon(n) = 0.
-                        rlat(n) = h*90.
+        if(iopt.eq.0.or.iopt.eq.1) then
+            !$omp parallel do private(n,di,dj,dr2,dr,dlon) reduction(+:nret) schedule(static)
+            do n=1,npts
+                if(xpts(n).ge.xmin.and.xpts(n).le.xmax.and. &
+                   ypts(n).ge.ymin.and.ypts(n).le.ymax) then
+                    di=h*(xpts(n)-xp)*dxs
+                    dj=h*(ypts(n)-yp)*dys
+                    dr2=di**2+dj**2
+                    dr=sqrt(dr2)
+                    if(dr2.lt.de2*1.e-6) then
+                        rlon(n)=0.
+                        rlat(n)=h*90.
                     else
-                        rlon(n) = mod(orient+1./an*dpr*atan2(di, -dj)+3600, 360.)
-                        rlat(n) = (2*dpr*atan((de2/dr2)**antr)-90)
-                    end if
-                    nret = nret+1
-                    dlon = mod(rlon(n)-orient+180+3600, 360.)-180
-                    if (lrot) call lambert_conf_vect_rot(dlon, crot(n), srot(n))
-                    if (lmap) call lambert_conf_map_jacob(rlat(n), fill, dlon, dr, &
-                                                          xlon(n), xlat(n), ylon(n), ylat(n))
-                    if (larea) call lambert_conf_grid_area(rlat(n), fill, dr, area(n))
+                        rlon(n)=mod(orient+1./an*dpr*atan2(di,-dj)+3600,360.)
+                        rlat(n)=(2*dpr*atan((de2/dr2)**antr)-90)
+                    endif
+                    nret=nret+1
+                    dlon=mod(rlon(n)-orient+180+3600,360.)-180
+                    if(lrot) call lambert_conf_vect_rot(dlon,crot(n),srot(n))
+                    if(lmap) call lambert_conf_map_jacob(rlat(n),fill,dlon,dr, &
+                                                         xlon(n),xlat(n),ylon(n),ylat(n))
+                    if(larea) call lambert_conf_grid_area(rlat(n),fill,dr,area(n))
                 else
-                    rlon(n) = fill
-                    rlat(n) = fill
-                end if
-            end do
+                    rlon(n)=fill
+                    rlat(n)=fill
+                endif
+            enddo
             ! - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
             !  TRANSLATE EARTH COORDINATES TO GRID COORDINATES
-        elseif (iopt .eq. -1) then
-            !$omp parallel do private(n, dr, dlon) reduction(+:nret) schedule(static)
-            do n = 1, npts
-                if (abs(rlon(n)) .lt. (360.+tinyreal) .and. abs(rlat(n)) .lt. (90.+tinyreal) .and. &
-                    abs(h*rlat(n)+90) .gt. tinyreal) then
-                    dr = h*de*tan((90-rlat(n))/2/dpr)**an
-                    dlon = mod(rlon(n)-orient+180+3600, 360.)-180
-                    xpts(n) = xp+h*sin(an*dlon/dpr)*dr/dxs
-                    ypts(n) = yp-h*cos(an*dlon/dpr)*dr/dys
-                    if (xpts(n) .ge. xmin .and. xpts(n) .le. xmax .and. &
-                        ypts(n) .ge. ymin .and. ypts(n) .le. ymax) then
-                        nret = nret+1
-                        if (lrot) call lambert_conf_vect_rot(dlon, crot(n), srot(n))
-                        if (lmap) call lambert_conf_map_jacob(rlat(n), fill, dlon, dr, &
-                                                              xlon(n), xlat(n), ylon(n), ylat(n))
-                        if (larea) call lambert_conf_grid_area(rlat(n), fill, dr, area(n))
+        elseif(iopt.eq.-1) then
+            !$omp parallel do private(n,dr,dlon) reduction(+:nret) schedule(static)
+            do n=1,npts
+                if(abs(rlon(n)).lt.(360.+tinyreal).and.abs(rlat(n)).lt.(90.+tinyreal).and. &
+                   abs(h*rlat(n)+90).gt.tinyreal) then
+                    dr=h*de*tan((90-rlat(n))/2/dpr)**an
+                    dlon=mod(rlon(n)-orient+180+3600,360.)-180
+                    xpts(n)=xp+h*sin(an*dlon/dpr)*dr/dxs
+                    ypts(n)=yp-h*cos(an*dlon/dpr)*dr/dys
+                    if(xpts(n).ge.xmin.and.xpts(n).le.xmax.and. &
+                       ypts(n).ge.ymin.and.ypts(n).le.ymax) then
+                        nret=nret+1
+                        if(lrot) call lambert_conf_vect_rot(dlon,crot(n),srot(n))
+                        if(lmap) call lambert_conf_map_jacob(rlat(n),fill,dlon,dr, &
+                                                             xlon(n),xlat(n),ylon(n),ylat(n))
+                        if(larea) call lambert_conf_grid_area(rlat(n),fill,dr,area(n))
                     else
-                        xpts(n) = fill
-                        ypts(n) = fill
-                    end if
+                        xpts(n)=fill
+                        ypts(n)=fill
+                    endif
                 else
-                    xpts(n) = fill
-                    ypts(n) = fill
-                end if
-            end do
+                    xpts(n)=fill
+                    ypts(n)=fill
+                endif
+            enddo
             !$omp end parallel do
-        end if
+        endif
         ! - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-    end subroutine gdswzd_lambert_conf
+    endsubroutine gdswzd_lambert_conf
 
     !> Vector rotation fields for lambert conformal conical.
     !>
@@ -386,20 +386,20 @@ contains
     !> (ugrid=crot*uearth-srot*vearth; vgrid=srot*uearth+crot*vearth)
     !>
     !> @author Gayno @date 2015-01-21
-    subroutine lambert_conf_vect_rot(dlon, crot, srot)
+    subroutine lambert_conf_vect_rot(dlon,crot,srot)
         implicit none
-        real, intent(in) :: dlon
-        real, intent(out) :: crot, srot
+        real,intent(in) :: dlon
+        real,intent(out) :: crot,srot
 
-        if (irot .eq. 1) then
-            crot = cos(an*dlon/dpr)
-            srot = sin(an*dlon/dpr)
+        if(irot.eq.1) then
+            crot=cos(an*dlon/dpr)
+            srot=sin(an*dlon/dpr)
         else
-            crot = 1.
-            srot = 0.
-        end if
+            crot=1.
+            srot=0.
+        endif
 
-    end subroutine lambert_conf_vect_rot
+    endsubroutine lambert_conf_vect_rot
 
     !> Map jacobians for lambert conformal conical.
     !>
@@ -423,28 +423,28 @@ contains
     !> @param[out] ylat dy/dlat in 1/degrees (real)
     !>
     !> @author Gayno @date 2015-01-21
-    subroutine lambert_conf_map_jacob(rlat, fill, dlon, dr, xlon, xlat, ylon, ylat)
+    subroutine lambert_conf_map_jacob(rlat,fill,dlon,dr,xlon,xlat,ylon,ylat)
         implicit none
 
-        real, intent(in) :: rlat, fill, dlon, dr
-        real, intent(out) :: xlon, xlat, ylon, ylat
+        real,intent(in) :: rlat,fill,dlon,dr
+        real,intent(out) :: xlon,xlat,ylon,ylat
 
         real                          :: clat
 
-        clat = cos(rlat/dpr)
-        if (clat .le. 0 .or. dr .le. 0) then
-            xlon = fill
-            xlat = fill
-            ylon = fill
-            ylat = fill
+        clat=cos(rlat/dpr)
+        if(clat.le.0.or.dr.le.0) then
+            xlon=fill
+            xlat=fill
+            ylon=fill
+            ylat=fill
         else
-            xlon = h*cos(an*dlon/dpr)*an/dpr*dr/dxs
-            xlat = -h*sin(an*dlon/dpr)*an/dpr*dr/dxs/clat
-            ylon = h*sin(an*dlon/dpr)*an/dpr*dr/dys
-            ylat = h*cos(an*dlon/dpr)*an/dpr*dr/dys/clat
-        end if
+            xlon=h*cos(an*dlon/dpr)*an/dpr*dr/dxs
+            xlat=-h*sin(an*dlon/dpr)*an/dpr*dr/dxs/clat
+            ylon=h*sin(an*dlon/dpr)*an/dpr*dr/dys
+            ylat=h*cos(an*dlon/dpr)*an/dpr*dr/dys/clat
+        endif
 
-    end subroutine lambert_conf_map_jacob
+    endsubroutine lambert_conf_map_jacob
 
     !> Grid box area for lambert conformal conical.
     !>
@@ -464,24 +464,24 @@ contains
     !> @param[out] area area weights in m**2 (real)
     !>
     !> @author Gayno @date 2015-01-21
-    subroutine lambert_conf_grid_area(rlat, fill, dr, area)
+    subroutine lambert_conf_grid_area(rlat,fill,dr,area)
         implicit none
 
-        real, intent(in) :: rlat
-        real, intent(in) :: fill
-        real, intent(in) :: dr
-        real, intent(out) :: area
+        real,intent(in) :: rlat
+        real,intent(in) :: fill
+        real,intent(in) :: dr
+        real,intent(out) :: area
 
         real                          :: clat
 
-        clat = cos(rlat/dpr)
-        if (clat .le. 0 .or. dr .le. 0) then
-            area = fill
+        clat=cos(rlat/dpr)
+        if(clat.le.0.or.dr.le.0) then
+            area=fill
         else
-            area = rerth**2*clat**2*abs(dxs)*abs(dys)/(an*dr)**2
-        end if
+            area=rerth**2*clat**2*abs(dxs)*abs(dys)/(an*dr)**2
+        endif
 
-    end subroutine lambert_conf_grid_area
+    endsubroutine lambert_conf_grid_area
 
-end module ip_lambert_conf_grid_mod
+endmodule ip_lambert_conf_grid_mod
 

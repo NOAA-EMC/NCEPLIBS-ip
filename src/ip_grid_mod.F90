@@ -11,22 +11,22 @@ module ip_grid_mod
     use ip_grid_descriptor_mod
     implicit none
 
-    integer, public, parameter :: equid_cylind_grid_id_grib1 = 0 !< Integer grid number for equidistant cylindrical grid in grib1
-    integer, public, parameter :: mercator_grid_id_grib1 = 1 !< Integer grid number for Mercator grid in grib1
-    integer, public, parameter :: lambert_conf_grid_id_grib1 = 3 !< Integer grid number for Lambert Conformal grid in grib1
-    integer, public, parameter :: gaussian_grid_id_grib1 = 4 !< Integer grid number for Gaussian grid in grib1
-    integer, public, parameter :: polar_stereo_grid_id_grib1 = 5 !< Integer grid number for polar stereo grid in grib1
-    integer, public, parameter :: rot_equid_cylind_e_grid_id_grib1 = 203 !< Integer grid number for rotated equidistant cylindrical E-stagger grid
-    integer, public, parameter :: rot_equid_cylind_b_grid_id_grib1 = 205 !< Integer grid number for rotated equidistant cylindrical B-stagger grid
+    integer,public,parameter :: equid_cylind_grid_id_grib1=0 !< Integer grid number for equidistant cylindrical grid in grib1
+    integer,public,parameter :: mercator_grid_id_grib1=1 !< Integer grid number for Mercator grid in grib1
+    integer,public,parameter :: lambert_conf_grid_id_grib1=3 !< Integer grid number for Lambert Conformal grid in grib1
+    integer,public,parameter :: gaussian_grid_id_grib1=4 !< Integer grid number for Gaussian grid in grib1
+    integer,public,parameter :: polar_stereo_grid_id_grib1=5 !< Integer grid number for polar stereo grid in grib1
+    integer,public,parameter :: rot_equid_cylind_e_grid_id_grib1=203 !< Integer grid number for rotated equidistant cylindrical E-stagger grid
+    integer,public,parameter :: rot_equid_cylind_b_grid_id_grib1=205 !< Integer grid number for rotated equidistant cylindrical B-stagger grid
 
-    integer, public, parameter :: equid_cylind_grid_id_grib2 = 0 !< Integer grid number for equidistant cylindrical grid in grib2
-    integer, public, parameter :: rot_equid_cylind_grid_id_grib2 = 1 !< Integer grid number for rotated equidistant cylindrical grid in grib2
-    integer, public, parameter :: mercator_grid_id_grib2 = 10 !< Integer grid number for Mercator grid in grib2
-    integer, public, parameter :: polar_stereo_grid_id_grib2 = 20 !< Integer grid number for polar stereo grid in grib2
-    integer, public, parameter :: lambert_conf_grid_id_grib2 = 30 !< Integer grid number for Lambert conformal grid in grib2
-    integer, public, parameter :: gaussian_grid_id_grib2 = 40 !< Integer grid number for Gaussian grid in grib2
-    integer, public, parameter :: rot_equid_cylind_e_grid_id_grib2 = 32768 !< Integer grid number for rotated equidistant cylindrical E-stagger grid (grib2)
-    integer, public, parameter :: rot_equid_cylind_b_grid_id_grib2 = 32769 !< Integer grid number for rotated equidistant cylindrical B-stagger grid (grib2)
+    integer,public,parameter :: equid_cylind_grid_id_grib2=0 !< Integer grid number for equidistant cylindrical grid in grib2
+    integer,public,parameter :: rot_equid_cylind_grid_id_grib2=1 !< Integer grid number for rotated equidistant cylindrical grid in grib2
+    integer,public,parameter :: mercator_grid_id_grib2=10 !< Integer grid number for Mercator grid in grib2
+    integer,public,parameter :: polar_stereo_grid_id_grib2=20 !< Integer grid number for polar stereo grid in grib2
+    integer,public,parameter :: lambert_conf_grid_id_grib2=30 !< Integer grid number for Lambert conformal grid in grib2
+    integer,public,parameter :: gaussian_grid_id_grib2=40 !< Integer grid number for Gaussian grid in grib2
+    integer,public,parameter :: rot_equid_cylind_e_grid_id_grib2=32768 !< Integer grid number for rotated equidistant cylindrical E-stagger grid (grib2)
+    integer,public,parameter :: rot_equid_cylind_b_grid_id_grib2=32769 !< Integer grid number for rotated equidistant cylindrical B-stagger grid (grib2)
 
     private
     public :: ip_grid
@@ -51,8 +51,8 @@ module ip_grid_mod
   !! NCEPLIBS-ip can be found here: https://doi.org/10.3133/pp1395.
   !!
   !! @author Kyle Gerheiser @date July 2021
-    type, abstract :: ip_grid
-        class(ip_grid_descriptor), allocatable :: descriptor !< Descriptor.
+    type,abstract :: ip_grid
+        class(ip_grid_descriptor),allocatable :: descriptor !< Descriptor.
 
         integer :: im !< Number of x points
         integer :: jm !< Number of y points
@@ -74,17 +74,17 @@ module ip_grid_mod
         real :: eccen_squared !< Eccentricity of the Earth squared (e^2).
     contains
         !> Initializer for grib1 input descriptor. @return N/A
-        procedure(init_grib1_interface), deferred :: init_grib1
+        procedure(init_grib1_interface),deferred :: init_grib1
         !> Initializer for grib2 input descriptor. @return N/A
-        procedure(init_grib2_interface), deferred :: init_grib2
+        procedure(init_grib2_interface),deferred :: init_grib2
         !> Coordinate transformations for the grid. @return N/A
-        procedure(gdswzd_interface), deferred :: gdswzd
+        procedure(gdswzd_interface),deferred :: gdswzd
         !> Field position for a given grid point. @return Integer
         !> position in grib field to locate grid point.
         procedure :: field_pos
         !> Init subprogram. @return N/A
-        generic :: init => init_grib1, init_grib2
-    end type ip_grid
+        generic :: init=>init_grib1,init_grib2
+    endtype ip_grid
 
     abstract interface
 
@@ -118,20 +118,20 @@ module ip_grid_mod
         !> (proportional to the square of the map factor)
         !>
         !> @author Kyle Gerheiser @date July 2021
-        subroutine gdswzd_interface(self, iopt, npts, fill, xpts, ypts, rlon, rlat, nret, crot, srot, &
-                                    xlon, xlat, ylon, ylat, area)
+        subroutine gdswzd_interface(self,iopt,npts,fill,xpts,ypts,rlon,rlat,nret,crot,srot, &
+                                    xlon,xlat,ylon,ylat,area)
             import
-            class(ip_grid), intent(in) :: self
-            integer, intent(in) :: iopt, npts
-            integer, intent(out) :: nret
+            class(ip_grid),intent(in) :: self
+            integer,intent(in) :: iopt,npts
+            integer,intent(out) :: nret
             !
-            real, intent(in) :: fill
-            real, intent(inout) :: rlon(npts), rlat(npts)
-            real, intent(inout) :: xpts(npts), ypts(npts)
-            real, optional, intent(out) :: crot(npts), srot(npts)
-            real, optional, intent(out) :: xlon(npts), xlat(npts)
-            real, optional, intent(out) :: ylon(npts), ylat(npts), area(npts)
-        end subroutine gdswzd_interface
+            real,intent(in) :: fill
+            real,intent(inout) :: rlon(npts),rlat(npts)
+            real,intent(inout) :: xpts(npts),ypts(npts)
+            real,optional,intent(out) :: crot(npts),srot(npts)
+            real,optional,intent(out) :: xlon(npts),xlat(npts)
+            real,optional,intent(out) :: ylon(npts),ylat(npts),area(npts)
+        endsubroutine gdswzd_interface
 
         !> @fn ip_grid_mod::init_grib1_interface::init_grib1_interface(self, g1_desc)
         !> Init GRIB1 interface.
@@ -141,11 +141,11 @@ module ip_grid_mod
         !>
         !> @author Kyle Gerheiser
         !> @date July 2021
-        subroutine init_grib1_interface(self, g1_desc)
+        subroutine init_grib1_interface(self,g1_desc)
             import
-            class(ip_grid), intent(inout) :: self
-            type(grib1_descriptor), intent(in) :: g1_desc
-        end subroutine init_grib1_interface
+            class(ip_grid),intent(inout) :: self
+            type(grib1_descriptor),intent(in) :: g1_desc
+        endsubroutine init_grib1_interface
 
         !> @fn ip_grid_mod::init_grib2_interface::init_grib2_interface(self, g2_desc)
         !> Init GRIB2 interface.
@@ -155,19 +155,19 @@ module ip_grid_mod
         !>
         !> @author Kyle Gerheiser
         !> @date July 2021
-        subroutine init_grib2_interface(self, g2_desc)
+        subroutine init_grib2_interface(self,g2_desc)
             import
-            class(ip_grid), intent(inout) :: self
-            type(grib2_descriptor), intent(in) :: g2_desc
-        end subroutine init_grib2_interface
+            class(ip_grid),intent(inout) :: self
+            type(grib2_descriptor),intent(in) :: g2_desc
+        endsubroutine init_grib2_interface
 
-    end interface
+    endinterface
 
     !> Check equality.
     !> @author Kyle Gerheiser @date July 2021
     interface operator(==)
         module procedure is_same_grid
-    end interface operator(==)
+    endinterface operator(==)
 
 contains
 
@@ -180,10 +180,10 @@ contains
     !>
     !> @author Kyle Gerheiser
     !> @date July 2021
-    logical function is_same_grid(grid1, grid2)
-        class(ip_grid), intent(in) :: grid1, grid2
-        is_same_grid = grid1%descriptor .eq. grid2%descriptor
-    end function is_same_grid
+    logical function is_same_grid(grid1,grid2)
+        class(ip_grid),intent(in) :: grid1,grid2
+        is_same_grid=grid1%descriptor.eq.grid2%descriptor
+    endfunction is_same_grid
 
     !> Returns the field position for a given grid point.
     !>
@@ -195,57 +195,57 @@ contains
     !>
     !> @author Mark Iredell, George Gayno, Kyle Gerheiser
     !> @date April 1996
-    function field_pos(self, i, j)
-        class(ip_grid), intent(in) :: self
-        integer, intent(in) :: i, j
+    function field_pos(self,i,j)
+        class(ip_grid),intent(in) :: self
+        integer,intent(in) :: i,j
         integer :: field_pos
 
-        integer :: ii, jj, im, jm
-        integer :: iif, jjf, is1, iwrap
-        integer :: jwrap1, jwrap2, kscan, nscan
+        integer :: ii,jj,im,jm
+        integer :: iif,jjf,is1,iwrap
+        integer :: jwrap1,jwrap2,kscan,nscan
 
         ! extract from navigation parameter array
-        im = self%im
-        jm = self%jm
-        iwrap = self%iwrap
-        jwrap1 = self%jwrap1
-        jwrap2 = self%jwrap2
-        nscan = self%nscan_field_pos
-        kscan = self%kscan
+        im=self%im
+        jm=self%jm
+        iwrap=self%iwrap
+        jwrap1=self%jwrap1
+        jwrap2=self%jwrap2
+        nscan=self%nscan_field_pos
+        kscan=self%kscan
 
         ! compute wraparounds in x and y if necessary and possible
-        ii = i
-        jj = j
-        if (iwrap .gt. 0) then
-            ii = mod(i-1+iwrap, iwrap)+1
-            if (j .lt. 1 .and. jwrap1 .gt. 0) then
-                jj = jwrap1-j
-                ii = mod(ii-1+iwrap/2, iwrap)+1
-            elseif (j .gt. jm .and. jwrap2 .gt. 0) then
-                jj = jwrap2-j
-                ii = mod(ii-1+iwrap/2, iwrap)+1
-            end if
-        end if
+        ii=i
+        jj=j
+        if(iwrap.gt.0) then
+            ii=mod(i-1+iwrap,iwrap)+1
+            if(j.lt.1.and.jwrap1.gt.0) then
+                jj=jwrap1-j
+                ii=mod(ii-1+iwrap/2,iwrap)+1
+            elseif(j.gt.jm.and.jwrap2.gt.0) then
+                jj=jwrap2-j
+                ii=mod(ii-1+iwrap/2,iwrap)+1
+            endif
+        endif
 
         ! compute position for the appropriate scanning mode
-        field_pos = 0
-        if (nscan .eq. 0) then
-            if (ii .ge. 1 .and. ii .le. im .and. jj .ge. 1 .and. jj .le. jm) field_pos = ii+(jj-1)*im
-        elseif (nscan .eq. 1) then
-            if (ii .ge. 1 .and. ii .le. im .and. jj .ge. 1 .and. jj .le. jm) field_pos = jj+(ii-1)*jm
-        elseif (nscan .eq. 2) then
-            is1 = (jm+1-kscan)/2
-            iif = jj+(ii-is1)
-            jjf = jj-(ii-is1)+kscan
-            if (iif .ge. 1 .and. iif .le. 2*im-1 .and. jjf .ge. 1 .and. jjf .le. jm) &
-                field_pos = (iif+(jjf-1)*(2*im-1)+1-kscan)/2
-        elseif (nscan .eq. 3) then
-            is1 = (jm+1-kscan)/2
-            iif = jj+(ii-is1)
-            jjf = jj-(ii-is1)+kscan
-            if (iif .ge. 1 .and. iif .le. 2*im-1 .and. jjf .ge. 1 .and. jjf .le. jm) field_pos = (iif+1)/2+(jjf-1)*im
-        end if
-    end function field_pos
+        field_pos=0
+        if(nscan.eq.0) then
+            if(ii.ge.1.and.ii.le.im.and.jj.ge.1.and.jj.le.jm) field_pos=ii+(jj-1)*im
+        elseif(nscan.eq.1) then
+            if(ii.ge.1.and.ii.le.im.and.jj.ge.1.and.jj.le.jm) field_pos=jj+(ii-1)*jm
+        elseif(nscan.eq.2) then
+            is1=(jm+1-kscan)/2
+            iif=jj+(ii-is1)
+            jjf=jj-(ii-is1)+kscan
+            if(iif.ge.1.and.iif.le.2*im-1.and.jjf.ge.1.and.jjf.le.jm) &
+                field_pos=(iif+(jjf-1)*(2*im-1)+1-kscan)/2
+        elseif(nscan.eq.3) then
+            is1=(jm+1-kscan)/2
+            iif=jj+(ii-is1)
+            jjf=jj-(ii-is1)+kscan
+            if(iif.ge.1.and.iif.le.2*im-1.and.jjf.ge.1.and.jjf.le.jm) field_pos=(iif+1)/2+(jjf-1)*im
+        endif
+    endfunction field_pos
 
-end module ip_grid_mod
+endmodule ip_grid_mod
 

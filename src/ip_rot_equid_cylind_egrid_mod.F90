@@ -22,19 +22,19 @@
 !> @author George Gayno, Mark Iredell, Kyle Gerheiser
 !> @date July 2021
 module ip_rot_equid_cylind_egrid_mod
-    use iso_fortran_env, only: real64
+    use iso_fortran_env,only:real64
     use ip_grid_descriptor_mod
     use ip_grid_mod
-    use ip_constants_mod, only: dpr, pi
+    use ip_constants_mod,only:dpr,pi
     use earth_radius_mod
     implicit none
 
     private
     public :: ip_rot_equid_cylind_egrid
 
-    integer, parameter :: kd = real64 !< Kind of reals.
+    integer,parameter :: kd=real64 !< Kind of reals.
 
-    type, extends(ip_grid) :: ip_rot_equid_cylind_egrid
+    type,extends(ip_grid) :: ip_rot_equid_cylind_egrid
         real(kd) :: rlon0 !< Longitude of southern pole of projection.
         real(kd) :: rlon1 !< Longitude of first grid point.
         real(kd) :: rlat1 !< Latitude of first grid point.
@@ -56,8 +56,8 @@ module ip_rot_equid_cylind_egrid_mod
         procedure :: init_grib2
         !> Calculates Earth coordinates (iopt = 1) or grid coorindates
         !> (iopt = -1). @return N/A
-        procedure :: gdswzd => gdswzd_rot_equid_cylind_egrid
-    end type ip_rot_equid_cylind_egrid
+        procedure :: gdswzd=>gdswzd_rot_equid_cylind_egrid
+    endtype ip_rot_equid_cylind_egrid
 
     integer :: irot !< Local copy of irot.
 
@@ -83,74 +83,74 @@ contains
     !>
     !> @author Kyle Gerheiser
     !> @date July 2021
-    subroutine init_grib1(self, g1_desc)
-        class(ip_rot_equid_cylind_egrid), intent(inout) :: self
-        type(grib1_descriptor), intent(in) :: g1_desc
+    subroutine init_grib1(self,g1_desc)
+        class(ip_rot_equid_cylind_egrid),intent(inout) :: self
+        type(grib1_descriptor),intent(in) :: g1_desc
 
         integer :: iscan
         real(kd) :: rlat0
 
-        real(kd) :: rlat1, rlon1, rlon0, slat1, clat1, slat0, clat0, clon1
-        real(kd) :: slatr, clatr, clonr, rlatr, rlonr, dlats, dlons, hs, hi
-        integer :: im, jm
+        real(kd) :: rlat1,rlon1,rlon0,slat1,clat1,slat0,clat0,clon1
+        real(kd) :: slatr,clatr,clonr,rlatr,rlonr,dlats,dlons,hs,hi
+        integer :: im,jm
 
-        integer :: is1, kscan, irot
+        integer :: is1,kscan,irot
 
-        associate (kgds => g1_desc%gds)
-            self%rerth = 6.3712e6_kd
-            self%eccen_squared = 0.0
+        associate(kgds=>g1_desc%gds)
+            self%rerth=6.3712e6_kd
+            self%eccen_squared=0.0
 
-            im = kgds(2)
-            jm = kgds(3)
+            im=kgds(2)
+            jm=kgds(3)
 
-            self%nscan_field_pos = 3
-            self%nscan = mod(kgds(11)/32, 2)
+            self%nscan_field_pos=3
+            self%nscan=mod(kgds(11)/32,2)
 
-            rlat1 = kgds(4)*1.e-3_kd
-            rlon1 = kgds(5)*1.e-3_kd
-            rlat0 = kgds(7)*1.e-3_kd
-            rlon0 = kgds(8)*1.e-3_kd
+            rlat1=kgds(4)*1.e-3_kd
+            rlon1=kgds(5)*1.e-3_kd
+            rlat0=kgds(7)*1.e-3_kd
+            rlon0=kgds(8)*1.e-3_kd
 
-            irot = mod(kgds(6)/8, 2)
-            kscan = mod(kgds(11)/256, 2)
-            iscan = mod(kgds(11)/128, 2)
-            hi = (-1.)**iscan
-            slat1 = sin(rlat1/dpr)
-            clat1 = cos(rlat1/dpr)
-            slat0 = sin(rlat0/dpr)
-            clat0 = cos(rlat0/dpr)
-            hs = sign(1._kd, mod(rlon1-rlon0+180+3600, 360._kd)-180)
-            clon1 = cos((rlon1-rlon0)/dpr)
-            slatr = clat0*slat1-slat0*clat1*clon1
-            clatr = sqrt(1-slatr**2)
-            clonr = (clat0*clat1*clon1+slat0*slat1)/clatr
-            rlatr = dpr*asin(slatr)
-            rlonr = hs*dpr*acos(clonr)
-            dlats = rlatr/(-(jm-1)/2)
-            dlons = rlonr/(-((im*2-1)-1)/2)
+            irot=mod(kgds(6)/8,2)
+            kscan=mod(kgds(11)/256,2)
+            iscan=mod(kgds(11)/128,2)
+            hi=(-1.)**iscan
+            slat1=sin(rlat1/dpr)
+            clat1=cos(rlat1/dpr)
+            slat0=sin(rlat0/dpr)
+            clat0=cos(rlat0/dpr)
+            hs=sign(1._kd,mod(rlon1-rlon0+180+3600,360._kd)-180)
+            clon1=cos((rlon1-rlon0)/dpr)
+            slatr=clat0*slat1-slat0*clat1*clon1
+            clatr=sqrt(1-slatr**2)
+            clonr=(clat0*clat1*clon1+slat0*slat1)/clatr
+            rlatr=dpr*asin(slatr)
+            rlonr=hs*dpr*acos(clonr)
+            dlats=rlatr/(-(jm-1)/2)
+            dlons=rlonr/(-((im*2-1)-1)/2)
 
-            if (kscan .eq. 0) then
-                is1 = (jm+1)/2
+            if(kscan.eq.0) then
+                is1=(jm+1)/2
             else
-                is1 = jm/2
-            end if
+                is1=jm/2
+            endif
 
-            self%im = im
-            self%jm = jm
-            self%rlon0 = rlon0
-            self%rlon1 = rlon1
-            self%rlat1 = rlat1
-            self%clat0 = clat0
-            self%slat0 = slat0
-            self%dlats = dlats
-            self%dlons = dlons
-            self%hi = hi
-            self%irot = irot
-            self%kscan = kscan
+            self%im=im
+            self%jm=jm
+            self%rlon0=rlon0
+            self%rlon1=rlon1
+            self%rlat1=rlat1
+            self%clat0=clat0
+            self%slat0=slat0
+            self%dlats=dlats
+            self%dlons=dlons
+            self%hi=hi
+            self%irot=irot
+            self%kscan=kscan
 
-        end associate
+        endassociate
 
-    end subroutine init_grib1
+    endsubroutine init_grib1
 
     !> Initializes a rotated equidistant cylindrical grid given a grib2_descriptor object.
     !> @param[inout] self The grid to initialize
@@ -158,16 +158,16 @@ contains
     !>
     !> @author Kyle Gerheiser
     !> @date July 2021
-    subroutine init_grib2(self, g2_desc)
-        class(ip_rot_equid_cylind_egrid), intent(inout) :: self
-        type(grib2_descriptor), intent(in) :: g2_desc
+    subroutine init_grib2(self,g2_desc)
+        class(ip_rot_equid_cylind_egrid),intent(inout) :: self
+        type(grib2_descriptor),intent(in) :: g2_desc
 
-        integer :: iscale, iscan
+        integer :: iscale,iscan
         real(kd) :: rlat0
         integer :: i_offset_odd!, i_offset_even
 
-        associate (igdtmpl => g2_desc%gdt_tmpl, igdtlen => g2_desc%gdt_len)
-            call earth_radius(igdtmpl, igdtlen, self%rerth, self%eccen_squared)
+        associate(igdtmpl=>g2_desc%gdt_tmpl,igdtlen=>g2_desc%gdt_len)
+            call earth_radius(igdtmpl,igdtlen,self%rerth,self%eccen_squared)
 
             ! - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
             ! ROUTINE ONLY WORKS FOR "E"-STAGGER GRIDS.
@@ -181,38 +181,38 @@ contains
             ! ENDIF
             ! - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
-            self%im = igdtmpl(8)
-            self%jm = igdtmpl(9)
+            self%im=igdtmpl(8)
+            self%jm=igdtmpl(9)
 
-            self%nscan = mod(igdtmpl(16)/32, 2)
-            self%nscan_field_pos = 3
+            self%nscan=mod(igdtmpl(16)/32,2)
+            self%nscan_field_pos=3
 
-            iscale = igdtmpl(10)*igdtmpl(11)
-            if (iscale .eq. 0) iscale = 10**6
+            iscale=igdtmpl(10)*igdtmpl(11)
+            if(iscale.eq.0) iscale=10**6
 
-            self%rlon0 = float(igdtmpl(21))/float(iscale)
-            self%dlats = float(igdtmpl(18))/float(iscale)
+            self%rlon0=float(igdtmpl(21))/float(iscale)
+            self%dlats=float(igdtmpl(18))/float(iscale)
             ! THE GRIB2 CONVENTION FOR "I" RESOLUTION IS TWICE WHAT THIS ROUTINE ASSUMES.
-            self%dlons = float(igdtmpl(17))/float(iscale)*0.5_kd
+            self%dlons=float(igdtmpl(17))/float(iscale)*0.5_kd
 
-            self%irot = mod(igdtmpl(14)/8, 2)
+            self%irot=mod(igdtmpl(14)/8,2)
 
-            i_offset_odd = mod(igdtmpl(19)/8, 2)
-            self%kscan = i_offset_odd
-            iscan = mod(igdtmpl(19)/128, 2)
+            i_offset_odd=mod(igdtmpl(19)/8,2)
+            self%kscan=i_offset_odd
+            iscan=mod(igdtmpl(19)/128,2)
 
-            self%hi = (-1.)**iscan
+            self%hi=(-1.)**iscan
 
-            rlat0 = float(igdtmpl(20))/float(iscale)
-            rlat0 = rlat0+90.0_kd
+            rlat0=float(igdtmpl(20))/float(iscale)
+            rlat0=rlat0+90.0_kd
 
-            self%slat0 = sin(rlat0/dpr)
-            self%clat0 = cos(rlat0/dpr)
+            self%slat0=sin(rlat0/dpr)
+            self%clat0=cos(rlat0/dpr)
 
-            self%rlat1 = float(igdtmpl(12))/float(iscale)
-            self%rlon1 = float(igdtmpl(13))/float(iscale)
-        end associate
-    end subroutine init_grib2
+            self%rlat1=float(igdtmpl(12))/float(iscale)
+            self%rlon1=float(igdtmpl(13))/float(iscale)
+        endassociate
+    endsubroutine init_grib2
 
     !> Calculates Earth coordinates (iopt = 1) or grid coorindates (iopt = -1)
     !> for rotated equidistant cylindrical grids.
@@ -261,197 +261,197 @@ contains
     !>
     !> @author Mark Iredell, George Gayno, Kyle Gerheiser
     !> @date Jan 2015
-    subroutine gdswzd_rot_equid_cylind_egrid(self, iopt, npts, &
-                                             fill, xpts, ypts, rlon, rlat, nret, &
-                                             crot, srot, xlon, xlat, ylon, ylat, area)
+    subroutine gdswzd_rot_equid_cylind_egrid(self,iopt,npts, &
+                                             fill,xpts,ypts,rlon,rlat,nret, &
+                                             crot,srot,xlon,xlat,ylon,ylat,area)
         implicit none
         !
-        class(ip_rot_equid_cylind_egrid), intent(in) :: self
+        class(ip_rot_equid_cylind_egrid),intent(in) :: self
 
-        integer, intent(in) :: iopt, npts
-        integer, intent(out) :: nret
+        integer,intent(in) :: iopt,npts
+        integer,intent(out) :: nret
         !
-        real, intent(in) :: fill
-        real, intent(inout) :: rlon(npts), rlat(npts)
-        real, intent(inout) :: xpts(npts), ypts(npts)
-        real, optional, intent(out) :: crot(npts), srot(npts)
-        real, optional, intent(out) :: xlon(npts), xlat(npts)
-        real, optional, intent(out) :: ylon(npts), ylat(npts), area(npts)
+        real,intent(in) :: fill
+        real,intent(inout) :: rlon(npts),rlat(npts)
+        real,intent(inout) :: xpts(npts),ypts(npts)
+        real,optional,intent(out) :: crot(npts),srot(npts)
+        real,optional,intent(out) :: xlon(npts),xlat(npts)
+        real,optional,intent(out) :: ylon(npts),ylat(npts),area(npts)
         !
-        integer                        :: im, jm, is1, n
+        integer                        :: im,jm,is1,n
         integer                        :: kscan
         !    INTEGER                        :: I_OFFSET_ODD, I_OFFSET_EVEN
         !
-        logical                        :: lrot, lmap, larea
+        logical                        :: lrot,lmap,larea
         !
-        real(KIND=kd)                  :: rlat1, rlon1
+        real(KIND=kd)                  :: rlat1,rlon1
         real(KIND=kd)                  :: clonr
-        real(KIND=kd)                  :: rlatr, rlonr, sbd, wbd, hs, hi
-        real                           :: xmax, xmin, ymax, ymin, xptf, yptf
+        real(KIND=kd)                  :: rlatr,rlonr,sbd,wbd,hs,hi
+        real                           :: xmax,xmin,ymax,ymin,xptf,yptf
         ! - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-        if (present(crot)) crot = fill
-        if (present(srot)) srot = fill
-        if (present(xlon)) xlon = fill
-        if (present(xlat)) xlat = fill
-        if (present(ylon)) ylon = fill
-        if (present(ylat)) ylat = fill
-        if (present(area)) area = fill
+        if(present(crot)) crot=fill
+        if(present(srot)) srot=fill
+        if(present(xlon)) xlon=fill
+        if(present(xlat)) xlat=fill
+        if(present(ylon)) ylon=fill
+        if(present(ylat)) ylat=fill
+        if(present(area)) area=fill
 
-        rlon0 = self%rlon0
-        irot = self%irot
-        im = self%im*2-1
-        jm = self%jm
-        dlats = self%dlats
-        dlons = self%dlons
-        kscan = self%kscan
-        hi = self%hi
-        slat0 = self%slat0
-        clat0 = self%clat0
-        rlat1 = self%rlat1
-        rlon1 = self%rlon1
+        rlon0=self%rlon0
+        irot=self%irot
+        im=self%im*2-1
+        jm=self%jm
+        dlats=self%dlats
+        dlons=self%dlons
+        kscan=self%kscan
+        hi=self%hi
+        slat0=self%slat0
+        clat0=self%clat0
+        rlat1=self%rlat1
+        rlon1=self%rlon1
 
-        rerth = self%rerth
+        rerth=self%rerth
 
         ! IS THE EARTH RADIUS DEFINED?
-        if (rerth .lt. 0.) then
-            call rot_equid_cylind_egrid_error(iopt, fill, rlat, rlon, xpts, ypts, npts)
+        if(rerth.lt.0.) then
+            call rot_equid_cylind_egrid_error(iopt,fill,rlat,rlon,xpts,ypts,npts)
             return
-        end if
+        endif
 
-        sbd = rlat1
-        wbd = rlon1
+        sbd=rlat1
+        wbd=rlon1
 
-        if (wbd .gt. 180.0) wbd = wbd-360.0
-        if (kscan .eq. 0) then
-            is1 = (jm+1)/2
+        if(wbd.gt.180.0) wbd=wbd-360.0
+        if(kscan.eq.0) then
+            is1=(jm+1)/2
         else
-            is1 = jm/2
-        end if
+            is1=jm/2
+        endif
 
-        xmin = 0
-        xmax = im+2
-        ymin = 0
-        ymax = jm+1
-        nret = 0
+        xmin=0
+        xmax=im+2
+        ymin=0
+        ymax=jm+1
+        nret=0
 
-        if (present(crot) .and. present(srot)) then
-            lrot = .true.
+        if(present(crot).and.present(srot)) then
+            lrot=.true.
         else
-            lrot = .false.
-        end if
-        if (present(xlon) .and. present(xlat) .and. present(ylon) .and. present(ylat)) then
-            lmap = .true.
+            lrot=.false.
+        endif
+        if(present(xlon).and.present(xlat).and.present(ylon).and.present(ylat)) then
+            lmap=.true.
         else
-            lmap = .false.
-        end if
-        if (present(area)) then
-            larea = .true.
+            lmap=.false.
+        endif
+        if(present(area)) then
+            larea=.true.
         else
-            larea = .false.
-        end if
+            larea=.false.
+        endif
 
         ! - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
         !  TRANSLATE GRID COORDINATES TO EARTH COORDINATES
-        if (iopt .eq. 0 .or. iopt .eq. 1) then
-            do n = 1, npts
-                xptf = ypts(n)+(xpts(n)-is1)
-                yptf = ypts(n)-(xpts(n)-is1)+kscan
-                if (xptf .ge. xmin .and. xptf .le. xmax .and. &
-                    yptf .ge. ymin .and. yptf .le. ymax) then
-                    hs = hi*sign(1., xptf-(im+1)/2)
-                    select type (desc => self%descriptor)
-                    type is (grib1_descriptor)
-                        rlonr = (xptf-(im+1)/2)*dlons
-                        rlatr = (yptf-(jm+1)/2)*dlats
-                    type is (grib2_descriptor)
-                        rlonr = (xptf-1.0_kd)*dlons+wbd
-                        rlatr = (yptf-1.0_kd)*dlats+sbd
-                    end select
-                    clonr = cos(rlonr/dpr)
-                    slatr = sin(rlatr/dpr)
-                    clatr = cos(rlatr/dpr)
-                    slat = clat0*slatr+slat0*clatr*clonr
-                    if (slat .le. -1) then
-                        clat = 0.
-                        clon = cos(rlon0/dpr)
-                        rlon(n) = 0
-                        rlat(n) = -90
-                    elseif (slat .ge. 1) then
-                        clat = 0.
-                        clon = cos(rlon0/dpr)
-                        rlon(n) = 0
-                        rlat(n) = 90
+        if(iopt.eq.0.or.iopt.eq.1) then
+            do n=1,npts
+                xptf=ypts(n)+(xpts(n)-is1)
+                yptf=ypts(n)-(xpts(n)-is1)+kscan
+                if(xptf.ge.xmin.and.xptf.le.xmax.and. &
+                   yptf.ge.ymin.and.yptf.le.ymax) then
+                    hs=hi*sign(1.,xptf-(im+1)/2)
+                    select type(desc=>self%descriptor)
+                    type is(grib1_descriptor)
+                        rlonr=(xptf-(im+1)/2)*dlons
+                        rlatr=(yptf-(jm+1)/2)*dlats
+                    type is(grib2_descriptor)
+                        rlonr=(xptf-1.0_kd)*dlons+wbd
+                        rlatr=(yptf-1.0_kd)*dlats+sbd
+                    endselect
+                    clonr=cos(rlonr/dpr)
+                    slatr=sin(rlatr/dpr)
+                    clatr=cos(rlatr/dpr)
+                    slat=clat0*slatr+slat0*clatr*clonr
+                    if(slat.le.-1) then
+                        clat=0.
+                        clon=cos(rlon0/dpr)
+                        rlon(n)=0
+                        rlat(n)=-90
+                    elseif(slat.ge.1) then
+                        clat=0.
+                        clon=cos(rlon0/dpr)
+                        rlon(n)=0
+                        rlat(n)=90
                     else
-                        clat = sqrt(1-slat**2)
-                        clon = (clat0*clatr*clonr-slat0*slatr)/clat
-                        clon = min(max(clon, -1._kd), 1._kd)
-                        rlon(n) = real(mod(rlon0+hs*dpr*acos(clon)+3600, 360._kd))
-                        rlat(n) = real(dpr*asin(slat))
-                    end if
-                    nret = nret+1
-                    if (lrot) call rot_equid_cylind_egrid_vect_rot(rlon(n), crot(n), srot(n))
-                    if (lmap) call rot_equid_cylind_egrid_map_jacob(fill, rlon(n), &
-                                                                    xlon(n), xlat(n), ylon(n), ylat(n))
-                    if (larea) call rot_equid_cylind_egrid_grid_area(fill, area(n))
+                        clat=sqrt(1-slat**2)
+                        clon=(clat0*clatr*clonr-slat0*slatr)/clat
+                        clon=min(max(clon,-1._kd),1._kd)
+                        rlon(n)=real(mod(rlon0+hs*dpr*acos(clon)+3600,360._kd))
+                        rlat(n)=real(dpr*asin(slat))
+                    endif
+                    nret=nret+1
+                    if(lrot) call rot_equid_cylind_egrid_vect_rot(rlon(n),crot(n),srot(n))
+                    if(lmap) call rot_equid_cylind_egrid_map_jacob(fill,rlon(n), &
+                                                                   xlon(n),xlat(n),ylon(n),ylat(n))
+                    if(larea) call rot_equid_cylind_egrid_grid_area(fill,area(n))
                 else
-                    rlon(n) = fill
-                    rlat(n) = fill
-                end if
-            end do
+                    rlon(n)=fill
+                    rlat(n)=fill
+                endif
+            enddo
             ! - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
             !  TRANSLATE EARTH COORDINATES TO GRID COORDINATES
-        elseif (iopt .eq. -1) then
-            do n = 1, npts
-                if (abs(rlon(n)) .le. 360 .and. abs(rlat(n)) .le. 90) then
-                    hs = sign(1._kd, mod(rlon(n)-rlon0+180+3600, 360._kd)-180)
-                    clon = cos((rlon(n)-rlon0)/dpr)
-                    slat = sin(rlat(n)/dpr)
-                    clat = cos(rlat(n)/dpr)
-                    slatr = clat0*slat-slat0*clat*clon
-                    if (slatr .le. -1) then
-                        clatr = 0.
-                        rlonr = 0
-                        rlatr = -90
-                    elseif (slatr .ge. 1) then
-                        clatr = 0.
-                        rlonr = 0
-                        rlatr = 90
+        elseif(iopt.eq.-1) then
+            do n=1,npts
+                if(abs(rlon(n)).le.360.and.abs(rlat(n)).le.90) then
+                    hs=sign(1._kd,mod(rlon(n)-rlon0+180+3600,360._kd)-180)
+                    clon=cos((rlon(n)-rlon0)/dpr)
+                    slat=sin(rlat(n)/dpr)
+                    clat=cos(rlat(n)/dpr)
+                    slatr=clat0*slat-slat0*clat*clon
+                    if(slatr.le.-1) then
+                        clatr=0.
+                        rlonr=0
+                        rlatr=-90
+                    elseif(slatr.ge.1) then
+                        clatr=0.
+                        rlonr=0
+                        rlatr=90
                     else
-                        clatr = sqrt(1-slatr**2)
-                        clonr = (clat0*clat*clon+slat0*slat)/clatr
-                        clonr = min(max(clonr, -1._kd), 1._kd)
-                        rlonr = hs*dpr*acos(clonr)
-                        rlatr = dpr*asin(slatr)
-                    end if
-                    select type (desc => self%descriptor)
-                    type is (grib1_descriptor)
-                        xptf = real(((rlonr-wbd)/dlons)+1.0_kd)
-                        yptf = real(((rlatr-sbd)/dlats)+1.0_kd)
-                    type is (grib2_descriptor)
-                        xptf = real((im+1)/2+rlonr/dlons)
-                        yptf = real((jm+1)/2+rlatr/dlats)
-                    end select
+                        clatr=sqrt(1-slatr**2)
+                        clonr=(clat0*clat*clon+slat0*slat)/clatr
+                        clonr=min(max(clonr,-1._kd),1._kd)
+                        rlonr=hs*dpr*acos(clonr)
+                        rlatr=dpr*asin(slatr)
+                    endif
+                    select type(desc=>self%descriptor)
+                    type is(grib1_descriptor)
+                        xptf=real(((rlonr-wbd)/dlons)+1.0_kd)
+                        yptf=real(((rlatr-sbd)/dlats)+1.0_kd)
+                    type is(grib2_descriptor)
+                        xptf=real((im+1)/2+rlonr/dlons)
+                        yptf=real((jm+1)/2+rlatr/dlats)
+                    endselect
 
-                    if (xptf .ge. xmin .and. xptf .le. xmax .and. &
-                        yptf .ge. ymin .and. yptf .le. ymax) then
-                        xpts(n) = is1+(xptf-(yptf-kscan))/2
-                        ypts(n) = (xptf+(yptf-kscan))/2
-                        nret = nret+1
-                        if (lrot) call rot_equid_cylind_egrid_vect_rot(rlon(n), crot(n), srot(n))
-                        if (lmap) call rot_equid_cylind_egrid_map_jacob(fill, rlon(n), &
-                                                                        xlon(n), xlat(n), ylon(n), ylat(n))
-                        if (larea) call rot_equid_cylind_egrid_grid_area(fill, area(n))
+                    if(xptf.ge.xmin.and.xptf.le.xmax.and. &
+                       yptf.ge.ymin.and.yptf.le.ymax) then
+                        xpts(n)=is1+(xptf-(yptf-kscan))/2
+                        ypts(n)=(xptf+(yptf-kscan))/2
+                        nret=nret+1
+                        if(lrot) call rot_equid_cylind_egrid_vect_rot(rlon(n),crot(n),srot(n))
+                        if(lmap) call rot_equid_cylind_egrid_map_jacob(fill,rlon(n), &
+                                                                       xlon(n),xlat(n),ylon(n),ylat(n))
+                        if(larea) call rot_equid_cylind_egrid_grid_area(fill,area(n))
                     else
-                        xpts(n) = fill
-                        ypts(n) = fill
-                    end if
+                        xpts(n)=fill
+                        ypts(n)=fill
+                    endif
                 else
-                    xpts(n) = fill
-                    ypts(n) = fill
-                end if
-            end do
-        end if
-    end subroutine gdswzd_rot_equid_cylind_egrid
+                    xpts(n)=fill
+                    ypts(n)=fill
+                endif
+            enddo
+        endif
+    endsubroutine gdswzd_rot_equid_cylind_egrid
 
     !> Error handler.
     !>
@@ -476,24 +476,24 @@ contains
     !> @param[in] npts maximum number of coordinates
     !>
     !> @author GAYNO @date 2015-07-13
-    subroutine rot_equid_cylind_egrid_error(iopt, fill, rlat, rlon, xpts, ypts, npts)
+    subroutine rot_equid_cylind_egrid_error(iopt,fill,rlat,rlon,xpts,ypts,npts)
         implicit none
         !
-        integer, intent(in) :: iopt, npts
+        integer,intent(in) :: iopt,npts
         !
-        real, intent(in) :: fill
-        real, intent(out) :: rlat(npts), rlon(npts)
-        real, intent(out) :: xpts(npts), ypts(npts)
+        real,intent(in) :: fill
+        real,intent(out) :: rlat(npts),rlon(npts)
+        real,intent(out) :: xpts(npts),ypts(npts)
 
-        if (iopt .ge. 0) then
-            rlon = fill
-            rlat = fill
-        end if
-        if (iopt .le. 0) then
-            xpts = fill
-            ypts = fill
-        end if
-    end subroutine rot_equid_cylind_egrid_error
+        if(iopt.ge.0) then
+            rlon=fill
+            rlat=fill
+        endif
+        if(iopt.le.0) then
+            xpts=fill
+            ypts=fill
+        endif
+    endsubroutine rot_equid_cylind_egrid_error
 
     !> Computes the vector rotation sines and
     !> cosines for a rotated equidistant cylindrical grid.
@@ -508,29 +508,29 @@ contains
     !>
     !> @author George Gayno
     !> @date Jan 2015
-    subroutine rot_equid_cylind_egrid_vect_rot(rlon, crot, srot)
+    subroutine rot_equid_cylind_egrid_vect_rot(rlon,crot,srot)
         implicit none
 
-        real, intent(in) :: rlon
-        real, intent(out) :: crot, srot
+        real,intent(in) :: rlon
+        real,intent(out) :: crot,srot
 
         real(KIND=kd)                   :: slon
 
-        if (irot .eq. 1) then
-            if (clatr .le. 0) then
-                crot = real(-sign(1._kd, slatr*slat0))
-                srot = 0.
+        if(irot.eq.1) then
+            if(clatr.le.0) then
+                crot=real(-sign(1._kd,slatr*slat0))
+                srot=0.
             else
-                slon = sin((rlon-rlon0)/dpr)
-                crot = real((clat0*clat+slat0*slat*clon)/clatr)
-                srot = real(slat0*slon/clatr)
-            end if
+                slon=sin((rlon-rlon0)/dpr)
+                crot=real((clat0*clat+slat0*slat*clon)/clatr)
+                srot=real(slat0*slon/clatr)
+            endif
         else
-            crot = 1.
-            srot = 0.
-        end if
+            crot=1.
+            srot=0.
+        endif
 
-    end subroutine rot_equid_cylind_egrid_vect_rot
+    endsubroutine rot_equid_cylind_egrid_vect_rot
 
     !> Computes the map jacobians for a rotated equidistant cylindrical grid.
     !>
@@ -543,36 +543,36 @@ contains
     !>
     !> @author George Gayno
     !> @date Jan 2015
-    subroutine rot_equid_cylind_egrid_map_jacob(fill, rlon, &
-                                                xlon, xlat, ylon, ylat)
+    subroutine rot_equid_cylind_egrid_map_jacob(fill,rlon, &
+                                                xlon,xlat,ylon,ylat)
         implicit none
 
-        real, intent(in) :: fill, rlon
-        real, intent(out) :: xlon, xlat, ylon, ylat
+        real,intent(in) :: fill,rlon
+        real,intent(out) :: xlon,xlat,ylon,ylat
 
-        real(KIND=kd)                   :: slon, term1, term2
-        real(KIND=kd)                   :: xlatf, xlonf, ylatf, ylonf
+        real(KIND=kd)                   :: slon,term1,term2
+        real(KIND=kd)                   :: xlatf,xlonf,ylatf,ylonf
 
-        if (clatr .le. 0._kd) then
-            xlon = fill
-            xlat = fill
-            ylon = fill
-            ylat = fill
+        if(clatr.le.0._kd) then
+            xlon=fill
+            xlat=fill
+            ylon=fill
+            ylat=fill
         else
-            slon = sin((rlon-rlon0)/dpr)
-            term1 = (clat0*clat+slat0*slat*clon)/clatr
-            term2 = slat0*slon/clatr
-            xlonf = term1*clat/(dlons*clatr)
-            xlatf = -term2/(dlons*clatr)
-            ylonf = term2*clat/dlats
-            ylatf = term1/dlats
-            xlon = real(xlonf-ylonf)
-            xlat = real(xlatf-ylatf)
-            ylon = real(xlonf+ylonf)
-            ylat = real(xlatf+ylatf)
-        end if
+            slon=sin((rlon-rlon0)/dpr)
+            term1=(clat0*clat+slat0*slat*clon)/clatr
+            term2=slat0*slon/clatr
+            xlonf=term1*clat/(dlons*clatr)
+            xlatf=-term2/(dlons*clatr)
+            ylonf=term2*clat/dlats
+            ylatf=term1/dlats
+            xlon=real(xlonf-ylonf)
+            xlat=real(xlatf-ylatf)
+            ylon=real(xlonf+ylonf)
+            ylat=real(xlatf+ylatf)
+        endif
 
-    end subroutine rot_equid_cylind_egrid_map_jacob
+    endsubroutine rot_equid_cylind_egrid_map_jacob
 
     !> Computes the grid box area for a rotated equidistant cylindrical grid.
     !>
@@ -581,19 +581,19 @@ contains
     !>
     !> @author George Gayno
     !> @date Jan 2015
-    subroutine rot_equid_cylind_egrid_grid_area(fill, area)
+    subroutine rot_equid_cylind_egrid_grid_area(fill,area)
         implicit none
 
-        real, intent(in) :: fill
-        real, intent(out) :: area
+        real,intent(in) :: fill
+        real,intent(out) :: area
 
-        if (clatr .le. 0._kd) then
-            area = fill
+        if(clatr.le.0._kd) then
+            area=fill
         else
-            area = real(rerth**2*clatr*dlats*dlons)*2/dpr**2
-        end if
+            area=real(rerth**2*clatr*dlats*dlons)*2/dpr**2
+        endif
 
-    end subroutine rot_equid_cylind_egrid_grid_area
+    endsubroutine rot_equid_cylind_egrid_grid_area
 
-end module ip_rot_equid_cylind_egrid_mod
+endmodule ip_rot_equid_cylind_egrid_mod
 

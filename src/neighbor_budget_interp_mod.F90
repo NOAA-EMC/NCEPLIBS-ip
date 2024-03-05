@@ -17,10 +17,10 @@ module neighbor_budget_interp_mod
     interface interpolate_neighbor_budget
         module procedure interpolate_neighbor_budget_scalar
         module procedure interpolate_neighbor_budget_vector
-    end interface interpolate_neighbor_budget
+    endinterface interpolate_neighbor_budget
 
     ! Smallest positive real value (use for equality comparisons)
-    real :: tinyreal = tiny(1.0)
+    real :: tinyreal=tiny(1.0)
 
 contains
 
@@ -104,153 +104,153 @@ contains
     !> - 32   invalid budget method parameters
     !>
     !> @author Mark Iredell @date 96-04-10
-    subroutine interpolate_neighbor_budget_scalar(ipopt, grid_in, grid_out, &
-                                                  mi, mo, km, ibi, li, gi, &
-                                                  no, rlat, rlon, ibo, lo, go, iret)
-        class(ip_grid), intent(in) :: grid_in, grid_out
+    subroutine interpolate_neighbor_budget_scalar(ipopt,grid_in,grid_out, &
+                                                  mi,mo,km,ibi,li,gi, &
+                                                  no,rlat,rlon,ibo,lo,go,iret)
+        class(ip_grid),intent(in) :: grid_in,grid_out
 
-        integer, intent(in) :: ibi(km), ipopt(20), km, mi, mo
-        integer, intent(out) :: ibo(km), iret, no
+        integer,intent(in) :: ibi(km),ipopt(20),km,mi,mo
+        integer,intent(out) :: ibo(km),iret,no
         !
-        logical*1, intent(in) :: li(mi, km)
-        logical*1, intent(out) :: lo(mo, km)
+        logical*1,intent(in) :: li(mi,km)
+        logical*1,intent(out) :: lo(mo,km)
         !
-        real, intent(in) :: gi(mi, km)
-        real, intent(out) :: go(mo, km), rlat(mo), rlon(mo)
+        real,intent(in) :: gi(mi,km)
+        real,intent(out) :: go(mo,km),rlat(mo),rlon(mo)
         !
-        real, parameter         :: fill = -9999.
+        real,parameter         :: fill=-9999.
         !
-        integer                       :: ib, i1
-        integer                       :: jb, j1, k, lb, lsw, mp, n
-        integer                       :: n11(mo), nb, nb1, nb2, nb3, nb4, nv
+        integer                       :: ib,i1
+        integer                       :: jb,j1,k,lb,lsw,mp,n
+        integer                       :: n11(mo),nb,nb1,nb2,nb3,nb4,nv
         !
-        real                          :: pmp, rlob(mo), rlab(mo)
-        real                          :: wb, wo(mo, km), xi, yi
-        real                          :: xptb(mo), yptb(mo), xpts(mo), ypts(mo)
+        real                          :: pmp,rlob(mo),rlab(mo)
+        real                          :: wb,wo(mo,km),xi,yi
+        real                          :: xptb(mo),yptb(mo),xpts(mo),ypts(mo)
 
         logical :: to_station_points
 
-        select type (grid_out)
-        type is (ip_station_points_grid)
-            to_station_points = .true.
+        select type(grid_out)
+        type is(ip_station_points_grid)
+            to_station_points=.true.
         class default
-            to_station_points = .false.
-        end select
+            to_station_points=.false.
+        endselect
 
         ! - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
         !  COMPUTE NUMBER OF OUTPUT POINTS AND THEIR LATITUDES AND LONGITUDES.
-        iret = 0
-        if (to_station_points) then
-            call gdswzd(grid_out, 0, mo, fill, xpts, ypts, rlon, rlat, no)
-            if (no .eq. 0) iret = 3
-            call gdswzd(grid_in, -1, no, fill, xpts, ypts, rlon, rlat, nv)
-            if (nv .eq. 0) iret = 2
+        iret=0
+        if(to_station_points) then
+            call gdswzd(grid_out,0,mo,fill,xpts,ypts,rlon,rlat,no)
+            if(no.eq.0) iret=3
+            call gdswzd(grid_in,-1,no,fill,xpts,ypts,rlon,rlat,nv)
+            if(nv.eq.0) iret=2
         else
-            call gdswzd(grid_out, 0, mo, fill, xpts, ypts, rlon, rlat, no)
-            if (no .eq. 0) iret = 3
-        end if
+            call gdswzd(grid_out,0,mo,fill,xpts,ypts,rlon,rlat,no)
+            if(no.eq.0) iret=3
+        endif
         ! - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
         !  SET PARAMETERS
-        nb1 = ipopt(1)
-        if (nb1 .eq. -1) nb1 = 2
-        if (iret .eq. 0 .and. nb1 .lt. 0) iret = 32
-        lsw = 1
-        if (ipopt(1) .eq. -1 .or. ipopt(2) .eq. -1) lsw = 0
-        if (iret .eq. 0 .and. lsw .eq. 1 .and. nb1 .gt. 15) iret = 32
-        mp = ipopt(3+ipopt(1))
-        if (mp .eq. -1 .or. mp .eq. 0) mp = 50
-        if (mp .lt. 0 .or. mp .gt. 100) iret = 32
-        pmp = mp*0.01
-        if (iret .eq. 0) then
-            nb2 = 2*nb1+1
-            nb3 = nb2*nb2
-            nb4 = nb3
-            if (lsw .eq. 1) then
-                nb4 = ipopt(2)
-                do ib = 1, nb1
-                    nb4 = nb4+8*ib*ipopt(2+ib)
-                end do
-            end if
+        nb1=ipopt(1)
+        if(nb1.eq.-1) nb1=2
+        if(iret.eq.0.and.nb1.lt.0) iret=32
+        lsw=1
+        if(ipopt(1).eq.-1.or.ipopt(2).eq.-1) lsw=0
+        if(iret.eq.0.and.lsw.eq.1.and.nb1.gt.15) iret=32
+        mp=ipopt(3+ipopt(1))
+        if(mp.eq.-1.or.mp.eq.0) mp=50
+        if(mp.lt.0.or.mp.gt.100) iret=32
+        pmp=mp*0.01
+        if(iret.eq.0) then
+            nb2=2*nb1+1
+            nb3=nb2*nb2
+            nb4=nb3
+            if(lsw.eq.1) then
+                nb4=ipopt(2)
+                do ib=1,nb1
+                    nb4=nb4+8*ib*ipopt(2+ib)
+                enddo
+            endif
         else
-            nb2 = 0
-            nb3 = 0
-            nb4 = 0
-        end if
-        do k = 1, km
-            do n = 1, no
-                go(n, k) = 0.
-                wo(n, k) = 0.
-            end do
-        end do
+            nb2=0
+            nb3=0
+            nb4=0
+        endif
+        do k=1,km
+            do n=1,no
+                go(n,k)=0.
+                wo(n,k)=0.
+            enddo
+        enddo
         ! - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
         !  LOOP OVER SAMPLE POINTS IN OUTPUT GRID BOX
 
-        do nb = 1, nb3
+        do nb=1,nb3
             !  LOCATE INPUT POINTS AND COMPUTE THEIR WEIGHTS
-            jb = (nb-1)/nb2-nb1
-            ib = nb-(jb+nb1)*nb2-nb1-1
-            lb = max(abs(ib), abs(jb))
-            wb = 1
-            if (lsw .eq. 1) wb = ipopt(2+lb)
-            if (abs(wb) .gt. tinyreal) then
-                do n = 1, no
-                    xptb(n) = xpts(n)+ib/real(nb2)
-                    yptb(n) = ypts(n)+jb/real(nb2)
-                end do
-                if (to_station_points) then
-                    call gdswzd(grid_in, 1, no, fill, xptb, yptb, rlob, rlab, nv)
-                    call gdswzd(grid_in, -1, no, fill, xptb, yptb, rlob, rlab, nv)
+            jb=(nb-1)/nb2-nb1
+            ib=nb-(jb+nb1)*nb2-nb1-1
+            lb=max(abs(ib),abs(jb))
+            wb=1
+            if(lsw.eq.1) wb=ipopt(2+lb)
+            if(abs(wb).gt.tinyreal) then
+                do n=1,no
+                    xptb(n)=xpts(n)+ib/real(nb2)
+                    yptb(n)=ypts(n)+jb/real(nb2)
+                enddo
+                if(to_station_points) then
+                    call gdswzd(grid_in,1,no,fill,xptb,yptb,rlob,rlab,nv)
+                    call gdswzd(grid_in,-1,no,fill,xptb,yptb,rlob,rlab,nv)
                 else
-                    call gdswzd(grid_out, 1, no, fill, xptb, yptb, rlob, rlab, nv)
-                    call gdswzd(grid_in, -1, no, fill, xptb, yptb, rlob, rlab, nv)
-                end if
-                if (iret .eq. 0 .and. nv .eq. 0 .and. lb .eq. 0) iret = 2
-                do n = 1, no
-                    xi = xptb(n)
-                    yi = yptb(n)
-                    if (abs(xi-fill) .gt. tinyreal .and. abs(yi-fill) .gt. tinyreal) then
-                        i1 = nint(xi)
-                        j1 = nint(yi)
-                        n11(n) = grid_in%field_pos(i1, j1)
+                    call gdswzd(grid_out,1,no,fill,xptb,yptb,rlob,rlab,nv)
+                    call gdswzd(grid_in,-1,no,fill,xptb,yptb,rlob,rlab,nv)
+                endif
+                if(iret.eq.0.and.nv.eq.0.and.lb.eq.0) iret=2
+                do n=1,no
+                    xi=xptb(n)
+                    yi=yptb(n)
+                    if(abs(xi-fill).gt.tinyreal.and.abs(yi-fill).gt.tinyreal) then
+                        i1=nint(xi)
+                        j1=nint(yi)
+                        n11(n)=grid_in%field_pos(i1,j1)
                     else
-                        n11(n) = 0
-                    end if
-                end do
+                        n11(n)=0
+                    endif
+                enddo
                 ! - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
                 !  INTERPOLATE WITH OR WITHOUT BITMAPS
-                do k = 1, km
-                    do n = 1, no
-                        if (n11(n) .gt. 0) then
-                            if (ibi(k) .eq. 0 .or. li(n11(n), k)) then
-                                go(n, k) = go(n, k)+wb*gi(n11(n), k)
-                                wo(n, k) = wo(n, k)+wb
-                            end if
-                        end if
-                    end do
-                end do
-            end if
-        end do
+                do k=1,km
+                    do n=1,no
+                        if(n11(n).gt.0) then
+                            if(ibi(k).eq.0.or.li(n11(n),k)) then
+                                go(n,k)=go(n,k)+wb*gi(n11(n),k)
+                                wo(n,k)=wo(n,k)+wb
+                            endif
+                        endif
+                    enddo
+                enddo
+            endif
+        enddo
         ! - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
         !  COMPUTE OUTPUT BITMAPS AND FIELDS
-        do k = 1, km
-            ibo(k) = ibi(k)
-            do n = 1, no
-                lo(n, k) = wo(n, k) .ge. pmp*nb4
-                if (lo(n, k)) then
-                    go(n, k) = go(n, k)/wo(n, k)
+        do k=1,km
+            ibo(k)=ibi(k)
+            do n=1,no
+                lo(n,k)=wo(n,k).ge.pmp*nb4
+                if(lo(n,k)) then
+                    go(n,k)=go(n,k)/wo(n,k)
                 else
-                    ibo(k) = 1
-                    go(n, k) = 0.
-                end if
-            end do
-        end do
+                    ibo(k)=1
+                    go(n,k)=0.
+                endif
+            enddo
+        enddo
 
-        select type (grid_out)
-        type is (ip_equid_cylind_grid)
-            call polfixs(no, mo, km, rlat, ibo, lo, go)
-        end select
+        select type(grid_out)
+        type is(ip_equid_cylind_grid)
+            call polfixs(no,mo,km,rlat,ibo,lo,go)
+        endselect
 
-    end subroutine interpolate_neighbor_budget_scalar
+    endsubroutine interpolate_neighbor_budget_scalar
 
     !> Interpolate vector fields (budget).
     !>
@@ -347,204 +347,204 @@ contains
     !> - 32   invalid budget method parameters
     !>
     !> @author Mark Iredell @date 96-04-10
-    subroutine interpolate_neighbor_budget_vector(ipopt, grid_in, grid_out, &
-                                                  mi, mo, km, ibi, li, ui, vi, &
-                                                  no, rlat, rlon, crot, srot, ibo, lo, uo, vo, iret)
-        class(ip_grid), intent(in) :: grid_in, grid_out
+    subroutine interpolate_neighbor_budget_vector(ipopt,grid_in,grid_out, &
+                                                  mi,mo,km,ibi,li,ui,vi, &
+                                                  no,rlat,rlon,crot,srot,ibo,lo,uo,vo,iret)
+        class(ip_grid),intent(in) :: grid_in,grid_out
 
-        integer, intent(in) :: ipopt(20), ibi(km)
-        integer, intent(in) :: km, mi, mo
-        integer, intent(out) :: iret, no, ibo(km)
+        integer,intent(in) :: ipopt(20),ibi(km)
+        integer,intent(in) :: km,mi,mo
+        integer,intent(out) :: iret,no,ibo(km)
         !
-        logical*1, intent(in) :: li(mi, km)
-        logical*1, intent(out) :: lo(mo, km)
+        logical*1,intent(in) :: li(mi,km)
+        logical*1,intent(out) :: lo(mo,km)
         !
-        real, intent(in) :: ui(mi, km), vi(mi, km)
-        real, intent(inout) :: rlat(mo), rlon(mo)
-        real, intent(out) :: uo(mo, km), vo(mo, km)
-        real, intent(out) :: crot(mo), srot(mo)
+        real,intent(in) :: ui(mi,km),vi(mi,km)
+        real,intent(inout) :: rlat(mo),rlon(mo)
+        real,intent(out) :: uo(mo,km),vo(mo,km)
+        real,intent(out) :: crot(mo),srot(mo)
         !
-        real, parameter     :: fill = -9999.
+        real,parameter     :: fill=-9999.
         !
         integer                        :: n11(mo)
-        integer                        :: ib, jb, i1, j1
-        integer                        :: k, lb, lsw, mp, n, nv
-        integer                        :: nb, nb1, nb2, nb3, nb4
+        integer                        :: ib,jb,i1,j1
+        integer                        :: k,lb,lsw,mp,n,nv
+        integer                        :: nb,nb1,nb2,nb3,nb4
         !
         logical                        :: same_grid
         !
-        real                           :: c11(mo), s11(mo)
-        real                           :: cm11, sm11, pmp
-        real                           :: u11, v11, urot, vrot
-        real                           :: wb, wo(mo, km), xi, yi
-        real                           :: rlob(mo), rlab(mo)
-        real                           :: xpts(mo), ypts(mo)
-        real                           :: xptb(mo), yptb(mo)
+        real                           :: c11(mo),s11(mo)
+        real                           :: cm11,sm11,pmp
+        real                           :: u11,v11,urot,vrot
+        real                           :: wb,wo(mo,km),xi,yi
+        real                           :: rlob(mo),rlab(mo)
+        real                           :: xpts(mo),ypts(mo)
+        real                           :: xptb(mo),yptb(mo)
 
         logical :: to_station_points
 
         ! Save coeffecients between runs and only compute if grid has changed
-        integer, save  :: mix = -1
-        real, allocatable, save  :: croi(:), sroi(:)
-        real, allocatable, save  :: xpti(:), ypti(:)
-        real, allocatable, save  :: rloi(:), rlai(:)
-        class(ip_grid), allocatable, save :: prev_grid_in
+        integer,save  :: mix=-1
+        real,allocatable,save  :: croi(:),sroi(:)
+        real,allocatable,save  :: xpti(:),ypti(:)
+        real,allocatable,save  :: rloi(:),rlai(:)
+        class(ip_grid),allocatable,save :: prev_grid_in
 
-        select type (grid_out)
-        type is (ip_station_points_grid)
-            to_station_points = .true.
+        select type(grid_out)
+        type is(ip_station_points_grid)
+            to_station_points=.true.
         class default
-            to_station_points = .false.
-        end select
+            to_station_points=.false.
+        endselect
 
         ! - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
         !  COMPUTE NUMBER OF OUTPUT POINTS AND THEIR LATITUDES AND LONGITUDES.
-        iret = 0
-        call gdswzd(grid_out, 0, mo, fill, xpts, ypts, rlon, rlat, no, crot, srot)
-        if (no .eq. 0) iret = 3
-        if (to_station_points) then
-            call gdswzd(grid_in, -1, no, fill, xpts, ypts, rlon, rlat, nv, crot, srot)
-            if (nv .eq. 0) iret = 2
-        end if
+        iret=0
+        call gdswzd(grid_out,0,mo,fill,xpts,ypts,rlon,rlat,no,crot,srot)
+        if(no.eq.0) iret=3
+        if(to_station_points) then
+            call gdswzd(grid_in,-1,no,fill,xpts,ypts,rlon,rlat,nv,crot,srot)
+            if(nv.eq.0) iret=2
+        endif
 
-        if (.not. allocated(prev_grid_in)) then
-            allocate (prev_grid_in, source=grid_in)
+        if(.not.allocated(prev_grid_in)) then
+            allocate(prev_grid_in,source=grid_in)
 
-            same_grid = .false.
+            same_grid=.false.
         else
-            same_grid = grid_in .eq. prev_grid_in
+            same_grid=grid_in.eq.prev_grid_in
 
-            if (.not. same_grid) then
-                deallocate (prev_grid_in)
-                allocate (prev_grid_in, source=grid_in)
-            end if
-        end if
+            if(.not.same_grid) then
+                deallocate(prev_grid_in)
+                allocate(prev_grid_in,source=grid_in)
+            endif
+        endif
 
-        if (.not. same_grid) then
-            if (mix .ne. mi) then
-                if (mix .ge. 0) deallocate (xpti, ypti, rloi, rlai, croi, sroi)
-                allocate (xpti(mi), ypti(mi), rloi(mi), rlai(mi), croi(mi), sroi(mi))
-                mix = mi
-            end if
-            call gdswzd(grid_in, 0, mi, fill, xpti, ypti, &
-                        rloi, rlai, nv, croi, sroi)
-        end if
+        if(.not.same_grid) then
+            if(mix.ne.mi) then
+                if(mix.ge.0) deallocate(xpti,ypti,rloi,rlai,croi,sroi)
+                allocate(xpti(mi),ypti(mi),rloi(mi),rlai(mi),croi(mi),sroi(mi))
+                mix=mi
+            endif
+            call gdswzd(grid_in,0,mi,fill,xpti,ypti, &
+                        rloi,rlai,nv,croi,sroi)
+        endif
         ! - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
         !  SET PARAMETERS
-        nb1 = ipopt(1)
-        if (nb1 .eq. -1) nb1 = 2
-        if (iret .eq. 0 .and. nb1 .lt. 0) iret = 32
-        lsw = 1
-        if (ipopt(1) .eq. -1 .or. ipopt(2) .eq. -1) lsw = 0
-        if (iret .eq. 0 .and. lsw .eq. 1 .and. nb1 .gt. 15) iret = 32
-        mp = ipopt(3+ipopt(1))
-        if (mp .eq. -1 .or. mp .eq. 0) mp = 50
-        if (mp .lt. 0 .or. mp .gt. 100) iret = 32
-        pmp = mp*0.01
-        if (iret .eq. 0) then
-            nb2 = 2*nb1+1
-            nb3 = nb2*nb2
-            nb4 = nb3
-            if (lsw .eq. 1) then
-                nb4 = ipopt(2)
-                do ib = 1, nb1
-                    nb4 = nb4+8*ib*ipopt(2+ib)
-                end do
-            end if
+        nb1=ipopt(1)
+        if(nb1.eq.-1) nb1=2
+        if(iret.eq.0.and.nb1.lt.0) iret=32
+        lsw=1
+        if(ipopt(1).eq.-1.or.ipopt(2).eq.-1) lsw=0
+        if(iret.eq.0.and.lsw.eq.1.and.nb1.gt.15) iret=32
+        mp=ipopt(3+ipopt(1))
+        if(mp.eq.-1.or.mp.eq.0) mp=50
+        if(mp.lt.0.or.mp.gt.100) iret=32
+        pmp=mp*0.01
+        if(iret.eq.0) then
+            nb2=2*nb1+1
+            nb3=nb2*nb2
+            nb4=nb3
+            if(lsw.eq.1) then
+                nb4=ipopt(2)
+                do ib=1,nb1
+                    nb4=nb4+8*ib*ipopt(2+ib)
+                enddo
+            endif
         else
-            nb2 = 0
-            nb3 = 0
-            nb4 = 0
-        end if
-        do k = 1, km
-            do n = 1, no
-                uo(n, k) = 0
-                vo(n, k) = 0
-                wo(n, k) = 0.
-            end do
-        end do
+            nb2=0
+            nb3=0
+            nb4=0
+        endif
+        do k=1,km
+            do n=1,no
+                uo(n,k)=0
+                vo(n,k)=0
+                wo(n,k)=0.
+            enddo
+        enddo
         ! - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
         !  LOOP OVER SAMPLE POINTS IN OUTPUT GRID BOX
-        do nb = 1, nb3
+        do nb=1,nb3
             !  LOCATE INPUT POINTS AND COMPUTE THEIR WEIGHTS AND ROTATIONS
-            jb = (nb-1)/nb2-nb1
-            ib = nb-(jb+nb1)*nb2-nb1-1
-            lb = max(abs(ib), abs(jb))
-            wb = 1
-            if (lsw .eq. 1) wb = ipopt(2+lb)
-            if (abs(wb) .gt. tinyreal) then
-                do n = 1, no
-                    xptb(n) = xpts(n)+ib/real(nb2)
-                    yptb(n) = ypts(n)+jb/real(nb2)
-                end do
-                if (to_station_points) then
-                    call gdswzd(grid_in, 1, no, fill, xptb, yptb, rlob, rlab, nv)
-                    call gdswzd(grid_in, -1, no, fill, xptb, yptb, rlob, rlab, nv)
+            jb=(nb-1)/nb2-nb1
+            ib=nb-(jb+nb1)*nb2-nb1-1
+            lb=max(abs(ib),abs(jb))
+            wb=1
+            if(lsw.eq.1) wb=ipopt(2+lb)
+            if(abs(wb).gt.tinyreal) then
+                do n=1,no
+                    xptb(n)=xpts(n)+ib/real(nb2)
+                    yptb(n)=ypts(n)+jb/real(nb2)
+                enddo
+                if(to_station_points) then
+                    call gdswzd(grid_in,1,no,fill,xptb,yptb,rlob,rlab,nv)
+                    call gdswzd(grid_in,-1,no,fill,xptb,yptb,rlob,rlab,nv)
                 else
-                    call gdswzd(grid_out, 1, no, fill, xptb, yptb, rlob, rlab, nv)
-                    call gdswzd(grid_in, -1, no, fill, xptb, yptb, rlob, rlab, nv)
-                end if
-                if (iret .eq. 0 .and. nv .eq. 0 .and. lb .eq. 0) iret = 2
-                do n = 1, no
-                    xi = xptb(n)
-                    yi = yptb(n)
-                    if (abs(xi-fill) .gt. tinyreal .and. abs(yi-fill) .gt. tinyreal) then
-                        i1 = nint(xi)
-                        j1 = nint(yi)
-                        n11(n) = grid_in%field_pos(i1, j1)
-                        if (n11(n) .gt. 0) then
-                            call movect(rlai(n11(n)), rloi(n11(n)), rlat(n), rlon(n), cm11, sm11)
-                            c11(n) = cm11*croi(n11(n))+sm11*sroi(n11(n))
-                            s11(n) = sm11*croi(n11(n))-cm11*sroi(n11(n))
-                        end if
+                    call gdswzd(grid_out,1,no,fill,xptb,yptb,rlob,rlab,nv)
+                    call gdswzd(grid_in,-1,no,fill,xptb,yptb,rlob,rlab,nv)
+                endif
+                if(iret.eq.0.and.nv.eq.0.and.lb.eq.0) iret=2
+                do n=1,no
+                    xi=xptb(n)
+                    yi=yptb(n)
+                    if(abs(xi-fill).gt.tinyreal.and.abs(yi-fill).gt.tinyreal) then
+                        i1=nint(xi)
+                        j1=nint(yi)
+                        n11(n)=grid_in%field_pos(i1,j1)
+                        if(n11(n).gt.0) then
+                            call movect(rlai(n11(n)),rloi(n11(n)),rlat(n),rlon(n),cm11,sm11)
+                            c11(n)=cm11*croi(n11(n))+sm11*sroi(n11(n))
+                            s11(n)=sm11*croi(n11(n))-cm11*sroi(n11(n))
+                        endif
                     else
-                        n11(n) = 0
-                    end if
-                end do
+                        n11(n)=0
+                    endif
+                enddo
                 ! - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
                 !  INTERPOLATE WITH OR WITHOUT BITMAPS
-                do k = 1, km
-                    do n = 1, no
-                        if (n11(n) .gt. 0) then
-                            if (ibi(k) .eq. 0 .or. li(n11(n), k)) then
-                                u11 = c11(n)*ui(n11(n), k)-s11(n)*vi(n11(n), k)
-                                v11 = s11(n)*ui(n11(n), k)+c11(n)*vi(n11(n), k)
-                                uo(n, k) = uo(n, k)+wb*u11
-                                vo(n, k) = vo(n, k)+wb*v11
-                                wo(n, k) = wo(n, k)+wb
-                            end if
-                        end if
-                    end do
-                end do
-            end if
-        end do  ! NB LOOP
+                do k=1,km
+                    do n=1,no
+                        if(n11(n).gt.0) then
+                            if(ibi(k).eq.0.or.li(n11(n),k)) then
+                                u11=c11(n)*ui(n11(n),k)-s11(n)*vi(n11(n),k)
+                                v11=s11(n)*ui(n11(n),k)+c11(n)*vi(n11(n),k)
+                                uo(n,k)=uo(n,k)+wb*u11
+                                vo(n,k)=vo(n,k)+wb*v11
+                                wo(n,k)=wo(n,k)+wb
+                            endif
+                        endif
+                    enddo
+                enddo
+            endif
+        enddo  ! NB LOOP
         ! - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
         !  COMPUTE OUTPUT BITMAPS AND FIELDS
-        do k = 1, km
-            ibo(k) = ibi(k)
-            do n = 1, no
-                lo(n, k) = wo(n, k) .ge. pmp*nb4
-                if (lo(n, k)) then
-                    uo(n, k) = uo(n, k)/wo(n, k)
-                    vo(n, k) = vo(n, k)/wo(n, k)
-                    urot = crot(n)*uo(n, k)-srot(n)*vo(n, k)
-                    vrot = srot(n)*uo(n, k)+crot(n)*vo(n, k)
-                    uo(n, k) = urot
-                    vo(n, k) = vrot
+        do k=1,km
+            ibo(k)=ibi(k)
+            do n=1,no
+                lo(n,k)=wo(n,k).ge.pmp*nb4
+                if(lo(n,k)) then
+                    uo(n,k)=uo(n,k)/wo(n,k)
+                    vo(n,k)=vo(n,k)/wo(n,k)
+                    urot=crot(n)*uo(n,k)-srot(n)*vo(n,k)
+                    vrot=srot(n)*uo(n,k)+crot(n)*vo(n,k)
+                    uo(n,k)=urot
+                    vo(n,k)=vrot
                 else
-                    ibo(k) = 1
-                    uo(n, k) = 0.
-                    vo(n, k) = 0.
-                end if
-            end do
-        end do
+                    ibo(k)=1
+                    uo(n,k)=0.
+                    vo(n,k)=0.
+                endif
+            enddo
+        enddo
 
-        select type (grid_out)
-        type is (ip_equid_cylind_grid)
-            call polfixv(no, mo, km, rlat, rlon, ibo, lo, uo, vo)
-        end select
+        select type(grid_out)
+        type is(ip_equid_cylind_grid)
+            call polfixv(no,mo,km,rlat,rlon,ibo,lo,uo,vo)
+        endselect
 
         ! - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-    end subroutine interpolate_neighbor_budget_vector
+    endsubroutine interpolate_neighbor_budget_vector
 
-end module neighbor_budget_interp_mod
+endmodule neighbor_budget_interp_mod

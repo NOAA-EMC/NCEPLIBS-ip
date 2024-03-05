@@ -78,148 +78,148 @@
 !> - 1 improper grid specification
 !>
 !> @author Iredell @date 96-04-10
- subroutine ipxwafs(idir, numpts_thin, numpts_full, km, num_opt, &
-                    opt_pts, igdtlen, igdtmpl_thin, data_thin, &
-                    igdtmpl_full, data_full, iret)
+ subroutine ipxwafs(idir,numpts_thin,numpts_full,km,num_opt, &
+                    opt_pts,igdtlen,igdtmpl_thin,data_thin, &
+                    igdtmpl_full,data_full,iret)
      implicit none
 !
-     integer, intent(in) :: num_opt
-     integer, intent(inout) :: opt_pts(num_opt)
-     integer, intent(in) :: idir, km, numpts_thin, numpts_full
-     integer, intent(in) :: igdtlen
-     integer, intent(inout) :: igdtmpl_thin(igdtlen)
-     integer, intent(inout) :: igdtmpl_full(igdtlen)
-     integer, intent(out) :: iret
+     integer,intent(in) :: num_opt
+     integer,intent(inout) :: opt_pts(num_opt)
+     integer,intent(in) :: idir,km,numpts_thin,numpts_full
+     integer,intent(in) :: igdtlen
+     integer,intent(inout) :: igdtmpl_thin(igdtlen)
+     integer,intent(inout) :: igdtmpl_full(igdtlen)
+     integer,intent(out) :: iret
 !
-     real, intent(inout) :: data_thin(numpts_thin, km)
-     real, intent(inout) :: data_full(numpts_full, km)
+     real,intent(inout) :: data_thin(numpts_thin,km)
+     real,intent(inout) :: data_full(numpts_full,km)
 !
-     integer, parameter     :: missing = -1
+     integer,parameter     :: missing=-1
 !
-     integer                              :: scan_mode, i, j, k, idlat, idlon
-     integer                              :: ia, ib, im, im1, im2, npwafs(73)
-     integer                              :: is1, is2, iscan, iscale
+     integer                              :: scan_mode,i,j,k,idlat,idlon
+     integer                              :: ia,ib,im,im1,im2,npwafs(73)
+     integer                              :: is1,is2,iscan,iscale
 !
-     logical                              :: test1, test2
+     logical                              :: test1,test2
 !
-     real                                 :: dlon, hi
-     real                                 :: rat1, rat2, rlon1, rlon2
-     real                                 :: wa, wb, x1, x2
+     real                                 :: dlon,hi
+     real                                 :: rat1,rat2,rlon1,rlon2
+     real                                 :: wa,wb,x1,x2
 !
      data npwafs/ &
-         73, 73, 73, 73, 73, 73, 73, 73, 72, 72, 72, 71, 71, 71, 70, &
-         70, 69, 69, 68, 67, 67, 66, 65, 65, 64, 63, 62, 61, 60, 60, &
-         59, 58, 57, 56, 55, 54, 52, 51, 50, 49, 48, 47, 45, 44, 43, &
-         42, 40, 39, 38, 36, 35, 33, 32, 30, 29, 28, 26, 25, 23, 22, &
-         20, 19, 17, 16, 14, 12, 11, 9, 8, 6, 5, 3, 2/
+         73,73,73,73,73,73,73,73,72,72,72,71,71,71,70, &
+         70,69,69,68,67,67,66,65,65,64,63,62,61,60,60, &
+         59,58,57,56,55,54,52,51,50,49,48,47,45,44,43, &
+         42,40,39,38,36,35,33,32,30,29,28,26,25,23,22, &
+         20,19,17,16,14,12,11,9,8,6,5,3,2/
 ! - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 !  TRANSFORM GDS
-     iret = 0
+     iret=0
 ! - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 !  REG LAT/LON GRIDS HAVE 19 GDT ELEMENTS.
-     if (igdtlen .ne. 19 .or. numpts_thin .ne. 3447 .or. numpts_full .ne. 5329) then
-         iret = 1
+     if(igdtlen.ne.19.or.numpts_thin.ne.3447.or.numpts_full.ne.5329) then
+         iret=1
          return
-     end if
+     endif
 ! - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 !  EXPAND THINNED GDS TO FULL GDS
-     if (idir .gt. 0) then
-         scan_mode = igdtmpl_thin(19)
-         iscale = igdtmpl_thin(10)*igdtmpl_thin(11)
-         if (iscale .eq. 0) iscale = 10**6
-         idlat = nint(1.25*float(iscale))
-         test1 = all(opt_pts .eq. npwafs)
-         test2 = all(opt_pts .eq. npwafs(73:1:-1))
+     if(idir.gt.0) then
+         scan_mode=igdtmpl_thin(19)
+         iscale=igdtmpl_thin(10)*igdtmpl_thin(11)
+         if(iscale.eq.0) iscale=10**6
+         idlat=nint(1.25*float(iscale))
+         test1=all(opt_pts.eq.npwafs)
+         test2=all(opt_pts.eq.npwafs(73:1:-1))
 ! - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 !  SOME CHECKS TO ENSURE THIS IS A WAFS GRID
-         if (scan_mode .eq. 64 .and. igdtmpl_thin(9) .eq. 73 .and. &
-             idlat .eq. igdtmpl_thin(18) .and. (test1 .or. test2)) then
-             igdtmpl_full = igdtmpl_thin
-             im = 73
-             igdtmpl_full(8) = im
-             rlon1 = float(igdtmpl_full(13))/float(iscale)
-             rlon2 = float(igdtmpl_full(16))/float(iscale)
-             iscan = mod(igdtmpl_full(19)/128, 2)
-             hi = (-1.)**iscan
-             dlon = hi*(mod(hi*(rlon2-rlon1)-1+3600, 360.)+1)/(im-1)
-             igdtmpl_full(17) = nint(dlon*float(iscale))
+         if(scan_mode.eq.64.and.igdtmpl_thin(9).eq.73.and. &
+            idlat.eq.igdtmpl_thin(18).and.(test1.or.test2)) then
+             igdtmpl_full=igdtmpl_thin
+             im=73
+             igdtmpl_full(8)=im
+             rlon1=float(igdtmpl_full(13))/float(iscale)
+             rlon2=float(igdtmpl_full(16))/float(iscale)
+             iscan=mod(igdtmpl_full(19)/128,2)
+             hi=(-1.)**iscan
+             dlon=hi*(mod(hi*(rlon2-rlon1)-1+3600,360.)+1)/(im-1)
+             igdtmpl_full(17)=nint(dlon*float(iscale))
          else
-             iret = 1
-         end if
+             iret=1
+         endif
 ! - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 !  CONTRACT FULL GDS TO THINNED GDS
-     elseif (idir .lt. 0) then
-         scan_mode = igdtmpl_full(19)
-         iscale = igdtmpl_full(10)*igdtmpl_full(11)
-         if (iscale .eq. 0) iscale = 10**6
-         idlat = nint(1.25*float(iscale))
-         idlon = idlat
+     elseif(idir.lt.0) then
+         scan_mode=igdtmpl_full(19)
+         iscale=igdtmpl_full(10)*igdtmpl_full(11)
+         if(iscale.eq.0) iscale=10**6
+         idlat=nint(1.25*float(iscale))
+         idlon=idlat
 ! - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 !  SOME CHECKS TO ENSURE THIS IS A WAFS GRID
-         if (scan_mode .eq. 64 .and. igdtmpl_full(8) .eq. 73 .and. igdtmpl_full(9) .eq. 73 .and. &
-             num_opt .eq. 73 .and. idlat .eq. igdtmpl_full(18) .and. idlon .eq. igdtmpl_full(17)) then
-             igdtmpl_thin = igdtmpl_full
-             igdtmpl_thin(8) = missing
-             igdtmpl_thin(17) = missing
-             if (igdtmpl_thin(12) .eq. 0) then  ! IS LATITUDE OF ROW 1 THE EQUATOR?
-                 opt_pts = npwafs
+         if(scan_mode.eq.64.and.igdtmpl_full(8).eq.73.and.igdtmpl_full(9).eq.73.and. &
+            num_opt.eq.73.and.idlat.eq.igdtmpl_full(18).and.idlon.eq.igdtmpl_full(17)) then
+             igdtmpl_thin=igdtmpl_full
+             igdtmpl_thin(8)=missing
+             igdtmpl_thin(17)=missing
+             if(igdtmpl_thin(12).eq.0) then  ! IS LATITUDE OF ROW 1 THE EQUATOR?
+                 opt_pts=npwafs
              else
-                 opt_pts = npwafs(73:1:-1)
-             end if
+                 opt_pts=npwafs(73:1:-1)
+             endif
          else
-             iret = 1
-         end if
-     end if
+             iret=1
+         endif
+     endif
 ! - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 !  TRANSFORM FIELDS
-     if (iret .eq. 0) then
+     if(iret.eq.0) then
 ! - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 !  EXPAND THINNED FIELDS TO FULL FIELDS
-         if (idir .eq. 1) then
-             do k = 1, km
-                 is1 = 0
-                 is2 = 0
-                 do j = 1, igdtmpl_full(9)
-                     im1 = opt_pts(j)
-                     im2 = igdtmpl_full(8)
-                     rat1 = float(im1-1)/float(im2-1)
-                     do i = 1, im2
-                         x1 = (i-1)*rat1+1
-                         ia = int(x1)
-                         ia = min(max(ia, 1), im1-1)
-                         ib = ia+1
-                         wa = ib-x1
-                         wb = x1-ia
-                         data_full(is2+i, k) = wa*data_thin(is1+ia, k)+wb*data_thin(is1+ib, k)
-                     end do
-                     is1 = is1+im1
-                     is2 = is2+im2
-                 end do
-             end do
+         if(idir.eq.1) then
+             do k=1,km
+                 is1=0
+                 is2=0
+                 do j=1,igdtmpl_full(9)
+                     im1=opt_pts(j)
+                     im2=igdtmpl_full(8)
+                     rat1=float(im1-1)/float(im2-1)
+                     do i=1,im2
+                         x1=(i-1)*rat1+1
+                         ia=int(x1)
+                         ia=min(max(ia,1),im1-1)
+                         ib=ia+1
+                         wa=ib-x1
+                         wb=x1-ia
+                         data_full(is2+i,k)=wa*data_thin(is1+ia,k)+wb*data_thin(is1+ib,k)
+                     enddo
+                     is1=is1+im1
+                     is2=is2+im2
+                 enddo
+             enddo
 ! - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 !  CONTRACT FULL FIELDS TO THINNED FIELDS
-         elseif (idir .eq. -1) then
-             do k = 1, km
-                 is1 = 0
-                 is2 = 0
-                 do j = 1, igdtmpl_full(9)
-                     im1 = opt_pts(j)
-                     im2 = igdtmpl_full(8)
-                     rat2 = float(im2-1)/float(im1-1)
-                     do i = 1, im1
-                         x2 = (i-1)*rat2+1
-                         ia = int(x2)
-                         ia = min(max(ia, 1), im2-1)
-                         ib = ia+1
-                         wa = ib-x2
-                         wb = x2-ia
-                         data_thin(is1+i, k) = wa*data_full(is2+ia, k)+wb*data_full(is2+ib, k)
-                     end do
-                     is1 = is1+im1
-                     is2 = is2+im2
-                 end do
-             end do
-         end if
-     end if
+         elseif(idir.eq.-1) then
+             do k=1,km
+                 is1=0
+                 is2=0
+                 do j=1,igdtmpl_full(9)
+                     im1=opt_pts(j)
+                     im2=igdtmpl_full(8)
+                     rat2=float(im2-1)/float(im1-1)
+                     do i=1,im1
+                         x2=(i-1)*rat2+1
+                         ia=int(x2)
+                         ia=min(max(ia,1),im2-1)
+                         ib=ia+1
+                         wa=ib-x2
+                         wb=x2-ia
+                         data_thin(is1+i,k)=wa*data_full(is2+ia,k)+wb*data_full(is2+ib,k)
+                     enddo
+                     is1=is1+im1
+                     is2=is2+im2
+                 enddo
+             enddo
+         endif
+     endif
 ! - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
- end subroutine ipxwafs
+ endsubroutine ipxwafs

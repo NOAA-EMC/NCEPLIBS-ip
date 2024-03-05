@@ -37,60 +37,60 @@ contains
     !> @param[out] eccen_squared real earth eccentricity squared
     !>
     !> @author Gayno @date 2015-07-14
-    subroutine earth_radius(igdtmpl, igdtlen, radius, eccen_squared)
+    subroutine earth_radius(igdtmpl,igdtlen,radius,eccen_squared)
         implicit none
 
-        integer, intent(in) :: igdtlen
-        integer, intent(in) :: igdtmpl(igdtlen)
+        integer,intent(in) :: igdtlen
+        integer,intent(in) :: igdtmpl(igdtlen)
 
-        real, intent(out) :: eccen_squared
-        real, intent(out) :: radius
+        real,intent(out) :: eccen_squared
+        real,intent(out) :: radius
 
         real                                  :: flat
-        real                                  :: major_axis, minor_axis
+        real                                  :: major_axis,minor_axis
 
-        select case (igdtmpl(1))
-        case (0)
-            radius = 6367470.0
-            eccen_squared = 0.0
-        case (1)  ! USER SPECIFIED SPHERICAL
-            radius = float(igdtmpl(3))/float(10**igdtmpl(2))
-            eccen_squared = 0.0
-        case (2)  ! IAU 1965
-            radius = 6378160.0      ! SEMI MAJOR AXIS
-            flat = 1.0/297.0      ! FLATTENING
-            eccen_squared = (2.0*flat)-(flat**2)
-        case (3)  ! USER SPECIFIED ELLIPTICAL (KM)
-            major_axis = float(igdtmpl(5))/float(10**igdtmpl(4))
-            major_axis = major_axis*1000.0
-            minor_axis = float(igdtmpl(7))/float(10**igdtmpl(6))
-            minor_axis = minor_axis*1000.0
-            eccen_squared = 1.0-(minor_axis**2/major_axis**2)
-            radius = major_axis
-        case (4)  ! IAG-GRS80 MODEL
-            radius = 6378137.0      ! SEMI MAJOR AXIS
-            flat = 1.0/298.2572   ! FLATTENING
-            eccen_squared = (2.0*flat)-(flat**2)
-        case (5)  ! WGS84 DATUM
-            radius = 6378137.0      ! SEMI MAJOR AXIS
-            eccen_squared = 0.00669437999013
-        case (6)
-            radius = 6371229.0
-            eccen_squared = 0.0
-        case (7)  ! USER SPECIFIED ELLIPTICAL (M)
-            major_axis = float(igdtmpl(5))/float(10**igdtmpl(4))
-            minor_axis = float(igdtmpl(7))/float(10**igdtmpl(6))
-            eccen_squared = 1.0-(minor_axis**2/major_axis**2)
-            radius = major_axis
-        case (8)
-            radius = 6371200.0
-            eccen_squared = 0.0
+        select case(igdtmpl(1))
+        case(0)
+            radius=6367470.0
+            eccen_squared=0.0
+        case(1)  ! USER SPECIFIED SPHERICAL
+            radius=float(igdtmpl(3))/float(10**igdtmpl(2))
+            eccen_squared=0.0
+        case(2)  ! IAU 1965
+            radius=6378160.0      ! SEMI MAJOR AXIS
+            flat=1.0/297.0      ! FLATTENING
+            eccen_squared=(2.0*flat)-(flat**2)
+        case(3)  ! USER SPECIFIED ELLIPTICAL (KM)
+            major_axis=float(igdtmpl(5))/float(10**igdtmpl(4))
+            major_axis=major_axis*1000.0
+            minor_axis=float(igdtmpl(7))/float(10**igdtmpl(6))
+            minor_axis=minor_axis*1000.0
+            eccen_squared=1.0-(minor_axis**2/major_axis**2)
+            radius=major_axis
+        case(4)  ! IAG-GRS80 MODEL
+            radius=6378137.0      ! SEMI MAJOR AXIS
+            flat=1.0/298.2572   ! FLATTENING
+            eccen_squared=(2.0*flat)-(flat**2)
+        case(5)  ! WGS84 DATUM
+            radius=6378137.0      ! SEMI MAJOR AXIS
+            eccen_squared=0.00669437999013
+        case(6)
+            radius=6371229.0
+            eccen_squared=0.0
+        case(7)  ! USER SPECIFIED ELLIPTICAL (M)
+            major_axis=float(igdtmpl(5))/float(10**igdtmpl(4))
+            minor_axis=float(igdtmpl(7))/float(10**igdtmpl(6))
+            eccen_squared=1.0-(minor_axis**2/major_axis**2)
+            radius=major_axis
+        case(8)
+            radius=6371200.0
+            eccen_squared=0.0
         case default
-            radius = -9999.
-            eccen_squared = -9999.
-        end select
+            radius=-9999.
+            eccen_squared=-9999.
+        endselect
         !
         return
         !
-    end subroutine earth_radius
-end module earth_radius_mod
+    endsubroutine earth_radius
+endmodule earth_radius_mod

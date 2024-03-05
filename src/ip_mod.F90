@@ -7,14 +7,14 @@ module ip_mod
 
     ! Make these constants public to everyone instead of
     ! using numbers directly
-    use ip_interpolators_mod, only: bilinear_interp_id, &
-                                    bicubic_interp_id, &
-                                    neighbor_interp_id, &
-                                    budget_interp_id, &
-                                    spectral_interp_id, &
-                                    neighbor_budget_interp_id
+    use ip_interpolators_mod,only:bilinear_interp_id, &
+                                   bicubic_interp_id, &
+                                   neighbor_interp_id, &
+                                   budget_interp_id, &
+                                   spectral_interp_id, &
+                                   neighbor_budget_interp_id
 
     use ipolates_mod
     use ipolatev_mod
     use gdswzd_mod
-end module ip_mod
+endmodule ip_mod

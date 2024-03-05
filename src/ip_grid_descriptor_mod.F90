@@ -18,49 +18,49 @@ module ip_grid_descriptor_mod
     private
 
     public :: ip_grid_descriptor
-    public :: grib1_descriptor, grib2_descriptor
-    public :: init_descriptor, init_grib1_descriptor, init_grib2_descriptor
+    public :: grib1_descriptor,grib2_descriptor
+    public :: init_descriptor,init_grib1_descriptor,init_grib2_descriptor
 
     public :: operator(==)
 
     !> Abstract descriptor object which represents a grib1 or grib2 descriptor.
   !! @date July 2021
-    type, abstract :: ip_grid_descriptor
+    type,abstract :: ip_grid_descriptor
         integer :: grid_num !< Integer representing the grid type (see *_GRID_ID_GRIB1/2 in ip_grid_mod).
     contains
         !> Test whether two grid descriptors are the same. @return N/A
         procedure :: is_same_grid
-    end type ip_grid_descriptor
+    endtype ip_grid_descriptor
 
     !> Descriptor representing a grib1 grib descriptor section (GDS)
     !> with an integer array
   !! @date July 2021
-    type, extends(ip_grid_descriptor) :: grib1_descriptor
+    type,extends(ip_grid_descriptor) :: grib1_descriptor
         integer :: gds(200) !< Grib-1 grib descriptor section (GDS)
     contains
         !> Test whether two grid descriptors are the same. @return N/A
         procedure :: is_same_grid_grib1
-    end type grib1_descriptor
+    endtype grib1_descriptor
 
     !> Grib-2 descriptor containing a grib2 GDT represented by an integer array
   !! @date July 2021
-    type, extends(ip_grid_descriptor) :: grib2_descriptor
+    type,extends(ip_grid_descriptor) :: grib2_descriptor
         integer :: gdt_num !< Grid number which represents grid type.
         integer :: gdt_len !< Length of the template.
-        integer, allocatable :: gdt_tmpl(:) !< Grib-2 grid definition template.
+        integer,allocatable :: gdt_tmpl(:) !< Grib-2 grid definition template.
     contains
         !> Test whether two grid descriptors are the same. @return N/A
         procedure :: is_same_grid_grib2
-    end type grib2_descriptor
+    endtype grib2_descriptor
 
     interface operator(==)
         module procedure is_same_grid
-    end interface operator(==)
+    endinterface operator(==)
 
     interface init_descriptor
         module procedure init_grib1_descriptor
         module procedure init_grib2_descriptor
-    end interface init_descriptor
+    endinterface init_descriptor
 
 contains
 
@@ -73,13 +73,13 @@ contains
   !! @date July 2021
     function init_grib1_descriptor(gds) result(desc)
         type(grib1_descriptor) :: desc
-        integer, intent(in) :: gds(:)
-        desc%gds = gds
-        desc%grid_num = gds(1)
+        integer,intent(in) :: gds(:)
+        desc%gds=gds
+        desc%grid_num=gds(1)
 
         !call desc%decode_template()
 
-    end function init_grib1_descriptor
+    endfunction init_grib1_descriptor
 
     !> Initialize grib-2 descriptor from integer grid definition template (GDT).
   !! @param[in] gdt_num Grib-2 grid number.
@@ -90,19 +90,19 @@ contains
   !!
   !! @author Kyle Gerheiser
   !! @date July 2021
-    function init_grib2_descriptor(gdt_num, gdt_len, gdt_tmpl) result(desc)
+    function init_grib2_descriptor(gdt_num,gdt_len,gdt_tmpl) result(desc)
         type(grib2_descriptor) :: desc
-        integer, intent(in) :: gdt_num, gdt_len, gdt_tmpl(:)
-        desc%grid_num = gdt_num
+        integer,intent(in) :: gdt_num,gdt_len,gdt_tmpl(:)
+        desc%grid_num=gdt_num
 
-        desc%gdt_num = gdt_num
-        desc%gdt_len = gdt_len
-        allocate (desc%gdt_tmpl(gdt_len))
-        desc%gdt_tmpl = gdt_tmpl
+        desc%gdt_num=gdt_num
+        desc%gdt_len=gdt_len
+        allocate(desc%gdt_tmpl(gdt_len))
+        desc%gdt_tmpl=gdt_tmpl
 
         !call desc%decode_template()
 
-    end function init_grib2_descriptor
+    endfunction init_grib2_descriptor
 
     !> Test whether two grid descriptors are the same.
   !! @param[in] grid1 An ip_grid_descriptor.
@@ -112,27 +112,27 @@ contains
   !!
   !! @author Kyle Gerheiser
   !! @date July 2021
-    logical function is_same_grid(grid1, grid2)
-        class(ip_grid_descriptor), intent(in) :: grid1, grid2
+    logical function is_same_grid(grid1,grid2)
+        class(ip_grid_descriptor),intent(in) :: grid1,grid2
 
-        select type (grid1)
-        type is (grib1_descriptor)
-            select type (grid2)
-            type is (grib1_descriptor)
-                is_same_grid = grid1%is_same_grid_grib1(grid2)
+        select type(grid1)
+        type is(grib1_descriptor)
+            select type(grid2)
+            type is(grib1_descriptor)
+                is_same_grid=grid1%is_same_grid_grib1(grid2)
             class default
-                is_same_grid = .false.
-            end select
-        type is (grib2_descriptor)
-            select type (grid2)
-            type is (grib2_descriptor)
-                is_same_grid = grid1%is_same_grid_grib2(grid2)
+                is_same_grid=.false.
+            endselect
+        type is(grib2_descriptor)
+            select type(grid2)
+            type is(grib2_descriptor)
+                is_same_grid=grid1%is_same_grid_grib2(grid2)
             class default
-                is_same_grid = .false.
-            end select
-        end select
+                is_same_grid=.false.
+            endselect
+        endselect
 
-    end function is_same_grid
+    endfunction is_same_grid
 
     !> Test whether two grib1_descriptors are the same.
   !! @param[in] self The grib1_descriptor which this routine was called on.
@@ -142,16 +142,16 @@ contains
   !!
   !! @author Kyle Gerheiser
   !! @date July 2021
-    logical function is_same_grid_grib1(self, grid_desc) result(same_grid)
-        class(grib1_descriptor), intent(in) :: self, grid_desc
+    logical function is_same_grid_grib1(self,grid_desc) result(same_grid)
+        class(grib1_descriptor),intent(in) :: self,grid_desc
 
-        if (all(self%gds .eq. grid_desc%gds)) then
-            same_grid = .true.
+        if(all(self%gds.eq.grid_desc%gds)) then
+            same_grid=.true.
         else
-            same_grid = .false.
-        end if
+            same_grid=.false.
+        endif
 
-    end function is_same_grid_grib1
+    endfunction is_same_grid_grib1
 
     !> Test whether two grib2_descriptors are the same.
   !! @param[in] self The grib2_descriptor which this routine was called on.
@@ -161,19 +161,19 @@ contains
   !!
   !! @author Kyle Gerheiser
   !! @date July 2021
-    logical function is_same_grid_grib2(self, grid_desc) result(same_grid)
-        class(grib2_descriptor), intent(in) :: self, grid_desc
+    logical function is_same_grid_grib2(self,grid_desc) result(same_grid)
+        class(grib2_descriptor),intent(in) :: self,grid_desc
 
-        same_grid = .false.
-        if (self%grid_num .eq. grid_desc%grid_num) then
-            if (self%gdt_len .eq. grid_desc%gdt_len) then
-                if (all(self%gdt_tmpl .eq. grid_desc%gdt_tmpl)) then
-                    same_grid = .true.
-                end if
-            end if
-        end if
+        same_grid=.false.
+        if(self%grid_num.eq.grid_desc%grid_num) then
+            if(self%gdt_len.eq.grid_desc%gdt_len) then
+                if(all(self%gdt_tmpl.eq.grid_desc%gdt_tmpl)) then
+                    same_grid=.true.
+                endif
+            endif
+        endif
 
-    end function is_same_grid_grib2
+    endfunction is_same_grid_grib2
 
     ! subroutine decode_template_grib1(self)
     !   type(grib1_descriptor), intent(inout) :: self
@@ -525,4 +525,4 @@ contains
     !   end select
     ! end subroutine earth_radius
 
-end module ip_grid_descriptor_mod
+endmodule ip_grid_descriptor_mod
