@@ -69,7 +69,7 @@ jobs:
     - name: recipe-check
       run: |
         echo "If this jobs fails, look at the most recently output CMake option below and make sure that option appears in spack/package.py"
-        for opt in $(grep -ioP '^option\(\K(?!(ENABLE_DOCS|TEST_TIME_LIMIT))[^ ]+' $GITHUB_WORKSPACE/ip/CMakeLists.txt) ; do
+        for opt in $(grep -ioP '^option\(\K(?!(ENABLE_DOCS|TEST_TIME_LIMIT|F90_AUTOFORMAT))[^ ]+' $GITHUB_WORKSPACE/ip/CMakeLists.txt) ; do
           echo "Checking for presence of '$opt' CMake option in package.py"
           grep -cP "define.+\b${opt}\b" $GITHUB_WORKSPACE/ip/spack/package.py
         done
