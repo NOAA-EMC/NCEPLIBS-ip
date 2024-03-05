@@ -574,7 +574,7 @@ contains
                     call gdswzd(grid_in, -1, no, fill, xptb, yptb, rlob, rlab, nv)
                 end if
                 if (iret .eq. 0 .and. nv .eq. 0 .and. lb .eq. 0) iret = 2
-            !$omp parallel do private(n, xi, yi, i1, i2, wi1, wi2, j1, j2, wj1, wj2, cm11, cm21, cm12, cm22, sm11, sm21, sm12, sm22) &
+                !$omp parallel do private(n, xi, yi, i1, i2, wi1, wi2, j1, j2, wj1, wj2, cm11, cm21, cm12, cm22, sm11, sm21, sm12, sm22) &
                     !$omp schedule(static)
                 do n = 1, no
                     xi = xptb(n)
