@@ -21,6 +21,7 @@ option(BUILD_D "Build the 8-byte real version of the library, libip_d.{a,so}" ON
 option(BUILD_8 "Build the 8-byte integer & real version of the library, libip_8.{a,so}" OFF)
 option(BUILD_DEPRECATED "Build deprecated spectral processing functions" OFF)
 option(TEST_TIME_LIMIT "Set timeout for tests" OFF)
+option(F90_AUTOFORMAT "Use fprettify to reformat source code" OFF)
 
 # Figure whether user wants a _4, a _d, and/or _8.
 if(BUILD_4)
@@ -85,4 +86,24 @@ if(ENABLE_DOCS)
   find_package(Doxygen REQUIRED)
   set(abs_top_srcdir "${CMAKE_SOURCE_DIR}")
   add_subdirectory(docs)  
+endif()
+
+# Run 'fprettify' autoformatter directly on src/*.F90
+if(F90_AUTOFORMAT)
+  find_program(FPRETTIFY_EXE fprettify REQUIRED)
+  execute_process(
+                      COMMAND ${FPRETTIFY_EXE} --version
+                      OUTPUT_VARIABLE FPRETTIFY_VERSION
+                      OUTPUT_STRIP_TRAILING_WHITESPACE
+                  )
+  if(NOT ${FPRETTIFY_VERSION} MATCHES "-emc$")
+    message(FATAL_ERROR "The EMC-modified version of fprettify is required")
+  endif()
+  message(STATUS "Creating 'fprettify' target to directly update src/*.F90")
+  add_custom_target(
+                        fprettify
+                        COMMAND ${FPRETTIFY_EXE} --case 1 1 1 1 1 --indent 4
+                        --whitespace 1 --enable-replacements --bkup_suffix .bkp
+                        "${CMAKE_SOURCE_DIR}/src/*.F90"
+                   )
 endif()
