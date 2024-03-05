@@ -86,168 +86,168 @@
 !>  - 1 improper grid specification
 !>
 !> @author Iredell @date 96-04-10
-SUBROUTINE IPXWAFS2(IDIR, NUMPTS_THIN, NUMPTS_FULL, KM, NUM_OPT, OPT_PTS, &
-     IGDTLEN, IGDTMPL_THIN, DATA_THIN, IB_THIN, BITMAP_THIN,  &
-     IGDTMPL_FULL, DATA_FULL, IB_FULL, BITMAP_FULL, IRET)
-  IMPLICIT NONE
-  !
-  INTEGER,               INTENT(IN   ) :: NUM_OPT
-  INTEGER,               INTENT(INOUT) :: OPT_PTS(NUM_OPT)
-  INTEGER,               INTENT(IN   ) :: IDIR, KM, NUMPTS_THIN, NUMPTS_FULL
-  INTEGER,               INTENT(IN   ) :: IGDTLEN
-  INTEGER,               INTENT(INOUT) :: IGDTMPL_THIN(IGDTLEN)
-  INTEGER,               INTENT(INOUT) :: IGDTMPL_FULL(IGDTLEN)
-  INTEGER,               INTENT(INOUT) :: IB_THIN(KM), IB_FULL(KM)
-  INTEGER,               INTENT(  OUT) :: IRET
-  !
-  LOGICAL(KIND=1),       INTENT(INOUT) :: BITMAP_THIN(NUMPTS_THIN,KM)
-  LOGICAL(KIND=1),       INTENT(INOUT) :: BITMAP_FULL(NUMPTS_FULL,KM)
-  !
-  REAL,                  INTENT(INOUT) :: DATA_THIN(NUMPTS_THIN,KM)
-  REAL,                  INTENT(INOUT) :: DATA_FULL(NUMPTS_FULL,KM)
-  !
-  INTEGER,               PARAMETER     :: MISSING=-1
-  !
-  INTEGER                              :: SCAN_MODE, I, J, K, IDLAT, IDLON
-  INTEGER                              :: IA, IB, IM, IM1, IM2, NPWAFS(73)
-  INTEGER                              :: IS1, IS2, ISCAN, ISCALE
-  !
-  LOGICAL                              :: TEST1, TEST2
-  !
-  REAL                                 :: DLON, HI
-  REAL                                 :: RAT1, RAT2, RLON1, RLON2
-  REAL                                 :: WA, WB, X1, X2
-  !
-  DATA NPWAFS/ &
-       73, 73, 73, 73, 73, 73, 73, 73, 72, 72, 72, 71, 71, 71, 70,&
-       70, 69, 69, 68, 67, 67, 66, 65, 65, 64, 63, 62, 61, 60, 60,&
-       59, 58, 57, 56, 55, 54, 52, 51, 50, 49, 48, 47, 45, 44, 43,&
-       42, 40, 39, 38, 36, 35, 33, 32, 30, 29, 28, 26, 25, 23, 22,&
-       20, 19, 17, 16, 14, 12, 11,  9,  8,  6,  5,  3,  2/
-  ! - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-  !  TRANSFORM GDS
-  IRET=0
-  ! - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-  !  REG LAT/LON GRIDS HAVE 19 GDT ELEMENTS.
-  IF (IGDTLEN /= 19 .OR. NUMPTS_THIN/=3447 .OR. NUMPTS_FULL/=5329) THEN
-     IRET=1
-     RETURN
-  ENDIF
-  ! - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-  !  EXPAND THINNED GDS TO FULL GDS
-  IF(IDIR.GT.0) THEN
-     SCAN_MODE=IGDTMPL_THIN(19)
-     ISCALE=IGDTMPL_THIN(10)*IGDTMPL_THIN(11)
-     IF(ISCALE==0) ISCALE=10**6
-     IDLAT=NINT(1.25*FLOAT(ISCALE))
-     TEST1=ALL(OPT_PTS==NPWAFS)
-     TEST2=ALL(OPT_PTS==NPWAFS(73:1:-1))
-     ! - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-     !  SOME CHECKS TO ENSURE THIS IS A WAFS GRID
-     IF(SCAN_MODE==64 .AND. IGDTMPL_THIN(9)==73 .AND. &
-          IDLAT==IGDTMPL_THIN(18) .AND. (TEST1 .OR. TEST2) ) THEN
-        IGDTMPL_FULL=IGDTMPL_THIN
-        IM=73
-        IGDTMPL_FULL(8)=IM
-        RLON1=FLOAT(IGDTMPL_FULL(13))/FLOAT(ISCALE)
-        RLON2=FLOAT(IGDTMPL_FULL(16))/FLOAT(ISCALE)
-        ISCAN=MOD(IGDTMPL_FULL(19)/128,2)
-        HI=(-1.)**ISCAN
-        DLON=HI*(MOD(HI*(RLON2-RLON1)-1+3600,360.)+1)/(IM-1)
-        IGDTMPL_FULL(17)=NINT(DLON*FLOAT(ISCALE))
-     ELSE
-        IRET=1
-     ENDIF
-     ! - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-     !  CONTRACT FULL GDS TO THINNED GDS
-  ELSEIF(IDIR.LT.0) THEN
-     SCAN_MODE=IGDTMPL_FULL(19)
-     ISCALE=IGDTMPL_FULL(10)*IGDTMPL_FULL(11)
-     IF(ISCALE==0) ISCALE=10**6
-     IDLAT=NINT(1.25*FLOAT(ISCALE))
-     IDLON=IDLAT
-     ! - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-     !  SOME CHECKS TO ENSURE THIS IS A WAFS GRID
-     IF(SCAN_MODE==64 .AND. IGDTMPL_FULL(8)==73 .AND. IGDTMPL_FULL(9)==73 .AND. &
-          NUM_OPT==73 .AND. IDLAT==IGDTMPL_FULL(18) .AND. IDLON==IGDTMPL_FULL(17))THEN
-        IGDTMPL_THIN=IGDTMPL_FULL
-        IGDTMPL_THIN(8)=MISSING
-        IGDTMPL_THIN(17)=MISSING
-        IF(IGDTMPL_THIN(12)==0) THEN  ! IS LATITUDE OF ROW 1 THE EQUATOR?
-           OPT_PTS=NPWAFS
-        ELSE
-           OPT_PTS=NPWAFS(73:1:-1)
-        ENDIF
-     ELSE
-        IRET=1
-     ENDIF
-  ENDIF
-  ! - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-  !  TRANSFORM FIELDS
-  IF(IRET.EQ.0) THEN
-     ! - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-     !  EXPAND THINNED FIELDS TO FULL FIELDS
-     IF(IDIR.EQ.1) THEN
-        DO K=1,KM
-           IS1=0
-           IS2=0
-           IB_FULL(K)=0
-           DO J=1,IGDTMPL_FULL(9)
-              IM1=OPT_PTS(J)
-              IM2=IGDTMPL_FULL(8)
-              RAT1=FLOAT(IM1-1)/FLOAT(IM2-1)
-              DO I=1,IM2
-                 X1=(I-1)*RAT1+1
-                 IA=INT(X1)
-                 IA=MIN(MAX(IA,1),IM1-1)
-                 IB=IA+1
-                 WA=IB-X1
-                 WB=X1-IA
-                 IF(IB_THIN(K)==0.OR.(BITMAP_THIN(IS1+IA,K).AND.BITMAP_THIN(IS1+IB,K))) THEN
-                    DATA_FULL(IS2+I,K)=WA*DATA_THIN(IS1+IA,K)+WB*DATA_THIN(IS1+IB,K)
-                    BITMAP_FULL(IS2+I,K)=.TRUE.
-                 ELSE
-                    DATA_FULL(IS2+I,K)=0.0
-                    BITMAP_FULL(IS2+I,K)=.FALSE.
-                    IB_FULL(K)=1
-                 ENDIF
-              ENDDO
-              IS1=IS1+IM1
-              IS2=IS2+IM2
-           ENDDO
-        ENDDO
+subroutine ipxwafs2(idir, numpts_thin, numpts_full, km, num_opt, opt_pts, &
+                    igdtlen, igdtmpl_thin, data_thin, ib_thin, bitmap_thin, &
+                    igdtmpl_full, data_full, ib_full, bitmap_full, iret)
+    implicit none
+    !
+    integer, intent(in) :: num_opt
+    integer, intent(inout) :: opt_pts(num_opt)
+    integer, intent(in) :: idir, km, numpts_thin, numpts_full
+    integer, intent(in) :: igdtlen
+    integer, intent(inout) :: igdtmpl_thin(igdtlen)
+    integer, intent(inout) :: igdtmpl_full(igdtlen)
+    integer, intent(inout) :: ib_thin(km), ib_full(km)
+    integer, intent(out) :: iret
+    !
+    logical(KIND=1), intent(inout) :: bitmap_thin(numpts_thin, km)
+    logical(KIND=1), intent(inout) :: bitmap_full(numpts_full, km)
+    !
+    real, intent(inout) :: data_thin(numpts_thin, km)
+    real, intent(inout) :: data_full(numpts_full, km)
+    !
+    integer, parameter     :: missing = -1
+    !
+    integer                              :: scan_mode, i, j, k, idlat, idlon
+    integer                              :: ia, ib, im, im1, im2, npwafs(73)
+    integer                              :: is1, is2, iscan, iscale
+    !
+    logical                              :: test1, test2
+    !
+    real                                 :: dlon, hi
+    real                                 :: rat1, rat2, rlon1, rlon2
+    real                                 :: wa, wb, x1, x2
+    !
+    data npwafs/ &
+        73, 73, 73, 73, 73, 73, 73, 73, 72, 72, 72, 71, 71, 71, 70, &
+        70, 69, 69, 68, 67, 67, 66, 65, 65, 64, 63, 62, 61, 60, 60, &
+        59, 58, 57, 56, 55, 54, 52, 51, 50, 49, 48, 47, 45, 44, 43, &
+        42, 40, 39, 38, 36, 35, 33, 32, 30, 29, 28, 26, 25, 23, 22, &
+        20, 19, 17, 16, 14, 12, 11, 9, 8, 6, 5, 3, 2/
+    ! - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+    !  TRANSFORM GDS
+    iret = 0
+    ! - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+    !  REG LAT/LON GRIDS HAVE 19 GDT ELEMENTS.
+    if (igdtlen .ne. 19 .or. numpts_thin .ne. 3447 .or. numpts_full .ne. 5329) then
+        iret = 1
+        return
+    end if
+    ! - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+    !  EXPAND THINNED GDS TO FULL GDS
+    if (idir .gt. 0) then
+        scan_mode = igdtmpl_thin(19)
+        iscale = igdtmpl_thin(10)*igdtmpl_thin(11)
+        if (iscale .eq. 0) iscale = 10**6
+        idlat = nint(1.25*float(iscale))
+        test1 = all(opt_pts .eq. npwafs)
+        test2 = all(opt_pts .eq. npwafs(73:1:-1))
         ! - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-        !  CONTRACT FULL FIELDS TO THINNED FIELDS
-     ELSEIF(IDIR.EQ.-1) THEN
-        DO K=1,KM
-           IS1=0
-           IS2=0
-           IB_THIN(K)=0
-           DO J=1,IGDTMPL_FULL(9)
-              IM1=OPT_PTS(J)
-              IM2=IGDTMPL_FULL(8)
-              RAT2=FLOAT(IM2-1)/FLOAT(IM1-1)
-              DO I=1,IM1
-                 X2=(I-1)*RAT2+1
-                 IA=INT(X2)
-                 IA=MIN(MAX(IA,1),IM2-1)
-                 IB=IA+1
-                 WA=IB-X2
-                 WB=X2-IA
-                 IF(IB_FULL(K)==0.OR.(BITMAP_FULL(IS2+IA,K).AND.BITMAP_FULL(IS2+IB,K))) THEN
-                    DATA_THIN(IS1+I,K)=WA*DATA_FULL(IS2+IA,K)+WB*DATA_FULL(IS2+IB,K)
-                    BITMAP_THIN(IS1+I,K)=.TRUE.
-                 ELSE
-                    DATA_THIN(IS1+I,K)=0.0
-                    BITMAP_THIN(IS1+I,K)=.FALSE.
-                    IB_THIN(K)=1
-                 ENDIF
-              ENDDO
-              IS1=IS1+IM1
-              IS2=IS2+IM2
-           ENDDO
-        ENDDO
-     ENDIF
-  ENDIF
-  ! - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-END SUBROUTINE IPXWAFS2
+        !  SOME CHECKS TO ENSURE THIS IS A WAFS GRID
+        if (scan_mode .eq. 64 .and. igdtmpl_thin(9) .eq. 73 .and. &
+            idlat .eq. igdtmpl_thin(18) .and. (test1 .or. test2)) then
+            igdtmpl_full = igdtmpl_thin
+            im = 73
+            igdtmpl_full(8) = im
+            rlon1 = float(igdtmpl_full(13))/float(iscale)
+            rlon2 = float(igdtmpl_full(16))/float(iscale)
+            iscan = mod(igdtmpl_full(19)/128, 2)
+            hi = (-1.)**iscan
+            dlon = hi*(mod(hi*(rlon2-rlon1)-1+3600, 360.)+1)/(im-1)
+            igdtmpl_full(17) = nint(dlon*float(iscale))
+        else
+            iret = 1
+        end if
+        ! - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+        !  CONTRACT FULL GDS TO THINNED GDS
+    elseif (idir .lt. 0) then
+        scan_mode = igdtmpl_full(19)
+        iscale = igdtmpl_full(10)*igdtmpl_full(11)
+        if (iscale .eq. 0) iscale = 10**6
+        idlat = nint(1.25*float(iscale))
+        idlon = idlat
+        ! - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+        !  SOME CHECKS TO ENSURE THIS IS A WAFS GRID
+        if (scan_mode .eq. 64 .and. igdtmpl_full(8) .eq. 73 .and. igdtmpl_full(9) .eq. 73 .and. &
+            num_opt .eq. 73 .and. idlat .eq. igdtmpl_full(18) .and. idlon .eq. igdtmpl_full(17)) then
+            igdtmpl_thin = igdtmpl_full
+            igdtmpl_thin(8) = missing
+            igdtmpl_thin(17) = missing
+            if (igdtmpl_thin(12) .eq. 0) then  ! IS LATITUDE OF ROW 1 THE EQUATOR?
+                opt_pts = npwafs
+            else
+                opt_pts = npwafs(73:1:-1)
+            end if
+        else
+            iret = 1
+        end if
+    end if
+    ! - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+    !  TRANSFORM FIELDS
+    if (iret .eq. 0) then
+        ! - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+        !  EXPAND THINNED FIELDS TO FULL FIELDS
+        if (idir .eq. 1) then
+            do k = 1, km
+                is1 = 0
+                is2 = 0
+                ib_full(k) = 0
+                do j = 1, igdtmpl_full(9)
+                    im1 = opt_pts(j)
+                    im2 = igdtmpl_full(8)
+                    rat1 = float(im1-1)/float(im2-1)
+                    do i = 1, im2
+                        x1 = (i-1)*rat1+1
+                        ia = int(x1)
+                        ia = min(max(ia, 1), im1-1)
+                        ib = ia+1
+                        wa = ib-x1
+                        wb = x1-ia
+                        if (ib_thin(k) .eq. 0 .or. (bitmap_thin(is1+ia, k) .and. bitmap_thin(is1+ib, k))) then
+                            data_full(is2+i, k) = wa*data_thin(is1+ia, k)+wb*data_thin(is1+ib, k)
+                            bitmap_full(is2+i, k) = .true.
+                        else
+                            data_full(is2+i, k) = 0.0
+                            bitmap_full(is2+i, k) = .false.
+                            ib_full(k) = 1
+                        end if
+                    end do
+                    is1 = is1+im1
+                    is2 = is2+im2
+                end do
+            end do
+            ! - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+            !  CONTRACT FULL FIELDS TO THINNED FIELDS
+        elseif (idir .eq. -1) then
+            do k = 1, km
+                is1 = 0
+                is2 = 0
+                ib_thin(k) = 0
+                do j = 1, igdtmpl_full(9)
+                    im1 = opt_pts(j)
+                    im2 = igdtmpl_full(8)
+                    rat2 = float(im2-1)/float(im1-1)
+                    do i = 1, im1
+                        x2 = (i-1)*rat2+1
+                        ia = int(x2)
+                        ia = min(max(ia, 1), im2-1)
+                        ib = ia+1
+                        wa = ib-x2
+                        wb = x2-ia
+                        if (ib_full(k) .eq. 0 .or. (bitmap_full(is2+ia, k) .and. bitmap_full(is2+ib, k))) then
+                            data_thin(is1+i, k) = wa*data_full(is2+ia, k)+wb*data_full(is2+ib, k)
+                            bitmap_thin(is1+i, k) = .true.
+                        else
+                            data_thin(is1+i, k) = 0.0
+                            bitmap_thin(is1+i, k) = .false.
+                            ib_thin(k) = 1
+                        end if
+                    end do
+                    is1 = is1+im1
+                    is2 = is2+im2
+                end do
+            end do
+        end if
+    end if
+    ! - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+end subroutine ipxwafs2

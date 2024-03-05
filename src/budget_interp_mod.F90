@@ -8,707 +8,707 @@
 !! @author George Gayno, Mark Iredell, Kyle Gerheiser, Eric Engle
 !! @date July 2021
 module budget_interp_mod
-  use gdswzd_mod
-  use polfix_mod
-  use ip_grids_mod
-  use ip_grid_descriptor_mod
-  use ip_grid_factory_mod
-  implicit none
+    use gdswzd_mod
+    use polfix_mod
+    use ip_grids_mod
+    use ip_grid_descriptor_mod
+    use ip_grid_factory_mod
+    implicit none
 
-  private
-  public :: interpolate_budget
+    private
+    public :: interpolate_budget
 
-  interface interpolate_budget
-     module procedure interpolate_budget_scalar
-     module procedure interpolate_budget_vector
-  end interface interpolate_budget
+    interface interpolate_budget
+        module procedure interpolate_budget_scalar
+        module procedure interpolate_budget_vector
+    end interface interpolate_budget
 
-  ! Smallest positive real value (use for equality comparisons)
-  REAL :: TINYREAL=TINY(1.0)
+    ! Smallest positive real value (use for equality comparisons)
+    real :: tinyreal = tiny(1.0)
 
 contains
 
-  !> Performs budget interpolation from any grid to any grid (or to
-  !> random station points) for scalar fields.
-  !>
-  !> The algorithm simply computes (weighted) averages of bilinearly
-  !> interpolated points arranged in a square box centered around each
-  !> output grid point and stretching nearly halfway to each of the
-  !> neighboring grid points.
-  !>
-  !> Options allow choices of number of points in each radius from the
-  !> center point (ipopt(1)) which defaults to 2 (if ipopt(1)=-1)
-  !> meaning that 25 points will be averaged; further options are the
-  !> respective weights for the radius points starting at the center
-  !> point (ipopt(2:2+ipopt(1)) which defaults to all 1 (if
-  !> ipopt(1)=-1 or ipopt(2)=-1).
-  !>
-  !> A special interpolation is done if ipopt(2)=-2.  in this case,
-  !> the boxes stretch nearly all the way to each of the neighboring
-  !> grid points and the weights are the adjoint of the bilinear
-  !> interpolation weights.  This case gives quasi-second-order budget
-  !> interpolation.
-  !>
-  !> Another option is the minimum percentage for mask, i.e. percent
-  !> valid input data required to make output data, (ipopt(3+ipopt(1))
-  !> which defaults to 50 (if -1).
-  !>
-  !> In cases where there is no or insufficient valid input data, the
-  !> user may choose to search for the nearest valid data.  this is
-  !> invoked by setting ipopt(20) to the width of the search
-  !> square. The default is 1 (no search). Squares are searched for
-  !> valid data in a spiral pattern starting from the center. No
-  !> searching is done where the output grid is outside the input
-  !> grid.
-  !>
-  !> Only horizontal interpolation is performed.
-  !>
-  !> @param[in] ipopt Interpolation options
-  !> - ipopt(1) is number of radius points (defaults to 2 if ipopt(1)=-1).
-  !> - ipopt(2:2+ipopt(1)) are respective weights (defaults to all 1 if ipopt(1)=-1 or ipopt(2)=-1).
-  !> - ipopt(3+ipopt(1)) is minimum percentage for mask (defaults to 50 if ipopt(3+ipopt(1)=-1).
-  !> @param[in] grid_in Input grid
-  !> @param[in] grid_out Output grid
-  !> @param[in] mi Skip number between input grid fields if km>1 or
-  !> dimension of input grid fields if km=1.
-  !> @param[out] mo Skip number between output grid fields if km>1 or
-  !> dimension of output grid fields if km=1.
-  !> @param[in] km Number of fields to interpolate.
-  !> @param[in] ibi Input bitmap flags.
-  !> @param[in] li Input bitmaps (if some ibi(k)=1).
-  !> @param[in] gi Input fields to interpolate.
-  !> @param[in,out] no  Number of output points (only if igdtnumo<0).
-  !> @param[in,out] rlat Output latitudes in degrees (if igdtnumo<0).
-  !> @param[in,out] rlon Output longitudes in degrees (if igdtnumo<0).
-  !> @param[out] ibo Output bitmap flags.
-  !> @param[out] lo Output bitmaps (always output).
-  !> @param[out] go Output fields interpolated.
-  !> @param[out] iret Return code.
-  !> - 0 Successful interpolation.
-  !> - 2 Unrecognized input grid or no grid overlap.
-  !> - 3 Unrecognized output grid.
-  !> - 32 Invalid budget method parameters.
-  !>
-  !> @author Marke Iredell, George Gayno, Kyle Gerheiser, Eric Engle
-  !> @date July 2021
-  SUBROUTINE interpolate_budget_scalar(IPOPT,grid_in,grid_out, &
-       MI,MO,KM,IBI,LI,GI, &
-       NO,RLAT,RLON,IBO,LO,GO,IRET)
-    class(ip_grid), intent(in) :: grid_in, grid_out
-    INTEGER,    INTENT(IN   )     :: IBI(KM), IPOPT(20)
-    INTEGER,    INTENT(IN   )     :: KM, MI, MO
-    INTEGER,    INTENT(  OUT)     :: IBO(KM), IRET, NO
-    !
-    LOGICAL*1,  INTENT(IN   )     :: LI(MI,KM)
-    LOGICAL*1,  INTENT(  OUT)     :: LO(MO,KM)
-    !
-    REAL,       INTENT(IN   )     :: GI(MI,KM)
-    REAL,       INTENT(INOUT)     :: RLAT(MO), RLON(MO)
-    REAL,       INTENT(  OUT)     :: GO(MO,KM)
-    !
-    REAL,       PARAMETER         :: FILL=-9999.
-    !
-    INTEGER                       :: I1, J1, I2, J2, IB, JB
-    INTEGER                       :: IX, JX, IXS, JXS
-    INTEGER                       :: K, KXS, KXT
-    INTEGER                       :: LB, LSW, MP, MSPIRAL, MX
-    INTEGER                       :: N, NB, NB1, NB2, NB3, NB4, NV, NX
-    INTEGER                       :: N11(MO),N21(MO),N12(MO),N22(MO)
-    !
-    REAL                          :: GB, LAT(1), LON(1)
-    REAL                          :: PMP, RB2, RLOB(MO), RLAB(MO), WB
-    REAL                          :: W11(MO), W21(MO), W12(MO), W22(MO)
-    REAL                          :: WO(MO,KM), XF, YF, XI, YI, XX, YY
-    REAL                          :: XPTS(MO),YPTS(MO),XPTB(MO),YPTB(MO)
-    REAL                          :: XXX(1), YYY(1)
+    !> Performs budget interpolation from any grid to any grid (or to
+    !> random station points) for scalar fields.
+    !>
+    !> The algorithm simply computes (weighted) averages of bilinearly
+    !> interpolated points arranged in a square box centered around each
+    !> output grid point and stretching nearly halfway to each of the
+    !> neighboring grid points.
+    !>
+    !> Options allow choices of number of points in each radius from the
+    !> center point (ipopt(1)) which defaults to 2 (if ipopt(1)=-1)
+    !> meaning that 25 points will be averaged; further options are the
+    !> respective weights for the radius points starting at the center
+    !> point (ipopt(2:2+ipopt(1)) which defaults to all 1 (if
+    !> ipopt(1)=-1 or ipopt(2)=-1).
+    !>
+    !> A special interpolation is done if ipopt(2)=-2.  in this case,
+    !> the boxes stretch nearly all the way to each of the neighboring
+    !> grid points and the weights are the adjoint of the bilinear
+    !> interpolation weights.  This case gives quasi-second-order budget
+    !> interpolation.
+    !>
+    !> Another option is the minimum percentage for mask, i.e. percent
+    !> valid input data required to make output data, (ipopt(3+ipopt(1))
+    !> which defaults to 50 (if -1).
+    !>
+    !> In cases where there is no or insufficient valid input data, the
+    !> user may choose to search for the nearest valid data.  this is
+    !> invoked by setting ipopt(20) to the width of the search
+    !> square. The default is 1 (no search). Squares are searched for
+    !> valid data in a spiral pattern starting from the center. No
+    !> searching is done where the output grid is outside the input
+    !> grid.
+    !>
+    !> Only horizontal interpolation is performed.
+    !>
+    !> @param[in] ipopt Interpolation options
+    !> - ipopt(1) is number of radius points (defaults to 2 if ipopt(1)=-1).
+    !> - ipopt(2:2+ipopt(1)) are respective weights (defaults to all 1 if ipopt(1)=-1 or ipopt(2)=-1).
+    !> - ipopt(3+ipopt(1)) is minimum percentage for mask (defaults to 50 if ipopt(3+ipopt(1)=-1).
+    !> @param[in] grid_in Input grid
+    !> @param[in] grid_out Output grid
+    !> @param[in] mi Skip number between input grid fields if km>1 or
+    !> dimension of input grid fields if km=1.
+    !> @param[out] mo Skip number between output grid fields if km>1 or
+    !> dimension of output grid fields if km=1.
+    !> @param[in] km Number of fields to interpolate.
+    !> @param[in] ibi Input bitmap flags.
+    !> @param[in] li Input bitmaps (if some ibi(k)=1).
+    !> @param[in] gi Input fields to interpolate.
+    !> @param[in,out] no  Number of output points (only if igdtnumo<0).
+    !> @param[in,out] rlat Output latitudes in degrees (if igdtnumo<0).
+    !> @param[in,out] rlon Output longitudes in degrees (if igdtnumo<0).
+    !> @param[out] ibo Output bitmap flags.
+    !> @param[out] lo Output bitmaps (always output).
+    !> @param[out] go Output fields interpolated.
+    !> @param[out] iret Return code.
+    !> - 0 Successful interpolation.
+    !> - 2 Unrecognized input grid or no grid overlap.
+    !> - 3 Unrecognized output grid.
+    !> - 32 Invalid budget method parameters.
+    !>
+    !> @author Marke Iredell, George Gayno, Kyle Gerheiser, Eric Engle
+    !> @date July 2021
+    subroutine interpolate_budget_scalar(ipopt, grid_in, grid_out, &
+                                         mi, mo, km, ibi, li, gi, &
+                                         no, rlat, rlon, ibo, lo, go, iret)
+        class(ip_grid), intent(in) :: grid_in, grid_out
+        integer, intent(in)     :: ibi(km), ipopt(20)
+        integer, intent(in)     :: km, mi, mo
+        integer, intent(out)     :: ibo(km), iret, no
+        !
+        logical*1, intent(in)     :: li(mi, km)
+        logical*1, intent(out)     :: lo(mo, km)
+        !
+        real, intent(in)     :: gi(mi, km)
+        real, intent(inout)     :: rlat(mo), rlon(mo)
+        real, intent(out)     :: go(mo, km)
+        !
+        real, parameter         :: fill = -9999.
+        !
+        integer                       :: i1, j1, i2, j2, ib, jb
+        integer                       :: ix, jx, ixs, jxs
+        integer                       :: k, kxs, kxt
+        integer                       :: lb, lsw, mp, mspiral, mx
+        integer                       :: n, nb, nb1, nb2, nb3, nb4, nv, nx
+        integer                       :: n11(mo), n21(mo), n12(mo), n22(mo)
+        !
+        real                          :: gb, lat(1), lon(1)
+        real                          :: pmp, rb2, rlob(mo), rlab(mo), wb
+        real                          :: w11(mo), w21(mo), w12(mo), w22(mo)
+        real                          :: wo(mo, km), xf, yf, xi, yi, xx, yy
+        real                          :: xpts(mo), ypts(mo), xptb(mo), yptb(mo)
+        real                          :: xxx(1), yyy(1)
 
-    logical :: to_station_points
+        logical :: to_station_points
 
-    class(ip_grid), allocatable :: grid_out2
-    
-    ! - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-    !  COMPUTE NUMBER OF OUTPUT POINTS AND THEIR LATITUDES AND LONGITUDES.
-    !  DO SUBSECTION OF GRID IF KGDSO(1) IS SUBTRACTED FROM 255.
-    IRET=0
+        class(ip_grid), allocatable :: grid_out2
 
-    select type(grid_out)
-    type is(ip_station_points_grid)
-       to_station_points = .true.
-       allocate(grid_out2, source = grid_out)
-       CALL GDSWZD(grid_out2, 0,MO,FILL,XPTS,YPTS,RLON,RLAT,NO)
-       IF(NO.EQ.0) IRET=3
-       CALL GDSWZD(grid_in,-1,NO,FILL,XPTS,YPTS,RLON,RLAT,NV)
-       IF(NV.EQ.0) IRET=2
-    class default
-       to_station_points = .false.
-       allocate(grid_out2, source = grid_out)
-       CALL GDSWZD(grid_out2, 0,MO,FILL,XPTS,YPTS,RLON,RLAT,NO)
-       IF(NO.EQ.0) IRET=3
-    end select
+        ! - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+        !  COMPUTE NUMBER OF OUTPUT POINTS AND THEIR LATITUDES AND LONGITUDES.
+        !  DO SUBSECTION OF GRID IF KGDSO(1) IS SUBTRACTED FROM 255.
+        iret = 0
 
-    ! - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-    !  SET PARAMETERS
-    IF(IPOPT(1).GT.16) IRET=32  
-    MSPIRAL=MAX(IPOPT(20),1)
-    NB1=IPOPT(1)
-    IF(NB1.EQ.-1) NB1=2
-    IF(IRET.EQ.0.AND.NB1.LT.0) IRET=32
-    LSW=1
-    IF(IPOPT(2).EQ.-2) LSW=2
-    IF(IPOPT(1).EQ.-1.OR.IPOPT(2).EQ.-1) LSW=0
-    IF(IRET.EQ.0.AND.LSW.EQ.1.AND.NB1.GT.15) IRET=32
-    MP=IPOPT(3+IPOPT(1))
-    IF(MP.EQ.-1.OR.MP.EQ.0) MP=50
-    IF(MP.LT.0.OR.MP.GT.100) IRET=32
-    PMP=MP*0.01
-    IF(IRET.EQ.0) THEN
-       NB2=2*NB1+1
-       RB2=1./NB2
-       NB3=NB2*NB2
-       NB4=NB3
-       IF(LSW.EQ.2) THEN
-          RB2=1./(NB1+1)
-          NB4=(NB1+1)**4
-       ELSEIF(LSW.EQ.1) THEN
-          NB4=IPOPT(2)
-          DO IB=1,NB1
-             NB4=NB4+8*IB*IPOPT(2+IB)
-          ENDDO
-       ENDIF
-    ELSE
-       NB3=0
-       NB4=1
-    ENDIF
-    DO K=1,KM
-       DO N=1,NO
-          GO(N,K)=0.
-          WO(N,K)=0.
-       ENDDO
-    ENDDO
-    ! - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-    !  LOOP OVER SAMPLE POINTS IN OUTPUT GRID BOX
-    DO NB=1,NB3
-       !  LOCATE INPUT POINTS AND COMPUTE THEIR WEIGHTS
-       JB=(NB-1)/NB2-NB1
-       IB=NB-(JB+NB1)*NB2-NB1-1
-       LB=MAX(ABS(IB),ABS(JB))
-       WB=1
-       IF(LSW.EQ.2) THEN
-          WB=(NB1+1-ABS(IB))*(NB1+1-ABS(JB))
-       ELSEIF(LSW.EQ.1) THEN
-          WB=IPOPT(2+LB)
-       ENDIF
-       IF(ABS(WB).GT.TINYREAL) THEN
-          !$OMP PARALLEL DO PRIVATE(N) SCHEDULE(STATIC)
-          DO N=1,NO
-             XPTB(N)=XPTS(N)+IB*RB2
-             YPTB(N)=YPTS(N)+JB*RB2
-          ENDDO
-          !$OMP END PARALLEL DO
-          if(to_station_points)then
-             CALL GDSWZD(grid_in, 1,NO,FILL,XPTB,YPTB,RLOB,RLAB,NV)
-             CALL GDSWZD(grid_in,-1,NO,FILL,XPTB,YPTB,RLOB,RLAB,NV)
-          else
-             CALL GDSWZD(grid_out2, 1,NO,FILL,XPTB,YPTB,RLOB,RLAB,NV)
-             CALL GDSWZD(grid_in,-1,NO,FILL,XPTB,YPTB,RLOB,RLAB,NV)
-          endif
-          IF(IRET.EQ.0.AND.NV.EQ.0.AND.LB.EQ.0) IRET=2
-          !$OMP PARALLEL DO PRIVATE(N,XI,YI,I1,I2,J1,J2,XF,YF) SCHEDULE(STATIC)
-          DO N=1,NO
-             XI=XPTB(N)
-             YI=YPTB(N)
-             IF(ABS(XI-FILL).GT.TINYREAL.AND.ABS(YI-FILL).GT.TINYREAL) THEN
-                I1=INT(XI)
-                I2=I1+1
-                J1=INT(YI)
-                J2=J1+1
-                XF=XI-I1
-                YF=YI-J1
-                N11(N)=grid_in%field_pos(i1, j1)                
-                N21(N)=grid_in%field_pos(i2, j1)
-                N12(N)=grid_in%field_pos(i1, j2)
-                N22(N)=grid_in%field_pos(i2, j2)
-                IF(MIN(N11(N),N21(N),N12(N),N22(N)).GT.0) THEN
-                   W11(N)=(1-XF)*(1-YF)
-                   W21(N)=XF*(1-YF)
-                   W12(N)=(1-XF)*YF
-                   W22(N)=XF*YF
-                ELSE
-                   N11(N)=0
-                   N21(N)=0
-                   N12(N)=0
-                   N22(N)=0
-                ENDIF
-             ELSE
-                N11(N)=0
-                N21(N)=0
-                N12(N)=0
-                N22(N)=0
-             ENDIF
-          ENDDO
-          !$OMP END PARALLEL DO
-          ! - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-          !  INTERPOLATE WITH OR WITHOUT BITMAPS
-          !$OMP PARALLEL DO PRIVATE(K,N,GB) SCHEDULE(STATIC)
-          DO K=1,KM
-             DO N=1,NO
-                IF(N11(N).GT.0) THEN
-                   IF(IBI(K).EQ.0) THEN
-                      GB=W11(N)*GI(N11(N),K)+W21(N)*GI(N21(N),K) &
-                           +W12(N)*GI(N12(N),K)+W22(N)*GI(N22(N),K)
-                      GO(N,K)=GO(N,K)+WB*GB
-                      WO(N,K)=WO(N,K)+WB
-                   ELSE
-                      IF(LI(N11(N),K)) THEN
-                         GO(N,K)=GO(N,K)+WB*W11(N)*GI(N11(N),K)
-                         WO(N,K)=WO(N,K)+WB*W11(N)
-                      ENDIF
-                      IF(LI(N21(N),K)) THEN
-                         GO(N,K)=GO(N,K)+WB*W21(N)*GI(N21(N),K)
-                         WO(N,K)=WO(N,K)+WB*W21(N)
-                      ENDIF
-                      IF(LI(N12(N),K)) THEN
-                         GO(N,K)=GO(N,K)+WB*W12(N)*GI(N12(N),K)
-                         WO(N,K)=WO(N,K)+WB*W12(N)
-                      ENDIF
-                      IF(LI(N22(N),K)) THEN
-                         GO(N,K)=GO(N,K)+WB*W22(N)*GI(N22(N),K)
-                         WO(N,K)=WO(N,K)+WB*W22(N)
-                      ENDIF
-                   ENDIF
-                ENDIF
-             ENDDO
-          ENDDO
-          !$OMP END PARALLEL DO
-       ENDIF
-    ENDDO   ! sub-grid points
-    ! - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-    !  COMPUTE OUTPUT BITMAPS AND FIELDS
-    ! KM is often 1 .. do not do OMP PARALLEL DO here
-    KM_LOOP : DO K=1,KM
-       IBO(K)=IBI(K)
-       !$OMP PARALLEL DO PRIVATE(N,LAT,LON,XXX,YYY,NV,XX,YY,IXS,JXS,MX,KXS,KXT,IX,JX,NX) SCHEDULE(STATIC)
-       N_LOOP : DO N=1,NO
-          LO(N,K)=WO(N,K).GE.PMP*NB4
-          IF(LO(N,K)) THEN
-             GO(N,K)=GO(N,K)/WO(N,K)
-          ELSEIF (MSPIRAL.GT.1) THEN
-             LAT(1)=RLAT(N)
-             LON(1)=RLON(N)
-             CALL GDSWZD(grid_in,-1,1,FILL,XXX,YYY,LON,LAT,NV)
-             XX=XXX(1)
-             YY=YYY(1)
-             IF(NV.EQ.1)THEN
-                I1=NINT(XX)
-                J1=NINT(YY)
-                IXS=INT(SIGN(1.,XX-I1))
-                JXS=INT(SIGN(1.,YY-J1))
-                SPIRAL_LOOP : DO MX=2,MSPIRAL**2
-                   KXS=INT(SQRT(4*MX-2.5))
-                   KXT=MX-(KXS**2/4+1)
-                   SELECT CASE(MOD(KXS,4))
-                   CASE(1)
-                      IX=I1-IXS*(KXS/4-KXT)
-                      JX=J1-JXS*KXS/4
-                   CASE(2)
-                      IX=I1+IXS*(1+KXS/4)
-                      JX=J1-JXS*(KXS/4-KXT)
-                   CASE(3)
-                      IX=I1+IXS*(1+KXS/4-KXT)
-                      JX=J1+JXS*(1+KXS/4)
-                   CASE DEFAULT
-                      IX=I1-IXS*KXS/4
-                      JX=J1+JXS*(KXS/4-KXT)
-                   END SELECT
-                   NX=grid_in%field_pos(ix, jx)
-                   IF(NX.GT.0.)THEN
-                      IF(LI(NX,K).OR.IBI(K).EQ.0) THEN
-                         GO(N,K)=GI(NX,K)
-                         LO(N,K)=.TRUE.
-                         CYCLE N_LOOP           
-                      ENDIF
-                   ENDIF
-                ENDDO SPIRAL_LOOP
-                IBO(K)=1
-                GO(N,K)=0.
-             ELSE
-                IBO(K)=1
-                GO(N,K)=0.
-             ENDIF
-          ELSE  ! no spiral search option
-             IBO(K)=1
-             GO(N,K)=0.
-          ENDIF
-       ENDDO N_LOOP
-       !$OMP END PARALLEL DO
-    ENDDO KM_LOOP
-    
-    select type(grid_out2)
-    type is(ip_equid_cylind_grid)
-       CALL POLFIXS(NO,MO,KM,RLAT,IBO,LO,GO)
-    end select
-    ! - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-  END SUBROUTINE interpolate_budget_scalar
+        select type (grid_out)
+        type is (ip_station_points_grid)
+            to_station_points = .true.
+            allocate (grid_out2, source=grid_out)
+            call gdswzd(grid_out2, 0, mo, fill, xpts, ypts, rlon, rlat, no)
+            if (no .eq. 0) iret = 3
+            call gdswzd(grid_in, -1, no, fill, xpts, ypts, rlon, rlat, nv)
+            if (nv .eq. 0) iret = 2
+        class default
+            to_station_points = .false.
+            allocate (grid_out2, source=grid_out)
+            call gdswzd(grid_out2, 0, mo, fill, xpts, ypts, rlon, rlat, no)
+            if (no .eq. 0) iret = 3
+        end select
 
-  !> This subprogram performs budget interpolation from any grid to
-  !> any grid (or to random station points) for vector fields.
-  !>
-  !> The algorithm simply computes (weighted) averages of bilinearly
-  !> interpolated points arranged in a square box centered around each
-  !> output grid point and stretching nearly halfway to each of the
-  !> neighboring grid points.
-  !>
-  !> Options allow choices of number of points in each radius from the
-  !> center point (ipopt(1)) which defaults to 2 (if ipopt(1)=-1)
-  !> meaning that 25 points will be averaged; further options are the
-  !> respective weights for the radius points starting at the center
-  !> point (ipopt(2:2+ipopt(1)) which defaults to all 1 (if
-  !> ipopt(1)=-1 or ipopt(2)=-1).
-  !>
-  !> A special interpolation is done if ipopt(2)=-2.  in this case,
-  !> the boxes stretch nearly all the way to each of the neighboring
-  !> grid points and the weights are the adjoint of the bilinear
-  !> interpolation weights.  This case gives quasi-second-order budget
-  !> interpolation.
-  !>
-  !> Another option is the minimum percentage for mask, i.e. percent
-  !> valid input data required to make output data, (ipopt(3+ipopt(1))
-  !> which defaults to 50 (if -1).
-  !>
-  !> In cases where there is no or insufficient valid input data, the
-  !> user may choose to search for the nearest valid data.  this is
-  !> invoked by setting ipopt(20) to the width of the search
-  !> square. The default is 1 (no search). Squares are searched for
-  !> valid data in a spiral pattern starting from the center. No
-  !> searching is done where the output grid is outside the input
-  !> grid.
-  !>
-  !> Only horizontal interpolation is performed.
-  !>
-  !> @param[in] ipopt interpolation options ipopt(1) Number of radius
-  !> points (defaults to 2 if ipopt(1)=-1); ipopt(2:2+ipopt(1))
-  !> Respective weights (defaults to all 1 if ipopt(1)=-1 or
-  !> ipopt(2)=-1).  ipopt(3+ipopt(1)) Minimum percentage for mask
-  !> (defaults to 50 if ipopt(3+ipopt(1)=-1)
-  !> @param[in] grid_in Input grid.
-  !> @param[in] grid_out Output grid.
-  !> @param[in] mi skip Number between input grid fields if km>1 or
-  !> dimension of input grid fields if km=1.
-  !> @param[out] mo skip Number between output grid fields if km>1 or
-  !> dimension of output grid fields if km=1.
-  !> @param[in] km Number of fields to interpolate.
-  !> @param[in] ibi Input bitmap flags.
-  !> @param[in] li Input bitmaps (if some ibi(k)=1).
-  !> @param[in] ui Input u-component fields to interpolate.
-  !> @param[in] vi Input v-component fields to interpolate.
-  !> @param[in,out] no  Number of output points (only if igdtnumo<0)
-  !> @param[in,out] rlat Output latitudes in degrees (if igdtnumo<0)
-  !> @param[in,out] rlon Output longitudes in degrees (if igdtnumo<0)
-  !> @param[in,out] crot Vector rotation cosines. If interpolating
-  !> subgrid ugrid=crot * uearth - srot * vearth.
-  !> @param[in,out] srot Vector rotation sines. If interpolating
-  !> subgrid vgrid = srot * uearth + crot * vearth.
-  !> @param[out] ibo Output bitmap flags.
-  !> @param[out] lo Output bitmaps (always output).
-  !> @param[out] uo Output u-component fields interpolated.
-  !> @param[out] vo Output v-component fields interpolated.
-  !> @param[out] iret Return code.
-  !> - 0 Successful interpolation.
-  !> - 2 Unrecognized input grid or no grid overlap.
-  !> - 3 Unrecognized output grid.
-  !> - 32 Invalid budget method parameters.
-  !> 
-  !> @author Marke Iredell, George Gayno, Kyle Gerheiser, Eric Engle
-  !> @date July 2021
-  SUBROUTINE interpolate_budget_vector(IPOPT,grid_in,grid_out, &
-       MI,MO,KM,IBI,LI,UI,VI, &
-       NO,RLAT,RLON,CROT,SROT,IBO,LO,UO,VO,IRET)
-    class(ip_grid), intent(in) :: grid_in, grid_out
-    INTEGER,          INTENT(IN   ) :: IPOPT(20), IBI(KM)
-    INTEGER,          INTENT(IN   ) :: KM, MI, MO
-    INTEGER,          INTENT(  OUT) :: IRET, NO, IBO(KM)
-    !
-    LOGICAL*1,        INTENT(IN   ) :: LI(MI,KM)
-    LOGICAL*1,        INTENT(  OUT) :: LO(MO,KM)
-    !
-    REAL,             INTENT(IN   ) :: UI(MI,KM),VI(MI,KM)
-    REAL,             INTENT(INOUT) :: RLAT(MO),RLON(MO)
-    REAL,             INTENT(  OUT) :: UO(MO,KM),VO(MO,KM)
-    REAL,             INTENT(  OUT) :: CROT(MO),SROT(MO)
-    !
-    REAL,             PARAMETER     :: FILL=-9999.
-    !
-    INTEGER                         :: I1,I2,J1,J2,IB,JB,LSW,MP
-    INTEGER                         :: K,LB,N,NB,NB1,NB2,NB3,NB4,NV
-    INTEGER                         :: N11(MO),N21(MO),N12(MO),N22(MO)
-    !
-    LOGICAL                         :: SAME_GRID
-    !
-    REAL                            :: CM11,SM11,CM12,SM12
-    REAL                            :: CM21,SM21,CM22,SM22
-    REAL                            :: PMP,RB2
-    REAL                            :: C11(MO),C21(MO),C12(MO),C22(MO)
-    REAL                            :: S11(MO),S21(MO),S12(MO),S22(MO)
-    REAL                            :: W11(MO),W21(MO),W12(MO),W22(MO)
-    REAL                            :: UB,VB,WB,UROT,VROT
-    REAL                            :: U11,V11,U21,V21,U12,V12,U22,V22
-    REAL                            :: WI1,WJ1,WI2,WJ2
-    REAL                            :: WO(MO,KM),XI,YI
-    REAL                            :: XPTS(MO),YPTS(MO)
-    REAL                            :: XPTB(MO),YPTB(MO),RLOB(MO),RLAB(MO)
+        ! - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+        !  SET PARAMETERS
+        if (ipopt(1) .gt. 16) iret = 32
+        mspiral = max(ipopt(20), 1)
+        nb1 = ipopt(1)
+        if (nb1 .eq. -1) nb1 = 2
+        if (iret .eq. 0 .and. nb1 .lt. 0) iret = 32
+        lsw = 1
+        if (ipopt(2) .eq. -2) lsw = 2
+        if (ipopt(1) .eq. -1 .or. ipopt(2) .eq. -1) lsw = 0
+        if (iret .eq. 0 .and. lsw .eq. 1 .and. nb1 .gt. 15) iret = 32
+        mp = ipopt(3+ipopt(1))
+        if (mp .eq. -1 .or. mp .eq. 0) mp = 50
+        if (mp .lt. 0 .or. mp .gt. 100) iret = 32
+        pmp = mp*0.01
+        if (iret .eq. 0) then
+            nb2 = 2*nb1+1
+            rb2 = 1./nb2
+            nb3 = nb2*nb2
+            nb4 = nb3
+            if (lsw .eq. 2) then
+                rb2 = 1./(nb1+1)
+                nb4 = (nb1+1)**4
+            elseif (lsw .eq. 1) then
+                nb4 = ipopt(2)
+                do ib = 1, nb1
+                    nb4 = nb4+8*ib*ipopt(2+ib)
+                end do
+            end if
+        else
+            nb3 = 0
+            nb4 = 1
+        end if
+        do k = 1, km
+            do n = 1, no
+                go(n, k) = 0.
+                wo(n, k) = 0.
+            end do
+        end do
+        ! - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+        !  LOOP OVER SAMPLE POINTS IN OUTPUT GRID BOX
+        do nb = 1, nb3
+            !  LOCATE INPUT POINTS AND COMPUTE THEIR WEIGHTS
+            jb = (nb-1)/nb2-nb1
+            ib = nb-(jb+nb1)*nb2-nb1-1
+            lb = max(abs(ib), abs(jb))
+            wb = 1
+            if (lsw .eq. 2) then
+                wb = (nb1+1-abs(ib))*(nb1+1-abs(jb))
+            elseif (lsw .eq. 1) then
+                wb = ipopt(2+lb)
+            end if
+            if (abs(wb) .gt. tinyreal) then
+                !$omp parallel do private(n) schedule(static)
+                do n = 1, no
+                    xptb(n) = xpts(n)+ib*rb2
+                    yptb(n) = ypts(n)+jb*rb2
+                end do
+                !$omp end parallel do
+                if (to_station_points) then
+                    call gdswzd(grid_in, 1, no, fill, xptb, yptb, rlob, rlab, nv)
+                    call gdswzd(grid_in, -1, no, fill, xptb, yptb, rlob, rlab, nv)
+                else
+                    call gdswzd(grid_out2, 1, no, fill, xptb, yptb, rlob, rlab, nv)
+                    call gdswzd(grid_in, -1, no, fill, xptb, yptb, rlob, rlab, nv)
+                end if
+                if (iret .eq. 0 .and. nv .eq. 0 .and. lb .eq. 0) iret = 2
+                !$omp parallel do private(n, xi, yi, i1, i2, j1, j2, xf, yf) schedule(static)
+                do n = 1, no
+                    xi = xptb(n)
+                    yi = yptb(n)
+                    if (abs(xi-fill) .gt. tinyreal .and. abs(yi-fill) .gt. tinyreal) then
+                        i1 = int(xi)
+                        i2 = i1+1
+                        j1 = int(yi)
+                        j2 = j1+1
+                        xf = xi-i1
+                        yf = yi-j1
+                        n11(n) = grid_in%field_pos(i1, j1)
+                        n21(n) = grid_in%field_pos(i2, j1)
+                        n12(n) = grid_in%field_pos(i1, j2)
+                        n22(n) = grid_in%field_pos(i2, j2)
+                        if (min(n11(n), n21(n), n12(n), n22(n)) .gt. 0) then
+                            w11(n) = (1-xf)*(1-yf)
+                            w21(n) = xf*(1-yf)
+                            w12(n) = (1-xf)*yf
+                            w22(n) = xf*yf
+                        else
+                            n11(n) = 0
+                            n21(n) = 0
+                            n12(n) = 0
+                            n22(n) = 0
+                        end if
+                    else
+                        n11(n) = 0
+                        n21(n) = 0
+                        n12(n) = 0
+                        n22(n) = 0
+                    end if
+                end do
+                !$omp end parallel do
+                ! - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+                !  INTERPOLATE WITH OR WITHOUT BITMAPS
+                !$omp parallel do private(k, n, gb) schedule(static)
+                do k = 1, km
+                    do n = 1, no
+                        if (n11(n) .gt. 0) then
+                            if (ibi(k) .eq. 0) then
+                                gb = w11(n)*gi(n11(n), k)+w21(n)*gi(n21(n), k) &
+                                     +w12(n)*gi(n12(n), k)+w22(n)*gi(n22(n), k)
+                                go(n, k) = go(n, k)+wb*gb
+                                wo(n, k) = wo(n, k)+wb
+                            else
+                                if (li(n11(n), k)) then
+                                    go(n, k) = go(n, k)+wb*w11(n)*gi(n11(n), k)
+                                    wo(n, k) = wo(n, k)+wb*w11(n)
+                                end if
+                                if (li(n21(n), k)) then
+                                    go(n, k) = go(n, k)+wb*w21(n)*gi(n21(n), k)
+                                    wo(n, k) = wo(n, k)+wb*w21(n)
+                                end if
+                                if (li(n12(n), k)) then
+                                    go(n, k) = go(n, k)+wb*w12(n)*gi(n12(n), k)
+                                    wo(n, k) = wo(n, k)+wb*w12(n)
+                                end if
+                                if (li(n22(n), k)) then
+                                    go(n, k) = go(n, k)+wb*w22(n)*gi(n22(n), k)
+                                    wo(n, k) = wo(n, k)+wb*w22(n)
+                                end if
+                            end if
+                        end if
+                    end do
+                end do
+                !$omp end parallel do
+            end if
+        end do   ! sub-grid points
+        ! - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+        !  COMPUTE OUTPUT BITMAPS AND FIELDS
+        ! KM is often 1 .. do not do OMP PARALLEL DO here
+        km_loop: do k = 1, km
+            ibo(k) = ibi(k)
+            !$omp parallel do private(n, lat, lon, xxx, yyy, nv, xx, yy, ixs, jxs, mx, kxs, kxt, ix, jx, nx) schedule(static)
+            n_loop: do n = 1, no
+                lo(n, k) = wo(n, k) .ge. pmp*nb4
+                if (lo(n, k)) then
+                    go(n, k) = go(n, k)/wo(n, k)
+                elseif (mspiral .gt. 1) then
+                    lat(1) = rlat(n)
+                    lon(1) = rlon(n)
+                    call gdswzd(grid_in, -1, 1, fill, xxx, yyy, lon, lat, nv)
+                    xx = xxx(1)
+                    yy = yyy(1)
+                    if (nv .eq. 1) then
+                        i1 = nint(xx)
+                        j1 = nint(yy)
+                        ixs = int(sign(1., xx-i1))
+                        jxs = int(sign(1., yy-j1))
+                        spiral_loop: do mx = 2, mspiral**2
+                            kxs = int(sqrt(4*mx-2.5))
+                            kxt = mx-(kxs**2/4+1)
+                            select case (mod(kxs, 4))
+                            case (1)
+                                ix = i1-ixs*(kxs/4-kxt)
+                                jx = j1-jxs*kxs/4
+                            case (2)
+                                ix = i1+ixs*(1+kxs/4)
+                                jx = j1-jxs*(kxs/4-kxt)
+                            case (3)
+                                ix = i1+ixs*(1+kxs/4-kxt)
+                                jx = j1+jxs*(1+kxs/4)
+                            case default
+                                ix = i1-ixs*kxs/4
+                                jx = j1+jxs*(kxs/4-kxt)
+                            end select
+                            nx = grid_in%field_pos(ix, jx)
+                            if (nx .gt. 0.) then
+                                if (li(nx, k) .or. ibi(k) .eq. 0) then
+                                    go(n, k) = gi(nx, k)
+                                    lo(n, k) = .true.
+                                    cycle n_loop
+                                end if
+                            end if
+                        end do spiral_loop
+                        ibo(k) = 1
+                        go(n, k) = 0.
+                    else
+                        ibo(k) = 1
+                        go(n, k) = 0.
+                    end if
+                else  ! no spiral search option
+                    ibo(k) = 1
+                    go(n, k) = 0.
+                end if
+            end do n_loop
+            !$omp end parallel do
+        end do km_loop
 
-    logical :: to_station_points
+        select type (grid_out2)
+        type is (ip_equid_cylind_grid)
+            call polfixs(no, mo, km, rlat, ibo, lo, go)
+        end select
+        ! - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+    end subroutine interpolate_budget_scalar
 
-    class(ip_grid), allocatable :: grid_out2
-    
-    ! Save coeffecients between calls and only compute if grids have changed
-    INTEGER,          SAVE          :: MIX=-1
-    REAL,         ALLOCATABLE, SAVE :: CROI(:),SROI(:)
-    REAL,         ALLOCATABLE, SAVE :: XPTI(:),YPTI(:),RLOI(:),RLAI(:)
+    !> This subprogram performs budget interpolation from any grid to
+    !> any grid (or to random station points) for vector fields.
+    !>
+    !> The algorithm simply computes (weighted) averages of bilinearly
+    !> interpolated points arranged in a square box centered around each
+    !> output grid point and stretching nearly halfway to each of the
+    !> neighboring grid points.
+    !>
+    !> Options allow choices of number of points in each radius from the
+    !> center point (ipopt(1)) which defaults to 2 (if ipopt(1)=-1)
+    !> meaning that 25 points will be averaged; further options are the
+    !> respective weights for the radius points starting at the center
+    !> point (ipopt(2:2+ipopt(1)) which defaults to all 1 (if
+    !> ipopt(1)=-1 or ipopt(2)=-1).
+    !>
+    !> A special interpolation is done if ipopt(2)=-2.  in this case,
+    !> the boxes stretch nearly all the way to each of the neighboring
+    !> grid points and the weights are the adjoint of the bilinear
+    !> interpolation weights.  This case gives quasi-second-order budget
+    !> interpolation.
+    !>
+    !> Another option is the minimum percentage for mask, i.e. percent
+    !> valid input data required to make output data, (ipopt(3+ipopt(1))
+    !> which defaults to 50 (if -1).
+    !>
+    !> In cases where there is no or insufficient valid input data, the
+    !> user may choose to search for the nearest valid data.  this is
+    !> invoked by setting ipopt(20) to the width of the search
+    !> square. The default is 1 (no search). Squares are searched for
+    !> valid data in a spiral pattern starting from the center. No
+    !> searching is done where the output grid is outside the input
+    !> grid.
+    !>
+    !> Only horizontal interpolation is performed.
+    !>
+    !> @param[in] ipopt interpolation options ipopt(1) Number of radius
+    !> points (defaults to 2 if ipopt(1)=-1); ipopt(2:2+ipopt(1))
+    !> Respective weights (defaults to all 1 if ipopt(1)=-1 or
+    !> ipopt(2)=-1).  ipopt(3+ipopt(1)) Minimum percentage for mask
+    !> (defaults to 50 if ipopt(3+ipopt(1)=-1)
+    !> @param[in] grid_in Input grid.
+    !> @param[in] grid_out Output grid.
+    !> @param[in] mi skip Number between input grid fields if km>1 or
+    !> dimension of input grid fields if km=1.
+    !> @param[out] mo skip Number between output grid fields if km>1 or
+    !> dimension of output grid fields if km=1.
+    !> @param[in] km Number of fields to interpolate.
+    !> @param[in] ibi Input bitmap flags.
+    !> @param[in] li Input bitmaps (if some ibi(k)=1).
+    !> @param[in] ui Input u-component fields to interpolate.
+    !> @param[in] vi Input v-component fields to interpolate.
+    !> @param[in,out] no  Number of output points (only if igdtnumo<0)
+    !> @param[in,out] rlat Output latitudes in degrees (if igdtnumo<0)
+    !> @param[in,out] rlon Output longitudes in degrees (if igdtnumo<0)
+    !> @param[in,out] crot Vector rotation cosines. If interpolating
+    !> subgrid ugrid=crot * uearth - srot * vearth.
+    !> @param[in,out] srot Vector rotation sines. If interpolating
+    !> subgrid vgrid = srot * uearth + crot * vearth.
+    !> @param[out] ibo Output bitmap flags.
+    !> @param[out] lo Output bitmaps (always output).
+    !> @param[out] uo Output u-component fields interpolated.
+    !> @param[out] vo Output v-component fields interpolated.
+    !> @param[out] iret Return code.
+    !> - 0 Successful interpolation.
+    !> - 2 Unrecognized input grid or no grid overlap.
+    !> - 3 Unrecognized output grid.
+    !> - 32 Invalid budget method parameters.
+    !>
+    !> @author Marke Iredell, George Gayno, Kyle Gerheiser, Eric Engle
+    !> @date July 2021
+    subroutine interpolate_budget_vector(ipopt, grid_in, grid_out, &
+                                         mi, mo, km, ibi, li, ui, vi, &
+                                         no, rlat, rlon, crot, srot, ibo, lo, uo, vo, iret)
+        class(ip_grid), intent(in) :: grid_in, grid_out
+        integer, intent(in) :: ipopt(20), ibi(km)
+        integer, intent(in) :: km, mi, mo
+        integer, intent(out) :: iret, no, ibo(km)
+        !
+        logical*1, intent(in) :: li(mi, km)
+        logical*1, intent(out) :: lo(mo, km)
+        !
+        real, intent(in) :: ui(mi, km), vi(mi, km)
+        real, intent(inout) :: rlat(mo), rlon(mo)
+        real, intent(out) :: uo(mo, km), vo(mo, km)
+        real, intent(out) :: crot(mo), srot(mo)
+        !
+        real, parameter     :: fill = -9999.
+        !
+        integer                         :: i1, i2, j1, j2, ib, jb, lsw, mp
+        integer                         :: k, lb, n, nb, nb1, nb2, nb3, nb4, nv
+        integer                         :: n11(mo), n21(mo), n12(mo), n22(mo)
+        !
+        logical                         :: same_grid
+        !
+        real                            :: cm11, sm11, cm12, sm12
+        real                            :: cm21, sm21, cm22, sm22
+        real                            :: pmp, rb2
+        real                            :: c11(mo), c21(mo), c12(mo), c22(mo)
+        real                            :: s11(mo), s21(mo), s12(mo), s22(mo)
+        real                            :: w11(mo), w21(mo), w12(mo), w22(mo)
+        real                            :: ub, vb, wb, urot, vrot
+        real                            :: u11, v11, u21, v21, u12, v12, u22, v22
+        real                            :: wi1, wj1, wi2, wj2
+        real                            :: wo(mo, km), xi, yi
+        real                            :: xpts(mo), ypts(mo)
+        real                            :: xptb(mo), yptb(mo), rlob(mo), rlab(mo)
 
-    class(ip_grid), allocatable, save :: prev_grid_in
+        logical :: to_station_points
 
-    IRET=0
+        class(ip_grid), allocatable :: grid_out2
 
-    ! Negative grid number means interpolate to subgrid
-    ! The type of the subgrid is calculated by 255 + 
-    select type(grid_out)
-    type is(ip_station_points_grid)
-       to_station_points = .true.
-       allocate(grid_out2, source = grid_out)
-       CALL GDSWZD(grid_out2, 0,MO,FILL,XPTS,YPTS,RLON,RLAT,NO,CROT,SROT)
-       IF(NO.EQ.0) IRET=3
-       CALL GDSWZD(grid_in,-1,NO,FILL,XPTS,YPTS,RLON,RLAT,NV,CROT,SROT)
-       IF(NV.EQ.0) IRET=2
-    class default
-       to_station_points = .false.
-       allocate(grid_out2, source = grid_out)
-       CALL GDSWZD(grid_out2, 0,MO,FILL,XPTS,YPTS,RLON,RLAT,NO,CROT,SROT)
-    end select
+        ! Save coeffecients between calls and only compute if grids have changed
+        integer, save          :: mix = -1
+        real, allocatable, save :: croi(:), sroi(:)
+        real, allocatable, save :: xpti(:), ypti(:), rloi(:), rlai(:)
 
-    if (.not. allocated(prev_grid_in)) then
-       allocate(prev_grid_in, source = grid_in)
+        class(ip_grid), allocatable, save :: prev_grid_in
 
-       same_grid = .false.
-    else
-       same_grid = grid_in == prev_grid_in
+        iret = 0
 
-       if (.not. same_grid) then
-          deallocate(prev_grid_in)
-          allocate(prev_grid_in, source = grid_in)
-       end if
-    end if
+        ! Negative grid number means interpolate to subgrid
+        ! The type of the subgrid is calculated by 255 +
+        select type (grid_out)
+        type is (ip_station_points_grid)
+            to_station_points = .true.
+            allocate (grid_out2, source=grid_out)
+            call gdswzd(grid_out2, 0, mo, fill, xpts, ypts, rlon, rlat, no, crot, srot)
+            if (no .eq. 0) iret = 3
+            call gdswzd(grid_in, -1, no, fill, xpts, ypts, rlon, rlat, nv, crot, srot)
+            if (nv .eq. 0) iret = 2
+        class default
+            to_station_points = .false.
+            allocate (grid_out2, source=grid_out)
+            call gdswzd(grid_out2, 0, mo, fill, xpts, ypts, rlon, rlat, no, crot, srot)
+        end select
 
-    IF(.NOT.SAME_GRID) THEN
-       IF(MIX.NE.MI) THEN
-          IF(MIX.GE.0) DEALLOCATE(XPTI,YPTI,RLOI,RLAI,CROI,SROI)
-          ALLOCATE(XPTI(MI),YPTI(MI),RLOI(MI),RLAI(MI),CROI(MI),SROI(MI))
-          MIX=MI
-       ENDIF
-       CALL GDSWZD(grid_in, 0,MI,FILL,XPTI,YPTI,RLOI,RLAI,NV,CROI,SROI)
-    ENDIF
+        if (.not. allocated(prev_grid_in)) then
+            allocate (prev_grid_in, source=grid_in)
 
-    ! - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-    !  SET PARAMETERS
-    NB1=IPOPT(1)
-    IF(NB1.EQ.-1) NB1=2
-    IF(IRET.EQ.0.AND.NB1.LT.0) IRET=32
-    LSW=1
-    IF(IPOPT(2).EQ.-2) LSW=2
-    IF(IPOPT(1).EQ.-1.OR.IPOPT(2).EQ.-1) LSW=0
-    IF(IRET.EQ.0.AND.LSW.EQ.1.AND.NB1.GT.15) IRET=32
-    MP=IPOPT(3+IPOPT(1))
-    IF(MP.EQ.-1.OR.MP.EQ.0) MP=50
-    IF(MP.LT.0.OR.MP.GT.100) IRET=32
-    PMP=MP*0.01
-    IF(IRET.EQ.0) THEN
-       NB2=2*NB1+1
-       RB2=1./NB2
-       NB3=NB2*NB2
-       NB4=NB3
-       IF(LSW.EQ.2) THEN
-          RB2=1./(NB1+1)
-          NB4=(NB1+1)**4
-       ELSEIF(LSW.EQ.1) THEN
-          NB4=IPOPT(2)
-          DO IB=1,NB1
-             NB4=NB4+8*IB*IPOPT(2+IB)
-          ENDDO
-       ENDIF
-    ELSE
-       NB3=0
-       NB4=1
-    ENDIF
-    DO K=1,KM
-       DO N=1,NO
-          UO(N,K)=0
-          VO(N,K)=0
-          WO(N,K)=0.
-       ENDDO
-    ENDDO
-    ! - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-    !  LOOP OVER SAMPLE POINTS IN OUTPUT GRID BOX
-    DO NB=1,NB3
-       !  LOCATE INPUT POINTS AND COMPUTE THEIR WEIGHTS AND ROTATIONS
-       JB=(NB-1)/NB2-NB1
-       IB=NB-(JB+NB1)*NB2-NB1-1
-       LB=MAX(ABS(IB),ABS(JB))
-       WB=1
-       IF(IPOPT(2).EQ.-2) THEN
-          WB=(NB1+1-ABS(IB))*(NB1+1-ABS(JB))
-       ELSEIF(IPOPT(2).NE.-1) THEN
-          WB=IPOPT(2+LB)
-       ENDIF
-       IF(ABS(WB).GT.TINYREAL) THEN
-          !$OMP PARALLEL DO PRIVATE(N) SCHEDULE(STATIC)
-          DO N=1,NO
-             XPTB(N)=XPTS(N)+IB*RB2
-             YPTB(N)=YPTS(N)+JB*RB2
-          ENDDO
-          !$OMP END PARALLEL DO
-          if(to_station_points)then
-             CALL GDSWZD(grid_in, 1,NO,FILL,XPTB,YPTB,RLOB,RLAB,NV)
-             CALL GDSWZD(grid_in,-1,NO,FILL,XPTB,YPTB,RLOB,RLAB,NV)
-          else
-             CALL GDSWZD(grid_out2, 1,NO,FILL,XPTB,YPTB,RLOB,RLAB,NV)
-             CALL GDSWZD(grid_in,-1,NO,FILL,XPTB,YPTB,RLOB,RLAB,NV)
-          endif
-          IF(IRET.EQ.0.AND.NV.EQ.0.AND.LB.EQ.0) IRET=2
-          !$OMP PARALLEL DO PRIVATE(N,XI,YI,I1,I2,WI1,WI2,J1,J2,WJ1,WJ2,CM11,CM21,CM12,CM22,SM11,SM21,SM12,SM22) &
-          !$OMP SCHEDULE(STATIC)
-          DO N=1,NO
-             XI=XPTB(N)
-             YI=YPTB(N)
-             IF(ABS(XI-FILL).GT.TINYREAL.AND.ABS(YI-FILL).GT.TINYREAL) THEN
-                I1=INT(XI)
-                I2=I1+1
-                WI2=XI-I1
-                WI1=1-WI2
-                J1=INT(YI)
-                J2=J1+1
-                WJ2=YI-J1
-                WJ1=1-WJ2
-                N11(N) = grid_in%field_pos(i1,j1)
-                N21(N) = grid_in%field_pos(i2, j1)
-                N12(N) = grid_in%field_pos(i1, j2)
-                N22(N) = grid_in%field_pos(i2, j2)
-                IF(MIN(N11(N),N21(N),N12(N),N22(N)).GT.0) THEN
-                   W11(N)=WI1*WJ1
-                   W21(N)=WI2*WJ1
-                   W12(N)=WI1*WJ2
-                   W22(N)=WI2*WJ2
-                   CALL MOVECT(RLAI(N11(N)),RLOI(N11(N)),RLAT(N),RLON(N),CM11,SM11)
-                   CALL MOVECT(RLAI(N21(N)),RLOI(N21(N)),RLAT(N),RLON(N),CM21,SM21)
-                   CALL MOVECT(RLAI(N12(N)),RLOI(N12(N)),RLAT(N),RLON(N),CM12,SM12)
-                   CALL MOVECT(RLAI(N22(N)),RLOI(N22(N)),RLAT(N),RLON(N),CM22,SM22)
-                   C11(N)=CM11*CROI(N11(N))+SM11*SROI(N11(N))
-                   S11(N)=SM11*CROI(N11(N))-CM11*SROI(N11(N))
-                   C21(N)=CM21*CROI(N21(N))+SM21*SROI(N21(N))
-                   S21(N)=SM21*CROI(N21(N))-CM21*SROI(N21(N))
-                   C12(N)=CM12*CROI(N12(N))+SM12*SROI(N12(N))
-                   S12(N)=SM12*CROI(N12(N))-CM12*SROI(N12(N))
-                   C22(N)=CM22*CROI(N22(N))+SM22*SROI(N22(N))
-                   S22(N)=SM22*CROI(N22(N))-CM22*SROI(N22(N))
-                ELSE
-                   N11(N)=0
-                   N21(N)=0
-                   N12(N)=0
-                   N22(N)=0
-                ENDIF
-             ELSE
-                N11(N)=0
-                N21(N)=0
-                N12(N)=0
-                N22(N)=0
-             ENDIF
-          ENDDO
-          !$OMP END PARALLEL DO 
-          ! - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-          !  INTERPOLATE WITH OR WITHOUT BITMAPS
-          !  KM IS OFTEN 1 .. DO NO PUT OMP PARALLEL DO HERE
-          DO K=1,KM
-             !$OMP PARALLEL DO PRIVATE(N,U11,U12,U21,U22,UB,V11,V12,V21,V22,VB) SCHEDULE(STATIC)
-             DO N=1,NO
-                IF(N11(N).GT.0) THEN
-                   IF(IBI(K).EQ.0) THEN
-                      U11=C11(N)*UI(N11(N),K)-S11(N)*VI(N11(N),K)
-                      V11=S11(N)*UI(N11(N),K)+C11(N)*VI(N11(N),K)
-                      U21=C21(N)*UI(N21(N),K)-S21(N)*VI(N21(N),K)
-                      V21=S21(N)*UI(N21(N),K)+C21(N)*VI(N21(N),K)
-                      U12=C12(N)*UI(N12(N),K)-S12(N)*VI(N12(N),K)
-                      V12=S12(N)*UI(N12(N),K)+C12(N)*VI(N12(N),K)
-                      U22=C22(N)*UI(N22(N),K)-S22(N)*VI(N22(N),K)
-                      V22=S22(N)*UI(N22(N),K)+C22(N)*VI(N22(N),K)
-                      UB=W11(N)*U11+W21(N)*U21+W12(N)*U12+W22(N)*U22
-                      VB=W11(N)*V11+W21(N)*V21+W12(N)*V12+W22(N)*V22
-                      UO(N,K)=UO(N,K)+WB*UB
-                      VO(N,K)=VO(N,K)+WB*VB
-                      WO(N,K)=WO(N,K)+WB
-                   ELSE
-                      IF(LI(N11(N),K)) THEN
-                         U11=C11(N)*UI(N11(N),K)-S11(N)*VI(N11(N),K)
-                         V11=S11(N)*UI(N11(N),K)+C11(N)*VI(N11(N),K)
-                         UO(N,K)=UO(N,K)+WB*W11(N)*U11
-                         VO(N,K)=VO(N,K)+WB*W11(N)*V11
-                         WO(N,K)=WO(N,K)+WB*W11(N)
-                      ENDIF
-                      IF(LI(N21(N),K)) THEN
-                         U21=C21(N)*UI(N21(N),K)-S21(N)*VI(N21(N),K)
-                         V21=S21(N)*UI(N21(N),K)+C21(N)*VI(N21(N),K)
-                         UO(N,K)=UO(N,K)+WB*W21(N)*U21
-                         VO(N,K)=VO(N,K)+WB*W21(N)*V21
-                         WO(N,K)=WO(N,K)+WB*W21(N)
-                      ENDIF
-                      IF(LI(N12(N),K)) THEN
-                         U12=C12(N)*UI(N12(N),K)-S12(N)*VI(N12(N),K)
-                         V12=S12(N)*UI(N12(N),K)+C12(N)*VI(N12(N),K)
-                         UO(N,K)=UO(N,K)+WB*W12(N)*U12
-                         VO(N,K)=VO(N,K)+WB*W12(N)*V12
-                         WO(N,K)=WO(N,K)+WB*W12(N)
-                      ENDIF
-                      IF(LI(N22(N),K)) THEN
-                         U22=C22(N)*UI(N22(N),K)-S22(N)*VI(N22(N),K)
-                         V22=S22(N)*UI(N22(N),K)+C22(N)*VI(N22(N),K)
-                         UO(N,K)=UO(N,K)+WB*W22(N)*U22
-                         VO(N,K)=VO(N,K)+WB*W22(N)*V22
-                         WO(N,K)=WO(N,K)+WB*W22(N)
-                      ENDIF
-                   ENDIF
-                ENDIF
-             ENDDO
-             !$OMP END PARALLEL DO
-          ENDDO
-       ENDIF
-    ENDDO
-    ! - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-    !  COMPUTE OUTPUT BITMAPS AND FIELDS
-    ! KM is often 1, do not put OMP PARALLEL here
-    DO K=1,KM
-       IBO(K)=IBI(K)
-       !$OMP PARALLEL DO PRIVATE(N,UROT,VROT) SCHEDULE(STATIC)
-       DO N=1,NO
-          LO(N,K)=WO(N,K).GE.PMP*NB4
-          IF(LO(N,K)) THEN
-             UO(N,K)=UO(N,K)/WO(N,K)
-             VO(N,K)=VO(N,K)/WO(N,K)
-             UROT=CROT(N)*UO(N,K)-SROT(N)*VO(N,K)
-             VROT=SROT(N)*UO(N,K)+CROT(N)*VO(N,K)
-             UO(N,K)=UROT
-             VO(N,K)=VROT
-          ELSE
-             IBO(K)=1
-             UO(N,K)=0.
-             VO(N,K)=0.
-          ENDIF
-       ENDDO
-       !$OMP END PARALLEL DO
-    ENDDO
+            same_grid = .false.
+        else
+            same_grid = grid_in .eq. prev_grid_in
 
-    select type(grid_out2)
-    type is(ip_equid_cylind_grid)
-       CALL POLFIXV(NO,MO,KM,RLAT,RLON,IBO,LO,UO,VO)
-    end select
-    ! - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-  END SUBROUTINE INTERPOLATE_BUDGET_VECTOR
+            if (.not. same_grid) then
+                deallocate (prev_grid_in)
+                allocate (prev_grid_in, source=grid_in)
+            end if
+        end if
+
+        if (.not. same_grid) then
+            if (mix .ne. mi) then
+                if (mix .ge. 0) deallocate (xpti, ypti, rloi, rlai, croi, sroi)
+                allocate (xpti(mi), ypti(mi), rloi(mi), rlai(mi), croi(mi), sroi(mi))
+                mix = mi
+            end if
+            call gdswzd(grid_in, 0, mi, fill, xpti, ypti, rloi, rlai, nv, croi, sroi)
+        end if
+
+        ! - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+        !  SET PARAMETERS
+        nb1 = ipopt(1)
+        if (nb1 .eq. -1) nb1 = 2
+        if (iret .eq. 0 .and. nb1 .lt. 0) iret = 32
+        lsw = 1
+        if (ipopt(2) .eq. -2) lsw = 2
+        if (ipopt(1) .eq. -1 .or. ipopt(2) .eq. -1) lsw = 0
+        if (iret .eq. 0 .and. lsw .eq. 1 .and. nb1 .gt. 15) iret = 32
+        mp = ipopt(3+ipopt(1))
+        if (mp .eq. -1 .or. mp .eq. 0) mp = 50
+        if (mp .lt. 0 .or. mp .gt. 100) iret = 32
+        pmp = mp*0.01
+        if (iret .eq. 0) then
+            nb2 = 2*nb1+1
+            rb2 = 1./nb2
+            nb3 = nb2*nb2
+            nb4 = nb3
+            if (lsw .eq. 2) then
+                rb2 = 1./(nb1+1)
+                nb4 = (nb1+1)**4
+            elseif (lsw .eq. 1) then
+                nb4 = ipopt(2)
+                do ib = 1, nb1
+                    nb4 = nb4+8*ib*ipopt(2+ib)
+                end do
+            end if
+        else
+            nb3 = 0
+            nb4 = 1
+        end if
+        do k = 1, km
+            do n = 1, no
+                uo(n, k) = 0
+                vo(n, k) = 0
+                wo(n, k) = 0.
+            end do
+        end do
+        ! - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+        !  LOOP OVER SAMPLE POINTS IN OUTPUT GRID BOX
+        do nb = 1, nb3
+            !  LOCATE INPUT POINTS AND COMPUTE THEIR WEIGHTS AND ROTATIONS
+            jb = (nb-1)/nb2-nb1
+            ib = nb-(jb+nb1)*nb2-nb1-1
+            lb = max(abs(ib), abs(jb))
+            wb = 1
+            if (ipopt(2) .eq. -2) then
+                wb = (nb1+1-abs(ib))*(nb1+1-abs(jb))
+            elseif (ipopt(2) .ne. -1) then
+                wb = ipopt(2+lb)
+            end if
+            if (abs(wb) .gt. tinyreal) then
+                !$omp parallel do private(n) schedule(static)
+                do n = 1, no
+                    xptb(n) = xpts(n)+ib*rb2
+                    yptb(n) = ypts(n)+jb*rb2
+                end do
+                !$omp end parallel do
+                if (to_station_points) then
+                    call gdswzd(grid_in, 1, no, fill, xptb, yptb, rlob, rlab, nv)
+                    call gdswzd(grid_in, -1, no, fill, xptb, yptb, rlob, rlab, nv)
+                else
+                    call gdswzd(grid_out2, 1, no, fill, xptb, yptb, rlob, rlab, nv)
+                    call gdswzd(grid_in, -1, no, fill, xptb, yptb, rlob, rlab, nv)
+                end if
+                if (iret .eq. 0 .and. nv .eq. 0 .and. lb .eq. 0) iret = 2
+            !$omp parallel do private(n, xi, yi, i1, i2, wi1, wi2, j1, j2, wj1, wj2, cm11, cm21, cm12, cm22, sm11, sm21, sm12, sm22) &
+                    !$omp schedule(static)
+                do n = 1, no
+                    xi = xptb(n)
+                    yi = yptb(n)
+                    if (abs(xi-fill) .gt. tinyreal .and. abs(yi-fill) .gt. tinyreal) then
+                        i1 = int(xi)
+                        i2 = i1+1
+                        wi2 = xi-i1
+                        wi1 = 1-wi2
+                        j1 = int(yi)
+                        j2 = j1+1
+                        wj2 = yi-j1
+                        wj1 = 1-wj2
+                        n11(n) = grid_in%field_pos(i1, j1)
+                        n21(n) = grid_in%field_pos(i2, j1)
+                        n12(n) = grid_in%field_pos(i1, j2)
+                        n22(n) = grid_in%field_pos(i2, j2)
+                        if (min(n11(n), n21(n), n12(n), n22(n)) .gt. 0) then
+                            w11(n) = wi1*wj1
+                            w21(n) = wi2*wj1
+                            w12(n) = wi1*wj2
+                            w22(n) = wi2*wj2
+                            call movect(rlai(n11(n)), rloi(n11(n)), rlat(n), rlon(n), cm11, sm11)
+                            call movect(rlai(n21(n)), rloi(n21(n)), rlat(n), rlon(n), cm21, sm21)
+                            call movect(rlai(n12(n)), rloi(n12(n)), rlat(n), rlon(n), cm12, sm12)
+                            call movect(rlai(n22(n)), rloi(n22(n)), rlat(n), rlon(n), cm22, sm22)
+                            c11(n) = cm11*croi(n11(n))+sm11*sroi(n11(n))
+                            s11(n) = sm11*croi(n11(n))-cm11*sroi(n11(n))
+                            c21(n) = cm21*croi(n21(n))+sm21*sroi(n21(n))
+                            s21(n) = sm21*croi(n21(n))-cm21*sroi(n21(n))
+                            c12(n) = cm12*croi(n12(n))+sm12*sroi(n12(n))
+                            s12(n) = sm12*croi(n12(n))-cm12*sroi(n12(n))
+                            c22(n) = cm22*croi(n22(n))+sm22*sroi(n22(n))
+                            s22(n) = sm22*croi(n22(n))-cm22*sroi(n22(n))
+                        else
+                            n11(n) = 0
+                            n21(n) = 0
+                            n12(n) = 0
+                            n22(n) = 0
+                        end if
+                    else
+                        n11(n) = 0
+                        n21(n) = 0
+                        n12(n) = 0
+                        n22(n) = 0
+                    end if
+                end do
+                !$omp end parallel do
+                ! - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+                !  INTERPOLATE WITH OR WITHOUT BITMAPS
+                !  KM IS OFTEN 1 .. DO NO PUT OMP PARALLEL DO HERE
+                do k = 1, km
+                    !$omp parallel do private(n, u11, u12, u21, u22, ub, v11, v12, v21, v22, vb) schedule(static)
+                    do n = 1, no
+                        if (n11(n) .gt. 0) then
+                            if (ibi(k) .eq. 0) then
+                                u11 = c11(n)*ui(n11(n), k)-s11(n)*vi(n11(n), k)
+                                v11 = s11(n)*ui(n11(n), k)+c11(n)*vi(n11(n), k)
+                                u21 = c21(n)*ui(n21(n), k)-s21(n)*vi(n21(n), k)
+                                v21 = s21(n)*ui(n21(n), k)+c21(n)*vi(n21(n), k)
+                                u12 = c12(n)*ui(n12(n), k)-s12(n)*vi(n12(n), k)
+                                v12 = s12(n)*ui(n12(n), k)+c12(n)*vi(n12(n), k)
+                                u22 = c22(n)*ui(n22(n), k)-s22(n)*vi(n22(n), k)
+                                v22 = s22(n)*ui(n22(n), k)+c22(n)*vi(n22(n), k)
+                                ub = w11(n)*u11+w21(n)*u21+w12(n)*u12+w22(n)*u22
+                                vb = w11(n)*v11+w21(n)*v21+w12(n)*v12+w22(n)*v22
+                                uo(n, k) = uo(n, k)+wb*ub
+                                vo(n, k) = vo(n, k)+wb*vb
+                                wo(n, k) = wo(n, k)+wb
+                            else
+                                if (li(n11(n), k)) then
+                                    u11 = c11(n)*ui(n11(n), k)-s11(n)*vi(n11(n), k)
+                                    v11 = s11(n)*ui(n11(n), k)+c11(n)*vi(n11(n), k)
+                                    uo(n, k) = uo(n, k)+wb*w11(n)*u11
+                                    vo(n, k) = vo(n, k)+wb*w11(n)*v11
+                                    wo(n, k) = wo(n, k)+wb*w11(n)
+                                end if
+                                if (li(n21(n), k)) then
+                                    u21 = c21(n)*ui(n21(n), k)-s21(n)*vi(n21(n), k)
+                                    v21 = s21(n)*ui(n21(n), k)+c21(n)*vi(n21(n), k)
+                                    uo(n, k) = uo(n, k)+wb*w21(n)*u21
+                                    vo(n, k) = vo(n, k)+wb*w21(n)*v21
+                                    wo(n, k) = wo(n, k)+wb*w21(n)
+                                end if
+                                if (li(n12(n), k)) then
+                                    u12 = c12(n)*ui(n12(n), k)-s12(n)*vi(n12(n), k)
+                                    v12 = s12(n)*ui(n12(n), k)+c12(n)*vi(n12(n), k)
+                                    uo(n, k) = uo(n, k)+wb*w12(n)*u12
+                                    vo(n, k) = vo(n, k)+wb*w12(n)*v12
+                                    wo(n, k) = wo(n, k)+wb*w12(n)
+                                end if
+                                if (li(n22(n), k)) then
+                                    u22 = c22(n)*ui(n22(n), k)-s22(n)*vi(n22(n), k)
+                                    v22 = s22(n)*ui(n22(n), k)+c22(n)*vi(n22(n), k)
+                                    uo(n, k) = uo(n, k)+wb*w22(n)*u22
+                                    vo(n, k) = vo(n, k)+wb*w22(n)*v22
+                                    wo(n, k) = wo(n, k)+wb*w22(n)
+                                end if
+                            end if
+                        end if
+                    end do
+                    !$omp end parallel do
+                end do
+            end if
+        end do
+        ! - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+        !  COMPUTE OUTPUT BITMAPS AND FIELDS
+        ! KM is often 1, do not put OMP PARALLEL here
+        do k = 1, km
+            ibo(k) = ibi(k)
+            !$omp parallel do private(n, urot, vrot) schedule(static)
+            do n = 1, no
+                lo(n, k) = wo(n, k) .ge. pmp*nb4
+                if (lo(n, k)) then
+                    uo(n, k) = uo(n, k)/wo(n, k)
+                    vo(n, k) = vo(n, k)/wo(n, k)
+                    urot = crot(n)*uo(n, k)-srot(n)*vo(n, k)
+                    vrot = srot(n)*uo(n, k)+crot(n)*vo(n, k)
+                    uo(n, k) = urot
+                    vo(n, k) = vrot
+                else
+                    ibo(k) = 1
+                    uo(n, k) = 0.
+                    vo(n, k) = 0.
+                end if
+            end do
+            !$omp end parallel do
+        end do
+
+        select type (grid_out2)
+        type is (ip_equid_cylind_grid)
+            call polfixv(no, mo, km, rlat, rlon, ibo, lo, uo, vo)
+        end select
+        ! - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+    end subroutine interpolate_budget_vector
 
 end module budget_interp_mod

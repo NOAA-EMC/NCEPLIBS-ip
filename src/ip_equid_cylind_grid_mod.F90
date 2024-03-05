@@ -15,148 +15,148 @@
 !! @author George Gayno, Mark Iredell, Kyle Gerheiser
 !! @date July 2021
 module ip_equid_cylind_grid_mod
-  use ip_grid_descriptor_mod
-  use ip_grid_mod
-  use earth_radius_mod
-  implicit none
+    use ip_grid_descriptor_mod
+    use ip_grid_mod
+    use earth_radius_mod
+    implicit none
 
-  private
-  public :: ip_equid_cylind_grid
+    private
+    public :: ip_equid_cylind_grid
 
-  type, extends(ip_grid) :: ip_equid_cylind_grid
-     real :: hi !< Scan mode in the 'i' direction. GRIB2, Section 3, octet 72.
-     real :: rlat1 !< Latitude of first grid point. GRIB2, Section 3, octets 47-50.
-     real :: rlon1 !< Longitude of first grid point. GRIB2, Section 3, octets 51-54.
-     real :: rlat2 !< Latitude of last grid point. GRIB2, Section 3, octets 56-59.
-     real :: rlon2 !< Longitude of last grid point. GRIB2, Section 3, octets 60-63.
-     real :: dlat !< Di — i direction increment. GRIB2, Section 3, octets 64-67.
-     real :: dlon !< Dj — j direction increment. GRIB2, Section 3, octets 68-71.
-   contains
-     procedure :: init_grib1 !< Init GRIB1. @return N/A
-     procedure :: init_grib2 !< Init GRIB2. @return N/A
-     procedure :: gdswzd => gdswzd_equid_cylind !< See gdswzd_equid_cylind(). @return N/A
-  end type ip_equid_cylind_grid
+    type, extends(ip_grid) :: ip_equid_cylind_grid
+        real :: hi !< Scan mode in the 'i' direction. GRIB2, Section 3, octet 72.
+        real :: rlat1 !< Latitude of first grid point. GRIB2, Section 3, octets 47-50.
+        real :: rlon1 !< Longitude of first grid point. GRIB2, Section 3, octets 51-54.
+        real :: rlat2 !< Latitude of last grid point. GRIB2, Section 3, octets 56-59.
+        real :: rlon2 !< Longitude of last grid point. GRIB2, Section 3, octets 60-63.
+        real :: dlat !< Di — i direction increment. GRIB2, Section 3, octets 64-67.
+        real :: dlon !< Dj — j direction increment. GRIB2, Section 3, octets 68-71.
+    contains
+        procedure :: init_grib1 !< Init GRIB1. @return N/A
+        procedure :: init_grib2 !< Init GRIB2. @return N/A
+        procedure :: gdswzd => gdswzd_equid_cylind !< See gdswzd_equid_cylind(). @return N/A
+    end type ip_equid_cylind_grid
 
-  REAL :: DLAT !< Grid resolution in degrees n/s direction.
-  REAL :: DLON !< Grid resolution in degrees e/w direction.
-  REAL :: RERTH !< Radius of the Earth.
+    real :: dlat !< Grid resolution in degrees n/s direction.
+    real :: dlon !< Grid resolution in degrees e/w direction.
+    real :: rerth !< Radius of the Earth.
 
 contains
 
-  !> Initializes an equidistant cylindrical grid given a grib1_descriptor object.
-  !! 
+    !> Initializes an equidistant cylindrical grid given a grib1_descriptor object.
+  !!
   !! @param[inout] self The grid to initialize
   !! @param[in] g1_desc A grib1_descriptor
   !!
   !! @author Kyle Gerheiser
   !! @date July 2021
-  subroutine init_grib1(self, g1_desc)
-    class(ip_equid_cylind_grid), intent(inout) :: self
-    type(grib1_descriptor), intent(in) :: g1_desc
+    subroutine init_grib1(self, g1_desc)
+        class(ip_equid_cylind_grid), intent(inout) :: self
+        type(grib1_descriptor), intent(in) :: g1_desc
 
-    integer :: iscan
+        integer :: iscan
 
-    associate(kgds => g1_desc%gds)
-      self%IM=KGDS(2)
-      self%JM=KGDS(3)
-      self%RLAT1=KGDS(4)*1.E-3
-      self%RLON1=KGDS(5)*1.E-3
-      self%RLAT2=KGDS(7)*1.E-3
-      self%RLON2=KGDS(8)*1.E-3
-      ISCAN=MOD(KGDS(11)/128,2)
-      self%HI=(-1.)**ISCAN
-      self%DLON=self%HI*(MOD(self%HI*(self%RLON2-self%RLON1)-1+3600,360.)+1)/(self%IM-1)
-      self%DLAT=(self%RLAT2-self%RLAT1)/(self%JM-1)
+        associate (kgds => g1_desc%gds)
+            self%im = kgds(2)
+            self%jm = kgds(3)
+            self%rlat1 = kgds(4)*1.e-3
+            self%rlon1 = kgds(5)*1.e-3
+            self%rlat2 = kgds(7)*1.e-3
+            self%rlon2 = kgds(8)*1.e-3
+            iscan = mod(kgds(11)/128, 2)
+            self%hi = (-1.)**iscan
+            self%dlon = self%hi*(mod(self%hi*(self%rlon2-self%rlon1)-1+3600, 360.)+1)/(self%im-1)
+            self%dlat = (self%rlat2-self%rlat1)/(self%jm-1)
 
-      ! defaults
-      self%iwrap = 0
-      self%jwrap1 = 0
-      self%jwrap2 = 0
-      self%nscan = mod(kgds(11) / 32, 2)
-      self%nscan_field_pos = self%nscan
-      self%kscan = 0
+            ! defaults
+            self%iwrap = 0
+            self%jwrap1 = 0
+            self%jwrap2 = 0
+            self%nscan = mod(kgds(11)/32, 2)
+            self%nscan_field_pos = self%nscan
+            self%kscan = 0
 
-      self%iwrap = nint(360/abs(self%dlon))
+            self%iwrap = nint(360/abs(self%dlon))
 
-      if(self%im < self%iwrap) self%iwrap=0
-      self%jwrap1 = 0
-      self%jwrap2 = 0
-      if(self%iwrap > 0 .and. mod(self%iwrap,2) == 0) then
-         if(abs(self%rlat1) > 90-0.25*self%dlat) then
-            self%jwrap1 = 2
-         elseif(abs(self%rlat1) > 90-0.75*self%dlat) then
-            self%jwrap1 = 1
-         endif
-         if(abs(self%rlat2) > 90-0.25*self%dlat) then
-            self%jwrap2 = 2 * self%jm
-         elseif(abs(self%rlat2) > 90-0.75*self%dlat) then
-            self%jwrap2 = 2 * self%jm+1
-         endif
-      endif
+            if (self%im .lt. self%iwrap) self%iwrap = 0
+            self%jwrap1 = 0
+            self%jwrap2 = 0
+            if (self%iwrap .gt. 0 .and. mod(self%iwrap, 2) .eq. 0) then
+                if (abs(self%rlat1) .gt. 90-0.25*self%dlat) then
+                    self%jwrap1 = 2
+                elseif (abs(self%rlat1) .gt. 90-0.75*self%dlat) then
+                    self%jwrap1 = 1
+                end if
+                if (abs(self%rlat2) .gt. 90-0.25*self%dlat) then
+                    self%jwrap2 = 2*self%jm
+                elseif (abs(self%rlat2) .gt. 90-0.75*self%dlat) then
+                    self%jwrap2 = 2*self%jm+1
+                end if
+            end if
 
-      self%rerth = 6.3712E6
-      self%eccen_squared = 0.0
-    end associate
+            self%rerth = 6.3712e6
+            self%eccen_squared = 0.0
+        end associate
 
-  end subroutine init_grib1
-  
-  !> Initializes an equidistant cylindrical grid given a grib2_descriptor object.
+    end subroutine init_grib1
+
+    !> Initializes an equidistant cylindrical grid given a grib2_descriptor object.
   !! @param[inout] self The grid to initialize
   !! @param[in] g2_desc A grib2_descriptor
   !!
   !! @author Kyle Gerheiser
   !! @date July 2021
-  subroutine init_grib2(self, g2_desc)
-    class(ip_equid_cylind_grid), intent(inout) :: self
-    type(grib2_descriptor), intent(in) :: g2_desc
+    subroutine init_grib2(self, g2_desc)
+        class(ip_equid_cylind_grid), intent(inout) :: self
+        type(grib2_descriptor), intent(in) :: g2_desc
 
-    integer :: iscale, iscan
+        integer :: iscale, iscan
 
-    associate(igdtmpl => g2_desc%gdt_tmpl, igdtlen => g2_desc%gdt_len)
-      self%IM=IGDTMPL(8)
-      self%JM=IGDTMPL(9)
-      ISCALE=IGDTMPL(10)*IGDTMPL(11)
-      IF(ISCALE==0) ISCALE=10**6
-      self%RLAT1=FLOAT(IGDTMPL(12))/FLOAT(ISCALE)
-      self%RLON1=FLOAT(IGDTMPL(13))/FLOAT(ISCALE)
-      self%RLAT2=FLOAT(IGDTMPL(15))/FLOAT(ISCALE)
-      self%RLON2=FLOAT(IGDTMPL(16))/FLOAT(ISCALE)
-      ISCAN=MOD(IGDTMPL(19)/128,2)
-      self%HI=(-1.)**ISCAN
-      self%DLON=self%HI*(MOD(self%HI*(self%RLON2-self%RLON1)-1+3600,360.)+1)/(self%IM-1)
-      self%DLAT=(self%RLAT2-self%RLAT1)/(self%JM-1)
+        associate (igdtmpl => g2_desc%gdt_tmpl, igdtlen => g2_desc%gdt_len)
+            self%im = igdtmpl(8)
+            self%jm = igdtmpl(9)
+            iscale = igdtmpl(10)*igdtmpl(11)
+            if (iscale .eq. 0) iscale = 10**6
+            self%rlat1 = float(igdtmpl(12))/float(iscale)
+            self%rlon1 = float(igdtmpl(13))/float(iscale)
+            self%rlat2 = float(igdtmpl(15))/float(iscale)
+            self%rlon2 = float(igdtmpl(16))/float(iscale)
+            iscan = mod(igdtmpl(19)/128, 2)
+            self%hi = (-1.)**iscan
+            self%dlon = self%hi*(mod(self%hi*(self%rlon2-self%rlon1)-1+3600, 360.)+1)/(self%im-1)
+            self%dlat = (self%rlat2-self%rlat1)/(self%jm-1)
 
-      self%nscan = MOD(IGDTMPL(19)/32,2)
-      self%nscan_field_pos = self%nscan
-      self%kscan = 0
-      self%iwrap = NINT(360/ABS(self%DLON))
+            self%nscan = mod(igdtmpl(19)/32, 2)
+            self%nscan_field_pos = self%nscan
+            self%kscan = 0
+            self%iwrap = nint(360/abs(self%dlon))
 
-      if(self%im.lt.self%iwrap) self%iwrap=0
-      self%jwrap1=0
-      self%jwrap2=0
+            if (self%im .lt. self%iwrap) self%iwrap = 0
+            self%jwrap1 = 0
+            self%jwrap2 = 0
 
-      if(self%im < self%iwrap) self%iwrap=0
-      self%jwrap1 = 0
-      self%jwrap2 = 0
-      if(self%iwrap > 0 .and. mod(self%iwrap,2) == 0) then
-         if(abs(self%rlat1) > 90-0.25*self%dlat) then
-            self%jwrap1 = 2
-         elseif(abs(self%rlat1) > 90-0.75*self%dlat) then
-            self%jwrap1 = 1
-         endif
-         if(abs(self%rlat2) > 90-0.25*self%dlat) then
-            self%jwrap2 = 2 * self%jm
-         elseif(abs(self%rlat2) > 90-0.75*self%dlat) then
-            self%jwrap2 = 2 * self%jm+1
-         endif
-      endif
+            if (self%im .lt. self%iwrap) self%iwrap = 0
+            self%jwrap1 = 0
+            self%jwrap2 = 0
+            if (self%iwrap .gt. 0 .and. mod(self%iwrap, 2) .eq. 0) then
+                if (abs(self%rlat1) .gt. 90-0.25*self%dlat) then
+                    self%jwrap1 = 2
+                elseif (abs(self%rlat1) .gt. 90-0.75*self%dlat) then
+                    self%jwrap1 = 1
+                end if
+                if (abs(self%rlat2) .gt. 90-0.25*self%dlat) then
+                    self%jwrap2 = 2*self%jm
+                elseif (abs(self%rlat2) .gt. 90-0.75*self%dlat) then
+                    self%jwrap2 = 2*self%jm+1
+                end if
+            end if
 
-      call EARTH_RADIUS(igdtmpl, igdtlen, self%rerth, self%eccen_squared)
+            call earth_radius(igdtmpl, igdtlen, self%rerth, self%eccen_squared)
 
-    end associate
-  end subroutine init_grib2
+        end associate
+    end subroutine init_grib2
 
-  !> Calculates Earth coordinates (iopt = 1) or grid coorindates (iopt = -1)
+    !> Calculates Earth coordinates (iopt = 1) or grid coorindates (iopt = -1)
   !! for equidistant cylindrical grids.
   !!
   !! If the selected coordinates are more than one gridpoint
@@ -200,119 +200,119 @@ contains
   !!
   !! @author Mark Iredell, George Gayno, Kyle Gerheiser
   !! @date July 2021
-  SUBROUTINE GDSWZD_EQUID_CYLIND(self,IOPT,NPTS,FILL, &
-       XPTS,YPTS,RLON,RLAT,NRET,  &
-       CROT,SROT,XLON,XLAT,YLON,YLAT,AREA)
-    IMPLICIT NONE
-    !
-    class(ip_equid_cylind_grid), intent(in) :: self
-    INTEGER,             INTENT(IN   ) :: IOPT, NPTS
-    INTEGER,             INTENT(  OUT) :: NRET
-    !
-    REAL,                INTENT(IN   ) :: FILL
-    REAL,                INTENT(INOUT) :: RLON(NPTS),RLAT(NPTS)
-    REAL,                INTENT(INOUT) :: XPTS(NPTS),YPTS(NPTS)
-    REAL, OPTIONAL,      INTENT(  OUT) :: CROT(NPTS),SROT(NPTS)
-    REAL, OPTIONAL,      INTENT(  OUT) :: XLON(NPTS),XLAT(NPTS)
-    REAL, OPTIONAL,      INTENT(  OUT) :: YLON(NPTS),YLAT(NPTS),AREA(NPTS)
-    !
-    INTEGER                            :: IM, JM, N
-    !
-    LOGICAL                            :: LROT, LMAP, LAREA
-    !
-    REAL                               :: HI, RLAT1, RLON1, RLAT2, RLON2
-    REAL                               :: XMAX, XMIN, YMAX, YMIN
-    ! - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-    IF(PRESENT(CROT)) CROT=FILL
-    IF(PRESENT(SROT)) SROT=FILL
-    IF(PRESENT(XLON)) XLON=FILL
-    IF(PRESENT(XLAT)) XLAT=FILL
-    IF(PRESENT(YLON)) YLON=FILL
-    IF(PRESENT(YLAT)) YLAT=FILL
-    IF(PRESENT(AREA)) AREA=FILL
+    subroutine gdswzd_equid_cylind(self, iopt, npts, fill, &
+                                   xpts, ypts, rlon, rlat, nret, &
+                                   crot, srot, xlon, xlat, ylon, ylat, area)
+        implicit none
+        !
+        class(ip_equid_cylind_grid), intent(in) :: self
+        integer, intent(in) :: iopt, npts
+        integer, intent(out) :: nret
+        !
+        real, intent(in) :: fill
+        real, intent(inout) :: rlon(npts), rlat(npts)
+        real, intent(inout) :: xpts(npts), ypts(npts)
+        real, optional, intent(out) :: crot(npts), srot(npts)
+        real, optional, intent(out) :: xlon(npts), xlat(npts)
+        real, optional, intent(out) :: ylon(npts), ylat(npts), area(npts)
+        !
+        integer                            :: im, jm, n
+        !
+        logical                            :: lrot, lmap, larea
+        !
+        real                               :: hi, rlat1, rlon1, rlat2, rlon2
+        real                               :: xmax, xmin, ymax, ymin
+        ! - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+        if (present(crot)) crot = fill
+        if (present(srot)) srot = fill
+        if (present(xlon)) xlon = fill
+        if (present(xlat)) xlat = fill
+        if (present(ylon)) ylon = fill
+        if (present(ylat)) ylat = fill
+        if (present(area)) area = fill
 
-    IM=self%im
-    JM=self%jm
+        im = self%im
+        jm = self%jm
 
-    RLAT1=self%rlat1
-    RLON1=self%rlon1
-    RLAT2=self%rlat2
-    RLON2=self%rlon2
+        rlat1 = self%rlat1
+        rlon1 = self%rlon1
+        rlat2 = self%rlat2
+        rlon2 = self%rlon2
 
-    HI=self%hi
+        hi = self%hi
 
-    rerth = self%rerth
-    dlat = self%dlat
-    dlon = self%dlon
+        rerth = self%rerth
+        dlat = self%dlat
+        dlon = self%dlon
 
-    XMIN=0
-    XMAX=IM+1
-    IF(IM.EQ.NINT(360/ABS(DLON))) XMAX=IM+2
-    YMIN=0
-    YMAX=JM+1
-    NRET=0
-    IF(PRESENT(CROT).AND.PRESENT(SROT))THEN
-       LROT=.TRUE.
-    ELSE
-       LROT=.FALSE.
-    ENDIF
-    IF(PRESENT(XLON).AND.PRESENT(XLAT).AND.PRESENT(YLON).AND.PRESENT(YLAT))THEN
-       LMAP=.TRUE.
-    ELSE
-       LMAP=.FALSE.
-    ENDIF
-    IF(PRESENT(AREA))THEN
-       LAREA=.TRUE.
-    ELSE
-       LAREA=.FALSE.
-    ENDIF
-    ! - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-    !  TRANSLATE GRID COORDINATES TO EARTH COORDINATES
-    IF(IOPT.EQ.0.OR.IOPT.EQ.1) THEN
-       !$OMP PARALLEL DO PRIVATE(N) REDUCTION(+:NRET) SCHEDULE(STATIC)
-       DO N=1,NPTS
-          IF(XPTS(N).GE.XMIN.AND.XPTS(N).LE.XMAX.AND. &
-               YPTS(N).GE.YMIN.AND.YPTS(N).LE.YMAX) THEN
-             RLON(N)=MOD(RLON1+DLON*(XPTS(N)-1)+3600,360.)
-             RLAT(N)=MIN(MAX(RLAT1+DLAT*(YPTS(N)-1),-90.),90.)
-             NRET=NRET+1
-             IF(LROT)  CALL EQUID_CYLIND_VECT_ROT(CROT(N),SROT(N))
-             IF(LMAP)  CALL EQUID_CYLIND_MAP_JACOB(XLON(N),XLAT(N),YLON(N),YLAT(N))
-             IF(LAREA) CALL EQUID_CYLIND_GRID_AREA(RLAT(N),AREA(N))
-          ELSE
-             RLON(N)=FILL
-             RLAT(N)=FILL
-          ENDIF
-       ENDDO
-       !$OMP END PARALLEL DO
-       ! - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-       !  TRANSLATE EARTH COORDINATES TO GRID COORDINATES
-    ELSEIF(IOPT.EQ.-1) THEN
-       !$OMP PARALLEL DO PRIVATE(N) REDUCTION(+:NRET) SCHEDULE(STATIC)
-       DO N=1,NPTS
-          IF(ABS(RLON(N)).LE.360.AND.ABS(RLAT(N)).LE.90) THEN
-             XPTS(N)=1+HI*MOD(HI*(RLON(N)-RLON1)+3600,360.)/DLON
-             YPTS(N)=1+(RLAT(N)-RLAT1)/DLAT
-             IF(XPTS(N).GE.XMIN.AND.XPTS(N).LE.XMAX.AND.  &
-                  YPTS(N).GE.YMIN.AND.YPTS(N).LE.YMAX) THEN
-                NRET=NRET+1
-                IF(LROT)  CALL EQUID_CYLIND_VECT_ROT(CROT(N),SROT(N))
-                IF(LMAP)  CALL EQUID_CYLIND_MAP_JACOB(XLON(N),XLAT(N),YLON(N),YLAT(N))
-                IF(LAREA) CALL EQUID_CYLIND_GRID_AREA(RLAT(N),AREA(N))
-             ELSE
-                XPTS(N)=FILL
-                YPTS(N)=FILL
-             ENDIF
-          ELSE
-             XPTS(N)=FILL
-             YPTS(N)=FILL
-          ENDIF
-       ENDDO
-       !$OMP END PARALLEL DO
-    ENDIF
-  END SUBROUTINE GDSWZD_EQUID_CYLIND
+        xmin = 0
+        xmax = im+1
+        if (im .eq. nint(360/abs(dlon))) xmax = im+2
+        ymin = 0
+        ymax = jm+1
+        nret = 0
+        if (present(crot) .and. present(srot)) then
+            lrot = .true.
+        else
+            lrot = .false.
+        end if
+        if (present(xlon) .and. present(xlat) .and. present(ylon) .and. present(ylat)) then
+            lmap = .true.
+        else
+            lmap = .false.
+        end if
+        if (present(area)) then
+            larea = .true.
+        else
+            larea = .false.
+        end if
+        ! - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+        !  TRANSLATE GRID COORDINATES TO EARTH COORDINATES
+        if (iopt .eq. 0 .or. iopt .eq. 1) then
+            !$omp parallel do private(n) reduction(+:nret) schedule(static)
+            do n = 1, npts
+                if (xpts(n) .ge. xmin .and. xpts(n) .le. xmax .and. &
+                    ypts(n) .ge. ymin .and. ypts(n) .le. ymax) then
+                    rlon(n) = mod(rlon1+dlon*(xpts(n)-1)+3600, 360.)
+                    rlat(n) = min(max(rlat1+dlat*(ypts(n)-1), -90.), 90.)
+                    nret = nret+1
+                    if (lrot) call equid_cylind_vect_rot(crot(n), srot(n))
+                    if (lmap) call equid_cylind_map_jacob(xlon(n), xlat(n), ylon(n), ylat(n))
+                    if (larea) call equid_cylind_grid_area(rlat(n), area(n))
+                else
+                    rlon(n) = fill
+                    rlat(n) = fill
+                end if
+            end do
+            !$omp end parallel do
+            ! - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+            !  TRANSLATE EARTH COORDINATES TO GRID COORDINATES
+        elseif (iopt .eq. -1) then
+            !$omp parallel do private(n) reduction(+:nret) schedule(static)
+            do n = 1, npts
+                if (abs(rlon(n)) .le. 360 .and. abs(rlat(n)) .le. 90) then
+                    xpts(n) = 1+hi*mod(hi*(rlon(n)-rlon1)+3600, 360.)/dlon
+                    ypts(n) = 1+(rlat(n)-rlat1)/dlat
+                    if (xpts(n) .ge. xmin .and. xpts(n) .le. xmax .and. &
+                        ypts(n) .ge. ymin .and. ypts(n) .le. ymax) then
+                        nret = nret+1
+                        if (lrot) call equid_cylind_vect_rot(crot(n), srot(n))
+                        if (lmap) call equid_cylind_map_jacob(xlon(n), xlat(n), ylon(n), ylat(n))
+                        if (larea) call equid_cylind_grid_area(rlat(n), area(n))
+                    else
+                        xpts(n) = fill
+                        ypts(n) = fill
+                    end if
+                else
+                    xpts(n) = fill
+                    ypts(n) = fill
+                end if
+            end do
+            !$omp end parallel do
+        end if
+    end subroutine gdswzd_equid_cylind
 
-  !> Computes the vector rotation sines and
+    !> Computes the vector rotation sines and
   !! cosines for a equidistant cylindrical grid.
   !!
   !! @param[out] crot Clockwise vector rotation cosines.
@@ -324,17 +324,17 @@ contains
   !!
   !! @author George Gayno
   !! @date July 2021
-  SUBROUTINE EQUID_CYLIND_VECT_ROT(CROT,SROT)
-    IMPLICIT NONE
+    subroutine equid_cylind_vect_rot(crot, srot)
+        implicit none
 
-    REAL,                INTENT(  OUT) :: CROT, SROT
+        real, intent(out) :: crot, srot
 
-    CROT=1.0
-    SROT=0.0
+        crot = 1.0
+        srot = 0.0
 
-  END SUBROUTINE EQUID_CYLIND_VECT_ROT
+    end subroutine equid_cylind_vect_rot
 
-  !> Computes the map jacobians for a equidistant cylindrical grid.
+    !> Computes the map jacobians for a equidistant cylindrical grid.
   !!
   !! @param[out] xlon dx/dlon in 1/degrees.
   !! @param[out] xlat dx/dlat in 1/degrees.
@@ -343,40 +343,40 @@ contains
   !!
   !! @author George Gayno
   !! @date July 2021
-  SUBROUTINE EQUID_CYLIND_MAP_JACOB(XLON,XLAT,YLON,YLAT)
-    REAL,                INTENT(  OUT) :: XLON,XLAT,YLON,YLAT
+    subroutine equid_cylind_map_jacob(xlon, xlat, ylon, ylat)
+        real, intent(out) :: xlon, xlat, ylon, ylat
 
-    XLON=1.0/DLON
-    XLAT=0.
-    YLON=0.
-    YLAT=1.0/DLAT
+        xlon = 1.0/dlon
+        xlat = 0.
+        ylon = 0.
+        ylat = 1.0/dlat
 
-  END SUBROUTINE EQUID_CYLIND_MAP_JACOB
+    end subroutine equid_cylind_map_jacob
 
-  !> Computes the grid box area for a equidistant cylindrical grid.
+    !> Computes the grid box area for a equidistant cylindrical grid.
   !!
   !! @param[in] rlat Latitude of grid point in degrees.
   !! @param[out] area Area weights in m^2.
   !!
   !! @author Mark Iredell, George Gayno
   !! @date July 2021
-  SUBROUTINE EQUID_CYLIND_GRID_AREA(RLAT,AREA)
-    IMPLICIT NONE
+    subroutine equid_cylind_grid_area(rlat, area)
+        implicit none
 
-    REAL,                INTENT(IN   ) :: RLAT
-    REAL,                INTENT(  OUT) :: AREA
+        real, intent(in) :: rlat
+        real, intent(out) :: area
 
-    REAL,                PARAMETER     :: PI=3.14159265358979
-    REAL,                PARAMETER     :: DPR=180./PI
+        real, parameter     :: pi = 3.14159265358979
+        real, parameter     :: dpr = 180./pi
 
-    REAL                               :: DSLAT, RLATU, RLATD
+        real                               :: dslat, rlatu, rlatd
 
-    RLATU=MIN(MAX(RLAT+DLAT/2,-90.),90.)
-    RLATD=MIN(MAX(RLAT-DLAT/2,-90.),90.)
-    DSLAT=SIN(RLATU/DPR)-SIN(RLATD/DPR)
-    AREA=RERTH**2*ABS(DSLAT*DLON)/DPR
+        rlatu = min(max(rlat+dlat/2, -90.), 90.)
+        rlatd = min(max(rlat-dlat/2, -90.), 90.)
+        dslat = sin(rlatu/dpr)-sin(rlatd/dpr)
+        area = rerth**2*abs(dslat*dlon)/dpr
 
-  END SUBROUTINE EQUID_CYLIND_GRID_AREA
+    end subroutine equid_cylind_grid_area
 
 end module ip_equid_cylind_grid_mod
 

@@ -22,30 +22,30 @@
 !!
 !! @author Mark Iredell, George Gayno, Kyle Gerheiser
 !! @date Jan 2015
-MODULE GDSWZD_MOD
-  use ip_grid_descriptor_mod
-  use ip_grids_mod
-  use ip_grid_mod
-  use ip_grid_factory_mod
-  
-  IMPLICIT NONE
+module gdswzd_mod
+    use ip_grid_descriptor_mod
+    use ip_grids_mod
+    use ip_grid_mod
+    use ip_grid_factory_mod
 
-  PRIVATE
+    implicit none
 
-  public :: GDSWZD_2D_ARRAY_grib1, gdswzd_grib1, gdswzd
+    private
 
-  INTERFACE GDSWZD
-     MODULE PROCEDURE GDSWZD_1D_ARRAY
-     MODULE PROCEDURE GDSWZD_2D_ARRAY
-     MODULE PROCEDURE GDSWZD_SCALAR
-     module procedure gdswzd_grib1
-     module procedure GDSWZD_2D_ARRAY_grib1
-     module procedure gdswzd_grid
-  END INTERFACE GDSWZD
+    public :: gdswzd_2d_array_grib1, gdswzd_grib1, gdswzd
 
-CONTAINS
+    interface gdswzd
+        module procedure gdswzd_1d_array
+        module procedure gdswzd_2d_array
+        module procedure gdswzd_scalar
+        module procedure gdswzd_grib1
+        module procedure gdswzd_2d_array_grib1
+        module procedure gdswzd_grid
+    end interface gdswzd
 
-  !> Returns one of the following for a grid object:
+contains
+
+    !> Returns one of the following for a grid object:
   !! - iopt=0 Grid and earth coordinates of all grid points.
   !! - iopt=+1 Earth coordinates of selected grid coordinates.
   !! - iopt=-1 Grid coordinates of selected earth coordinates.
@@ -55,7 +55,7 @@ CONTAINS
   !! output elements are set to fill values.  Also if iopt=0,
   !! if the number of grid points exceeds the number allotted,
   !! then all the output elements are set to fill values.
-  !! 
+  !!
   !! The actual number of valid points computed is returned too.
   !!
   !! Optionally, the vector rotations, map jacobians and
@@ -102,104 +102,103 @@ CONTAINS
   !!
   !! @author Kyle Gerheiser
   !! @date July 2021
-  subroutine gdswzd_grid(grid,IOPT,NPTS,FILL, &
-       XPTS,YPTS,RLON,RLAT,NRET, &
-       CROT,SROT,XLON,XLAT,YLON,YLAT,AREA)
+    subroutine gdswzd_grid(grid, iopt, npts, fill, &
+                           xpts, ypts, rlon, rlat, nret, &
+                           crot, srot, xlon, xlat, ylon, ylat, area)
 
-    class(ip_grid), intent(in) :: grid
-    INTEGER,        INTENT(IN   ) :: IOPT, NPTS
-    INTEGER,        INTENT(  OUT) :: NRET
-    !
-    REAL,           INTENT(IN   ) :: FILL
-    REAL,           INTENT(INOUT) :: RLON(NPTS),RLAT(NPTS)
-    REAL,           INTENT(INOUT) :: XPTS(NPTS),YPTS(NPTS)
-    REAL, OPTIONAL, INTENT(  OUT) :: CROT(NPTS),SROT(NPTS)
-    REAL, OPTIONAL, INTENT(  OUT) :: XLON(NPTS),XLAT(NPTS)
-    REAL, OPTIONAL, INTENT(  OUT) :: YLON(NPTS),YLAT(NPTS),AREA(NPTS)
+        class(ip_grid), intent(in) :: grid
+        integer, intent(in) :: iopt, npts
+        integer, intent(out) :: nret
+        !
+        real, intent(in) :: fill
+        real, intent(inout) :: rlon(npts), rlat(npts)
+        real, intent(inout) :: xpts(npts), ypts(npts)
+        real, optional, intent(out) :: crot(npts), srot(npts)
+        real, optional, intent(out) :: xlon(npts), xlat(npts)
+        real, optional, intent(out) :: ylon(npts), ylat(npts), area(npts)
 
-    INTEGER                       :: IS1, IM, JM, NM, KSCAN, NSCAN, N
-    INTEGER                       :: IOPF, NN, I, J
+        integer                       :: is1, im, jm, nm, kscan, nscan, n
+        integer                       :: iopf, nn, i, j
 
-    !  COMPUTE GRID COORDINATES FOR ALL GRID POINTS
-    IF(IOPT.EQ.0) THEN
-       IOPF=1
+        !  COMPUTE GRID COORDINATES FOR ALL GRID POINTS
+        if (iopt .eq. 0) then
+            iopf = 1
 
-       if(grid%descriptor%grid_num.eq.-1)then
-          nm = npts
-       else
-          im = grid%im
-          jm = grid%jm
-          nm = im * jm
-       endif
-       nscan = grid%nscan
-       kscan = grid%kscan
+            if (grid%descriptor%grid_num .eq. -1) then
+                nm = npts
+            else
+                im = grid%im
+                jm = grid%jm
+                nm = im*jm
+            end if
+            nscan = grid%nscan
+            kscan = grid%kscan
 
-       if (nm > npts) then
-          RLAT=FILL
-          RLON=FILL
-          XPTS=FILL
-          YPTS=FILL
-          return
-       end if
+            if (nm .gt. npts) then
+                rlat = fill
+                rlon = fill
+                xpts = fill
+                ypts = fill
+                return
+            end if
 
-       select type(grid)
-       type is(ip_rot_equid_cylind_egrid)
-          if(kscan == 0) then
-             is1 = (jm + 1) / 2
-          else
-             is1 = jm / 2
-          end if
+            select type (grid)
+            type is (ip_rot_equid_cylind_egrid)
+                if (kscan .eq. 0) then
+                    is1 = (jm+1)/2
+                else
+                    is1 = jm/2
+                end if
 
-          DO N=1,NM
-             IF(NSCAN.EQ.0) THEN
-                J=(N-1)/IM+1
-                I=(N-IM*(J-1))*2-MOD(J+KSCAN,2)
-             ELSE
-                NN=(N*2)-1+KSCAN
-                I = (NN-1)/JM + 1
-                J = MOD(NN-1,JM) + 1
-                IF (MOD(JM,2)==0.AND.MOD(I,2)==0.AND.KSCAN==0) J = J + 1
-                IF (MOD(JM,2)==0.AND.MOD(I,2)==0.AND.KSCAN==1) J = J - 1
-             ENDIF
-             XPTS(N)=IS1+(I-(J-KSCAN))/2
-             YPTS(N)=(I+(J-KSCAN))/2
-          ENDDO
-       type is(ip_station_points_grid)
-          DO N=1,NM
-             XPTS(N)=FILL
-             YPTS(N)=FILL
-          ENDDO
-       class default
-          DO N=1,NM
-             IF(NSCAN.EQ.0) THEN
-                J=(N-1)/IM+1
-                I=N-IM*(J-1)
-             ELSE
-                I=(N-1)/JM+1
-                J=N-JM*(I-1)
-             ENDIF
-             XPTS(N)=I
-             YPTS(N)=J
-          ENDDO
-       end select
+                do n = 1, nm
+                    if (nscan .eq. 0) then
+                        j = (n-1)/im+1
+                        i = (n-im*(j-1))*2-mod(j+kscan, 2)
+                    else
+                        nn = (n*2)-1+kscan
+                        i = (nn-1)/jm+1
+                        j = mod(nn-1, jm)+1
+                        if (mod(jm, 2) .eq. 0 .and. mod(i, 2) .eq. 0 .and. kscan .eq. 0) j = j+1
+                        if (mod(jm, 2) .eq. 0 .and. mod(i, 2) .eq. 0 .and. kscan .eq. 1) j = j-1
+                    end if
+                    xpts(n) = is1+(i-(j-kscan))/2
+                    ypts(n) = (i+(j-kscan))/2
+                end do
+            type is (ip_station_points_grid)
+                do n = 1, nm
+                    xpts(n) = fill
+                    ypts(n) = fill
+                end do
+            class default
+                do n = 1, nm
+                    if (nscan .eq. 0) then
+                        j = (n-1)/im+1
+                        i = n-im*(j-1)
+                    else
+                        i = (n-1)/jm+1
+                        j = n-jm*(i-1)
+                    end if
+                    xpts(n) = i
+                    ypts(n) = j
+                end do
+            end select
 
-       DO N=NM+1,NPTS
-          XPTS(N)=FILL
-          YPTS(N)=FILL
-       ENDDO
+            do n = nm+1, npts
+                xpts(n) = fill
+                ypts(n) = fill
+            end do
 
-    ELSE  ! IOPT /= 0
-       IOPF=IOPT
-    ENDIF ! IOPT CHECK
+        else  ! IOPT /= 0
+            iopf = iopt
+        end if ! IOPT CHECK
 
-    call grid%gdswzd(IOPF,NPTS,FILL,  &
-            XPTS,YPTS,RLON,RLAT,NRET, &
-            CROT,SROT,XLON,XLAT,YLON,YLAT,AREA)
+        call grid%gdswzd(iopf, npts, fill, &
+                         xpts, ypts, rlon, rlat, nret, &
+                         crot, srot, xlon, xlat, ylon, ylat, area)
 
-  end subroutine gdswzd_grid
+    end subroutine gdswzd_grid
 
-
-  !> Decodes the grib 2 grid definition template and returns
+    !> Decodes the grib 2 grid definition template and returns
   !! one of the following (for scalars):
   !! - iopt=0 Grid and earth coordinates of all grid points.
   !! - iopt=+1 Earth coordinates of selected grid coordinates.
@@ -219,7 +218,7 @@ CONTAINS
   !! output elements are set to fill values. Also if iopt=0,
   !! if the number of grid points exceeds the number allotted,
   !! then all the output elements are set to fill values.
-  !! 
+  !!
   !! The actual number of valid points computed is returned too.
   !!
   !! Optionally, the vector rotations, map jacobians and
@@ -275,112 +274,112 @@ CONTAINS
   !!
   !! @author George Gayno, Mark Iredell
   !! @date Jan 2015
-  SUBROUTINE GDSWZD_SCALAR(IGDTNUM,IGDTMPL,IGDTLEN,IOPT,NPTS,FILL, &
-       XPTS,YPTS,RLON,RLAT,NRET, &
-       CROT,SROT,XLON,XLAT,YLON,YLAT,AREA)
+    subroutine gdswzd_scalar(igdtnum, igdtmpl, igdtlen, iopt, npts, fill, &
+                             xpts, ypts, rlon, rlat, nret, &
+                             crot, srot, xlon, xlat, ylon, ylat, area)
 
-    IMPLICIT NONE
-    !
-    INTEGER,        INTENT(IN   ) :: IGDTNUM, IGDTLEN
-    INTEGER,        INTENT(IN   ) :: IGDTMPL(IGDTLEN)
-    INTEGER,        INTENT(IN   ) :: IOPT, NPTS
-    INTEGER,        INTENT(  OUT) :: NRET
-    !
-    REAL,           INTENT(IN   ) :: FILL
-    REAL,           INTENT(INOUT) :: RLON, RLAT
-    REAL,           INTENT(INOUT) :: XPTS, YPTS
-    REAL, OPTIONAL, INTENT(  OUT) :: CROT, SROT
-    REAL, OPTIONAL, INTENT(  OUT) :: XLON, XLAT
-    REAL, OPTIONAL, INTENT(  OUT) :: YLON, YLAT, AREA
+        implicit none
+        !
+        integer, intent(in) :: igdtnum, igdtlen
+        integer, intent(in) :: igdtmpl(igdtlen)
+        integer, intent(in) :: iopt, npts
+        integer, intent(out) :: nret
+        !
+        real, intent(in) :: fill
+        real, intent(inout) :: rlon, rlat
+        real, intent(inout) :: xpts, ypts
+        real, optional, intent(out) :: crot, srot
+        real, optional, intent(out) :: xlon, xlat
+        real, optional, intent(out) :: ylon, ylat, area
 
-    REAL                          :: RLONA(1),RLATA(1)
-    REAL                          :: XPTSA(1),YPTSA(1)
-    REAL                          :: CROTA(1),SROTA(1)
-    REAL                          :: XLONA(1),XLATA(1)
-    REAL                          :: YLONA(1),YLATA(1),AREAA(1)
+        real                          :: rlona(1), rlata(1)
+        real                          :: xptsa(1), yptsa(1)
+        real                          :: crota(1), srota(1)
+        real                          :: xlona(1), xlata(1)
+        real                          :: ylona(1), ylata(1), areaa(1)
 
-    RLONA(1) = RLON
-    RLATA(1) = RLAT
-    XPTSA(1) = XPTS
-    YPTSA(1) = YPTS
+        rlona(1) = rlon
+        rlata(1) = rlat
+        xptsa(1) = xpts
+        yptsa(1) = ypts
 
-    NRET = 0
+        nret = 0
 
-    ! CALL WITHOUT EXTRA FIELDS.
+        ! CALL WITHOUT EXTRA FIELDS.
 
-    IF (.NOT. PRESENT(CROT) .AND. &
-         .NOT. PRESENT(SROT) .AND. &
-         .NOT. PRESENT(XLON) .AND. &
-         .NOT. PRESENT(XLAT) .AND. &
-         .NOT. PRESENT(YLON) .AND. &
-         .NOT. PRESENT(YLAT) .AND. &
-         .NOT. PRESENT(AREA) ) THEN
+        if (.not. present(crot) .and. &
+            .not. present(srot) .and. &
+            .not. present(xlon) .and. &
+            .not. present(xlat) .and. &
+            .not. present(ylon) .and. &
+            .not. present(ylat) .and. &
+            .not. present(area)) then
 
-       CALL GDSWZD_1D_ARRAY(IGDTNUM,IGDTMPL,IGDTLEN,IOPT,NPTS,FILL, &
-            XPTSA,YPTSA,RLONA,RLATA,NRET)
+            call gdswzd_1d_array(igdtnum, igdtmpl, igdtlen, iopt, npts, fill, &
+                                 xptsa, yptsa, rlona, rlata, nret)
 
-       RLON = RLONA(1)
-       RLAT = RLATA(1)
-       XPTS = XPTSA(1)
-       YPTS = YPTSA(1)
+            rlon = rlona(1)
+            rlat = rlata(1)
+            xpts = xptsa(1)
+            ypts = yptsa(1)
 
-    ENDIF
+        end if
 
-    ! MIMIC CALL TO OLD 'GDSWIZ' ROUTINES.
+        ! MIMIC CALL TO OLD 'GDSWIZ' ROUTINES.
 
-    IF (PRESENT(CROT) .AND. &
-         PRESENT(SROT) .AND. &
-         .NOT. PRESENT(XLON) .AND. &
-         .NOT. PRESENT(XLAT) .AND. &
-         .NOT. PRESENT(YLON) .AND. &
-         .NOT. PRESENT(YLAT) .AND. &
-         .NOT. PRESENT(AREA) ) THEN
+        if (present(crot) .and. &
+            present(srot) .and. &
+            .not. present(xlon) .and. &
+            .not. present(xlat) .and. &
+            .not. present(ylon) .and. &
+            .not. present(ylat) .and. &
+            .not. present(area)) then
 
-       CALL GDSWZD_1D_ARRAY(IGDTNUM,IGDTMPL,IGDTLEN,IOPT,NPTS,FILL, &
-            XPTSA,YPTSA,RLONA,RLATA,NRET,CROTA,SROTA)
+            call gdswzd_1d_array(igdtnum, igdtmpl, igdtlen, iopt, npts, fill, &
+                                 xptsa, yptsa, rlona, rlata, nret, crota, srota)
 
-       RLON = RLONA(1)
-       RLAT = RLATA(1)
-       XPTS = XPTSA(1)
-       YPTS = YPTSA(1)
-       CROT = CROTA(1)
-       SROT = SROTA(1)
+            rlon = rlona(1)
+            rlat = rlata(1)
+            xpts = xptsa(1)
+            ypts = yptsa(1)
+            crot = crota(1)
+            srot = srota(1)
 
-    ENDIF
+        end if
 
-    ! MIMIC CALL TO OLD 'GDSWZD' ROUTINES.
+        ! MIMIC CALL TO OLD 'GDSWZD' ROUTINES.
 
-    IF (PRESENT(CROT) .AND. &
-         PRESENT(SROT) .AND. &
-         PRESENT(XLON) .AND. &
-         PRESENT(XLAT) .AND. &
-         PRESENT(YLON) .AND. &
-         PRESENT(YLAT) .AND. &
-         PRESENT(AREA) ) THEN
+        if (present(crot) .and. &
+            present(srot) .and. &
+            present(xlon) .and. &
+            present(xlat) .and. &
+            present(ylon) .and. &
+            present(ylat) .and. &
+            present(area)) then
 
-       CALL GDSWZD_1D_ARRAY(IGDTNUM,IGDTMPL,IGDTLEN,IOPT,NPTS,FILL, &
-            XPTSA,YPTSA,RLONA,RLATA,NRET, &
-            CROTA,SROTA,XLONA,XLATA,YLONA,YLATA,AREAA)
+            call gdswzd_1d_array(igdtnum, igdtmpl, igdtlen, iopt, npts, fill, &
+                                 xptsa, yptsa, rlona, rlata, nret, &
+                                 crota, srota, xlona, xlata, ylona, ylata, areaa)
 
-       RLON = RLONA(1)
-       RLAT = RLATA(1)
-       XPTS = XPTSA(1)
-       YPTS = YPTSA(1)
-       CROT = CROTA(1)
-       SROT = SROTA(1)
-       XLON = XLONA(1)
-       XLAT = XLATA(1)
-       YLON = YLONA(1)
-       YLAT = YLATA(1)
-       AREA = AREAA(1)
+            rlon = rlona(1)
+            rlat = rlata(1)
+            xpts = xptsa(1)
+            ypts = yptsa(1)
+            crot = crota(1)
+            srot = srota(1)
+            xlon = xlona(1)
+            xlat = xlata(1)
+            ylon = ylona(1)
+            ylat = ylata(1)
+            area = areaa(1)
 
-    ENDIF
+        end if
 
-    RETURN
+        return
 
-  END SUBROUTINE GDSWZD_SCALAR
+    end subroutine gdswzd_scalar
 
-  !> Decodes the grib 2 grid definition template and returns
+    !> Decodes the grib 2 grid definition template and returns
   !! one of the following (for 2d-arrays):
   !! - iopt=0 Grid and earth coordinates of all grid points.
   !! - iopt=+1 Earth coordinates of selected grid coordinates.
@@ -400,7 +399,7 @@ CONTAINS
   !! output elements are set to fill values. Also if iopt=0,
   !! if the number of grid points exceeds the number allotted,
   !! then all the output elements are set to fill values.
-  !! 
+  !!
   !! The actual number of valid points computed is returned too.
   !!
   !! Optionally, the vector rotations, map jacobians and
@@ -456,31 +455,31 @@ CONTAINS
   !!
   !! @author George Gayno, Mark Iredell
   !! @date Jan 2015
-  SUBROUTINE GDSWZD_2D_ARRAY(IGDTNUM,IGDTMPL,IGDTLEN,IOPT,NPTS,FILL, &
-       XPTS,YPTS,RLON,RLAT,NRET, &
-       CROT,SROT,XLON,XLAT,YLON,YLAT,AREA)
+    subroutine gdswzd_2d_array(igdtnum, igdtmpl, igdtlen, iopt, npts, fill, &
+                               xpts, ypts, rlon, rlat, nret, &
+                               crot, srot, xlon, xlat, ylon, ylat, area)
 
-    IMPLICIT NONE
-    !
-    INTEGER,        INTENT(IN   ) :: IGDTNUM, IGDTLEN
-    INTEGER,        INTENT(IN   ) :: IGDTMPL(IGDTLEN)
-    INTEGER,        INTENT(IN   ) :: IOPT, NPTS
-    INTEGER,        INTENT(  OUT) :: NRET
-    !
-    REAL,           INTENT(IN   ) :: FILL
-    REAL,           INTENT(INOUT) :: RLON(:,:),RLAT(:,:)
-    REAL,           INTENT(INOUT) :: XPTS(:,:),YPTS(:,:)
-    REAL, OPTIONAL, INTENT(  OUT) :: CROT(:,:),SROT(:,:)
-    REAL, OPTIONAL, INTENT(  OUT) :: XLON(:,:),XLAT(:,:)
-    REAL, OPTIONAL, INTENT(  OUT) :: YLON(:,:),YLAT(:,:),AREA(:,:)
+        implicit none
+        !
+        integer, intent(in) :: igdtnum, igdtlen
+        integer, intent(in) :: igdtmpl(igdtlen)
+        integer, intent(in) :: iopt, npts
+        integer, intent(out) :: nret
+        !
+        real, intent(in) :: fill
+        real, intent(inout) :: rlon(:, :), rlat(:, :)
+        real, intent(inout) :: xpts(:, :), ypts(:, :)
+        real, optional, intent(out) :: crot(:, :), srot(:, :)
+        real, optional, intent(out) :: xlon(:, :), xlat(:, :)
+        real, optional, intent(out) :: ylon(:, :), ylat(:, :), area(:, :)
 
-    CALL GDSWZD_1D_ARRAY(IGDTNUM,IGDTMPL,IGDTLEN,IOPT,NPTS,FILL, &
-         XPTS,YPTS,RLON,RLAT,NRET, &
-         CROT,SROT,XLON,XLAT,YLON,YLAT,AREA)
+        call gdswzd_1d_array(igdtnum, igdtmpl, igdtlen, iopt, npts, fill, &
+                             xpts, ypts, rlon, rlat, nret, &
+                             crot, srot, xlon, xlat, ylon, ylat, area)
 
-  END SUBROUTINE GDSWZD_2D_ARRAY
+    end subroutine gdswzd_2d_array
 
-  !> Decodes the grib 2 grid definition template and returns one of the following:
+    !> Decodes the grib 2 grid definition template and returns one of the following:
   !! - iopt=0 Grid and earth coordinates of all grid points.
   !! - iopt=+1 Earth coordinates of selected grid coordinates.
   !! - iopt=-1 Grid coordinates of selected earth coordinates.
@@ -499,7 +498,7 @@ CONTAINS
   !! output elements are set to fill values. Also if iopt=0,
   !! if the number of grid points exceeds the number allotted,
   !! then all the output elements are set to fill values.
-  !! 
+  !!
   !! The actual number of valid points computed is returned too.
   !!
   !! Optionally, the vector rotations, map jacobians and
@@ -662,34 +661,34 @@ CONTAINS
   !!
   !! @author George Gayno, Mark Iredell
   !! @date Jan 2015
-  SUBROUTINE GDSWZD_1D_ARRAY(IGDTNUM,IGDTMPL,IGDTLEN,IOPT,NPTS,FILL, &
-       XPTS,YPTS,RLON,RLAT,NRET, &
-       CROT,SROT,XLON,XLAT,YLON,YLAT,AREA)
-    INTEGER,        INTENT(IN   ) :: IGDTNUM, IGDTLEN
-    INTEGER,        INTENT(IN   ) :: IGDTMPL(IGDTLEN)
-    INTEGER,        INTENT(IN   ) :: IOPT, NPTS
-    INTEGER,        INTENT(  OUT) :: NRET
-    !
-    REAL,           INTENT(IN   ) :: FILL
-    REAL,           INTENT(INOUT) :: RLON(NPTS),RLAT(NPTS)
-    REAL,           INTENT(INOUT) :: XPTS(NPTS),YPTS(NPTS)
-    REAL, OPTIONAL, INTENT(  OUT) :: CROT(NPTS),SROT(NPTS)
-    REAL, OPTIONAL, INTENT(  OUT) :: XLON(NPTS),XLAT(NPTS)
-    REAL, OPTIONAL, INTENT(  OUT) :: YLON(NPTS),YLAT(NPTS),AREA(NPTS)
+    subroutine gdswzd_1d_array(igdtnum, igdtmpl, igdtlen, iopt, npts, fill, &
+                               xpts, ypts, rlon, rlat, nret, &
+                               crot, srot, xlon, xlat, ylon, ylat, area)
+        integer, intent(in) :: igdtnum, igdtlen
+        integer, intent(in) :: igdtmpl(igdtlen)
+        integer, intent(in) :: iopt, npts
+        integer, intent(out) :: nret
+        !
+        real, intent(in) :: fill
+        real, intent(inout) :: rlon(npts), rlat(npts)
+        real, intent(inout) :: xpts(npts), ypts(npts)
+        real, optional, intent(out) :: crot(npts), srot(npts)
+        real, optional, intent(out) :: xlon(npts), xlat(npts)
+        real, optional, intent(out) :: ylon(npts), ylat(npts), area(npts)
 
-    type(grib2_descriptor) :: desc
-    class(ip_grid), allocatable :: grid
+        type(grib2_descriptor) :: desc
+        class(ip_grid), allocatable :: grid
 
-    desc = init_descriptor(igdtnum, igdtlen, igdtmpl)
-    call init_grid(grid, desc)
-    
-    call gdswzd_grid(grid,IOPT,NPTS,FILL, &
-         XPTS,YPTS,RLON,RLAT,NRET, &
-         CROT,SROT,XLON,XLAT,YLON,YLAT,AREA)
-  
-  END SUBROUTINE GDSWZD_1D_ARRAY
+        desc = init_descriptor(igdtnum, igdtlen, igdtmpl)
+        call init_grid(grid, desc)
 
-  !> Decodes the grib grid description section and
+        call gdswzd_grid(grid, iopt, npts, fill, &
+                         xpts, ypts, rlon, rlat, nret, &
+                         crot, srot, xlon, xlat, ylon, ylat, area)
+
+    end subroutine gdswzd_1d_array
+
+    !> Decodes the grib grid description section and
   !! returns one of the following (for 1-d arrays):
   !! - iopt=0 Grid and earth coordinates of all grid points.
   !! - iopt=+1 Earth coordinates of selected grid coordinates.
@@ -700,7 +699,7 @@ CONTAINS
   !! output elements are set to fill values.  Also if iopt=0,
   !! if the number of grid points exceeds the number allotted,
   !! then all the output elements are set to fill values.
-  !! 
+  !!
   !! The actual number of valid points computed is returned too.
   !!
   !! Optionally, the vector rotations, map jacobians and
@@ -722,7 +721,7 @@ CONTAINS
   !! - kgds(1)=203 E-staggered Rotated Equidistant Cylindrical
   !! - kgds(1)=205 B-staggered Rotated Equidistant Cylindrical
   !!
-  !! @param[in] kgds GDS parameters as decoded by w3fi63.  
+  !! @param[in] kgds GDS parameters as decoded by w3fi63.
   !! @param[in] iopt Option flag.
   !! - 0 Earth coords of all the grid points.
   !! - 1 Earth coords of selected grid coords.
@@ -755,33 +754,31 @@ CONTAINS
   !!
   !! @author George Gayno, Mark Iredell
   !! @date April 1996
-  SUBROUTINE GDSWZD_grib1(KGDS,IOPT,NPTS,FILL,XPTS,YPTS,RLON,RLAT,NRET, &
-       CROT,SROT,XLON,XLAT,YLON,YLAT,AREA)
-    INTEGER,        INTENT(IN   ) :: IOPT, KGDS(200), NPTS
-    INTEGER,        INTENT(  OUT) :: NRET
-    !
-    REAL,           INTENT(IN   ) :: FILL
-    REAL,           INTENT(INOUT) :: RLON(NPTS),RLAT(NPTS)
-    REAL,           INTENT(INOUT) :: XPTS(NPTS),YPTS(NPTS)
-    REAL, OPTIONAL, INTENT(  OUT) :: CROT(NPTS),SROT(NPTS)
-    REAL, OPTIONAL, INTENT(  OUT) :: XLON(NPTS),XLAT(NPTS)
-    REAL, OPTIONAL, INTENT(  OUT) :: YLON(NPTS),YLAT(NPTS),AREA(NPTS)
+    subroutine gdswzd_grib1(kgds, iopt, npts, fill, xpts, ypts, rlon, rlat, nret, &
+                            crot, srot, xlon, xlat, ylon, ylat, area)
+        integer, intent(in) :: iopt, kgds(200), npts
+        integer, intent(out) :: nret
+        !
+        real, intent(in) :: fill
+        real, intent(inout) :: rlon(npts), rlat(npts)
+        real, intent(inout) :: xpts(npts), ypts(npts)
+        real, optional, intent(out) :: crot(npts), srot(npts)
+        real, optional, intent(out) :: xlon(npts), xlat(npts)
+        real, optional, intent(out) :: ylon(npts), ylat(npts), area(npts)
 
-    
-    type(grib1_descriptor) :: desc
-    class(ip_grid), allocatable :: grid
+        type(grib1_descriptor) :: desc
+        class(ip_grid), allocatable :: grid
 
-    desc = init_descriptor(kgds)
-    call init_grid(grid, desc)
-    
-    call gdswzd_grid(grid,IOPT,NPTS,FILL, &
-         XPTS,YPTS,RLON,RLAT,NRET, &
-         CROT,SROT,XLON,XLAT,YLON,YLAT,AREA)
+        desc = init_descriptor(kgds)
+        call init_grid(grid, desc)
 
-  END SUBROUTINE GDSWZD_grib1
+        call gdswzd_grid(grid, iopt, npts, fill, &
+                         xpts, ypts, rlon, rlat, nret, &
+                         crot, srot, xlon, xlat, ylon, ylat, area)
 
-  
-  !> Decodes the grib grid description section and returns
+    end subroutine gdswzd_grib1
+
+    !> Decodes the grib grid description section and returns
   !! one of the following (for 2-d arrays):
   !! - iopt=0 Grid and earth coordinates of all grid points.
   !! - iopt=+1 Earth coordinates of selected grid coordinates.
@@ -792,7 +789,7 @@ CONTAINS
   !! output elements are set to fill values.  Also if iopt=0,
   !! if the number of grid points exceeds the number allotted,
   !! then all the output elements are set to fill values.
-  !! 
+  !!
   !! The actual number of valid points computed is returned too.
   !!
   !! Optionally, the vector rotations, map jacobians and
@@ -814,7 +811,7 @@ CONTAINS
   !! - kgds(1)=203 E-staggered Rotated Equidistant Cylindrical
   !! - kgds(1)=205 B-staggered Rotated Equidistant Cylindrical
   !!
-  !! @param[in] kgds GDS parameters as decoded by w3fi63.  
+  !! @param[in] kgds GDS parameters as decoded by w3fi63.
   !! @param[in] iopt Option flag.
   !! - 0 Earth coords of all the grid points.
   !! - 1 Earth coords of selected grid coords.
@@ -847,33 +844,30 @@ CONTAINS
   !!
   !! @author George Gayno, Mark Iredell
   !! @date April 1996
-  SUBROUTINE GDSWZD_2d_array_grib1(KGDS,IOPT,NPTS,FILL,XPTS,YPTS,RLON,RLAT,NRET, &
-       CROT,SROT,XLON,XLAT,YLON,YLAT,AREA)
-   
-    !$$$
-    INTEGER,        INTENT(IN   ) :: IOPT, KGDS(200), NPTS
-    INTEGER,        INTENT(  OUT) :: NRET
-    !
-    REAL,           INTENT(IN   ) :: FILL
-    REAL,           INTENT(INOUT) :: RLON(:,:),RLAT(:,:)
-    REAL,           INTENT(INOUT) :: XPTS(:,:),YPTS(:,:)
-    REAL, OPTIONAL, INTENT(  OUT) :: CROT(:,:),SROT(:,:)
-    REAL, OPTIONAL, INTENT(  OUT) :: XLON(:,:),XLAT(:,:)
-    REAL, OPTIONAL, INTENT(  OUT) :: YLON(:,:),YLAT(:,:),AREA(:,:)
+    subroutine gdswzd_2d_array_grib1(kgds, iopt, npts, fill, xpts, ypts, rlon, rlat, nret, &
+                                     crot, srot, xlon, xlat, ylon, ylat, area)
 
-    
-    type(grib1_descriptor) :: desc
-    class(ip_grid), allocatable :: grid
+        !$$$
+        integer, intent(in) :: iopt, kgds(200), npts
+        integer, intent(out) :: nret
+        !
+        real, intent(in) :: fill
+        real, intent(inout) :: rlon(:, :), rlat(:, :)
+        real, intent(inout) :: xpts(:, :), ypts(:, :)
+        real, optional, intent(out) :: crot(:, :), srot(:, :)
+        real, optional, intent(out) :: xlon(:, :), xlat(:, :)
+        real, optional, intent(out) :: ylon(:, :), ylat(:, :), area(:, :)
 
-    desc = init_descriptor(kgds)
-    call init_grid(grid, desc)
-    
-    call gdswzd_grid(grid,IOPT,NPTS,FILL, &
-         XPTS,YPTS,RLON,RLAT,NRET, &
-         CROT,SROT,XLON,XLAT,YLON,YLAT,AREA)
+        type(grib1_descriptor) :: desc
+        class(ip_grid), allocatable :: grid
 
-  END SUBROUTINE GDSWZD_2d_array_grib1
+        desc = init_descriptor(kgds)
+        call init_grid(grid, desc)
 
+        call gdswzd_grid(grid, iopt, npts, fill, &
+                         xpts, ypts, rlon, rlat, nret, &
+                         crot, srot, xlon, xlat, ylon, ylat, area)
 
+    end subroutine gdswzd_2d_array_grib1
 
-END MODULE GDSWZD_MOD
+end module gdswzd_mod

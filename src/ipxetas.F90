@@ -87,118 +87,118 @@
 !> - non-0 invalid grid specs or problem in ipolates().
 !>
 ! @author Iredell @date 96-04-10
- SUBROUTINE IPXETAS(IDIR, IGDTNUMI, IGDTLEN, IGDTMPLI, NPTS_INPUT,  &
-                    BITMAP_INPUT, DATA_INPUT, IGDTNUMO, IGDTMPLO, &
-                    NPTS_OUTPUT, BITMAP_OUTPUT, DATA_OUTPUT, IRET)
- USE IPOLATES_MOD
- IMPLICIT NONE
+ subroutine ipxetas(idir, igdtnumi, igdtlen, igdtmpli, npts_input, &
+                    bitmap_input, data_input, igdtnumo, igdtmplo, &
+                    npts_output, bitmap_output, data_output, iret)
+     use ipolates_mod
+     implicit none
 !
- INTEGER,         INTENT(IN   )    :: IDIR
- INTEGER,         INTENT(IN   )    :: IGDTNUMI, IGDTLEN
- INTEGER,         INTENT(IN   )    :: IGDTMPLI(IGDTLEN)
- INTEGER,         INTENT(IN   )    :: NPTS_INPUT, NPTS_OUTPUT
- INTEGER,         INTENT(  OUT)    :: IGDTNUMO
- INTEGER,         INTENT(  OUT)    :: IGDTMPLO(IGDTLEN)
- INTEGER,         INTENT(  OUT)    :: IRET
+     integer, intent(in)    :: idir
+     integer, intent(in)    :: igdtnumi, igdtlen
+     integer, intent(in)    :: igdtmpli(igdtlen)
+     integer, intent(in)    :: npts_input, npts_output
+     integer, intent(out)    :: igdtnumo
+     integer, intent(out)    :: igdtmplo(igdtlen)
+     integer, intent(out)    :: iret
 
- LOGICAL(KIND=1), INTENT(IN   )    :: BITMAP_INPUT(NPTS_INPUT)
- LOGICAL(KIND=1), INTENT(  OUT)    :: BITMAP_OUTPUT(NPTS_OUTPUT)
+     logical(KIND=1), intent(in)    :: bitmap_input(npts_input)
+     logical(KIND=1), intent(out)    :: bitmap_output(npts_output)
 
- REAL,            INTENT(IN   )    :: DATA_INPUT(NPTS_INPUT)
- REAL,            INTENT(  OUT)    :: DATA_OUTPUT(NPTS_OUTPUT)
+     real, intent(in)    :: data_input(npts_input)
+     real, intent(out)    :: data_output(npts_output)
 
- INTEGER                           :: SCAN_MODE, ISCALE, IP, IPOPT(20)
- INTEGER                           :: IBI, IBO, J, KM, NO
+     integer                           :: scan_mode, iscale, ip, ipopt(20)
+     integer                           :: ibi, ibo, j, km, no
 
- REAL                              :: DLONS
- REAL, ALLOCATABLE                 :: OUTPUT_RLAT(:), OUTPUT_RLON(:)
+     real                              :: dlons
+     real, allocatable                 :: output_rlat(:), output_rlon(:)
 ! - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
- IRET = 0
+     iret = 0
 ! - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 ! ROUTINE ONLY WORKS FOR ROTATED LAT/LON GRIDS.
- IF (IGDTNUMI/=1) THEN
-   IRET=1
-   RETURN
- ENDIF
+     if (igdtnumi .ne. 1) then
+         iret = 1
+         return
+     end if
 !
- SCAN_MODE=IGDTMPLI(19)
- IF((SCAN_MODE==68.OR.SCAN_MODE==72).AND.(IDIR<-2.OR.IDIR>-1))THEN
-   IGDTNUMO=IGDTNUMI
-   IGDTMPLO=IGDTMPLI
-   IGDTMPLO(19)=64
-   IGDTMPLO(8)=IGDTMPLO(8)*2-1
-   IF((IGDTMPLO(8)*IGDTMPLO(9))/=NPTS_OUTPUT)THEN
-     IRET=3
-     RETURN
-   ENDIF
-   ISCALE=IGDTMPLO(10)*IGDTMPLO(11)
-   IF(ISCALE==0) ISCALE=10**6
-   DLONS=FLOAT(IGDTMPLO(17))/FLOAT(ISCALE)
-   DLONS=DLONS*0.5
-   IGDTMPLO(17)=NINT(DLONS*FLOAT(ISCALE))
- ELSEIF(SCAN_MODE==64.AND.IDIR==-1)THEN  ! FULL TO H-GRID
-   IGDTNUMO=IGDTNUMI
-   IGDTMPLO=IGDTMPLI
-   IGDTMPLO(19)=68
-   IGDTMPLO(8)=(IGDTMPLO(8)+1)/2
-   IF((IGDTMPLO(8)*IGDTMPLO(9))/=NPTS_OUTPUT)THEN
-     IRET=3
-     RETURN
-   ENDIF
-   ISCALE=IGDTMPLO(10)*IGDTMPLO(11)
-   IF(ISCALE==0) ISCALE=10**6
-   DLONS=FLOAT(IGDTMPLO(17))/FLOAT(ISCALE)
-   DLONS=DLONS*2.0
-   IGDTMPLO(17)=NINT(DLONS*FLOAT(ISCALE))
- ELSEIF(SCAN_MODE==64.AND.IDIR==-2)THEN  ! FULL TO V-GRID
-   IGDTNUMO=IGDTNUMI
-   IGDTMPLO=IGDTMPLI
-   IGDTMPLO(19)=72
-   IGDTMPLO(8)=(IGDTMPLO(8)+1)/2
-   IF((IGDTMPLO(8)*IGDTMPLO(9))/=NPTS_OUTPUT)THEN
-     IRET=3
-     RETURN
-   ENDIF
-   ISCALE=IGDTMPLO(10)*IGDTMPLO(11)
-   IF(ISCALE==0) ISCALE=10**6
-   DLONS=FLOAT(IGDTMPLO(17))/FLOAT(ISCALE)
-   DLONS=DLONS*2.0
-   IGDTMPLO(17)=NINT(DLONS*FLOAT(ISCALE))
- ELSE
-   IRET=2
-   RETURN
- ENDIF
+     scan_mode = igdtmpli(19)
+     if ((scan_mode .eq. 68 .or. scan_mode .eq. 72) .and. (idir .lt. -2 .or. idir .gt. -1)) then
+         igdtnumo = igdtnumi
+         igdtmplo = igdtmpli
+         igdtmplo(19) = 64
+         igdtmplo(8) = igdtmplo(8)*2-1
+         if ((igdtmplo(8)*igdtmplo(9)) .ne. npts_output) then
+             iret = 3
+             return
+         end if
+         iscale = igdtmplo(10)*igdtmplo(11)
+         if (iscale .eq. 0) iscale = 10**6
+         dlons = float(igdtmplo(17))/float(iscale)
+         dlons = dlons*0.5
+         igdtmplo(17) = nint(dlons*float(iscale))
+     elseif (scan_mode .eq. 64 .and. idir .eq. -1) then  ! FULL TO H-GRID
+         igdtnumo = igdtnumi
+         igdtmplo = igdtmpli
+         igdtmplo(19) = 68
+         igdtmplo(8) = (igdtmplo(8)+1)/2
+         if ((igdtmplo(8)*igdtmplo(9)) .ne. npts_output) then
+             iret = 3
+             return
+         end if
+         iscale = igdtmplo(10)*igdtmplo(11)
+         if (iscale .eq. 0) iscale = 10**6
+         dlons = float(igdtmplo(17))/float(iscale)
+         dlons = dlons*2.0
+         igdtmplo(17) = nint(dlons*float(iscale))
+     elseif (scan_mode .eq. 64 .and. idir .eq. -2) then  ! FULL TO V-GRID
+         igdtnumo = igdtnumi
+         igdtmplo = igdtmpli
+         igdtmplo(19) = 72
+         igdtmplo(8) = (igdtmplo(8)+1)/2
+         if ((igdtmplo(8)*igdtmplo(9)) .ne. npts_output) then
+             iret = 3
+             return
+         end if
+         iscale = igdtmplo(10)*igdtmplo(11)
+         if (iscale .eq. 0) iscale = 10**6
+         dlons = float(igdtmplo(17))/float(iscale)
+         dlons = dlons*2.0
+         igdtmplo(17) = nint(dlons*float(iscale))
+     else
+         iret = 2
+         return
+     end if
 
- KM=1
- IP=0
- IPOPT=0
- IBI=1
- IBO=0
+     km = 1
+     ip = 0
+     ipopt = 0
+     ibi = 1
+     ibo = 0
 
- ALLOCATE(OUTPUT_RLAT(NPTS_OUTPUT))
- ALLOCATE(OUTPUT_RLON(NPTS_OUTPUT))
+     allocate (output_rlat(npts_output))
+     allocate (output_rlon(npts_output))
 
- CALL IPOLATES(IP, IPOPT, IGDTNUMI, IGDTMPLI, IGDTLEN, &
-               IGDTNUMO, IGDTMPLO, IGDTLEN, &
-               NPTS_INPUT, NPTS_OUTPUT, KM, IBI, BITMAP_INPUT, DATA_INPUT, &
-               NO, OUTPUT_RLAT, OUTPUT_RLON, IBO, BITMAP_OUTPUT, DATA_OUTPUT, IRET)
+     call ipolates(ip, ipopt, igdtnumi, igdtmpli, igdtlen, &
+                   igdtnumo, igdtmplo, igdtlen, &
+                   npts_input, npts_output, km, ibi, bitmap_input, data_input, &
+                   no, output_rlat, output_rlon, ibo, bitmap_output, data_output, iret)
 
- DEALLOCATE(OUTPUT_RLAT, OUTPUT_RLON)
+     deallocate (output_rlat, output_rlon)
 
- IF(IRET /= 0)THEN
-   PRINT*,'- PROBLEM IN IPOLATES: ', IRET
-   RETURN
- ENDIF
+     if (iret .ne. 0) then
+         print *, '- PROBLEM IN IPOLATES: ', iret
+         return
+     end if
 
 ! - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 ! REPLACE ANY UNDEFINED POINTS ALONG THE LEFT AND RIGHT EDGES.
- DO J=1, IGDTMPLO(9)
-   BITMAP_OUTPUT(J*IGDTMPLO(8))=BITMAP_OUTPUT(J*IGDTMPLO(8)-1)
-   DATA_OUTPUT(J*IGDTMPLO(8))=DATA_OUTPUT(J*IGDTMPLO(8)-1)
-   BITMAP_OUTPUT((J-1)*IGDTMPLO(8)+1)=BITMAP_OUTPUT((J-1)*IGDTMPLO(8)+2)
-   DATA_OUTPUT((J-1)*IGDTMPLO(8)+1)=DATA_OUTPUT((J-1)*IGDTMPLO(8)+2)
- ENDDO
+     do j = 1, igdtmplo(9)
+         bitmap_output(j*igdtmplo(8)) = bitmap_output(j*igdtmplo(8)-1)
+         data_output(j*igdtmplo(8)) = data_output(j*igdtmplo(8)-1)
+         bitmap_output((j-1)*igdtmplo(8)+1) = bitmap_output((j-1)*igdtmplo(8)+2)
+         data_output((j-1)*igdtmplo(8)+1) = data_output((j-1)*igdtmplo(8)+2)
+     end do
 
- RETURN
+     return
 ! - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
- END SUBROUTINE IPXETAS
+ end subroutine ipxetas

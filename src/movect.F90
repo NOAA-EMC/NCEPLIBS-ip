@@ -6,7 +6,7 @@
 !> along a great circle from one position to another while conserving
 !> its orientation with respect to the great circle. These rotation
 !> parameters are useful for vector interpolation.
-!>        
+!>
 !> ### Program History Log
 !> Date | Programmer | Comments
 !> -----|------------|---------
@@ -22,47 +22,47 @@
 !> (uto=crot*ufrom-srot*vfrom; vto=srot*ufrom+crot*vfrom)
 !>
 !> @author Iredell @date 96-04-10
- SUBROUTINE MOVECT(FLAT,FLON,TLAT,TLON,CROT,SROT)
- IMPLICIT NONE
+ subroutine movect(flat, flon, tlat, tlon, crot, srot)
+     implicit none
 !
- INTEGER,         PARAMETER     :: KD=SELECTED_REAL_KIND(15,45)
+     integer, parameter     :: kd = selected_real_kind(15, 45)
 !
- REAL,            INTENT(IN   ) :: FLAT, FLON
- REAL,            INTENT(IN   ) :: TLAT, TLON
- REAL,            INTENT(  OUT) :: CROT, SROT
+     real, intent(in) :: flat, flon
+     real, intent(in) :: tlat, tlon
+     real, intent(out) :: crot, srot
 !
- REAL(KIND=KD),   PARAMETER     :: CRDLIM=0.9999999
- REAL(KIND=KD),   PARAMETER     :: PI=3.14159265358979
- REAL(KIND=KD),   PARAMETER     :: DPR=180./PI
+     real(KIND=kd), parameter     :: crdlim = 0.9999999
+     real(KIND=kd), parameter     :: pi = 3.14159265358979
+     real(KIND=kd), parameter     :: dpr = 180./pi
 !
- REAL(KIND=KD)                  :: CTLAT,STLAT,CFLAT,SFLAT
- REAL(KIND=KD)                  :: CDLON,SDLON,CRD
- REAL(KIND=KD)                  :: SRD2RN,STR,CTR,SFR,CFR
+     real(KIND=kd)                  :: ctlat, stlat, cflat, sflat
+     real(KIND=kd)                  :: cdlon, sdlon, crd
+     real(KIND=kd)                  :: srd2rn, str, ctr, sfr, cfr
 ! - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 !  COMPUTE COSINE OF THE RADIAL DISTANCE BETWEEN THE POINTS.
- CTLAT=COS(TLAT/DPR)
- STLAT=SIN(TLAT/DPR)
- CFLAT=COS(FLAT/DPR)
- SFLAT=SIN(FLAT/DPR)
- CDLON=COS((FLON-TLON)/DPR)
- SDLON=SIN((FLON-TLON)/DPR)
- CRD=STLAT*SFLAT+CTLAT*CFLAT*CDLON
+     ctlat = cos(tlat/dpr)
+     stlat = sin(tlat/dpr)
+     cflat = cos(flat/dpr)
+     sflat = sin(flat/dpr)
+     cdlon = cos((flon-tlon)/dpr)
+     sdlon = sin((flon-tlon)/dpr)
+     crd = stlat*sflat+ctlat*cflat*cdlon
 ! - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 !  COMPUTE ROTATIONS AT BOTH POINTS WITH RESPECT TO THE GREAT CIRCLE
 !  AND COMBINE THEM TO GIVE THE TOTAL VECTOR ROTATION PARAMETERS.
- IF(ABS(CRD).LE.CRDLIM) THEN
-   SRD2RN=-1/(1-CRD**2)
-   STR=CFLAT*SDLON
-   CTR=CFLAT*STLAT*CDLON-SFLAT*CTLAT
-   SFR=CTLAT*SDLON
-   CFR=CTLAT*SFLAT*CDLON-STLAT*CFLAT
-   CROT=REAL(SRD2RN*(CTR*CFR-STR*SFR))
-   SROT=REAL(SRD2RN*(CTR*SFR+STR*CFR))
+     if (abs(crd) .le. crdlim) then
+         srd2rn = -1/(1-crd**2)
+         str = cflat*sdlon
+         ctr = cflat*stlat*cdlon-sflat*ctlat
+         sfr = ctlat*sdlon
+         cfr = ctlat*sflat*cdlon-stlat*cflat
+         crot = real(srd2rn*(ctr*cfr-str*sfr))
+         srot = real(srd2rn*(ctr*sfr+str*cfr))
 !  USE A DIFFERENT APPROXIMATION FOR NEARLY COINCIDENT POINTS.
 !  MOVING VECTORS TO ANTIPODAL POINTS IS AMBIGUOUS ANYWAY.
- ELSE
-   CROT=REAL(CDLON)
-   SROT=REAL(SDLON*STLAT)
- ENDIF
+     else
+         crot = real(cdlon)
+         srot = real(sdlon*stlat)
+     end if
 ! - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
- END SUBROUTINE MOVECT
+ end subroutine movect
