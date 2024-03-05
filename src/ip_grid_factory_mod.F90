@@ -113,6 +113,10 @@ contains
        allocate(ip_lambert_conf_grid::grid)
     case(GAUSSIAN_GRID_ID_GRIB2)
        allocate(ip_gaussian_grid::grid)
+    case(ROT_EQUID_CYLIND_E_GRID_ID_GRIB2)
+       allocate(ip_rot_equid_cylind_egrid::grid)
+    case(ROT_EQUID_CYLIND_B_GRID_ID_GRIB2)
+       allocate(ip_rot_equid_cylind_grid::grid)
     case default
        print *, "gdt_num: ", g2_desc%gdt_num, " not recognized"
        error stop

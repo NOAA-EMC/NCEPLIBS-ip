@@ -540,6 +540,20 @@ contains
        output_gdtmpl=gdtmpl218
        i_output = output_gdtmpl(8)
        j_output = output_gdtmpl(9)
+    case ('32768')
+       output_gdtnum = 32768
+       output_gdtlen = gdtlen203
+       allocate(output_gdtmpl(output_gdtlen))
+       output_gdtmpl=gdtmpl203
+       i_output = output_gdtmpl(8)
+       j_output = output_gdtmpl(9)
+    case ('32769')
+       output_gdtnum = 32769
+       output_gdtlen = gdtlen205
+       allocate(output_gdtmpl(output_gdtlen))
+       output_gdtmpl=gdtmpl205
+       i_output = output_gdtmpl(8)
+       j_output = output_gdtmpl(9)
     case default
        print*,"ERROR: ENTER VALID GRID NUMBER."
        stop 55
