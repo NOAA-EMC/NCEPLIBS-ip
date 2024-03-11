@@ -27,10 +27,10 @@ C    Obtain thread number
 !$OMP PARALLEL PRIVATE(TID)
       TID = OMP_GET_THREAD_NUM()
 !      PRINT *, '...............thread # ', TID
-	if (TID. eq. 0) then
+      if (TID. eq. 0) then
         NCPUS=OMP_GET_NUM_THREADS()
 !        PRINT *, 'totaly #------------------- of threads = ',NCPUS
-	endif
+      endif
 !$OMP END PARALLEL
 #else
       TID = 0
