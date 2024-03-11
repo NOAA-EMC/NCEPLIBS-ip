@@ -332,12 +332,12 @@ C>
 C> @author Paul N. Swarztrauber, National Center for Atmospheric Research, Boulder, CO
       SUBROUTINE RFFTB1 (N,C,CH,WA,IFAC)
       REAL       CH(*)      ,C(*)       ,WA(*)      ,IFAC(*)
-      NF = IFAC(2)
+      NF = INT(IFAC(2))
       NA = 0
       L1 = 1
       IW = 1
       DO 116 K1=1,NF
-         IP = IFAC(K1+2)
+         IP = INT(IFAC(K1+2))
          L2 = IP*L1
          IDO = N/L2
          IDL1 = IDO*L1
@@ -401,13 +401,13 @@ C>
 C> @author Paul N. Swarztrauber, National Center for Atmospheric Research, Boulder, CO
       SUBROUTINE RFFTF1 (N,C,CH,WA,IFAC)
       REAL       CH(*)      ,C(*)       ,WA(*)      ,IFAC(*)
-      NF = IFAC(2)
+      NF = INT(IFAC(2))
       NA = 1
       L2 = N
       IW = N
       DO 111 K1=1,NF
          KH = NF-K1
-         IP = IFAC(KH+3)
+         IP = INT(IFAC(KH+3))
          L1 = L2/IP
          IDO = N/L2
          IDL1 = IDO*L1
@@ -478,7 +478,7 @@ C> @author Paul N. Swarztrauber, National Center for Atmospheric Research, Bould
       ELSE
         GO TO 103
       ENDIF
-  102 NTRY = NTRYH(J)
+  102 NTRY = INT(NTRYH(J))
       GO TO 104
   103 NTRY = NTRY+2
   104 NQ = NL/NTRY
@@ -509,7 +509,7 @@ C> @author Paul N. Swarztrauber, National Center for Atmospheric Research, Bould
       IF (NFM1 .EQ. 0) RETURN
 !OCL NOVREC
       DO 110 K1=1,NFM1
-         IP = IFAC(K1+2)
+         IP = INT(IFAC(K1+2))
          LD = 0
          L2 = L1*IP
          IDO = N/L2
