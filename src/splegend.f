@@ -47,12 +47,13 @@ CFPP$ NOCONCUR R
       REAL EPS((M+1)*((I+1)*M+2)/2),EPSTOP(M+1)
       REAL PLN((M+1)*((I+1)*M+2)/2),PLNTOP(M+1)
       REAL(KIND=SELECTED_REAL_KIND(15,45)):: DLN((M+1)*((I+1)*M+2)/2)
+      REAL :: TINYREAL=TINY(1.0)
 C - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 C  ITERATIVELY COMPUTE PLN WITHIN SPECTRAL DOMAIN AT POLE
       M1=M+1
       M2=2*M+I+1
       MX=(M+1)*((I+1)*M+2)/2
-      IF(CLAT.EQ.0.) THEN
+      IF(ABS(CLAT).LT.TINYREAL) THEN
         DLN(1)=SQRT(0.5)
         IF(M.GT.0) THEN
           DLN(M1+1)=SQRT(0.75)
