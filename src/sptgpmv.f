@@ -72,7 +72,6 @@ C> @author IREDELL @date 96-02-29
       REAL PLN((MAXWV+1)*((IROMB+1)*MAXWV+2)/2),PLNTOP(MAXWV+1)
       REAL F(2*MAXWV+3,2,2*KMAX)
       REAL CLAT(MJ),SLAT(MJ),CLON(MAXWV,MI),SLON(MAXWV,MI)
-      PARAMETER(RERTH=6.3712E6)
       PARAMETER(PI=3.14159265358979,DPR=180./PI)
 C - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 C  CALCULATE PRELIMINARY CONSTANTS
