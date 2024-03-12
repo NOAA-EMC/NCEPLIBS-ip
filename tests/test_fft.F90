@@ -30,13 +30,14 @@ contains
   ! then check if frequency and DC component match the test signal.
   subroutine test_fft_real_to_complex()
     real(precision) :: amplitude, freq_hz, t, cosine, dt, sample_rate_hz, dc_component, df, f, magnitude
-    real(real64) :: AFFT(50000+4*IMAX)
-    real(precision), allocatable :: w(:,:), g(:,:)
+!    real(real64) :: AFFT(50000+4*IMAX)
+    real(precision), allocatable :: w(:,:), g(:,:), afft(:)
     integer :: i
     complex :: dft
 
     real :: max_freq=-999.9, max_magnitude
 
+    allocate(afft(50000+4*imax))
     ! Setup the test wave
     amplitude = 1.0
     freq_hz = 12.0
@@ -88,11 +89,10 @@ contains
   ! Run synthetic test array through FFT and run results through inverse FFT
   ! to obtain the original array
   subroutine test_fft_complex_to_real()
-    real(real64) :: AFFT(50000+4*IMAX)
-    real(precision), allocatable :: w(:,:), g(:,:), g_new(:,:)
+    real(precision), allocatable :: w(:,:), g(:,:), g_new(:,:), afft(:)
     integer :: i
 
-    allocate(w(2*incw, kmax), g(incg, kmax), g_new(incg, kmax))
+    allocate(w(2*incw, kmax), g(incg, kmax), g_new(incg, kmax), afft(50000+4*imax))
 
     ! Setup test array with synthetic data
     do i = 1, imax
