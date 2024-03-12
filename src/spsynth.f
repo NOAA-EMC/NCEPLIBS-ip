@@ -41,7 +41,7 @@ C> @author Iredell @date 92-10-31
       INTEGER MP(KM)
       REAL SPC(NC,KM),SPCTOP(NCTOP,KM)
       REAL F(IX,2,KM)
-      REAL TINYREAL=TINY(1.0)
+      REAL :: TINYREAL=TINY(1.0)
 
 C  ZERO OUT FOURIER COEFFICIENTS.
       DO K=1,KM
