@@ -47,7 +47,7 @@ CFPP$ NOCONCUR R
       REAL EPS((M+1)*((I+1)*M+2)/2),EPSTOP(M+1)
       REAL PLN((M+1)*((I+1)*M+2)/2),PLNTOP(M+1)
       REAL(KIND=SELECTED_REAL_KIND(15,45)):: DLN((M+1)*((I+1)*M+2)/2)
-      REAL :: TINYREAL=TINY(1.0)
+      REAL :: TINYREAL=TINY(1.0), RDLN1, RDLN2
 C - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 C  ITERATIVELY COMPUTE PLN WITHIN SPECTRAL DOMAIN AT POLE
       M1=M+1
@@ -79,10 +79,14 @@ C  ITERATIVELY COMPUTE PLN WITHIN SPECTRAL DOMAIN AT POLE
 C - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 C  COMPUTE POLYNOMIALS OVER TOP OF SPECTRAL DOMAIN
         K=M1+1
-        PLNTOP(1)=(SLAT*DLN(K-1)-EPS(K-1)*DLN(K-2))/EPSTOP(1)
+        RDLN1=REAL(DLN(K-1))
+        RDLN2=REAL(DLN(K-2))
+        PLNTOP(1)=(SLAT*RDLN1-EPS(K-1)*RDLN2)/EPSTOP(1)
         IF(M.GT.0) THEN
           K=M2+1
-          PLNTOP(2)=(SLAT*DLN(K-1)-EPS(K-1)*DLN(K-2))/EPSTOP(2)
+          RDLN1=REAL(DLN(K-1))
+          RDLN2=REAL(DLN(K-2))
+          PLNTOP(2)=(SLAT*RDLN1-EPS(K-1)*RDLN2)/EPSTOP(2)
           DO L=2,M
             PLNTOP(L+1)=0.
           ENDDO
@@ -120,13 +124,15 @@ C  COMPUTE POLYNOMIALS OVER TOP OF SPECTRAL DOMAIN
         DO L=0,M
           NML=M+1+(I-1)*L
           K=L*(2*M+(I-1)*(L-1))/2+L+NML+1
-          PLNTOP(L+1)=(SLAT*DLN(K-1)-EPS(K-1)*DLN(K-2))/EPSTOP(L+1)
+          RDLN1=REAL(DLN(K-1))
+          RDLN2=REAL(DLN(K-2))
+          PLNTOP(L+1)=(SLAT*RDLN1-EPS(K-1)*RDLN2)/EPSTOP(L+1)
         ENDDO
       ENDIF
 C - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 C  RETURN VALUES
       DO K=1,MX
-        PLN(K)=DLN(K)
+        PLN(K)=REAL(DLN(K))
       ENDDO
       RETURN
       END
