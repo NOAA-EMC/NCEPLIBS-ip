@@ -101,8 +101,8 @@ C  GAUSSIAN LATITUDES
         ENDDO
 CDIR$ IVDEP
         DO J=1,JH
-          SLAT(J)=SLATD(J)
-          WLAT(J)=(2.*(1.-SLATD(J)**2))/(JMAX*PKM1(J))**2
+          SLAT(J)=REAL(SLATD(J))
+          WLAT(J)=REAL((2.*(1.-SLATD(J)**2))/(JMAX*PKM1(J))**2)
           SLAT(JMAX+1-J)=-SLAT(J)
           WLAT(JMAX+1-J)=WLAT(J)
         ENDDO
