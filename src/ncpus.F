@@ -21,16 +21,17 @@ C> @return Number of CPUs assigned.
 C>
 C> @author Iredell @date 94-08-19
       FUNCTION NCPUS()
-      INTEGER NTHREADS, TID, OMP_GET_NUM_THREADS,OMP_GET_THREAD_NUM
+      INTEGER TID
 C    Obtain thread number
 #ifdef OPENMP
+      INTEGER OMP_GET_NUM_THREADS,OMP_GET_THREAD_NUM
 !$OMP PARALLEL PRIVATE(TID)
       TID = OMP_GET_THREAD_NUM()
 !      PRINT *, '...............thread # ', TID
-	if (TID. eq. 0) then
+      if (TID. eq. 0) then
         NCPUS=OMP_GET_NUM_THREADS()
 !        PRINT *, 'totaly #------------------- of threads = ',NCPUS
-	endif
+      endif
 !$OMP END PARALLEL
 #else
       TID = 0

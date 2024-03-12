@@ -332,12 +332,12 @@ C>
 C> @author Paul N. Swarztrauber, National Center for Atmospheric Research, Boulder, CO
       SUBROUTINE RFFTB1 (N,C,CH,WA,IFAC)
       REAL       CH(*)      ,C(*)       ,WA(*)      ,IFAC(*)
-      NF = IFAC(2)
+      NF = INT(IFAC(2))
       NA = 0
       L1 = 1
       IW = 1
       DO 116 K1=1,NF
-         IP = IFAC(K1+2)
+         IP = INT(IFAC(K1+2))
          L2 = IP*L1
          IDO = N/L2
          IDL1 = IDO*L1
@@ -401,13 +401,13 @@ C>
 C> @author Paul N. Swarztrauber, National Center for Atmospheric Research, Boulder, CO
       SUBROUTINE RFFTF1 (N,C,CH,WA,IFAC)
       REAL       CH(*)      ,C(*)       ,WA(*)      ,IFAC(*)
-      NF = IFAC(2)
+      NF = INT(IFAC(2))
       NA = 1
       L2 = N
       IW = N
       DO 111 K1=1,NF
          KH = NF-K1
-         IP = IFAC(KH+3)
+         IP = INT(IFAC(KH+3))
          L1 = L2/IP
          IDO = N/L2
          IDL1 = IDO*L1
@@ -473,13 +473,21 @@ C> @author Paul N. Swarztrauber, National Center for Atmospheric Research, Bould
       NF = 0
       J = 0
   101 J = J+1
-      IF (J-4) 102,102,103
-  102 NTRY = NTRYH(J)
+      IF ((J-4).LE.0) THEN
+        GO TO 102
+      ELSE
+        GO TO 103
+      ENDIF
+  102 NTRY = INT(NTRYH(J))
       GO TO 104
   103 NTRY = NTRY+2
   104 NQ = NL/NTRY
       NR = NL-NTRY*NQ
-      IF (NR) 101,105,101
+      IF (NR.EQ.0) THEN
+        GO TO 105
+      ELSE
+        GO TO 101
+      ENDIF
   105 NF = NF+1
       IFAC(NF+2) = NTRY
       NL = NQ
@@ -501,7 +509,7 @@ C> @author Paul N. Swarztrauber, National Center for Atmospheric Research, Bould
       IF (NFM1 .EQ. 0) RETURN
 !OCL NOVREC
       DO 110 K1=1,NFM1
-         IP = IFAC(K1+2)
+         IP = INT(IFAC(K1+2))
          LD = 0
          L2 = L1*IP
          IDO = N/L2
@@ -542,7 +550,13 @@ C> @author Paul N. Swarztrauber, National Center for Atmospheric Research, Bould
          CH(1,K,1) = CC(1,1,K)+CC(IDO,2,K)
          CH(1,K,2) = CC(1,1,K)-CC(IDO,2,K)
   101 CONTINUE
-      IF (IDO-2) 107,105,102
+      IF (IDO.LT.2) THEN
+        GO TO 107
+      ELSEIF (IDO.EQ.2) THEN
+        GO TO 105
+      ELSE
+        GO TO 102
+      ENDIF
   102 IDP2 = IDO+2
 !OCL NOVREC
       DO 104 K=1,L1
@@ -638,7 +652,13 @@ C> @author Paul N. Swarztrauber, National Center for Atmospheric Research, Bould
          CH(1,K,3) = TR2-TR3
          CH(1,K,4) = TR1+TR4
   101 CONTINUE
-      IF (IDO-2) 107,105,102
+      IF (IDO.LT.2) THEN
+        GO TO 107
+      ELSEIF (IDO.EQ.2) THEN
+        GO TO 105
+      ELSE
+        GO TO 102
+      ENDIF
   102 IDP2 = IDO+2
 !OCL NOVREC
       DO 104 K=1,L1
@@ -958,7 +978,13 @@ C> @author Paul N. Swarztrauber, National Center for Atmospheric Research, Bould
          CH(1,1,K) = CC(1,K,1)+CC(1,K,2)
          CH(IDO,2,K) = CC(1,K,1)-CC(1,K,2)
   101 CONTINUE
-      IF (IDO-2) 107,105,102
+      IF (IDO.LT.2) THEN
+        GO TO 107
+      ELSEIF (IDO.EQ.2) THEN
+        GO TO 105
+      ELSE
+        GO TO 102
+      ENDIF
   102 IDP2 = IDO+2
       DO 104 K=1,L1
          DO 103 I=3,IDO,2
@@ -1048,7 +1074,13 @@ C> @author Paul N. Swarztrauber, National Center for Atmospheric Research, Bould
          CH(IDO,2,K) = CC(1,K,1)-CC(1,K,3)
          CH(1,3,K) = CC(1,K,4)-CC(1,K,2)
   101 CONTINUE
-      IF (IDO-2) 107,105,102
+      IF (IDO.LT.2) THEN
+        GO TO 107
+      ELSEIF (IDO.EQ.2) THEN
+        GO TO 105
+      ELSE
+        GO TO 102
+      ENDIF
   102 IDP2 = IDO+2
 !OCL NOVREC
       DO 104 K=1,L1

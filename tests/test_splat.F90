@@ -11,25 +11,25 @@ program test_splat
 
   integer :: j, jj, jmax, ref_j(5)
   real :: slat(584), wlat(584), ref_slat(5), ref_wlat(5)
-  real :: tini=1e-5
+  real :: tini=1e-5, tinyreal=tiny(1.0)
   
   jmax = 584  ! t382 grid
 
   call splat(0, jmax, slat, wlat)
 
-  if (slat(1) /= 1d0) then
+  if (abs(slat(1)-1d0).gt.tinyreal) then
      error stop "slat(1) should equal 1.0"
   endif
 
-  if(slat(jmax) /= -1d0) then
+  if(abs(slat(jmax)+1).gt.tinyreal) then
      error stop "slat(jmax) should equal -1.0"
   endif
 
-  if(wlat(1) /= 0d0) then
+  if(abs(wlat(1)).gt.tinyreal) then
      error stop "wlat(1) should equal 0.0"
   endif
 
-  if(wlat(jmax) /= 0d0) then
+  if(abs(wlat(jmax)).gt.tinyreal) then
      error stop "wlat(jmax) should equal 0.0"
   endif
 

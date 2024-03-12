@@ -64,7 +64,7 @@ C> @author Iredell @date 96-02-20
      $ 146.870307625, 150.011882457, 153.153458019, 156.295034268 /
       REAL:: DLT,D1=1.
       REAL AWORK((JMAX+1)/2,((JMAX+1)/2)),BWORK(((JMAX+1)/2))
-      INTEGER:: JHE,JHO,J0=0, INFO
+      INTEGER:: JHE,JHO,INFO
       INTEGER IPVT((JMAX+1)/2)
       PARAMETER(PI=3.14159265358979,C=(1.-(2./PI)**2)*0.25)
 C - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -101,8 +101,8 @@ C  GAUSSIAN LATITUDES
         ENDDO
 CDIR$ IVDEP
         DO J=1,JH
-          SLAT(J)=SLATD(J)
-          WLAT(J)=(2.*(1.-SLATD(J)**2))/(JMAX*PKM1(J))**2
+          SLAT(J)=REAL(SLATD(J))
+          WLAT(J)=REAL((2.*(1.-SLATD(J)**2))/(JMAX*PKM1(J))**2)
           SLAT(JMAX+1-J)=-SLAT(J)
           WLAT(JMAX+1-J)=WLAT(J)
         ENDDO

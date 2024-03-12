@@ -917,7 +917,7 @@ contains
     INTEGER                         :: K, MAXWV, N, NI, NJ, NPS
     !
     REAL                            :: DLAT, DLON, DLATO, DLONO, DE, DR, DY
-    REAL                            :: DUM, E2, H, HI, HJ, DUMM(1)
+    REAL                            :: E2, H, HI, HJ, DUMM(1)
     REAL                            :: ORIENT, RERTH, SLAT
     REAL                            :: RLAT1, RLON1, RLAT2, RLON2, RLATI
     REAL                            :: UROT, VROT, UO2(MO,KM),VO2(MO,KM)
@@ -1247,7 +1247,7 @@ contains
     INTEGER                         :: K, MAXWV, N, NI, NJ, NO, NPS
     !
     REAL                            :: DLAT, DLON, DLATO, DLONO, DE, DR, DY
-    REAL                            :: DUM, H, HI, HJ, DUMM(1)
+    REAL                            :: H, HI, HJ, DUMM(1)
     REAL                            :: ORIENT
     REAL                            :: RLAT1, RLON1, RLAT2, RLON2, RLATI
     REAL                            :: UROT, VROT, UO2(MO,KM),VO2(MO,KM)
