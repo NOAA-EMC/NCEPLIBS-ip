@@ -30,7 +30,6 @@ contains
   ! then check if frequency and DC component match the test signal.
   subroutine test_fft_real_to_complex()
     real(precision) :: amplitude, freq_hz, t, cosine, dt, sample_rate_hz, dc_component, df, f, magnitude
-!    real(real64) :: AFFT(50000+4*IMAX)
     real(precision), allocatable :: w(:,:), g(:,:), afft(:)
     integer :: i
     complex :: dft
