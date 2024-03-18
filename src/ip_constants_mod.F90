@@ -7,16 +7,16 @@
 !!
 !! @author Kyle Gerheiser, George Gayno, Alex Richert
 module ip_constants_mod
-    implicit none
+  implicit none
 
-    public
+  public
 
-    real,parameter :: pi=3.14159265358979 !< PI
-    real,parameter :: dpr=180.0/pi !< Radians to degrees
-    real,parameter :: pi2=pi/2.0 !< PI / 2.0
-    real,parameter :: pi4=pi/4.0 !< PI / 4.0
-    real,parameter :: rerth_wgs84=6.378137e6 !< Radius of the Earth defined by WGS-84
-    real,parameter :: e2_wgs84=0.00669437999013 !< Eccentricity squared of Earth defined by WGS-84
+  real,parameter :: pi=3.14159265358979 !< PI
+  real,parameter :: dpr=180.0/pi !< Radians to degrees
+  real,parameter :: pi2=pi/2.0 !< PI / 2.0
+  real,parameter :: pi4=pi/4.0 !< PI / 4.0
+  real,parameter :: rerth_wgs84=6.378137e6 !< Radius of the Earth defined by WGS-84
+  real,parameter :: e2_wgs84=0.00669437999013 !< Eccentricity squared of Earth defined by WGS-84
 
 endmodule ip_constants_mod
 
