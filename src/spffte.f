@@ -55,8 +55,7 @@ C> @author Iredell @date 96-02-20
         INTEGER:: INIT,INC2X,INC2Y,N,M,ISIGN,NAUX1,NAUX2,NAUX3
 C ==EM==       ^(4)
         REAL:: SCALE
-        REAL(8):: AUX2(20000+2*IMAX),AUX3
-        REAL :: AUX2R(20000+2*IMAX),AUX3R
+        REAL :: AUX2(20000+2*IMAX),AUX3
         INTEGER:: IACR,IARC
 
         NAUX1=25000+2*IMAX
@@ -65,8 +64,6 @@ C ==EM==       ^(4)
         IACR=1
         IARC=1+NAUX1
         AFFTR=REAL(AFFT)
-        AUX2R=REAL(AUX2)
-        AUX3R=REAL(AUX3)
 
 C  INITIALIZATION.
 C  FILL AUXILIARY ARRAYS WITH TRIGONOMETRIC DATA
@@ -81,10 +78,10 @@ C  FILL AUXILIARY ARRAYS WITH TRIGONOMETRIC DATA
             SCALE=1.
             IF(DIGITS(1.).LT.DIGITS(1._8)) THEN
               CALL SCRFT(INIT,W,INC2X,G,INC2Y,N,M,ISIGN,SCALE,
-     &                   AFFTR(IACR),NAUX1,AUX2R,NAUX2,AUX3R,NAUX3)
+     &                   AFFTR(IACR),NAUX1,AUX2,NAUX2,AUX3,NAUX3)
             ELSE
               CALL DCRFT(INIT,W,INC2X,G,INC2Y,N,M,ISIGN,SCALE,
-     &                   AFFTR(IACR),NAUX1,AUX2R,NAUX2)
+     &                   AFFTR(IACR),NAUX1,AUX2,NAUX2)
             ENDIF
             INIT=1
             INC2X=INCG
@@ -95,10 +92,10 @@ C  FILL AUXILIARY ARRAYS WITH TRIGONOMETRIC DATA
             SCALE=1./IMAX
             IF(DIGITS(1.).LT.DIGITS(1._8)) THEN
               CALL SRCFT(INIT,G,INC2X,W,INC2Y,N,M,ISIGN,SCALE,
-     &                   AFFTR(IARC),NAUX1,AUX2R,NAUX2,AUX3R,NAUX3)
+     &                   AFFTR(IARC),NAUX1,AUX2,NAUX2,AUX3,NAUX3)
             ELSE
               CALL DRCFT(INIT,G,INC2X,W,INC2Y,N,M,ISIGN,SCALE,
-     &                   AFFTR(IARC),NAUX1,AUX2R,NAUX2)
+     &                   AFFTR(IARC),NAUX1,AUX2,NAUX2)
             ENDIF
 
 C  FOURIER TO PHYSICAL TRANSFORM.
@@ -112,10 +109,10 @@ C  FOURIER TO PHYSICAL TRANSFORM.
             SCALE=1.
             IF(DIGITS(1.).LT.DIGITS(1._8)) THEN
               CALL SCRFT(INIT,W,INC2X,G,INC2Y,N,M,ISIGN,SCALE,
-     &                   AFFTR(IACR),NAUX1,AUX2R,NAUX2,AUX3R,NAUX3)
+     &                   AFFTR(IACR),NAUX1,AUX2,NAUX2,AUX3,NAUX3)
             ELSE
               CALL DCRFT(INIT,W,INC2X,G,INC2Y,N,M,ISIGN,SCALE,
-     &                   AFFTR(IACR),NAUX1,AUX2R,NAUX2)
+     &                   AFFTR(IACR),NAUX1,AUX2,NAUX2)
             ENDIF
 
 C  PHYSICAL TO FOURIER TRANSFORM.
@@ -129,13 +126,11 @@ C  PHYSICAL TO FOURIER TRANSFORM.
             SCALE=1./IMAX
             IF(DIGITS(1.).LT.DIGITS(1._8)) THEN
               CALL SRCFT(INIT,G,INC2X,W,INC2Y,N,M,ISIGN,SCALE,
-     &                   AFFTR(IARC),NAUX1,AUX2R,NAUX2,AUX3R,NAUX3)
+     &                   AFFTR(IARC),NAUX1,AUX2,NAUX2,AUX3,NAUX3)
             ELSE
               CALL DRCFT(INIT,G,INC2X,W,INC2Y,N,M,ISIGN,SCALE,
-     &                   AFFTR(IARC),NAUX1,AUX2R,NAUX2)
+     &                   AFFTR(IARC),NAUX1,AUX2,NAUX2)
             ENDIF
         END SELECT
         AFFT=REAL(AFFTR,KIND=8)
-        AUX2=REAL(AUX2R,KIND=8)
-        AUX3=REAL(AUX3R,KIND=8)
       END SUBROUTINE

@@ -913,7 +913,7 @@ contains
     integer                         :: k,maxwv,n,ni,nj,nps
     !
     real                            :: dlat,dlon,dlato,dlono,de,dr,dy
-    real                            :: dum,e2,h,hi,hj,dumm(1)
+    real                            :: e2,h,hi,hj,dumm(1)
     real                            :: orient,rerth,slat
     real                            :: rlat1,rlon1,rlat2,rlon2,rlati
     real                            :: urot,vrot,uo2(mo,km),vo2(mo,km)
@@ -1243,7 +1243,7 @@ contains
     integer                         :: k,maxwv,n,ni,nj,no,nps
     !
     real                            :: dlat,dlon,dlato,dlono,de,dr,dy
-    real                            :: dum,h,hi,hj,dumm(1)
+    real                            :: h,hi,hj,dumm(1)
     real                            :: orient
     real                            :: rlat1,rlon1,rlat2,rlon2,rlati
     real                            :: urot,vrot,uo2(mo,km),vo2(mo,km)
