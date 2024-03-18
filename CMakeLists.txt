@@ -102,8 +102,8 @@ if(F90_AUTOFORMAT)
   message(STATUS "Creating 'fprettify' target to directly update src/*.F90")
   add_custom_target(
                         fprettify
-                        COMMAND ${FPRETTIFY_EXE} --case 1 1 1 1 1 --indent 4
-                        --whitespace 1 --enable-replacements --bkup_suffix .bkp
+                        COMMAND ${FPRETTIFY_EXE} --case 1 1 1 1 1 --indent 2
+                        --whitespace 0 --enable-replacements --bkup_suffix .bkp
                         "${CMAKE_SOURCE_DIR}/src/*.F90"
                    )
 endif()
