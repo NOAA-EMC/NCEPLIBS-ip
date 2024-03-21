@@ -15,16 +15,16 @@ module ip_station_points_grid_mod
   private
   public :: ip_station_points_grid
 
-  type, extends(ip_grid) :: ip_station_points_grid
-   contains
-     !> Initializes a gaussian grid given a grib1_descriptor object. @return N/A
-     procedure :: init_grib1 
-     !> Initializes a gaussian grid given a grib2_descriptor object. @return N/A
-     procedure :: init_grib2
-     !> Calculates Earth coordinates (iopt = 1) or grid coorindates (iopt = -1)
-     !> for IP Station Point grids. @return N/A
-     procedure :: gdswzd => GDSWZD_station_points 
-  end type ip_station_points_grid
+  type,extends(ip_grid) :: ip_station_points_grid
+  contains
+    !> Initializes a gaussian grid given a grib1_descriptor object. @return N/A
+    procedure :: init_grib1
+    !> Initializes a gaussian grid given a grib2_descriptor object. @return N/A
+    procedure :: init_grib2
+    !> Calculates Earth coordinates (iopt = 1) or grid coorindates (iopt = -1)
+    !> for IP Station Point grids. @return N/A
+    procedure :: gdswzd=>gdswzd_station_points
+  endtype ip_station_points_grid
 
 contains
 
@@ -34,10 +34,10 @@ contains
   !> @param[in] g1_desc A grib1_descriptor
   !>
   !> @author Iredell @date 96-04-10
-  subroutine init_grib1(self, g1_desc)
-    class(ip_station_points_grid), intent(inout) :: self
-    type(grib1_descriptor), intent(in) :: g1_desc
-  end subroutine init_grib1
+  subroutine init_grib1(self,g1_desc)
+    class(ip_station_points_grid),intent(inout) :: self
+    type(grib1_descriptor),intent(in) :: g1_desc
+  endsubroutine init_grib1
 
   !> Initializes an IP Station grid given a grib2_descriptor object.
   !>
@@ -45,10 +45,10 @@ contains
   !> @param[in] g2_desc A grib2_descriptor
   !>
   !> @author Iredell @date 96-04-10
-  subroutine init_grib2(self, g2_desc)
-    class(ip_station_points_grid), intent(inout) :: self
-    type(grib2_descriptor), intent(in) :: g2_desc
-  end subroutine init_grib2
+  subroutine init_grib2(self,g2_desc)
+    class(ip_station_points_grid),intent(inout) :: self
+    type(grib2_descriptor),intent(in) :: g2_desc
+  endsubroutine init_grib2
 
   !> Interpolate gridded data to a series of station points.
   !>
@@ -72,23 +72,23 @@ contains
   !>
   !> @author Kyle Gerheiser @date 7/21/21
   !> @author Eric Engle @date 5/4/23
-  SUBROUTINE GDSWZD_station_points(self,IOPT,NPTS, &
-       FILL,XPTS,YPTS,RLON,RLAT,NRET, &
-       CROT,SROT,XLON,XLAT,YLON,YLAT,AREA)
-    class(ip_station_points_grid), intent(in) :: self
-    INTEGER,                 INTENT(IN   ) :: IOPT, NPTS
-    INTEGER,                 INTENT(  OUT) :: NRET
+  subroutine gdswzd_station_points(self,iopt,npts, &
+                                   fill,xpts,ypts,rlon,rlat,nret, &
+                                   crot,srot,xlon,xlat,ylon,ylat,area)
+    class(ip_station_points_grid),intent(in) :: self
+    integer,intent(in) :: iopt,npts
+    integer,intent(out) :: nret
     !
-    REAL,                    INTENT(IN   ) :: FILL
-    REAL,                    INTENT(INOUT) :: RLON(NPTS),RLAT(NPTS)
-    REAL,                    INTENT(INOUT) :: XPTS(NPTS),YPTS(NPTS)
-    REAL,  OPTIONAL,         INTENT(  OUT) :: CROT(NPTS),SROT(NPTS)
-    REAL,  OPTIONAL,         INTENT(  OUT) :: XLON(NPTS),XLAT(NPTS)
-    REAL,  OPTIONAL,         INTENT(  OUT) :: YLON(NPTS),YLAT(NPTS),AREA(NPTS)
+    real,intent(in) :: fill
+    real,intent(inout) :: rlon(npts),rlat(npts)
+    real,intent(inout) :: xpts(npts),ypts(npts)
+    real,optional,intent(out) :: crot(npts),srot(npts)
+    real,optional,intent(out) :: xlon(npts),xlat(npts)
+    real,optional,intent(out) :: ylon(npts),ylat(npts),area(npts)
 
     ! This is all that needs to be done for GDSWZD for station points.
-    NRET = NPTS
+    nret=npts
 
-  end subroutine GDSWZD_STATION_POINTS
+  endsubroutine gdswzd_station_points
 
-end module ip_station_points_grid_mod
+endmodule ip_station_points_grid_mod

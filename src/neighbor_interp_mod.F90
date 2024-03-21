@@ -27,12 +27,12 @@ module neighbor_interp_mod
   public :: interpolate_neighbor
 
   interface interpolate_neighbor
-     module procedure interpolate_neighbor_scalar
-     module procedure interpolate_neighbor_vector
-  end interface interpolate_neighbor
+    module procedure interpolate_neighbor_scalar
+    module procedure interpolate_neighbor_vector
+  endinterface interpolate_neighbor
 
   ! Smallest positive real value (use for equality comparisons)
-  REAL :: TINYREAL=TINY(1.0)
+  real :: tinyreal=tiny(1.0)
 
 contains
 
@@ -71,7 +71,7 @@ contains
   !> Output bitmaps will also be created when the output grid extends
   !> outside of the domain of the input grid. The output field is set
   !> to 0 where the output bitmap is off.
-  !>        
+  !>
   !> @param[in] ipopt (20) interpolation options ipopt(1) is width of
   !> square to examine in spiral search (defaults to 1 if ipopt(1)=-1)
   !> @param[in] grid_in The input grid.
@@ -97,181 +97,181 @@ contains
   !>
   !> @author Mark Iredell @date 96-04-10
   !> @author Eric Engle @date 23-05-04
-  SUBROUTINE interpolate_neighbor_scalar(IPOPT,grid_in,grid_out, &
-       MI,MO,KM,IBI,LI,GI,  &
-       NO,RLAT,RLON,IBO,LO,GO,IRET)
-    class(ip_grid), intent(in) :: grid_in, grid_out
-    INTEGER,               INTENT(IN   ) :: IPOPT(20)
-    INTEGER,               INTENT(IN   ) :: MI,MO,KM
-    INTEGER,               INTENT(IN   ) :: IBI(KM)
-    INTEGER,               INTENT(INOUT) :: NO
-    INTEGER,               INTENT(  OUT) :: IRET, IBO(KM)
+  subroutine interpolate_neighbor_scalar(ipopt,grid_in,grid_out, &
+                                         mi,mo,km,ibi,li,gi, &
+                                         no,rlat,rlon,ibo,lo,go,iret)
+    class(ip_grid),intent(in) :: grid_in,grid_out
+    integer,intent(in) :: ipopt(20)
+    integer,intent(in) :: mi,mo,km
+    integer,intent(in) :: ibi(km)
+    integer,intent(inout) :: no
+    integer,intent(out) :: iret,ibo(km)
     !
-    LOGICAL*1,             INTENT(IN   ) :: LI(MI,KM)
-    LOGICAL*1,             INTENT(  OUT) :: LO(MO,KM)
+    logical*1,intent(in) :: li(mi,km)
+    logical*1,intent(out) :: lo(mo,km)
     !
-    REAL,                  INTENT(IN   ) :: GI(MI,KM)
-    REAL,                  INTENT(INOUT) :: RLAT(MO),RLON(MO)
-    REAL,                  INTENT(  OUT) :: GO(MO,KM)
+    real,intent(in) :: gi(mi,km)
+    real,intent(inout) :: rlat(mo),rlon(mo)
+    real,intent(out) :: go(mo,km)
     !
-    REAL,                  PARAMETER     :: FILL=-9999.
+    real,parameter     :: fill=-9999.
     !
-    INTEGER                              :: I1,J1,IXS,JXS
-    INTEGER                              :: MSPIRAL,N,K,NK
-    INTEGER                              :: NV
-    INTEGER                              :: MX,KXS,KXT,IX,JX,NX
+    integer                              :: i1,j1,ixs,jxs
+    integer                              :: mspiral,n,k,nk
+    integer                              :: nv
+    integer                              :: mx,kxs,kxt,ix,jx,nx
     !
-    LOGICAL                              :: SAME_GRIDI, SAME_GRIDO
+    logical                              :: same_gridi,same_grido
     !
-    REAL                                 :: XPTS(MO),YPTS(MO)
+    real                                 :: xpts(mo),ypts(mo)
     logical :: to_station_points
 
-    INTEGER,                     SAVE :: NOX=-1,IRETX=-1
-    INTEGER,        ALLOCATABLE, SAVE :: NXY(:)
-    REAL,           ALLOCATABLE, SAVE :: RLATX(:),RLONX(:),XPTSX(:),YPTSX(:)
-    class(ip_grid), allocatable, save :: prev_grid_in, prev_grid_out
+    integer,save :: nox=-1,iretx=-1
+    integer,allocatable,save :: nxy(:)
+    real,allocatable,save :: rlatx(:),rlonx(:),xptsx(:),yptsx(:)
+    class(ip_grid),allocatable,save :: prev_grid_in,prev_grid_out
     ! - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
     !  SET PARAMETERS
-    IRET=0
-    MSPIRAL=MAX(IPOPT(1),1)
+    iret=0
+    mspiral=max(ipopt(1),1)
     ! - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-    if (.not. allocated(prev_grid_in) .or. .not. allocated(prev_grid_out)) then
-       allocate(prev_grid_in, source = grid_in)
-       allocate(prev_grid_out, source = grid_out)
+    if(.not.allocated(prev_grid_in).or..not.allocated(prev_grid_out)) then
+      allocate(prev_grid_in,source=grid_in)
+      allocate(prev_grid_out,source=grid_out)
 
-       same_gridi = .false.
-       same_grido = .false.
+      same_gridi=.false.
+      same_grido=.false.
     else
-       same_gridi = grid_in == prev_grid_in
-       same_grido = grid_out == prev_grid_out
+      same_gridi=grid_in.eq.prev_grid_in
+      same_grido=grid_out.eq.prev_grid_out
 
-       if (.not. same_gridi .or. .not. same_grido) then
-          deallocate(prev_grid_in)
-          deallocate(prev_grid_out)
+      if(.not.same_gridi.or..not.same_grido) then
+        deallocate(prev_grid_in)
+        deallocate(prev_grid_out)
 
-          allocate(prev_grid_in, source = grid_in)
-          allocate(prev_grid_out, source = grid_out)
-       end if
-    end if
+        allocate(prev_grid_in,source=grid_in)
+        allocate(prev_grid_out,source=grid_out)
+      endif
+    endif
 
     select type(grid_out)
     type is(ip_station_points_grid)
-       to_station_points = .true.
-       class default
-       to_station_points = .false.
-    end select
+      to_station_points=.true.
+    class default
+      to_station_points=.false.
+    endselect
     ! - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
     !  SAVE OR SKIP WEIGHT COMPUTATION
-    IF(IRET.EQ.0.AND.(to_station_points.OR..NOT.SAME_GRIDI.OR..NOT.SAME_GRIDO))THEN
-       ! - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-       !  COMPUTE NUMBER OF OUTPUT POINTS AND THEIR LATITUDES AND LONGITUDES.
-       CALL GDSWZD(grid_out, 0,MO,FILL,XPTS,YPTS,RLON,RLAT,NO)
-       IF(NO.EQ.0) IRET=3
-       ! - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-       !  LOCATE INPUT POINTS
-       CALL GDSWZD(grid_in,-1,NO,FILL,XPTS,YPTS,RLON,RLAT,NV)
-       IF(IRET.EQ.0.AND.NV.EQ.0) IRET=2
-       ! - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-       !  ALLOCATE AND SAVE GRID DATA
-       IF(NOX.NE.NO) THEN
-          IF(NOX.GE.0) DEALLOCATE(RLATX,RLONX,XPTSX,YPTSX,NXY)
-          ALLOCATE(RLATX(NO),RLONX(NO),XPTSX(NO),YPTSX(NO),NXY(NO))
-          NOX=NO
-       ENDIF
-       IRETX=IRET
-       ! - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-       !  COMPUTE WEIGHTS
-       IF(IRET.EQ.0) THEN
-          !$OMP PARALLEL DO PRIVATE(N) SCHEDULE(STATIC)
-          DO N=1,NO
-             RLONX(N)=RLON(N)
-             RLATX(N)=RLAT(N)
-             XPTSX(N)=XPTS(N)
-             YPTSX(N)=YPTS(N)
-             IF(ABS(XPTS(N)-FILL).GT.TINYREAL.AND.ABS(YPTS(N)-FILL).GT.TINYREAL) THEN
-                nxy(n) = grid_in%field_pos(NINT(XPTS(N)), NINT(YPTS(N)))
-             ELSE
-                NXY(N)=0
-             ENDIF
-          ENDDO
-       ENDIF
-    ENDIF
+    if(iret.eq.0.and.(to_station_points.or..not.same_gridi.or..not.same_grido)) then
+      ! - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+      !  COMPUTE NUMBER OF OUTPUT POINTS AND THEIR LATITUDES AND LONGITUDES.
+      call gdswzd(grid_out,0,mo,fill,xpts,ypts,rlon,rlat,no)
+      if(no.eq.0) iret=3
+      ! - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+      !  LOCATE INPUT POINTS
+      call gdswzd(grid_in,-1,no,fill,xpts,ypts,rlon,rlat,nv)
+      if(iret.eq.0.and.nv.eq.0) iret=2
+      ! - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+      !  ALLOCATE AND SAVE GRID DATA
+      if(nox.ne.no) then
+        if(nox.ge.0) deallocate(rlatx,rlonx,xptsx,yptsx,nxy)
+        allocate(rlatx(no),rlonx(no),xptsx(no),yptsx(no),nxy(no))
+        nox=no
+      endif
+      iretx=iret
+      ! - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+      !  COMPUTE WEIGHTS
+      if(iret.eq.0) then
+        !$omp parallel do private(n) schedule(static)
+        do n=1,no
+          rlonx(n)=rlon(n)
+          rlatx(n)=rlat(n)
+          xptsx(n)=xpts(n)
+          yptsx(n)=ypts(n)
+          if(abs(xpts(n)-fill).gt.tinyreal.and.abs(ypts(n)-fill).gt.tinyreal) then
+            nxy(n)=grid_in%field_pos(nint(xpts(n)),nint(ypts(n)))
+          else
+            nxy(n)=0
+          endif
+        enddo
+      endif
+    endif
     ! - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
     !  INTERPOLATE OVER ALL FIELDS
-    IF(IRET.EQ.0.AND.IRETX.EQ.0) THEN
-       IF(.not. to_station_points) THEN
-          NO=NOX
-          DO N=1,NO
-             RLON(N)=RLONX(N)
-             RLAT(N)=RLATX(N)
-          ENDDO
-       ENDIF
-       DO N=1,NO
-          XPTS(N)=XPTSX(N)
-          YPTS(N)=YPTSX(N)
-       ENDDO
-       !$OMP PARALLEL DO PRIVATE(NK,K,N,I1,J1,IXS,JXS,MX,KXS,KXT,IX,JX,NX) SCHEDULE(STATIC)
-       DO NK=1,NO*KM
-          K=(NK-1)/NO+1
-          N=NK-NO*(K-1)
-          GO(N,K)=0
-          LO(N,K)=.FALSE.
-          IF(NXY(N).GT.0) THEN
-             IF(IBI(K).EQ.0.OR.LI(NXY(N),K)) THEN
-                GO(N,K)=GI(NXY(N),K)
-                LO(N,K)=.TRUE.
-                ! SPIRAL AROUND UNTIL VALID DATA IS FOUND.
-             ELSEIF(MSPIRAL.GT.1) THEN
-                I1=NINT(XPTS(N))
-                J1=NINT(YPTS(N))
-                IXS=INT(SIGN(1.,XPTS(N)-I1))
-                JXS=INT(SIGN(1.,YPTS(N)-J1))
-                DO MX=2,MSPIRAL**2
-                   KXS=INT(SQRT(4*MX-2.5))
-                   KXT=MX-(KXS**2/4+1)
-                   SELECT CASE(MOD(KXS,4))
-                   CASE(1)
-                      IX=I1-IXS*(KXS/4-KXT)
-                      JX=J1-JXS*KXS/4
-                   CASE(2)
-                      IX=I1+IXS*(1+KXS/4)
-                      JX=J1-JXS*(KXS/4-KXT)
-                   CASE(3)
-                      IX=I1+IXS*(1+KXS/4-KXT)
-                      JX=J1+JXS*(1+KXS/4)
-                   CASE DEFAULT
-                      IX=I1-IXS*KXS/4
-                      JX=J1+JXS*(KXS/4-KXT)
-                   END SELECT
-                   nx = grid_in%field_pos(ix, jx)
-                   IF(NX.GT.0) THEN
-                      IF(LI(NX,K)) THEN
-                         GO(N,K)=GI(NX,K)
-                         LO(N,K)=.TRUE.
-                         EXIT
-                      ENDIF
-                   ENDIF
-                ENDDO
-             ENDIF
-          ENDIF
-       ENDDO
+    if(iret.eq.0.and.iretx.eq.0) then
+      if(.not.to_station_points) then
+        no=nox
+        do n=1,no
+          rlon(n)=rlonx(n)
+          rlat(n)=rlatx(n)
+        enddo
+      endif
+      do n=1,no
+        xpts(n)=xptsx(n)
+        ypts(n)=yptsx(n)
+      enddo
+      !$omp parallel do private(nk,k,n,i1,j1,ixs,jxs,mx,kxs,kxt,ix,jx,nx) schedule(static)
+      do nk=1,no*km
+        k=(nk-1)/no+1
+        n=nk-no*(k-1)
+        go(n,k)=0
+        lo(n,k)=.false.
+        if(nxy(n).gt.0) then
+          if(ibi(k).eq.0.or.li(nxy(n),k)) then
+            go(n,k)=gi(nxy(n),k)
+            lo(n,k)=.true.
+            ! SPIRAL AROUND UNTIL VALID DATA IS FOUND.
+          elseif(mspiral.gt.1) then
+            i1=nint(xpts(n))
+            j1=nint(ypts(n))
+            ixs=int(sign(1.,xpts(n)-i1))
+            jxs=int(sign(1.,ypts(n)-j1))
+            do mx=2,mspiral**2
+              kxs=int(sqrt(4*mx-2.5))
+              kxt=mx-(kxs**2/4+1)
+              select case(mod(kxs,4))
+              case(1)
+                ix=i1-ixs*(kxs/4-kxt)
+                jx=j1-jxs*kxs/4
+              case(2)
+                ix=i1+ixs*(1+kxs/4)
+                jx=j1-jxs*(kxs/4-kxt)
+              case(3)
+                ix=i1+ixs*(1+kxs/4-kxt)
+                jx=j1+jxs*(1+kxs/4)
+              case default
+                ix=i1-ixs*kxs/4
+                jx=j1+jxs*(kxs/4-kxt)
+              endselect
+              nx=grid_in%field_pos(ix,jx)
+              if(nx.gt.0) then
+                if(li(nx,k)) then
+                  go(n,k)=gi(nx,k)
+                  lo(n,k)=.true.
+                  exit
+                endif
+              endif
+            enddo
+          endif
+        endif
+      enddo
 
-       DO K=1,KM
-          IBO(K)=IBI(K)
-          IF(.NOT.ALL(LO(1:NO,K))) IBO(K)=1
-       ENDDO
+      do k=1,km
+        ibo(k)=ibi(k)
+        if(.not.all(lo(1:no,k))) ibo(k)=1
+      enddo
 
-       select type(grid_out)
-       type is(ip_equid_cylind_grid)
-          CALL POLFIXS(NO,MO,KM,RLAT,IBO,LO,GO)
-       end select
-       ! - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-    ELSE
-       IF(IRET.EQ.0) IRET=IRETX
-       IF(.not. to_station_points) NO=0
-    ENDIF
+      select type(grid_out)
+      type is(ip_equid_cylind_grid)
+        call polfixs(no,mo,km,rlat,ibo,lo,go)
+      endselect
+      ! - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+    else
+      if(iret.eq.0) iret=iretx
+      if(.not.to_station_points) no=0
+    endif
     ! - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-  END SUBROUTINE interpolate_neighbor_scalar
+  endsubroutine interpolate_neighbor_scalar
 
   !> Interpolate vector fields (neighbor).
   !>
@@ -318,7 +318,7 @@ contains
   !> bitmaps will also be created when the output grid extends outside
   !> of the domain of the input grid. The output field is set to 0
   !> where the output bitmap is off.
-  !>        
+  !>
   !> @param[in] ipopt (20) interpolation options ipopt(1) is width of
   !> square to examine in spiral search (defaults to 1 if ipopt(1)=-1)
   !> @param[in] grid_in The input grid.
@@ -349,211 +349,211 @@ contains
   !>
   !> @author Mark Iredell @date 96-04-10
   !> @author Eric Engle @date 23-05-04
-  SUBROUTINE interpolate_neighbor_vector(IPOPT,grid_in,grid_out, &
-       MI,MO,KM,IBI,LI,UI,VI, &
-       NO,RLAT,RLON,CROT,SROT,IBO,LO,UO,VO,IRET)
+  subroutine interpolate_neighbor_vector(ipopt,grid_in,grid_out, &
+                                         mi,mo,km,ibi,li,ui,vi, &
+                                         no,rlat,rlon,crot,srot,ibo,lo,uo,vo,iret)
 
-    class(ip_grid), intent(in) :: grid_in, grid_out
-    INTEGER,            INTENT(IN   ) :: IPOPT(20)
-    INTEGER,            INTENT(IN   ) :: IBI(KM),MI,MO,KM
-    INTEGER,            INTENT(INOUT) :: NO
-    INTEGER,            INTENT(  OUT) :: IRET, IBO(KM)
+    class(ip_grid),intent(in) :: grid_in,grid_out
+    integer,intent(in) :: ipopt(20)
+    integer,intent(in) :: ibi(km),mi,mo,km
+    integer,intent(inout) :: no
+    integer,intent(out) :: iret,ibo(km)
     !
-    LOGICAL*1,          INTENT(IN   ) :: LI(MI,KM)
-    LOGICAL*1,          INTENT(  OUT) :: LO(MO,KM)
+    logical*1,intent(in) :: li(mi,km)
+    logical*1,intent(out) :: lo(mo,km)
     !
-    REAL,               INTENT(IN   ) :: UI(MI,KM),VI(MI,KM)
-    REAL,               INTENT(INOUT) :: CROT(MO),SROT(MO)
-    REAL,               INTENT(INOUT) :: RLAT(MO),RLON(MO)
-    REAL,               INTENT(  OUT) :: UO(MO,KM),VO(MO,KM)
+    real,intent(in) :: ui(mi,km),vi(mi,km)
+    real,intent(inout) :: crot(mo),srot(mo)
+    real,intent(inout) :: rlat(mo),rlon(mo)
+    real,intent(out) :: uo(mo,km),vo(mo,km)
     !
-    REAL,               PARAMETER     :: FILL=-9999.
+    real,parameter     :: fill=-9999.
     !
-    INTEGER                           :: I1,J1,IXS,JXS,MX
-    INTEGER                           :: KXS,KXT,IX,JX,NX
-    INTEGER                           :: MSPIRAL,N,K,NK,NV
+    integer                           :: i1,j1,ixs,jxs,mx
+    integer                           :: kxs,kxt,ix,jx,nx
+    integer                           :: mspiral,n,k,nk,nv
     !
-    LOGICAL                           :: SAME_GRIDI, SAME_GRIDO
+    logical                           :: same_gridi,same_grido
     !
-    REAL                              :: CX,SX,CM,SM,UROT,VROT
-    REAL                              :: XPTS(MO),YPTS(MO)
-    REAL                              :: CROI(MI),SROI(MI)
-    REAL                              :: XPTI(MI),YPTI(MI),RLOI(MI),RLAI(MI)
+    real                              :: cx,sx,cm,sm,urot,vrot
+    real                              :: xpts(mo),ypts(mo)
+    real                              :: croi(mi),sroi(mi)
+    real                              :: xpti(mi),ypti(mi),rloi(mi),rlai(mi)
 
     logical :: to_station_points
 
-    INTEGER,                     SAVE :: NOX=-1,IRETX=-1
-    INTEGER,        ALLOCATABLE, SAVE :: NXY(:)
+    integer,save :: nox=-1,iretx=-1
+    integer,allocatable,save :: nxy(:)
 
-    REAL,           ALLOCATABLE, SAVE :: RLATX(:),RLONX(:),XPTSX(:),YPTSX(:)
-    REAL,           ALLOCATABLE, SAVE :: CROTX(:),SROTX(:),CXY(:),SXY(:)
-    class(ip_grid), allocatable, save :: prev_grid_in, prev_grid_out
+    real,allocatable,save :: rlatx(:),rlonx(:),xptsx(:),yptsx(:)
+    real,allocatable,save :: crotx(:),srotx(:),cxy(:),sxy(:)
+    class(ip_grid),allocatable,save :: prev_grid_in,prev_grid_out
     ! - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
     !  SET PARAMETERS
-    IRET=0
-    MSPIRAL=MAX(IPOPT(1),1)
+    iret=0
+    mspiral=max(ipopt(1),1)
     ! - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
-    if (.not. allocated(prev_grid_in) .or. .not. allocated(prev_grid_out)) then
-       allocate(prev_grid_in, source = grid_in)
-       allocate(prev_grid_out, source = grid_out)
+    if(.not.allocated(prev_grid_in).or..not.allocated(prev_grid_out)) then
+      allocate(prev_grid_in,source=grid_in)
+      allocate(prev_grid_out,source=grid_out)
 
-       same_gridi = .false.
-       same_grido = .false.
+      same_gridi=.false.
+      same_grido=.false.
     else
-       same_gridi = grid_in == prev_grid_in
-       same_grido = grid_out == prev_grid_out
+      same_gridi=grid_in.eq.prev_grid_in
+      same_grido=grid_out.eq.prev_grid_out
 
-       if (.not. same_gridi .or. .not. same_grido) then
-          deallocate(prev_grid_in)
-          deallocate(prev_grid_out)
+      if(.not.same_gridi.or..not.same_grido) then
+        deallocate(prev_grid_in)
+        deallocate(prev_grid_out)
 
-          allocate(prev_grid_in, source = grid_in)
-          allocate(prev_grid_out, source = grid_out)
-       end if
-    end if
+        allocate(prev_grid_in,source=grid_in)
+        allocate(prev_grid_out,source=grid_out)
+      endif
+    endif
 
     select type(grid_out)
     type is(ip_station_points_grid)
-       to_station_points = .true.
-       class default
-       to_station_points = .false.
-    end select
+      to_station_points=.true.
+    class default
+      to_station_points=.false.
+    endselect
 
     ! - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
     !  SAVE OR SKIP WEIGHT COMPUTATION
-    IF(IRET.EQ.0.AND.(to_station_points.OR..NOT.SAME_GRIDI.OR..NOT.SAME_GRIDO))THEN
-       ! - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-       !  COMPUTE NUMBER OF OUTPUT POINTS AND THEIR LATITUDES AND LONGITUDES.
-       CALL GDSWZD(grid_out, 0,MO,FILL,XPTS,YPTS,RLON,RLAT,NO,CROT,SROT)
-       IF(NO.EQ.0) IRET=3
-       ! - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-       !  LOCATE INPUT POINTS
-       CALL GDSWZD(grid_in,-1,NO,FILL,XPTS,YPTS,RLON,RLAT,NV)
-       IF(IRET.EQ.0.AND.NV.EQ.0) IRET=2
-       CALL GDSWZD(grid_in, 0,MI,FILL,XPTI,YPTI,RLOI,RLAI,NV,CROI,SROI)
-       ! - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-       !  ALLOCATE AND SAVE GRID DATA
-       IF(NOX.NE.NO) THEN
-          IF(NOX.GE.0) DEALLOCATE(RLATX,RLONX,XPTSX,YPTSX,CROTX,SROTX,NXY,CXY,SXY)
-          ALLOCATE(RLATX(NO),RLONX(NO),XPTSX(NO),YPTSX(NO), &
-               CROTX(NO),SROTX(NO),NXY(NO),CXY(NO),SXY(NO))
-          NOX=NO
-       ENDIF
-       IRETX=IRET
-       ! - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-       !  COMPUTE WEIGHTS
-       IF(IRET.EQ.0) THEN
-          !$OMP PARALLEL DO PRIVATE(N,CM,SM) SCHEDULE(STATIC)
-          DO N=1,NO
-             RLONX(N)=RLON(N)
-             RLATX(N)=RLAT(N)
-             XPTSX(N)=XPTS(N)
-             YPTSX(N)=YPTS(N)
-             CROTX(N)=CROT(N)
-             SROTX(N)=SROT(N)
-             IF(ABS(XPTS(N)-FILL).GT.TINYREAL.AND.ABS(YPTS(N)-FILL).GT.TINYREAL) THEN
-                nxy(n) = grid_in%field_pos(NINT(XPTS(N)),NINT(YPTS(N)))
-                IF(NXY(N).GT.0) THEN
-                   CALL MOVECT(RLAI(NXY(N)),RLOI(NXY(N)),RLAT(N),RLON(N),CM,SM)
-                   CXY(N)=CM*CROI(NXY(N))+SM*SROI(NXY(N))
-                   SXY(N)=SM*CROI(NXY(N))-CM*SROI(NXY(N))
-                ENDIF
-             ELSE
-                NXY(N)=0
-             ENDIF
-          ENDDO
-       ENDIF
-    ENDIF
+    if(iret.eq.0.and.(to_station_points.or..not.same_gridi.or..not.same_grido)) then
+      ! - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+      !  COMPUTE NUMBER OF OUTPUT POINTS AND THEIR LATITUDES AND LONGITUDES.
+      call gdswzd(grid_out,0,mo,fill,xpts,ypts,rlon,rlat,no,crot,srot)
+      if(no.eq.0) iret=3
+      ! - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+      !  LOCATE INPUT POINTS
+      call gdswzd(grid_in,-1,no,fill,xpts,ypts,rlon,rlat,nv)
+      if(iret.eq.0.and.nv.eq.0) iret=2
+      call gdswzd(grid_in,0,mi,fill,xpti,ypti,rloi,rlai,nv,croi,sroi)
+      ! - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+      !  ALLOCATE AND SAVE GRID DATA
+      if(nox.ne.no) then
+        if(nox.ge.0) deallocate(rlatx,rlonx,xptsx,yptsx,crotx,srotx,nxy,cxy,sxy)
+        allocate(rlatx(no),rlonx(no),xptsx(no),yptsx(no), &
+                 crotx(no),srotx(no),nxy(no),cxy(no),sxy(no))
+        nox=no
+      endif
+      iretx=iret
+      ! - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+      !  COMPUTE WEIGHTS
+      if(iret.eq.0) then
+        !$omp parallel do private(n,cm,sm) schedule(static)
+        do n=1,no
+          rlonx(n)=rlon(n)
+          rlatx(n)=rlat(n)
+          xptsx(n)=xpts(n)
+          yptsx(n)=ypts(n)
+          crotx(n)=crot(n)
+          srotx(n)=srot(n)
+          if(abs(xpts(n)-fill).gt.tinyreal.and.abs(ypts(n)-fill).gt.tinyreal) then
+            nxy(n)=grid_in%field_pos(nint(xpts(n)),nint(ypts(n)))
+            if(nxy(n).gt.0) then
+              call movect(rlai(nxy(n)),rloi(nxy(n)),rlat(n),rlon(n),cm,sm)
+              cxy(n)=cm*croi(nxy(n))+sm*sroi(nxy(n))
+              sxy(n)=sm*croi(nxy(n))-cm*sroi(nxy(n))
+            endif
+          else
+            nxy(n)=0
+          endif
+        enddo
+      endif
+    endif
     ! - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
     !  INTERPOLATE OVER ALL FIELDS
-    IF(IRET.EQ.0.AND.IRETX.EQ.0) THEN
-       IF(.not. to_station_points) THEN
-          NO=NOX
-          DO N=1,NO
-             RLON(N)=RLONX(N)
-             RLAT(N)=RLATX(N)
-             CROT(N)=CROTX(N)
-             SROT(N)=SROTX(N)
-          ENDDO
-       ENDIF
-       DO N=1,NO
-          XPTS(N)=XPTSX(N)
-          YPTS(N)=YPTSX(N)
-       ENDDO
-       !$OMP PARALLEL DO &
-       !$OMP PRIVATE(NK,K,N,I1,J1,IXS,JXS,MX,KXS,KXT,IX,JX,NX) &
-       !$OMP PRIVATE(CM,SM,CX,SX,UROT,VROT) SCHEDULE(STATIC)
-       DO NK=1,NO*KM
-          K=(NK-1)/NO+1
-          N=NK-NO*(K-1)
-          UO(N,K)=0
-          VO(N,K)=0
-          LO(N,K)=.FALSE.
-          IF(NXY(N).GT.0) THEN
-             IF(IBI(K).EQ.0.OR.LI(NXY(N),K)) THEN
-                UROT=CXY(N)*UI(NXY(N),K)-SXY(N)*VI(NXY(N),K)
-                VROT=SXY(N)*UI(NXY(N),K)+CXY(N)*VI(NXY(N),K)
-                UO(N,K)=CROT(N)*UROT-SROT(N)*VROT
-                VO(N,K)=SROT(N)*UROT+CROT(N)*VROT
-                LO(N,K)=.TRUE.
-                ! SPIRAL AROUND UNTIL VALID DATA IS FOUND.
-             ELSEIF(MSPIRAL.GT.1) THEN
-                I1=NINT(XPTS(N))
-                J1=NINT(YPTS(N))
-                IXS=INT(SIGN(1.,XPTS(N)-I1))
-                JXS=INT(SIGN(1.,YPTS(N)-J1))
-                DO MX=2,MSPIRAL**2
-                   KXS=INT(SQRT(4*MX-2.5))
-                   KXT=MX-(KXS**2/4+1)
-                   SELECT CASE(MOD(KXS,4))
-                   CASE(1)
-                      IX=I1-IXS*(KXS/4-KXT)
-                      JX=J1-JXS*KXS/4
-                   CASE(2)
-                      IX=I1+IXS*(1+KXS/4)
-                      JX=J1-JXS*(KXS/4-KXT)
-                   CASE(3)
-                      IX=I1+IXS*(1+KXS/4-KXT)
-                      JX=J1+JXS*(1+KXS/4)
-                   CASE DEFAULT
-                      IX=I1-IXS*KXS/4
-                      JX=J1+JXS*(KXS/4-KXT)
-                   END SELECT
-                   nx = grid_in%field_pos(ix, jx)
-                   IF(NX.GT.0) THEN
-                      IF(LI(NX,K)) THEN
-                         CALL MOVECT(RLAI(NX),RLOI(NX),RLAT(N),RLON(N),CM,SM)
-                         CX=CM*CROI(NX)+SM*SROI(NX)
-                         SX=SM*CROI(NX)-CM*SROI(NX)
-                         UROT=CX*UI(NX,K)-SX*VI(NX,K)
-                         VROT=SX*UI(NX,K)+CX*VI(NX,K)
-                         UO(N,K)=CROT(N)*UROT-SROT(N)*VROT
-                         VO(N,K)=SROT(N)*UROT+CROT(N)*VROT
-                         LO(N,K)=.TRUE.
-                         EXIT
-                      ENDIF
-                   ENDIF
-                ENDDO
-             ENDIF
-          ENDIF
-       ENDDO
-       DO K=1,KM
-          IBO(K)=IBI(K)
-          IF(.NOT.ALL(LO(1:NO,K))) IBO(K)=1
-       ENDDO
+    if(iret.eq.0.and.iretx.eq.0) then
+      if(.not.to_station_points) then
+        no=nox
+        do n=1,no
+          rlon(n)=rlonx(n)
+          rlat(n)=rlatx(n)
+          crot(n)=crotx(n)
+          srot(n)=srotx(n)
+        enddo
+      endif
+      do n=1,no
+        xpts(n)=xptsx(n)
+        ypts(n)=yptsx(n)
+      enddo
+      !$omp parallel do &
+        !$omp private(nk,k,n,i1,j1,ixs,jxs,mx,kxs,kxt,ix,jx,nx) &
+        !$omp private(cm,sm,cx,sx,urot,vrot) schedule(static)
+      do nk=1,no*km
+        k=(nk-1)/no+1
+        n=nk-no*(k-1)
+        uo(n,k)=0
+        vo(n,k)=0
+        lo(n,k)=.false.
+        if(nxy(n).gt.0) then
+          if(ibi(k).eq.0.or.li(nxy(n),k)) then
+            urot=cxy(n)*ui(nxy(n),k)-sxy(n)*vi(nxy(n),k)
+            vrot=sxy(n)*ui(nxy(n),k)+cxy(n)*vi(nxy(n),k)
+            uo(n,k)=crot(n)*urot-srot(n)*vrot
+            vo(n,k)=srot(n)*urot+crot(n)*vrot
+            lo(n,k)=.true.
+            ! SPIRAL AROUND UNTIL VALID DATA IS FOUND.
+          elseif(mspiral.gt.1) then
+            i1=nint(xpts(n))
+            j1=nint(ypts(n))
+            ixs=int(sign(1.,xpts(n)-i1))
+            jxs=int(sign(1.,ypts(n)-j1))
+            do mx=2,mspiral**2
+              kxs=int(sqrt(4*mx-2.5))
+              kxt=mx-(kxs**2/4+1)
+              select case(mod(kxs,4))
+              case(1)
+                ix=i1-ixs*(kxs/4-kxt)
+                jx=j1-jxs*kxs/4
+              case(2)
+                ix=i1+ixs*(1+kxs/4)
+                jx=j1-jxs*(kxs/4-kxt)
+              case(3)
+                ix=i1+ixs*(1+kxs/4-kxt)
+                jx=j1+jxs*(1+kxs/4)
+              case default
+                ix=i1-ixs*kxs/4
+                jx=j1+jxs*(kxs/4-kxt)
+              endselect
+              nx=grid_in%field_pos(ix,jx)
+              if(nx.gt.0) then
+                if(li(nx,k)) then
+                  call movect(rlai(nx),rloi(nx),rlat(n),rlon(n),cm,sm)
+                  cx=cm*croi(nx)+sm*sroi(nx)
+                  sx=sm*croi(nx)-cm*sroi(nx)
+                  urot=cx*ui(nx,k)-sx*vi(nx,k)
+                  vrot=sx*ui(nx,k)+cx*vi(nx,k)
+                  uo(n,k)=crot(n)*urot-srot(n)*vrot
+                  vo(n,k)=srot(n)*urot+crot(n)*vrot
+                  lo(n,k)=.true.
+                  exit
+                endif
+              endif
+            enddo
+          endif
+        endif
+      enddo
+      do k=1,km
+        ibo(k)=ibi(k)
+        if(.not.all(lo(1:no,k))) ibo(k)=1
+      enddo
 
-       select type(grid_out)
-       type is(ip_equid_cylind_grid)
-          CALL POLFIXV(NO,MO,KM,RLAT,RLON,IBO,LO,UO,VO)
-       end select
+      select type(grid_out)
+      type is(ip_equid_cylind_grid)
+        call polfixv(no,mo,km,rlat,rlon,ibo,lo,uo,vo)
+      endselect
 
-       ! - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-    ELSE
-       IF(IRET.EQ.0) IRET=IRETX
-       IF(.not. to_station_points) NO=0
-    ENDIF
+      ! - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+    else
+      if(iret.eq.0) iret=iretx
+      if(.not.to_station_points) no=0
+    endif
     ! - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-  END SUBROUTINE INTERPOLATE_NEIGHBOR_VECTOR
+  endsubroutine interpolate_neighbor_vector
 
-end module neighbor_interp_mod
+endmodule neighbor_interp_mod

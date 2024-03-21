@@ -18,19 +18,19 @@ module spectral_interp_mod
   public :: interpolate_spectral
 
   interface interpolate_spectral
-     module procedure interpolate_spectral_scalar
-     module procedure interpolate_spectral_vector
-  end interface interpolate_spectral
+    module procedure interpolate_spectral_scalar
+    module procedure interpolate_spectral_vector
+  endinterface interpolate_spectral
 
   interface polates4
-     module procedure polates4_grib1
-     module procedure polates4_grib2
-  end interface polates4
+    module procedure polates4_grib1
+    module procedure polates4_grib2
+  endinterface polates4
 
   interface polatev4
-     module procedure polatev4_grib1
-     module procedure polatev4_grib2
-  end interface polatev4
+    module procedure polatev4_grib1
+    module procedure polatev4_grib2
+  endinterface polatev4
 
 contains
 
@@ -58,38 +58,37 @@ contains
   !> @param[out] IRET return code. 0/non-0 - successful/not successful.
   !>
   !! @author Mark Iredell @date 96-04-10
-  subroutine interpolate_spectral_scalar(IPOPT,grid_in,grid_out, &
-       MI,MO,KM,IBI,GI, &
-       NO,RLAT,RLON,IBO,LO,GO,IRET)
-    INTEGER,          INTENT(IN   ) :: IPOPT(20)
-    class(ip_grid), intent(in) :: grid_in, grid_out
-    INTEGER,          INTENT(IN   ) :: MI, MO
-    INTEGER,          INTENT(IN   ) :: IBI(KM), KM
-    INTEGER,          INTENT(  OUT) :: IBO(KM), IRET, NO
+  subroutine interpolate_spectral_scalar(ipopt,grid_in,grid_out, &
+                                         mi,mo,km,ibi,gi, &
+                                         no,rlat,rlon,ibo,lo,go,iret)
+    integer,intent(in) :: ipopt(20)
+    class(ip_grid),intent(in) :: grid_in,grid_out
+    integer,intent(in) :: mi,mo
+    integer,intent(in) :: ibi(km),km
+    integer,intent(out) :: ibo(km),iret,no
     !
-    LOGICAL*1,        INTENT(  OUT) :: LO(MO,KM)
+    logical*1,intent(out) :: lo(mo,km)
     !
-    REAL,             INTENT(IN   ) :: GI(MI,KM)
-    REAL,             INTENT(INOUT) :: RLAT(MO),RLON(MO)
-    REAL,             INTENT(  OUT) :: GO(MO,KM)
+    real,intent(in) :: gi(mi,km)
+    real,intent(inout) :: rlat(mo),rlon(mo)
+    real,intent(out) :: go(mo,km)
 
-
-    select type(desc_in => grid_in%descriptor)
+    select type(desc_in=>grid_in%descriptor)
     type is(grib1_descriptor)
-       select type(desc_out => grid_out%descriptor)
-       type is(grib1_descriptor)
-          CALL POLATES4(IPOPT,desc_in%gds,desc_out%gds,MI,MO,KM,IBI,GI,NO,RLAT,RLON,IBO,LO,GO,IRET)
-       end select
+      select type(desc_out=>grid_out%descriptor)
+      type is(grib1_descriptor)
+        call polates4(ipopt,desc_in%gds,desc_out%gds,mi,mo,km,ibi,gi,no,rlat,rlon,ibo,lo,go,iret)
+      endselect
 
     type is(grib2_descriptor)
-       select type(desc_out => grid_out%descriptor)
-       type is(grib2_descriptor)
-          CALL POLATES4(IPOPT,desc_in%gdt_num,desc_in%gdt_tmpl,desc_in%gdt_len, &
-               desc_out%gdt_num,desc_out%gdt_tmpl,desc_out%gdt_len, &
-               MI,MO,KM,IBI,GI,NO,RLAT,RLON,IBO,LO,GO,IRET)
-       end select
-    end select
-  end subroutine interpolate_spectral_scalar
+      select type(desc_out=>grid_out%descriptor)
+      type is(grib2_descriptor)
+        call polates4(ipopt,desc_in%gdt_num,desc_in%gdt_tmpl,desc_in%gdt_len, &
+                      desc_out%gdt_num,desc_out%gdt_tmpl,desc_out%gdt_len, &
+                      mi,mo,km,ibi,gi,no,rlat,rlon,ibo,lo,go,iret)
+      endselect
+    endselect
+  endsubroutine interpolate_spectral_scalar
 
   !> Interpolate spectral vector.
   !>
@@ -119,42 +118,40 @@ contains
   !> @param IRET return code. 0/non-0 - successful/not successful.
   !>
   !! @author Mark Iredell @date 96-04-10
-  subroutine interpolate_spectral_vector(IPOPT,grid_in,grid_out, &
-       MI,MO,KM,IBI,UI,VI, &
-       NO,RLAT,RLON,CROT,SROT,IBO,LO,UO,VO,IRET)
-    class(ip_grid), intent(in) :: grid_in, grid_out
-    INTEGER,          INTENT(IN   ) :: IPOPT(20), IBI(KM)
-    INTEGER,          INTENT(IN   ) :: KM, MI, MO
-    INTEGER,          INTENT(  OUT) :: IRET, IBO(KM), NO
+  subroutine interpolate_spectral_vector(ipopt,grid_in,grid_out, &
+                                         mi,mo,km,ibi,ui,vi, &
+                                         no,rlat,rlon,crot,srot,ibo,lo,uo,vo,iret)
+    class(ip_grid),intent(in) :: grid_in,grid_out
+    integer,intent(in) :: ipopt(20),ibi(km)
+    integer,intent(in) :: km,mi,mo
+    integer,intent(out) :: iret,ibo(km),no
     !
-    LOGICAL*1,        INTENT(  OUT) :: LO(MO,KM)
+    logical*1,intent(out) :: lo(mo,km)
     !
-    REAL,             INTENT(IN   ) :: UI(MI,KM),VI(MI,KM)
-    REAL,             INTENT(  OUT) :: UO(MO,KM),VO(MO,KM)
-    REAL,             INTENT(INOUT) :: RLAT(MO),RLON(MO)
-    REAL,             INTENT(  OUT) :: CROT(MO),SROT(MO)
+    real,intent(in) :: ui(mi,km),vi(mi,km)
+    real,intent(out) :: uo(mo,km),vo(mo,km)
+    real,intent(inout) :: rlat(mo),rlon(mo)
+    real,intent(out) :: crot(mo),srot(mo)
 
-
-    select type(desc_in => grid_in%descriptor)
+    select type(desc_in=>grid_in%descriptor)
     type is(grib1_descriptor)
-       select type(desc_out => grid_out%descriptor)
-       type is(grib1_descriptor)
-         CALL polatev4_grib1(IPOPT,desc_in%gds,desc_out%gds,MI,MO,KM,IBI,UI,VI,&
-            NO,RLAT,RLON,CROT,SROT,IBO,LO,UO,VO,IRET)
-       end select
+      select type(desc_out=>grid_out%descriptor)
+      type is(grib1_descriptor)
+        call polatev4_grib1(ipopt,desc_in%gds,desc_out%gds,mi,mo,km,ibi,ui,vi, &
+                            no,rlat,rlon,crot,srot,ibo,lo,uo,vo,iret)
+      endselect
 
     type is(grib2_descriptor)
-       select type(desc_out => grid_out%descriptor)
-       type is(grib2_descriptor)
-           CALL POLATEV4(IPOPT,desc_in%gdt_num,desc_in%gdt_tmpl,desc_in%gdt_len, &
-            desc_out%gdt_num,desc_out%gdt_tmpl,desc_out%gdt_len, &
-            MI,MO,KM,IBI,UI,VI,&
-            NO,RLAT,RLON,CROT,SROT,IBO,LO,UO,VO,IRET)
-       end select
-    end select
+      select type(desc_out=>grid_out%descriptor)
+      type is(grib2_descriptor)
+        call polatev4(ipopt,desc_in%gdt_num,desc_in%gdt_tmpl,desc_in%gdt_len, &
+                      desc_out%gdt_num,desc_out%gdt_tmpl,desc_out%gdt_len, &
+                      mi,mo,km,ibi,ui,vi, &
+                      no,rlat,rlon,crot,srot,ibo,lo,uo,vo,iret)
+      endselect
+    endselect
 
-
-  end subroutine interpolate_spectral_vector
+  endsubroutine interpolate_spectral_vector
 
   !> Interpolate scalar fields (spectral).
   !>
@@ -188,7 +185,7 @@ contains
   !> the output can be a set of station points if igdtnumo < 0, in which
   !> case the number of points and their latitudes and longitudes must
   !> be input. Output bitmaps will not be created.
-  !>        
+  !>
   !> ### Program History Log
   !> Date | Programmer | Comments
   !> -----|------------|---------
@@ -252,241 +249,241 @@ contains
   !> - 42 invalid spectral method parameters
   !>
   !>! @author Mark Iredell @date 96-04-10
-  SUBROUTINE POLATES4_grib2(IPOPT,IGDTNUMI,IGDTMPLI,IGDTLENI, &
-       IGDTNUMO,IGDTMPLO,IGDTLENO, &
-       MI,MO,KM,IBI,GI, &
-       NO,RLAT,RLON,IBO,LO,GO,IRET)
-    INTEGER,          INTENT(IN   ) :: IGDTNUMI, IGDTLENI
-    INTEGER,          INTENT(IN   ) :: IGDTMPLI(IGDTLENI)
-    INTEGER,          INTENT(IN   ) :: IGDTNUMO, IGDTLENO
-    INTEGER,          INTENT(IN   ) :: IGDTMPLO(IGDTLENO)
-    INTEGER,          INTENT(IN   ) :: IPOPT(20)
-    INTEGER,          INTENT(IN   ) :: MI, MO
-    INTEGER,          INTENT(IN   ) :: IBI(KM), KM
-    INTEGER,          INTENT(  OUT) :: IBO(KM), IRET, NO
+  subroutine polates4_grib2(ipopt,igdtnumi,igdtmpli,igdtleni, &
+                            igdtnumo,igdtmplo,igdtleno, &
+                            mi,mo,km,ibi,gi, &
+                            no,rlat,rlon,ibo,lo,go,iret)
+    integer,intent(in) :: igdtnumi,igdtleni
+    integer,intent(in) :: igdtmpli(igdtleni)
+    integer,intent(in) :: igdtnumo,igdtleno
+    integer,intent(in) :: igdtmplo(igdtleno)
+    integer,intent(in) :: ipopt(20)
+    integer,intent(in) :: mi,mo
+    integer,intent(in) :: ibi(km),km
+    integer,intent(out) :: ibo(km),iret,no
     !
-    LOGICAL*1,        INTENT(  OUT) :: LO(MO,KM)
+    logical*1,intent(out) :: lo(mo,km)
     !
-    REAL,             INTENT(IN   ) :: GI(MI,KM)
-    REAL,             INTENT(INOUT) :: RLAT(MO),RLON(MO)
-    REAL,             INTENT(  OUT) :: GO(MO,KM)
+    real,intent(in) :: gi(mi,km)
+    real,intent(inout) :: rlat(mo),rlon(mo)
+    real,intent(out) :: go(mo,km)
     !
-    REAL,             PARAMETER     :: FILL=-9999.
-    REAL,             PARAMETER     :: PI=3.14159265358979
-    REAL,             PARAMETER     :: DPR=180./PI
+    real,parameter     :: fill=-9999.
+    real,parameter     :: pi=3.14159265358979
+    real,parameter     :: dpr=180./pi
     !
-    INTEGER                         :: IDRTI, IDRTO, IG, JG, IM, JM
-    INTEGER                         :: IGO, JGO, IMO, JMO
-    INTEGER                         :: ISCAN, JSCAN, NSCAN
-    INTEGER                         :: ISCANO, JSCANO, NSCANO
-    INTEGER                         :: ISKIPI, JSKIPI, ISCALE
-    INTEGER                         :: IMAXI, JMAXI, ISPEC
-    INTEGER                         :: IP, IPRIME, IPROJ, IROMB, K
-    INTEGER                         :: MAXWV, N, NI, NJ, NPS
+    integer                         :: idrti,idrto,ig,jg,im,jm
+    integer                         :: igo,jgo,imo,jmo
+    integer                         :: iscan,jscan,nscan
+    integer                         :: iscano,jscano,nscano
+    integer                         :: iskipi,jskipi,iscale
+    integer                         :: imaxi,jmaxi,ispec
+    integer                         :: ip,iprime,iproj,iromb,k
+    integer                         :: maxwv,n,ni,nj,nps
     !
-    REAL                            :: DE, DR, DY
-    REAL                            :: DLAT, DLON, DLATO, DLONO
-    REAL                            :: GO2(MO,KM), H, HI, HJ
-    REAL                            :: ORIENT, SLAT, RERTH, E2
-    REAL                            :: RLAT1, RLON1, RLAT2, RLON2, RLATI
-    REAL                            :: XMESH, XP, YP
-    REAL                            :: XPTS(MO), YPTS(MO)
+    real                            :: de,dr,dy
+    real                            :: dlat,dlon,dlato,dlono
+    real                            :: go2(mo,km),h,hi,hj
+    real                            :: orient,slat,rerth,e2
+    real                            :: rlat1,rlon1,rlat2,rlon2,rlati
+    real                            :: xmesh,xp,yp
+    real                            :: xpts(mo),ypts(mo)
 
-    type(grib2_descriptor) :: desc_in, desc_out
-    class(ip_grid), allocatable :: grid_in, grid_out
+    type(grib2_descriptor) :: desc_in,desc_out
+    class(ip_grid),allocatable :: grid_in,grid_out
 
-    desc_in = init_descriptor(igdtnumi, igdtleni, igdtmpli)
-    desc_out = init_descriptor(igdtnumo, igdtleno, igdtmplo)
+    desc_in=init_descriptor(igdtnumi,igdtleni,igdtmpli)
+    desc_out=init_descriptor(igdtnumo,igdtleno,igdtmplo)
 
-    call init_grid(grid_in, desc_in)
-    call init_grid(grid_out, desc_out)
+    call init_grid(grid_in,desc_in)
+    call init_grid(grid_out,desc_out)
     ! - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
     !  COMPUTE NUMBER OF OUTPUT POINTS AND THEIR LATITUDES AND LONGITUDES.
-    IRET=0
-    IF(IGDTNUMO.GE.0) THEN
-       !CALL GDSWZD(IGDTNUMO,IGDTMPLO,IGDTLENO, 0,MO,FILL,XPTS,YPTS,RLON,RLAT,NO)
-       CALL GDSWZD(grid_out, 0,MO,FILL,XPTS,YPTS,RLON,RLAT,NO)
-       IF(NO.EQ.0) IRET=3
-    ENDIF
+    iret=0
+    if(igdtnumo.ge.0) then
+      !CALL GDSWZD(IGDTNUMO,IGDTMPLO,IGDTLENO, 0,MO,FILL,XPTS,YPTS,RLON,RLAT,NO)
+      call gdswzd(grid_out,0,mo,fill,xpts,ypts,rlon,rlat,no)
+      if(no.eq.0) iret=3
+    endif
     ! - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
     !  AFFIRM APPROPRIATE INPUT GRID
     !    LAT/LON OR GAUSSIAN
     !    NO BITMAPS
     !    FULL ZONAL COVERAGE
     !    FULL MERIDIONAL COVERAGE
-    IDRTI=IGDTNUMI
-    IF(IDRTI==40) IDRTI=4
-    IF(IDRTI==0.OR.IDRTI==4)THEN
-       IM=IGDTMPLI(8)
-       JM=IGDTMPLI(9)
-       ISCALE=IGDTMPLI(10)*IGDTMPLI(11)
-       IF(ISCALE==0) ISCALE=10**6
-       RLON1=FLOAT(IGDTMPLI(13))/FLOAT(ISCALE)
-       RLON2=FLOAT(IGDTMPLI(16))/FLOAT(ISCALE)
-       ISCAN=MOD(IGDTMPLI(19)/128,2)
-       JSCAN=MOD(IGDTMPLI(19)/64,2)
-       NSCAN=MOD(IGDTMPLI(19)/32,2)
-    ELSE
-       IRET=41
-    ENDIF
-    DO K=1,KM
-       IF(IBI(K).NE.0) IRET=41
-    ENDDO
-    IF(IRET.EQ.0) THEN
-       IF(ISCAN.EQ.0) THEN
-          DLON=(MOD(RLON2-RLON1-1+3600,360.)+1)/(IM-1)
-       ELSE
-          DLON=-(MOD(RLON1-RLON2-1+3600,360.)+1)/(IM-1)
-       ENDIF
-       IG=NINT(360/ABS(DLON))
-       IPRIME=1+MOD(-NINT(RLON1/DLON)+IG,IG)
-       IMAXI=IG
-       JMAXI=JM
-       IF(MOD(IG,2).NE.0.OR.IM.LT.IG) IRET=41
-    ENDIF
-    IF(IRET.EQ.0.AND.IDRTI.EQ.0) THEN
-       ISCALE=IGDTMPLI(10)*IGDTMPLI(11)
-       IF(ISCALE==0) ISCALE=10**6
-       RLAT1=FLOAT(IGDTMPLI(12))/FLOAT(ISCALE)
-       RLAT2=FLOAT(IGDTMPLI(15))/FLOAT(ISCALE)
-       DLAT=(RLAT2-RLAT1)/(JM-1)
-       JG=NINT(180/ABS(DLAT))
-       IF(JM.EQ.JG) IDRTI=256
-       IF(JM.NE.JG.AND.JM.NE.JG+1) IRET=41
-    ELSEIF(IRET.EQ.0.AND.IDRTI.EQ.4) THEN
-       JG=IGDTMPLI(18)*2
-       IF(JM.NE.JG) IRET=41
-    ENDIF
+    idrti=igdtnumi
+    if(idrti.eq.40) idrti=4
+    if(idrti.eq.0.or.idrti.eq.4) then
+      im=igdtmpli(8)
+      jm=igdtmpli(9)
+      iscale=igdtmpli(10)*igdtmpli(11)
+      if(iscale.eq.0) iscale=10**6
+      rlon1=float(igdtmpli(13))/float(iscale)
+      rlon2=float(igdtmpli(16))/float(iscale)
+      iscan=mod(igdtmpli(19)/128,2)
+      jscan=mod(igdtmpli(19)/64,2)
+      nscan=mod(igdtmpli(19)/32,2)
+    else
+      iret=41
+    endif
+    do k=1,km
+      if(ibi(k).ne.0) iret=41
+    enddo
+    if(iret.eq.0) then
+      if(iscan.eq.0) then
+        dlon=(mod(rlon2-rlon1-1+3600,360.)+1)/(im-1)
+      else
+        dlon=-(mod(rlon1-rlon2-1+3600,360.)+1)/(im-1)
+      endif
+      ig=nint(360/abs(dlon))
+      iprime=1+mod(-nint(rlon1/dlon)+ig,ig)
+      imaxi=ig
+      jmaxi=jm
+      if(mod(ig,2).ne.0.or.im.lt.ig) iret=41
+    endif
+    if(iret.eq.0.and.idrti.eq.0) then
+      iscale=igdtmpli(10)*igdtmpli(11)
+      if(iscale.eq.0) iscale=10**6
+      rlat1=float(igdtmpli(12))/float(iscale)
+      rlat2=float(igdtmpli(15))/float(iscale)
+      dlat=(rlat2-rlat1)/(jm-1)
+      jg=nint(180/abs(dlat))
+      if(jm.eq.jg) idrti=256
+      if(jm.ne.jg.and.jm.ne.jg+1) iret=41
+    elseif(iret.eq.0.and.idrti.eq.4) then
+      jg=igdtmpli(18)*2
+      if(jm.ne.jg) iret=41
+    endif
     ! - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
     !  SET PARAMETERS
-    IF(IRET.EQ.0) THEN
-       IROMB=IPOPT(1)
-       MAXWV=IPOPT(2)
-       IF(MAXWV.EQ.-1) THEN
-          IF(IROMB.EQ.0.AND.IDRTI.EQ.4) MAXWV=(JMAXI-1)
-          IF(IROMB.EQ.1.AND.IDRTI.EQ.4) MAXWV=(JMAXI-1)/2
-          IF(IROMB.EQ.0.AND.IDRTI.EQ.0) MAXWV=(JMAXI-3)/2
-          IF(IROMB.EQ.1.AND.IDRTI.EQ.0) MAXWV=(JMAXI-3)/4
-          IF(IROMB.EQ.0.AND.IDRTI.EQ.256) MAXWV=(JMAXI-1)/2
-          IF(IROMB.EQ.1.AND.IDRTI.EQ.256) MAXWV=(JMAXI-1)/4
-       ENDIF
-       IF((IROMB.NE.0.AND.IROMB.NE.1).OR.MAXWV.LT.0) IRET=42
-    ENDIF
+    if(iret.eq.0) then
+      iromb=ipopt(1)
+      maxwv=ipopt(2)
+      if(maxwv.eq.-1) then
+        if(iromb.eq.0.and.idrti.eq.4) maxwv=(jmaxi-1)
+        if(iromb.eq.1.and.idrti.eq.4) maxwv=(jmaxi-1)/2
+        if(iromb.eq.0.and.idrti.eq.0) maxwv=(jmaxi-3)/2
+        if(iromb.eq.1.and.idrti.eq.0) maxwv=(jmaxi-3)/4
+        if(iromb.eq.0.and.idrti.eq.256) maxwv=(jmaxi-1)/2
+        if(iromb.eq.1.and.idrti.eq.256) maxwv=(jmaxi-1)/4
+      endif
+      if((iromb.ne.0.and.iromb.ne.1).or.maxwv.lt.0) iret=42
+    endif
     ! - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
     !  INTERPOLATE
-    IF(IRET.EQ.0) THEN
-       IF(NSCAN.EQ.0) THEN
-          ISKIPI=1
-          JSKIPI=IM
-       ELSE
-          ISKIPI=JM
-          JSKIPI=1
-       ENDIF
-       IF(ISCAN.EQ.1) ISKIPI=-ISKIPI
-       IF(JSCAN.EQ.0) JSKIPI=-JSKIPI
-       ISPEC=0
-       !  SPECIAL CASE OF GLOBAL CYLINDRICAL GRID
-       IF((IGDTNUMO.EQ.0.OR.IGDTNUMO.EQ.40).AND. &
-            MOD(IGDTMPLO(8),2).EQ.0.AND.IGDTMPLO(13).EQ.0.AND.IGDTMPLO(19).EQ.0) THEN
-          IDRTO=IGDTNUMO
-          IF(IDRTO==40)IDRTO=4
-          IMO=IGDTMPLO(8)
-          JMO=IGDTMPLO(9)
-          ISCALE=IGDTMPLO(10)*IGDTMPLO(11)
-          IF(ISCALE==0) ISCALE=10**6
-          RLON2=FLOAT(IGDTMPLO(16))/FLOAT(ISCALE)
-          DLONO=(MOD(RLON2-1+3600,360.)+1)/(IMO-1)
-          IGO=NINT(360/ABS(DLONO))
-          IF(IMO.EQ.IGO.AND.IDRTO.EQ.0) THEN
-             RLAT1=FLOAT(IGDTMPLO(12))/FLOAT(ISCALE)
-             RLAT2=FLOAT(IGDTMPLO(15))/FLOAT(ISCALE)
-             DLAT=(RLAT2-RLAT1)/(JMO-1)
-             JGO=NINT(180/ABS(DLAT))
-             IF(JMO.EQ.JGO) IDRTO=256
-             IF(JMO.EQ.JGO.OR.JMO.EQ.JGO+1) ISPEC=1
-          ELSEIF(IMO.EQ.IGO.AND.IDRTO.EQ.4) THEN
-             JGO=IGDTMPLO(18)*2
-             IF(JMO.EQ.JGO) ISPEC=1
-          ENDIF
-          IF(ISPEC.EQ.1) THEN
-             CALL SPTRUN(IROMB,MAXWV,IDRTI,IMAXI,JMAXI,IDRTO,IMO,JMO, &
-                  KM,IPRIME,ISKIPI,JSKIPI,MI,0,0,MO,0,GI,GO)
-          ENDIF
-          !  SPECIAL CASE OF POLAR STEREOGRAPHIC GRID
-       ELSEIF(IGDTNUMO.EQ.20.AND. &
-            IGDTMPLO(8).EQ.IGDTMPLO(9).AND.MOD(IGDTMPLO(8),2).EQ.1.AND. &
-            IGDTMPLO(15).EQ.IGDTMPLO(16).AND.IGDTMPLO(18).EQ.64) THEN
-          NPS=IGDTMPLO(8)
-          RLAT1=FLOAT(IGDTMPLO(10))*1.E-6
-          RLON1=FLOAT(IGDTMPLO(11))*1.E-6
-          ORIENT=FLOAT(IGDTMPLO(14))*1.E-6
-          XMESH=FLOAT(IGDTMPLO(15))*1.E-3
-          IPROJ=MOD(IGDTMPLO(17)/128,2)
-          IP=(NPS+1)/2
-          H=(-1.)**IPROJ
-          SLAT=FLOAT(ABS(IGDTMPLO(13)))*1.E-6
-          CALL EARTH_RADIUS(IGDTMPLO,IGDTLENO,RERTH,E2)
-          DE=(1.+SIN(SLAT/DPR))*RERTH
-          DR=DE*COS(RLAT1/DPR)/(1+H*SIN(RLAT1/DPR))
-          XP=1-H*SIN((RLON1-ORIENT)/DPR)*DR/XMESH
-          YP=1+COS((RLON1-ORIENT)/DPR)*DR/XMESH
-          IF(NINT(XP).EQ.IP.AND.NINT(YP).EQ.IP) THEN
-             IF(IPROJ.EQ.0) THEN
-                CALL SPTRUNS(IROMB,MAXWV,IDRTI,IMAXI,JMAXI,KM,NPS, &
-                     IPRIME,ISKIPI,JSKIPI,MI,MO,0,0,0, &
-                     SLAT,XMESH,ORIENT,GI,GO,GO2)
-             ELSE
-                CALL SPTRUNS(IROMB,MAXWV,IDRTI,IMAXI,JMAXI,KM,NPS, &
-                     IPRIME,ISKIPI,JSKIPI,MI,MO,0,0,0, &
-                     SLAT,XMESH,ORIENT,GI,GO2,GO)
-             ENDIF
-             ISPEC=1
-          ENDIF
-          !  SPECIAL CASE OF MERCATOR GRID
-       ELSEIF(IGDTNUMO.EQ.10) THEN
-          NI=IGDTMPLO(8)
-          NJ=IGDTMPLO(9)
-          RLAT1=FLOAT(IGDTMPLO(10))*1.0E-6
-          RLON1=FLOAT(IGDTMPLO(11))*1.0E-6
-          RLON2=FLOAT(IGDTMPLO(15))*1.0E-6
-          RLATI=FLOAT(IGDTMPLO(13))*1.0E-6
-          ISCANO=MOD(IGDTMPLO(16)/128,2)
-          JSCANO=MOD(IGDTMPLO(16)/64,2)
-          NSCANO=MOD(IGDTMPLO(16)/32,2)
-          DY=FLOAT(IGDTMPLO(19))*1.0E-3
-          HI=(-1.)**ISCANO
-          HJ=(-1.)**(1-JSCANO)
-          CALL EARTH_RADIUS(IGDTMPLO,IGDTLENO,RERTH,E2)
-          DLONO=HI*(MOD(HI*(RLON2-RLON1)-1+3600,360.)+1)/(NI-1)
-          DLATO=HJ*DY/(RERTH*COS(RLATI/DPR))*DPR
-          IF(NSCANO.EQ.0) THEN
-             CALL SPTRUNM(IROMB,MAXWV,IDRTI,IMAXI,JMAXI,KM,NI,NJ, &
-                  IPRIME,ISKIPI,JSKIPI,MI,MO,0,0,0, &
-                  RLAT1,RLON1,DLATO,DLONO,GI,GO)
-             ISPEC=1
-          ENDIF
-       ENDIF
-       !  GENERAL SLOW CASE
-       IF(ISPEC.EQ.0) THEN
-          CALL SPTRUNG(IROMB,MAXWV,IDRTI,IMAXI,JMAXI,KM,NO, &
-               IPRIME,ISKIPI,JSKIPI,MI,MO,0,0,0,RLAT,RLON,GI,GO)
-       ENDIF
-       DO K=1,KM
-          IBO(K)=0
-          DO N=1,NO
-             LO(N,K)=.TRUE.
-          ENDDO
-       ENDDO
-    ELSE
-       DO K=1,KM
-          IBO(K)=1
-          DO N=1,NO
-             LO(N,K)=.FALSE.
-             GO(N,K)=0.
-          ENDDO
-       ENDDO
-    ENDIF
-  END SUBROUTINE POLATES4_GRIB2
+    if(iret.eq.0) then
+      if(nscan.eq.0) then
+        iskipi=1
+        jskipi=im
+      else
+        iskipi=jm
+        jskipi=1
+      endif
+      if(iscan.eq.1) iskipi=-iskipi
+      if(jscan.eq.0) jskipi=-jskipi
+      ispec=0
+      !  SPECIAL CASE OF GLOBAL CYLINDRICAL GRID
+      if((igdtnumo.eq.0.or.igdtnumo.eq.40).and. &
+         mod(igdtmplo(8),2).eq.0.and.igdtmplo(13).eq.0.and.igdtmplo(19).eq.0) then
+        idrto=igdtnumo
+        if(idrto.eq.40) idrto=4
+        imo=igdtmplo(8)
+        jmo=igdtmplo(9)
+        iscale=igdtmplo(10)*igdtmplo(11)
+        if(iscale.eq.0) iscale=10**6
+        rlon2=float(igdtmplo(16))/float(iscale)
+        dlono=(mod(rlon2-1+3600,360.)+1)/(imo-1)
+        igo=nint(360/abs(dlono))
+        if(imo.eq.igo.and.idrto.eq.0) then
+          rlat1=float(igdtmplo(12))/float(iscale)
+          rlat2=float(igdtmplo(15))/float(iscale)
+          dlat=(rlat2-rlat1)/(jmo-1)
+          jgo=nint(180/abs(dlat))
+          if(jmo.eq.jgo) idrto=256
+          if(jmo.eq.jgo.or.jmo.eq.jgo+1) ispec=1
+        elseif(imo.eq.igo.and.idrto.eq.4) then
+          jgo=igdtmplo(18)*2
+          if(jmo.eq.jgo) ispec=1
+        endif
+        if(ispec.eq.1) then
+          call sptrun(iromb,maxwv,idrti,imaxi,jmaxi,idrto,imo,jmo, &
+                      km,iprime,iskipi,jskipi,mi,0,0,mo,0,gi,go)
+        endif
+        !  SPECIAL CASE OF POLAR STEREOGRAPHIC GRID
+      elseif(igdtnumo.eq.20.and. &
+             igdtmplo(8).eq.igdtmplo(9).and.mod(igdtmplo(8),2).eq.1.and. &
+             igdtmplo(15).eq.igdtmplo(16).and.igdtmplo(18).eq.64) then
+        nps=igdtmplo(8)
+        rlat1=float(igdtmplo(10))*1.e-6
+        rlon1=float(igdtmplo(11))*1.e-6
+        orient=float(igdtmplo(14))*1.e-6
+        xmesh=float(igdtmplo(15))*1.e-3
+        iproj=mod(igdtmplo(17)/128,2)
+        ip=(nps+1)/2
+        h=(-1.)**iproj
+        slat=float(abs(igdtmplo(13)))*1.e-6
+        call earth_radius(igdtmplo,igdtleno,rerth,e2)
+        de=(1.+sin(slat/dpr))*rerth
+        dr=de*cos(rlat1/dpr)/(1+h*sin(rlat1/dpr))
+        xp=1-h*sin((rlon1-orient)/dpr)*dr/xmesh
+        yp=1+cos((rlon1-orient)/dpr)*dr/xmesh
+        if(nint(xp).eq.ip.and.nint(yp).eq.ip) then
+          if(iproj.eq.0) then
+            call sptruns(iromb,maxwv,idrti,imaxi,jmaxi,km,nps, &
+                         iprime,iskipi,jskipi,mi,mo,0,0,0, &
+                         slat,xmesh,orient,gi,go,go2)
+          else
+            call sptruns(iromb,maxwv,idrti,imaxi,jmaxi,km,nps, &
+                         iprime,iskipi,jskipi,mi,mo,0,0,0, &
+                         slat,xmesh,orient,gi,go2,go)
+          endif
+          ispec=1
+        endif
+        !  SPECIAL CASE OF MERCATOR GRID
+      elseif(igdtnumo.eq.10) then
+        ni=igdtmplo(8)
+        nj=igdtmplo(9)
+        rlat1=float(igdtmplo(10))*1.0e-6
+        rlon1=float(igdtmplo(11))*1.0e-6
+        rlon2=float(igdtmplo(15))*1.0e-6
+        rlati=float(igdtmplo(13))*1.0e-6
+        iscano=mod(igdtmplo(16)/128,2)
+        jscano=mod(igdtmplo(16)/64,2)
+        nscano=mod(igdtmplo(16)/32,2)
+        dy=float(igdtmplo(19))*1.0e-3
+        hi=(-1.)**iscano
+        hj=(-1.)**(1-jscano)
+        call earth_radius(igdtmplo,igdtleno,rerth,e2)
+        dlono=hi*(mod(hi*(rlon2-rlon1)-1+3600,360.)+1)/(ni-1)
+        dlato=hj*dy/(rerth*cos(rlati/dpr))*dpr
+        if(nscano.eq.0) then
+          call sptrunm(iromb,maxwv,idrti,imaxi,jmaxi,km,ni,nj, &
+                       iprime,iskipi,jskipi,mi,mo,0,0,0, &
+                       rlat1,rlon1,dlato,dlono,gi,go)
+          ispec=1
+        endif
+      endif
+      !  GENERAL SLOW CASE
+      if(ispec.eq.0) then
+        call sptrung(iromb,maxwv,idrti,imaxi,jmaxi,km,no, &
+                     iprime,iskipi,jskipi,mi,mo,0,0,0,rlat,rlon,gi,go)
+      endif
+      do k=1,km
+        ibo(k)=0
+        do n=1,no
+          lo(n,k)=.true.
+        enddo
+      enddo
+    else
+      do k=1,km
+        ibo(k)=1
+        do n=1,no
+          lo(n,k)=.false.
+          go(n,k)=0.
+        enddo
+      enddo
+    endif
+  endsubroutine polates4_grib2
 
   !> Interpolate scalar fields (spectral).
   !>
@@ -523,7 +520,7 @@ contains
   !> can be a set of station points if kgdso(1)<0, in which case the
   !> number of points and their latitudes and longitudes must be
   !> input. Output bitmaps will not be created.
-  !>        
+  !>
   !> ### Program History Log
   !> Date | Programmer | Comments
   !> -----|------------|---------
@@ -557,224 +554,223 @@ contains
   !> - 42 invalid spectral method parameters
   !>
   !> @author Iredell @date 96-04-10
-  suBROUTINE POLATES4_grib1(IPOPT,KGDSI,KGDSO,MI,MO,KM,IBI,GI, &
-       NO,RLAT,RLON,IBO,LO,GO,IRET)
-    INTEGER,          INTENT(IN   ) :: IPOPT(20), KGDSI(200)
-    INTEGER,          INTENT(IN   ) :: KGDSO(200), MI, MO
-    INTEGER,          INTENT(IN   ) :: IBI(KM), KM
-    INTEGER,          INTENT(  OUT) :: IBO(KM), IRET
+  subroutine polates4_grib1(ipopt,kgdsi,kgdso,mi,mo,km,ibi,gi, &
+                            no,rlat,rlon,ibo,lo,go,iret)
+    integer,intent(in) :: ipopt(20),kgdsi(200)
+    integer,intent(in) :: kgdso(200),mi,mo
+    integer,intent(in) :: ibi(km),km
+    integer,intent(out) :: ibo(km),iret
     !
-    LOGICAL*1,        INTENT(  OUT) :: LO(MO,KM)
+    logical*1,intent(out) :: lo(mo,km)
     !
-    REAL,             INTENT(IN   ) :: GI(MI,KM)
-    REAL,             INTENT(INOUT) :: RLAT(MO),RLON(MO)
-    REAL,             INTENT(  OUT) :: GO(MO,KM)
+    real,intent(in) :: gi(mi,km)
+    real,intent(inout) :: rlat(mo),rlon(mo)
+    real,intent(out) :: go(mo,km)
     !
-    REAL,             PARAMETER     :: FILL=-9999.
-    REAL,             PARAMETER     :: RERTH=6.3712E6
-    REAL,             PARAMETER     :: PI=3.14159265358979
-    REAL,             PARAMETER     :: DPR=180./PI
+    real,parameter     :: fill=-9999.
+    real,parameter     :: rerth=6.3712e6
+    real,parameter     :: pi=3.14159265358979
+    real,parameter     :: dpr=180./pi
     !
-    INTEGER                         :: IDRTI, IDRTO, IG, JG, IM, JM
-    INTEGER                         :: IGO, JGO, IMO, JMO
-    INTEGER                         :: ISCAN, JSCAN, NSCAN
-    INTEGER                         :: ISCANO, JSCANO, NSCANO
-    INTEGER                         :: ISKIPI, JSKIPI
-    INTEGER                         :: IMAXI, JMAXI, ISPEC
-    INTEGER                         :: IP, IPRIME, IPROJ, IROMB, K
-    INTEGER                         :: MAXWV, N, NI, NJ, NPS, NO
+    integer                         :: idrti,idrto,ig,jg,im,jm
+    integer                         :: igo,jgo,imo,jmo
+    integer                         :: iscan,jscan,nscan
+    integer                         :: iscano,jscano,nscano
+    integer                         :: iskipi,jskipi
+    integer                         :: imaxi,jmaxi,ispec
+    integer                         :: ip,iprime,iproj,iromb,k
+    integer                         :: maxwv,n,ni,nj,nps,no
     !
-    REAL                            :: DE, DR, DY
-    REAL                            :: DLAT, DLON, DLATO, DLONO
-    REAL                            :: GO2(MO,KM), H, HI, HJ
-    REAL                            :: ORIENT
-    REAL                            :: RLAT1, RLON1, RLAT2, RLON2, RLATI
-    REAL                            :: XMESH, XP, YP
-    REAL                            :: XPTS(MO), YPTS(MO)
+    real                            :: de,dr,dy
+    real                            :: dlat,dlon,dlato,dlono
+    real                            :: go2(mo,km),h,hi,hj
+    real                            :: orient
+    real                            :: rlat1,rlon1,rlat2,rlon2,rlati
+    real                            :: xmesh,xp,yp
+    real                            :: xpts(mo),ypts(mo)
 
-    type(grib1_descriptor) :: desc_in, desc_out
-    class(ip_grid), allocatable :: grid_in, grid_out
+    type(grib1_descriptor) :: desc_in,desc_out
+    class(ip_grid),allocatable :: grid_in,grid_out
 
-    desc_in = init_descriptor(kgdsi)
-    desc_out = init_descriptor(kgdso)
+    desc_in=init_descriptor(kgdsi)
+    desc_out=init_descriptor(kgdso)
 
-    call init_grid(grid_in, desc_in)
-    call init_grid(grid_out, desc_out)
-    
+    call init_grid(grid_in,desc_in)
+    call init_grid(grid_out,desc_out)
+
     ! - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
     !  COMPUTE NUMBER OF OUTPUT POINTS AND THEIR LATITUDES AND LONGITUDES.
-    IRET=0
-    IF(KGDSO(1).GE.0) THEN
-       CALL GDSWZD(grid_out, 0,MO,FILL,XPTS,YPTS,RLON,RLAT,NO)
-       IF(NO.EQ.0) IRET=3
-    ENDIF
+    iret=0
+    if(kgdso(1).ge.0) then
+      call gdswzd(grid_out,0,mo,fill,xpts,ypts,rlon,rlat,no)
+      if(no.eq.0) iret=3
+    endif
     ! - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
     !  AFFIRM APPROPRIATE INPUT GRID
     !    LAT/LON OR GAUSSIAN
     !    NO BITMAPS
     !    FULL ZONAL COVERAGE
     !    FULL MERIDIONAL COVERAGE
-    IDRTI=KGDSI(1)
-    IM=KGDSI(2)
-    JM=KGDSI(3)
-    RLON1=KGDSI(5)*1.E-3
-    RLON2=KGDSI(8)*1.E-3
-    ISCAN=MOD(KGDSI(11)/128,2)
-    JSCAN=MOD(KGDSI(11)/64,2)
-    NSCAN=MOD(KGDSI(11)/32,2)
-    IF(IDRTI.NE.0.AND.IDRTI.NE.4) IRET=41
-    DO K=1,KM
-       IF(IBI(K).NE.0) IRET=41
-    ENDDO
-    IF(IRET.EQ.0) THEN
-       IF(ISCAN.EQ.0) THEN
-          DLON=(MOD(RLON2-RLON1-1+3600,360.)+1)/(IM-1)
-       ELSE
-          DLON=-(MOD(RLON1-RLON2-1+3600,360.)+1)/(IM-1)
-       ENDIF
-       IG=NINT(360/ABS(DLON))
-       IPRIME=1+MOD(-NINT(RLON1/DLON)+IG,IG)
-       IMAXI=IG
-       JMAXI=JM
-       IF(MOD(IG,2).NE.0.OR.IM.LT.IG) IRET=41
-    ENDIF
-    IF(IRET.EQ.0.AND.IDRTI.EQ.0) THEN
-       RLAT1=KGDSI(4)*1.E-3
-       RLAT2=KGDSI(7)*1.E-3
-       DLAT=(RLAT2-RLAT1)/(JM-1)
-       JG=NINT(180/ABS(DLAT))
-       IF(JM.EQ.JG) IDRTI=256
-       IF(JM.NE.JG.AND.JM.NE.JG+1) IRET=41
-    ELSEIF(IRET.EQ.0.AND.IDRTI.EQ.4) THEN
-       JG=KGDSI(10)*2
-       IF(JM.NE.JG) IRET=41
-    ENDIF
+    idrti=kgdsi(1)
+    im=kgdsi(2)
+    jm=kgdsi(3)
+    rlon1=kgdsi(5)*1.e-3
+    rlon2=kgdsi(8)*1.e-3
+    iscan=mod(kgdsi(11)/128,2)
+    jscan=mod(kgdsi(11)/64,2)
+    nscan=mod(kgdsi(11)/32,2)
+    if(idrti.ne.0.and.idrti.ne.4) iret=41
+    do k=1,km
+      if(ibi(k).ne.0) iret=41
+    enddo
+    if(iret.eq.0) then
+      if(iscan.eq.0) then
+        dlon=(mod(rlon2-rlon1-1+3600,360.)+1)/(im-1)
+      else
+        dlon=-(mod(rlon1-rlon2-1+3600,360.)+1)/(im-1)
+      endif
+      ig=nint(360/abs(dlon))
+      iprime=1+mod(-nint(rlon1/dlon)+ig,ig)
+      imaxi=ig
+      jmaxi=jm
+      if(mod(ig,2).ne.0.or.im.lt.ig) iret=41
+    endif
+    if(iret.eq.0.and.idrti.eq.0) then
+      rlat1=kgdsi(4)*1.e-3
+      rlat2=kgdsi(7)*1.e-3
+      dlat=(rlat2-rlat1)/(jm-1)
+      jg=nint(180/abs(dlat))
+      if(jm.eq.jg) idrti=256
+      if(jm.ne.jg.and.jm.ne.jg+1) iret=41
+    elseif(iret.eq.0.and.idrti.eq.4) then
+      jg=kgdsi(10)*2
+      if(jm.ne.jg) iret=41
+    endif
     ! - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
     !  SET PARAMETERS
-    IF(IRET.EQ.0) THEN
-       IROMB=IPOPT(1)
-       MAXWV=IPOPT(2)
-       IF(MAXWV.EQ.-1) THEN
-          IF(IROMB.EQ.0.AND.IDRTI.EQ.4) MAXWV=(JMAXI-1)
-          IF(IROMB.EQ.1.AND.IDRTI.EQ.4) MAXWV=(JMAXI-1)/2
-          IF(IROMB.EQ.0.AND.IDRTI.EQ.0) MAXWV=(JMAXI-3)/2
-          IF(IROMB.EQ.1.AND.IDRTI.EQ.0) MAXWV=(JMAXI-3)/4
-          IF(IROMB.EQ.0.AND.IDRTI.EQ.256) MAXWV=(JMAXI-1)/2
-          IF(IROMB.EQ.1.AND.IDRTI.EQ.256) MAXWV=(JMAXI-1)/4
-       ENDIF
-       IF((IROMB.NE.0.AND.IROMB.NE.1).OR.MAXWV.LT.0) IRET=42
-    ENDIF
+    if(iret.eq.0) then
+      iromb=ipopt(1)
+      maxwv=ipopt(2)
+      if(maxwv.eq.-1) then
+        if(iromb.eq.0.and.idrti.eq.4) maxwv=(jmaxi-1)
+        if(iromb.eq.1.and.idrti.eq.4) maxwv=(jmaxi-1)/2
+        if(iromb.eq.0.and.idrti.eq.0) maxwv=(jmaxi-3)/2
+        if(iromb.eq.1.and.idrti.eq.0) maxwv=(jmaxi-3)/4
+        if(iromb.eq.0.and.idrti.eq.256) maxwv=(jmaxi-1)/2
+        if(iromb.eq.1.and.idrti.eq.256) maxwv=(jmaxi-1)/4
+      endif
+      if((iromb.ne.0.and.iromb.ne.1).or.maxwv.lt.0) iret=42
+    endif
     ! - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
     !  INTERPOLATE
-    IF(IRET.EQ.0) THEN
-       IF(NSCAN.EQ.0) THEN
-          ISKIPI=1
-          JSKIPI=IM
-       ELSE
-          ISKIPI=JM
-          JSKIPI=1
-       ENDIF
-       IF(ISCAN.EQ.1) ISKIPI=-ISKIPI
-       IF(JSCAN.EQ.0) JSKIPI=-JSKIPI
-       ISPEC=0
-       !  SPECIAL CASE OF GLOBAL CYLINDRICAL GRID
-       IF((KGDSO(1).EQ.0.OR.KGDSO(1).EQ.4).AND. &
-            MOD(KGDSO(2),2).EQ.0.AND.KGDSO(5).EQ.0.AND.KGDSO(11).EQ.0) THEN
-          IDRTO=KGDSO(1)
-          IMO=KGDSO(2)
-          JMO=KGDSO(3)
-          RLON2=KGDSO(8)*1.E-3
-          DLONO=(MOD(RLON2-1+3600,360.)+1)/(IMO-1)
-          IGO=NINT(360/ABS(DLONO))
-          IF(IMO.EQ.IGO.AND.IDRTO.EQ.0) THEN
-             RLAT1=KGDSO(4)*1.E-3
-             RLAT2=KGDSO(7)*1.E-3
-             DLAT=(RLAT2-RLAT1)/(JMO-1)
-             JGO=NINT(180/ABS(DLAT))
-             IF(JMO.EQ.JGO) IDRTO=256
-             IF(JMO.EQ.JGO.OR.JMO.EQ.JGO+1) ISPEC=1
-          ELSEIF(IMO.EQ.IGO.AND.IDRTO.EQ.4) THEN
-             JGO=KGDSO(10)*2
-             IF(JMO.EQ.JGO) ISPEC=1
-          ENDIF
-          IF(ISPEC.EQ.1) THEN
-             CALL SPTRUN(IROMB,MAXWV,IDRTI,IMAXI,JMAXI,IDRTO,IMO,JMO, &
-                  KM,IPRIME,ISKIPI,JSKIPI,MI,0,0,MO,0,GI,GO)
-          ENDIF
-          !  SPECIAL CASE OF POLAR STEREOGRAPHIC GRID
-       ELSEIF(KGDSO(1).EQ.5.AND. &
-            KGDSO(2).EQ.KGDSO(3).AND.MOD(KGDSO(2),2).EQ.1.AND. &
-            KGDSO(8).EQ.KGDSO(9).AND.KGDSO(11).EQ.64) THEN
-          NPS=KGDSO(2)
-          RLAT1=KGDSO(4)*1.E-3
-          RLON1=KGDSO(5)*1.E-3
-          ORIENT=KGDSO(7)*1.E-3
-          XMESH=KGDSO(8)
-          IPROJ=MOD(KGDSO(10)/128,2)
-          IP=(NPS+1)/2
-          H=(-1.)**IPROJ
-          DE=(1.+SIN(60./DPR))*RERTH
-          DR=DE*COS(RLAT1/DPR)/(1+H*SIN(RLAT1/DPR))
-          XP=1-H*SIN((RLON1-ORIENT)/DPR)*DR/XMESH
-          YP=1+COS((RLON1-ORIENT)/DPR)*DR/XMESH
-          IF(NINT(XP).EQ.IP.AND.NINT(YP).EQ.IP) THEN
-             IF(IPROJ.EQ.0) THEN
-                CALL SPTRUNS(IROMB,MAXWV,IDRTI,IMAXI,JMAXI,KM,NPS, &
-                     IPRIME,ISKIPI,JSKIPI,MI,MO,0,0,0, &
-                     60.,XMESH,ORIENT,GI,GO,GO2)
-             ELSE
-                CALL SPTRUNS(IROMB,MAXWV,IDRTI,IMAXI,JMAXI,KM,NPS, &
-                     IPRIME,ISKIPI,JSKIPI,MI,MO,0,0,0, &
-                     60.,XMESH,ORIENT,GI,GO2,GO)
-             ENDIF
-             ISPEC=1
-          ENDIF
-          !  SPECIAL CASE OF MERCATOR GRID
-       ELSEIF(KGDSO(1).EQ.1) THEN
-          NI=KGDSO(2)
-          NJ=KGDSO(3)
-          RLAT1=KGDSO(4)*1.E-3
-          RLON1=KGDSO(5)*1.E-3
-          RLON2=KGDSO(8)*1.E-3
-          RLATI=KGDSO(9)*1.E-3
-          ISCANO=MOD(KGDSO(11)/128,2)
-          JSCANO=MOD(KGDSO(11)/64,2)
-          NSCANO=MOD(KGDSO(11)/32,2)
-          DY=KGDSO(13)
-          HI=(-1.)**ISCANO
-          HJ=(-1.)**(1-JSCANO)
-          DLONO=HI*(MOD(HI*(RLON2-RLON1)-1+3600,360.)+1)/(NI-1)
-          DLATO=HJ*DY/(RERTH*COS(RLATI/DPR))*DPR
-          IF(NSCANO.EQ.0) THEN
-             CALL SPTRUNM(IROMB,MAXWV,IDRTI,IMAXI,JMAXI,KM,NI,NJ, &
-                  IPRIME,ISKIPI,JSKIPI,MI,MO,0,0,0, &
-                  RLAT1,RLON1,DLATO,DLONO,GI,GO)
-             ISPEC=1
-          ENDIF
-       ENDIF
-       !  GENERAL SLOW CASE
-       IF(ISPEC.EQ.0) THEN
-          CALL SPTRUNG(IROMB,MAXWV,IDRTI,IMAXI,JMAXI,KM,NO, &
-               IPRIME,ISKIPI,JSKIPI,MI,MO,0,0,0,RLAT,RLON,GI,GO)
-       ENDIF
-       DO K=1,KM
-          IBO(K)=0
-          DO N=1,NO
-             LO(N,K)=.TRUE.
-          ENDDO
-       ENDDO
-    ELSE
-       DO K=1,KM
-          IBO(K)=1
-          DO N=1,NO
-             LO(N,K)=.FALSE.
-             GO(N,K)=0.
-          ENDDO
-       ENDDO
-    ENDIF
+    if(iret.eq.0) then
+      if(nscan.eq.0) then
+        iskipi=1
+        jskipi=im
+      else
+        iskipi=jm
+        jskipi=1
+      endif
+      if(iscan.eq.1) iskipi=-iskipi
+      if(jscan.eq.0) jskipi=-jskipi
+      ispec=0
+      !  SPECIAL CASE OF GLOBAL CYLINDRICAL GRID
+      if((kgdso(1).eq.0.or.kgdso(1).eq.4).and. &
+         mod(kgdso(2),2).eq.0.and.kgdso(5).eq.0.and.kgdso(11).eq.0) then
+        idrto=kgdso(1)
+        imo=kgdso(2)
+        jmo=kgdso(3)
+        rlon2=kgdso(8)*1.e-3
+        dlono=(mod(rlon2-1+3600,360.)+1)/(imo-1)
+        igo=nint(360/abs(dlono))
+        if(imo.eq.igo.and.idrto.eq.0) then
+          rlat1=kgdso(4)*1.e-3
+          rlat2=kgdso(7)*1.e-3
+          dlat=(rlat2-rlat1)/(jmo-1)
+          jgo=nint(180/abs(dlat))
+          if(jmo.eq.jgo) idrto=256
+          if(jmo.eq.jgo.or.jmo.eq.jgo+1) ispec=1
+        elseif(imo.eq.igo.and.idrto.eq.4) then
+          jgo=kgdso(10)*2
+          if(jmo.eq.jgo) ispec=1
+        endif
+        if(ispec.eq.1) then
+          call sptrun(iromb,maxwv,idrti,imaxi,jmaxi,idrto,imo,jmo, &
+                      km,iprime,iskipi,jskipi,mi,0,0,mo,0,gi,go)
+        endif
+        !  SPECIAL CASE OF POLAR STEREOGRAPHIC GRID
+      elseif(kgdso(1).eq.5.and. &
+             kgdso(2).eq.kgdso(3).and.mod(kgdso(2),2).eq.1.and. &
+             kgdso(8).eq.kgdso(9).and.kgdso(11).eq.64) then
+        nps=kgdso(2)
+        rlat1=kgdso(4)*1.e-3
+        rlon1=kgdso(5)*1.e-3
+        orient=kgdso(7)*1.e-3
+        xmesh=kgdso(8)
+        iproj=mod(kgdso(10)/128,2)
+        ip=(nps+1)/2
+        h=(-1.)**iproj
+        de=(1.+sin(60./dpr))*rerth
+        dr=de*cos(rlat1/dpr)/(1+h*sin(rlat1/dpr))
+        xp=1-h*sin((rlon1-orient)/dpr)*dr/xmesh
+        yp=1+cos((rlon1-orient)/dpr)*dr/xmesh
+        if(nint(xp).eq.ip.and.nint(yp).eq.ip) then
+          if(iproj.eq.0) then
+            call sptruns(iromb,maxwv,idrti,imaxi,jmaxi,km,nps, &
+                         iprime,iskipi,jskipi,mi,mo,0,0,0, &
+                         60.,xmesh,orient,gi,go,go2)
+          else
+            call sptruns(iromb,maxwv,idrti,imaxi,jmaxi,km,nps, &
+                         iprime,iskipi,jskipi,mi,mo,0,0,0, &
+                         60.,xmesh,orient,gi,go2,go)
+          endif
+          ispec=1
+        endif
+        !  SPECIAL CASE OF MERCATOR GRID
+      elseif(kgdso(1).eq.1) then
+        ni=kgdso(2)
+        nj=kgdso(3)
+        rlat1=kgdso(4)*1.e-3
+        rlon1=kgdso(5)*1.e-3
+        rlon2=kgdso(8)*1.e-3
+        rlati=kgdso(9)*1.e-3
+        iscano=mod(kgdso(11)/128,2)
+        jscano=mod(kgdso(11)/64,2)
+        nscano=mod(kgdso(11)/32,2)
+        dy=kgdso(13)
+        hi=(-1.)**iscano
+        hj=(-1.)**(1-jscano)
+        dlono=hi*(mod(hi*(rlon2-rlon1)-1+3600,360.)+1)/(ni-1)
+        dlato=hj*dy/(rerth*cos(rlati/dpr))*dpr
+        if(nscano.eq.0) then
+          call sptrunm(iromb,maxwv,idrti,imaxi,jmaxi,km,ni,nj, &
+                       iprime,iskipi,jskipi,mi,mo,0,0,0, &
+                       rlat1,rlon1,dlato,dlono,gi,go)
+          ispec=1
+        endif
+      endif
+      !  GENERAL SLOW CASE
+      if(ispec.eq.0) then
+        call sptrung(iromb,maxwv,idrti,imaxi,jmaxi,km,no, &
+                     iprime,iskipi,jskipi,mi,mo,0,0,0,rlat,rlon,gi,go)
+      endif
+      do k=1,km
+        ibo(k)=0
+        do n=1,no
+          lo(n,k)=.true.
+        enddo
+      enddo
+    else
+      do k=1,km
+        ibo(k)=1
+        do n=1,no
+          lo(n,k)=.false.
+          go(n,k)=0.
+        enddo
+      enddo
+    endif
     ! - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-  END SUBROUTINE POLATES4_GRIB1
-
+  endsubroutine polates4_grib1
 
   !> Interpolate vector fields (spectral).
   !>
@@ -820,7 +816,7 @@ contains
   !> Output bitmaps will only be created when the output grid extends
   !> outside of the domain of the input grid.  the output field is set
   !> to 0 where the output bitmap is off.
-  !>        
+  !>
   !> ### Program History Log
   !> Date | Programmer | Comments
   !> -----|------------|---------
@@ -885,255 +881,255 @@ contains
   !> - 42 invalid spectral method parameters
   !>
   !> @author IREDELL @date 96-04-10
-  SUBROUTINE POLATEV4_grib2(IPOPT,IGDTNUMI,IGDTMPLI,IGDTLENI, &
-       IGDTNUMO,IGDTMPLO,IGDTLENO, &
-       MI,MO,KM,IBI,UI,VI, &
-       NO,RLAT,RLON,CROT,SROT,IBO,LO,UO,VO,IRET)
-    INTEGER,          INTENT(IN   ) :: IPOPT(20), IBI(KM)
-    INTEGER,          INTENT(IN   ) :: KM, MI, MO
-    INTEGER,          INTENT(  OUT) :: IRET, IBO(KM), NO
-    INTEGER,          INTENT(IN   ) :: IGDTNUMI, IGDTLENI
-    INTEGER,          INTENT(IN   ) :: IGDTMPLI(IGDTLENI)
-    INTEGER,          INTENT(IN   ) :: IGDTNUMO, IGDTLENO
-    INTEGER,          INTENT(IN   ) :: IGDTMPLO(IGDTLENO)
+  subroutine polatev4_grib2(ipopt,igdtnumi,igdtmpli,igdtleni, &
+                            igdtnumo,igdtmplo,igdtleno, &
+                            mi,mo,km,ibi,ui,vi, &
+                            no,rlat,rlon,crot,srot,ibo,lo,uo,vo,iret)
+    integer,intent(in) :: ipopt(20),ibi(km)
+    integer,intent(in) :: km,mi,mo
+    integer,intent(out) :: iret,ibo(km),no
+    integer,intent(in) :: igdtnumi,igdtleni
+    integer,intent(in) :: igdtmpli(igdtleni)
+    integer,intent(in) :: igdtnumo,igdtleno
+    integer,intent(in) :: igdtmplo(igdtleno)
     !
-    LOGICAL*1,        INTENT(  OUT) :: LO(MO,KM)
+    logical*1,intent(out) :: lo(mo,km)
     !
-    REAL,             INTENT(IN   ) :: UI(MI,KM),VI(MI,KM)
-    REAL,             INTENT(  OUT) :: UO(MO,KM),VO(MO,KM)
-    REAL,             INTENT(INOUT) :: RLAT(MO),RLON(MO)
-    REAL,             INTENT(  OUT) :: CROT(MO),SROT(MO)
+    real,intent(in) :: ui(mi,km),vi(mi,km)
+    real,intent(out) :: uo(mo,km),vo(mo,km)
+    real,intent(inout) :: rlat(mo),rlon(mo)
+    real,intent(out) :: crot(mo),srot(mo)
     !
-    REAL,                 PARAMETER :: FILL=-9999.
-    REAL,                 PARAMETER :: PI=3.14159265358979
-    REAL,                 PARAMETER :: DPR=180./PI
+    real,parameter :: fill=-9999.
+    real,parameter :: pi=3.14159265358979
+    real,parameter :: dpr=180./pi
     !
-    INTEGER                         :: IDRTO, IROMB, ISKIPI, ISPEC
-    INTEGER                         :: IDRTI, IMAXI, JMAXI, IM, JM
-    INTEGER                         :: IPRIME, IG, IMO, JMO, IGO, JGO
-    INTEGER                         :: ISCAN, JSCAN, NSCAN
-    INTEGER                         :: ISCANO, JSCANO, NSCANO
-    INTEGER                         :: ISCALE, IP, IPROJ, JSKIPI, JG
-    INTEGER                         :: K, MAXWV, N, NI, NJ, NPS
+    integer                         :: idrto,iromb,iskipi,ispec
+    integer                         :: idrti,imaxi,jmaxi,im,jm
+    integer                         :: iprime,ig,imo,jmo,igo,jgo
+    integer                         :: iscan,jscan,nscan
+    integer                         :: iscano,jscano,nscano
+    integer                         :: iscale,ip,iproj,jskipi,jg
+    integer                         :: k,maxwv,n,ni,nj,nps
     !
-    REAL                            :: DLAT, DLON, DLATO, DLONO, DE, DR, DY
-    REAL                            :: E2, H, HI, HJ, DUMM(1)
-    REAL                            :: ORIENT, RERTH, SLAT
-    REAL                            :: RLAT1, RLON1, RLAT2, RLON2, RLATI
-    REAL                            :: UROT, VROT, UO2(MO,KM),VO2(MO,KM)
-    REAL                            :: XMESH, XP, YP, XPTS(MO),YPTS(MO)
+    real                            :: dlat,dlon,dlato,dlono,de,dr,dy
+    real                            :: e2,h,hi,hj,dumm(1)
+    real                            :: orient,rerth,slat
+    real                            :: rlat1,rlon1,rlat2,rlon2,rlati
+    real                            :: urot,vrot,uo2(mo,km),vo2(mo,km)
+    real                            :: xmesh,xp,yp,xpts(mo),ypts(mo)
 
-    type(grib2_descriptor) :: desc_in, desc_out
-    class(ip_grid), allocatable :: grid_in, grid_out
+    type(grib2_descriptor) :: desc_in,desc_out
+    class(ip_grid),allocatable :: grid_in,grid_out
 
-    desc_in = init_descriptor(igdtnumi, igdtleni, igdtmpli)
-    desc_out = init_descriptor(igdtnumo, igdtleno, igdtmplo)
+    desc_in=init_descriptor(igdtnumi,igdtleni,igdtmpli)
+    desc_out=init_descriptor(igdtnumo,igdtleno,igdtmplo)
 
-    call init_grid(grid_in, desc_in)
-    call init_grid(grid_out, desc_out)
+    call init_grid(grid_in,desc_in)
+    call init_grid(grid_out,desc_out)
 
     ! - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
     !  COMPUTE NUMBER OF OUTPUT POINTS AND THEIR LATITUDES AND LONGITUDES.
-    IRET=0
-    IF(IGDTNUMO.GE.0) THEN
-       CALL GDSWZD(grid_out, 0,MO,FILL,XPTS,YPTS, &
-            RLON,RLAT,NO,CROT,SROT)
-       IF(NO.EQ.0) IRET=3
-    ENDIF
+    iret=0
+    if(igdtnumo.ge.0) then
+      call gdswzd(grid_out,0,mo,fill,xpts,ypts, &
+                  rlon,rlat,no,crot,srot)
+      if(no.eq.0) iret=3
+    endif
     ! - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
     !  AFFIRM APPROPRIATE INPUT GRID
     !    LAT/LON OR GAUSSIAN
     !    NO BITMAPS
     !    FULL ZONAL COVERAGE
     !    FULL MERIDIONAL COVERAGE
-    IDRTI=IGDTNUMI
-    IF(IDRTI==40) IDRTI=4
-    IF(IDRTI==0.OR.IDRTI==4)THEN
-       IM=IGDTMPLI(8)
-       JM=IGDTMPLI(9)
-       ISCALE=IGDTMPLI(10)*IGDTMPLI(11)
-       IF(ISCALE==0) ISCALE=10**6
-       RLON1=FLOAT(IGDTMPLI(13))/FLOAT(ISCALE)
-       RLON2=FLOAT(IGDTMPLI(16))/FLOAT(ISCALE)
-       ISCAN=MOD(IGDTMPLI(19)/128,2)
-       JSCAN=MOD(IGDTMPLI(19)/64,2)
-       NSCAN=MOD(IGDTMPLI(19)/32,2)
-    ELSE
-       IRET=41
-    ENDIF
-    DO K=1,KM
-       IF(IBI(K).NE.0) IRET=41
-    ENDDO
-    IF(IRET.EQ.0) THEN
-       IF(ISCAN.EQ.0) THEN
-          DLON=(MOD(RLON2-RLON1-1+3600,360.)+1)/(IM-1)
-       ELSE
-          DLON=-(MOD(RLON1-RLON2-1+3600,360.)+1)/(IM-1)
-       ENDIF
-       IG=NINT(360/ABS(DLON))
-       IPRIME=1+MOD(-NINT(RLON1/DLON)+IG,IG)
-       IMAXI=IG
-       JMAXI=JM
-       IF(MOD(IG,2).NE.0.OR.IM.LT.IG) IRET=41
-    ENDIF
-    IF(IRET.EQ.0.AND.IDRTI.EQ.0) THEN
-       ISCALE=IGDTMPLI(10)*IGDTMPLI(11)
-       IF(ISCALE==0) ISCALE=10**6
-       RLAT1=FLOAT(IGDTMPLI(12))/FLOAT(ISCALE)
-       RLAT2=FLOAT(IGDTMPLI(15))/FLOAT(ISCALE)
-       DLAT=(RLAT2-RLAT1)/(JM-1)
-       JG=NINT(180/ABS(DLAT))
-       IF(JM.EQ.JG) IDRTI=256
-       IF(JM.NE.JG.AND.JM.NE.JG+1) IRET=41
-    ELSEIF(IRET.EQ.0.AND.IDRTI.EQ.4) THEN
-       JG=IGDTMPLI(18)*2
-       IF(JM.NE.JG) IRET=41
-    ENDIF
+    idrti=igdtnumi
+    if(idrti.eq.40) idrti=4
+    if(idrti.eq.0.or.idrti.eq.4) then
+      im=igdtmpli(8)
+      jm=igdtmpli(9)
+      iscale=igdtmpli(10)*igdtmpli(11)
+      if(iscale.eq.0) iscale=10**6
+      rlon1=float(igdtmpli(13))/float(iscale)
+      rlon2=float(igdtmpli(16))/float(iscale)
+      iscan=mod(igdtmpli(19)/128,2)
+      jscan=mod(igdtmpli(19)/64,2)
+      nscan=mod(igdtmpli(19)/32,2)
+    else
+      iret=41
+    endif
+    do k=1,km
+      if(ibi(k).ne.0) iret=41
+    enddo
+    if(iret.eq.0) then
+      if(iscan.eq.0) then
+        dlon=(mod(rlon2-rlon1-1+3600,360.)+1)/(im-1)
+      else
+        dlon=-(mod(rlon1-rlon2-1+3600,360.)+1)/(im-1)
+      endif
+      ig=nint(360/abs(dlon))
+      iprime=1+mod(-nint(rlon1/dlon)+ig,ig)
+      imaxi=ig
+      jmaxi=jm
+      if(mod(ig,2).ne.0.or.im.lt.ig) iret=41
+    endif
+    if(iret.eq.0.and.idrti.eq.0) then
+      iscale=igdtmpli(10)*igdtmpli(11)
+      if(iscale.eq.0) iscale=10**6
+      rlat1=float(igdtmpli(12))/float(iscale)
+      rlat2=float(igdtmpli(15))/float(iscale)
+      dlat=(rlat2-rlat1)/(jm-1)
+      jg=nint(180/abs(dlat))
+      if(jm.eq.jg) idrti=256
+      if(jm.ne.jg.and.jm.ne.jg+1) iret=41
+    elseif(iret.eq.0.and.idrti.eq.4) then
+      jg=igdtmpli(18)*2
+      if(jm.ne.jg) iret=41
+    endif
     ! - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
     !  SET PARAMETERS
-    IF(IRET.EQ.0) THEN
-       IROMB=IPOPT(1)
-       MAXWV=IPOPT(2)
-       IF(MAXWV.EQ.-1) THEN
-          IF(IROMB.EQ.0.AND.IDRTI.EQ.4) MAXWV=(JMAXI-1)
-          IF(IROMB.EQ.1.AND.IDRTI.EQ.4) MAXWV=(JMAXI-1)/2
-          IF(IROMB.EQ.0.AND.IDRTI.EQ.0) MAXWV=(JMAXI-3)/2
-          IF(IROMB.EQ.1.AND.IDRTI.EQ.0) MAXWV=(JMAXI-3)/4
-          IF(IROMB.EQ.0.AND.IDRTI.EQ.256) MAXWV=(JMAXI-1)/2
-          IF(IROMB.EQ.1.AND.IDRTI.EQ.256) MAXWV=(JMAXI-1)/4
-       ENDIF
-       IF((IROMB.NE.0.AND.IROMB.NE.1).OR.MAXWV.LT.0) IRET=42
-    ENDIF
+    if(iret.eq.0) then
+      iromb=ipopt(1)
+      maxwv=ipopt(2)
+      if(maxwv.eq.-1) then
+        if(iromb.eq.0.and.idrti.eq.4) maxwv=(jmaxi-1)
+        if(iromb.eq.1.and.idrti.eq.4) maxwv=(jmaxi-1)/2
+        if(iromb.eq.0.and.idrti.eq.0) maxwv=(jmaxi-3)/2
+        if(iromb.eq.1.and.idrti.eq.0) maxwv=(jmaxi-3)/4
+        if(iromb.eq.0.and.idrti.eq.256) maxwv=(jmaxi-1)/2
+        if(iromb.eq.1.and.idrti.eq.256) maxwv=(jmaxi-1)/4
+      endif
+      if((iromb.ne.0.and.iromb.ne.1).or.maxwv.lt.0) iret=42
+    endif
     ! - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
     !  INTERPOLATE
-    IF(IRET.EQ.0) THEN
-       IF(NSCAN.EQ.0) THEN
-          ISKIPI=1
-          JSKIPI=IM
-       ELSE
-          ISKIPI=JM
-          JSKIPI=1
-       ENDIF
-       IF(ISCAN.EQ.1) ISKIPI=-ISKIPI
-       IF(JSCAN.EQ.0) JSKIPI=-JSKIPI
-       ISPEC=0
-       !  SPECIAL CASE OF GLOBAL CYLINDRICAL GRID
-       IF((IGDTNUMO.EQ.0.OR.IGDTNUMO.EQ.40).AND. &
-            MOD(IGDTMPLO(8),2).EQ.0.AND.IGDTMPLO(13).EQ.0.AND. &
-            IGDTMPLO(19).EQ.0) THEN
-          IDRTO=IGDTNUMO
-          IF(IDRTO==40)IDRTO=4
-          IMO=IGDTMPLO(8)
-          JMO=IGDTMPLO(9)
-          ISCALE=IGDTMPLO(10)*IGDTMPLO(11)
-          IF(ISCALE==0) ISCALE=10**6
-          RLON2=FLOAT(IGDTMPLO(16))/FLOAT(ISCALE)
-          DLONO=(MOD(RLON2-1+3600,360.)+1)/(IMO-1)
-          IGO=NINT(360/ABS(DLONO))
-          IF(IMO.EQ.IGO.AND.IDRTO.EQ.0) THEN
-             RLAT1=FLOAT(IGDTMPLO(12))/FLOAT(ISCALE)
-             RLAT2=FLOAT(IGDTMPLO(15))/FLOAT(ISCALE)
-             DLAT=(RLAT2-RLAT1)/(JMO-1)
-             JGO=NINT(180/ABS(DLAT))
-             IF(JMO.EQ.JGO) IDRTO=256
-             IF(JMO.EQ.JGO.OR.JMO.EQ.JGO+1) ISPEC=1
-          ELSEIF(IMO.EQ.IGO.AND.IDRTO.EQ.4) THEN
-             JGO=IGDTMPLO(18)*2
-             IF(JMO.EQ.JGO) ISPEC=1
-          ENDIF
-          IF(ISPEC.EQ.1) THEN
-             CALL SPTRUNV(IROMB,MAXWV,IDRTI,IMAXI,JMAXI,IDRTO,IMO,JMO, &
-                  KM,IPRIME,ISKIPI,JSKIPI,MI,0,0,MO,0,UI,VI, &
-                  .TRUE.,UO,VO,.FALSE.,DUMM,DUMM,.FALSE.,DUMM,DUMM)
-          ENDIF
-          !  SPECIAL CASE OF POLAR STEREOGRAPHIC GRID
-       ELSEIF(IGDTNUMO.EQ.20.AND. &
-            IGDTMPLO(8).EQ.IGDTMPLO(9).AND.MOD(IGDTMPLO(8),2).EQ.1.AND. &
-            IGDTMPLO(15).EQ.IGDTMPLO(16).AND.IGDTMPLO(18).EQ.64.AND. &
-            MOD(IGDTMPLO(12)/8,2).EQ.1) THEN
-          NPS=IGDTMPLO(8)
-          RLAT1=FLOAT(IGDTMPLO(10))*1.E-6
-          RLON1=FLOAT(IGDTMPLO(11))*1.E-6
-          ORIENT=FLOAT(IGDTMPLO(14))*1.E-6
-          XMESH=FLOAT(IGDTMPLO(15))*1.E-3
-          IPROJ=MOD(IGDTMPLO(17)/128,2)
-          IP=(NPS+1)/2
-          H=(-1.)**IPROJ
-          SLAT=FLOAT(ABS(IGDTMPLO(13)))*1.E-6
-          CALL EARTH_RADIUS(IGDTMPLO,IGDTLENO,RERTH,E2)
-          DE=(1.+SIN(SLAT/DPR))*RERTH
-          DR=DE*COS(RLAT1/DPR)/(1+H*SIN(RLAT1/DPR))
-          XP=1-H*SIN((RLON1-ORIENT)/DPR)*DR/XMESH
-          YP=1+COS((RLON1-ORIENT)/DPR)*DR/XMESH
-          IF(NINT(XP).EQ.IP.AND.NINT(YP).EQ.IP) THEN
-             IF(IPROJ.EQ.0) THEN
-                CALL SPTRUNSV(IROMB,MAXWV,IDRTI,IMAXI,JMAXI,KM,NPS, &
-                     IPRIME,ISKIPI,JSKIPI,MI,MO,0,0,0, &
-                     SLAT,XMESH,ORIENT,UI,VI,.TRUE.,UO,VO,UO2,VO2, &
-                     .FALSE.,DUMM,DUMM,DUMM,DUMM, &
-                     .FALSE.,DUMM,DUMM,DUMM,DUMM)
-             ELSE
-                CALL SPTRUNSV(IROMB,MAXWV,IDRTI,IMAXI,JMAXI,KM,NPS, &
-                     IPRIME,ISKIPI,JSKIPI,MI,MO,0,0,0, &
-                     SLAT,XMESH,ORIENT,UI,VI,.TRUE.,UO2,VO2,UO,VO, &
-                     .FALSE.,DUMM,DUMM,DUMM,DUMM, &
-                     .FALSE.,DUMM,DUMM,DUMM,DUMM)
-             ENDIF
-             ISPEC=1
-          ENDIF
-          !  SPECIAL CASE OF MERCATOR GRID
-       ELSEIF(IGDTNUMO.EQ.10) THEN
-          NI=IGDTMPLO(8)
-          NJ=IGDTMPLO(9)
-          RLAT1=FLOAT(IGDTMPLO(10))*1.0E-6
-          RLON1=FLOAT(IGDTMPLO(11))*1.0E-6
-          RLON2=FLOAT(IGDTMPLO(15))*1.0E-6
-          RLATI=FLOAT(IGDTMPLO(13))*1.0E-6
-          ISCANO=MOD(IGDTMPLO(16)/128,2)
-          JSCANO=MOD(IGDTMPLO(16)/64,2)
-          NSCANO=MOD(IGDTMPLO(16)/32,2)
-          DY=FLOAT(IGDTMPLO(19))*1.0E-3
-          HI=(-1.)**ISCANO
-          HJ=(-1.)**(1-JSCANO)
-          CALL EARTH_RADIUS(IGDTMPLO,IGDTLENO,RERTH,E2)
-          DLONO=HI*(MOD(HI*(RLON2-RLON1)-1+3600,360.)+1)/(NI-1)
-          DLATO=HJ*DY/(RERTH*COS(RLATI/DPR))*DPR
-          IF(NSCANO.EQ.0) THEN
-             CALL SPTRUNMV(IROMB,MAXWV,IDRTI,IMAXI,JMAXI,KM,NI,NJ, &
-                  IPRIME,ISKIPI,JSKIPI,MI,MO,0,0,0, &
-                  RLAT1,RLON1,DLATO,DLONO,UI,VI, &
-                  .TRUE.,UO,VO,.FALSE.,DUMM,DUMM,.FALSE.,DUMM,DUMM)
-             ISPEC=1
-          ENDIF
-       ENDIF
-       !  GENERAL SLOW CASE
-       IF(ISPEC.EQ.0) THEN
-          CALL SPTRUNGV(IROMB,MAXWV,IDRTI,IMAXI,JMAXI,KM,NO, &
-               IPRIME,ISKIPI,JSKIPI,MI,MO,0,0,0,RLAT,RLON, &
-               UI,VI,.TRUE.,UO,VO,.FALSE.,DUMM,DUMM,.FALSE.,DUMM,DUMM)
-          DO K=1,KM
-             IBO(K)=0
-             DO N=1,NO
-                LO(N,K)=.TRUE.
-                UROT=CROT(N)*UO(N,K)-SROT(N)*VO(N,K)
-                VROT=SROT(N)*UO(N,K)+CROT(N)*VO(N,K)
-                UO(N,K)=UROT
-                VO(N,K)=VROT
-             ENDDO
-          ENDDO
-       ENDIF
-    ELSE
-       DO K=1,KM
-          IBO(K)=1
-          DO N=1,NO
-             LO(N,K)=.FALSE.
-             UO(N,K)=0.
-             VO(N,K)=0.
-          ENDDO
-       ENDDO
-    ENDIF
+    if(iret.eq.0) then
+      if(nscan.eq.0) then
+        iskipi=1
+        jskipi=im
+      else
+        iskipi=jm
+        jskipi=1
+      endif
+      if(iscan.eq.1) iskipi=-iskipi
+      if(jscan.eq.0) jskipi=-jskipi
+      ispec=0
+      !  SPECIAL CASE OF GLOBAL CYLINDRICAL GRID
+      if((igdtnumo.eq.0.or.igdtnumo.eq.40).and. &
+         mod(igdtmplo(8),2).eq.0.and.igdtmplo(13).eq.0.and. &
+         igdtmplo(19).eq.0) then
+        idrto=igdtnumo
+        if(idrto.eq.40) idrto=4
+        imo=igdtmplo(8)
+        jmo=igdtmplo(9)
+        iscale=igdtmplo(10)*igdtmplo(11)
+        if(iscale.eq.0) iscale=10**6
+        rlon2=float(igdtmplo(16))/float(iscale)
+        dlono=(mod(rlon2-1+3600,360.)+1)/(imo-1)
+        igo=nint(360/abs(dlono))
+        if(imo.eq.igo.and.idrto.eq.0) then
+          rlat1=float(igdtmplo(12))/float(iscale)
+          rlat2=float(igdtmplo(15))/float(iscale)
+          dlat=(rlat2-rlat1)/(jmo-1)
+          jgo=nint(180/abs(dlat))
+          if(jmo.eq.jgo) idrto=256
+          if(jmo.eq.jgo.or.jmo.eq.jgo+1) ispec=1
+        elseif(imo.eq.igo.and.idrto.eq.4) then
+          jgo=igdtmplo(18)*2
+          if(jmo.eq.jgo) ispec=1
+        endif
+        if(ispec.eq.1) then
+          call sptrunv(iromb,maxwv,idrti,imaxi,jmaxi,idrto,imo,jmo, &
+                       km,iprime,iskipi,jskipi,mi,0,0,mo,0,ui,vi, &
+                       .true.,uo,vo,.false.,dumm,dumm,.false.,dumm,dumm)
+        endif
+        !  SPECIAL CASE OF POLAR STEREOGRAPHIC GRID
+      elseif(igdtnumo.eq.20.and. &
+             igdtmplo(8).eq.igdtmplo(9).and.mod(igdtmplo(8),2).eq.1.and. &
+             igdtmplo(15).eq.igdtmplo(16).and.igdtmplo(18).eq.64.and. &
+             mod(igdtmplo(12)/8,2).eq.1) then
+        nps=igdtmplo(8)
+        rlat1=float(igdtmplo(10))*1.e-6
+        rlon1=float(igdtmplo(11))*1.e-6
+        orient=float(igdtmplo(14))*1.e-6
+        xmesh=float(igdtmplo(15))*1.e-3
+        iproj=mod(igdtmplo(17)/128,2)
+        ip=(nps+1)/2
+        h=(-1.)**iproj
+        slat=float(abs(igdtmplo(13)))*1.e-6
+        call earth_radius(igdtmplo,igdtleno,rerth,e2)
+        de=(1.+sin(slat/dpr))*rerth
+        dr=de*cos(rlat1/dpr)/(1+h*sin(rlat1/dpr))
+        xp=1-h*sin((rlon1-orient)/dpr)*dr/xmesh
+        yp=1+cos((rlon1-orient)/dpr)*dr/xmesh
+        if(nint(xp).eq.ip.and.nint(yp).eq.ip) then
+          if(iproj.eq.0) then
+            call sptrunsv(iromb,maxwv,idrti,imaxi,jmaxi,km,nps, &
+                          iprime,iskipi,jskipi,mi,mo,0,0,0, &
+                          slat,xmesh,orient,ui,vi,.true.,uo,vo,uo2,vo2, &
+                          .false.,dumm,dumm,dumm,dumm, &
+                          .false.,dumm,dumm,dumm,dumm)
+          else
+            call sptrunsv(iromb,maxwv,idrti,imaxi,jmaxi,km,nps, &
+                          iprime,iskipi,jskipi,mi,mo,0,0,0, &
+                          slat,xmesh,orient,ui,vi,.true.,uo2,vo2,uo,vo, &
+                          .false.,dumm,dumm,dumm,dumm, &
+                          .false.,dumm,dumm,dumm,dumm)
+          endif
+          ispec=1
+        endif
+        !  SPECIAL CASE OF MERCATOR GRID
+      elseif(igdtnumo.eq.10) then
+        ni=igdtmplo(8)
+        nj=igdtmplo(9)
+        rlat1=float(igdtmplo(10))*1.0e-6
+        rlon1=float(igdtmplo(11))*1.0e-6
+        rlon2=float(igdtmplo(15))*1.0e-6
+        rlati=float(igdtmplo(13))*1.0e-6
+        iscano=mod(igdtmplo(16)/128,2)
+        jscano=mod(igdtmplo(16)/64,2)
+        nscano=mod(igdtmplo(16)/32,2)
+        dy=float(igdtmplo(19))*1.0e-3
+        hi=(-1.)**iscano
+        hj=(-1.)**(1-jscano)
+        call earth_radius(igdtmplo,igdtleno,rerth,e2)
+        dlono=hi*(mod(hi*(rlon2-rlon1)-1+3600,360.)+1)/(ni-1)
+        dlato=hj*dy/(rerth*cos(rlati/dpr))*dpr
+        if(nscano.eq.0) then
+          call sptrunmv(iromb,maxwv,idrti,imaxi,jmaxi,km,ni,nj, &
+                        iprime,iskipi,jskipi,mi,mo,0,0,0, &
+                        rlat1,rlon1,dlato,dlono,ui,vi, &
+                        .true.,uo,vo,.false.,dumm,dumm,.false.,dumm,dumm)
+          ispec=1
+        endif
+      endif
+      !  GENERAL SLOW CASE
+      if(ispec.eq.0) then
+        call sptrungv(iromb,maxwv,idrti,imaxi,jmaxi,km,no, &
+                      iprime,iskipi,jskipi,mi,mo,0,0,0,rlat,rlon, &
+                      ui,vi,.true.,uo,vo,.false.,dumm,dumm,.false.,dumm,dumm)
+        do k=1,km
+          ibo(k)=0
+          do n=1,no
+            lo(n,k)=.true.
+            urot=crot(n)*uo(n,k)-srot(n)*vo(n,k)
+            vrot=srot(n)*uo(n,k)+crot(n)*vo(n,k)
+            uo(n,k)=urot
+            vo(n,k)=vrot
+          enddo
+        enddo
+      endif
+    else
+      do k=1,km
+        ibo(k)=1
+        do n=1,no
+          lo(n,k)=.false.
+          uo(n,k)=0.
+          vo(n,k)=0.
+        enddo
+      enddo
+    endif
     ! - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-  END SUBROUTINE POLATEV4_GRIB2
+  endsubroutine polatev4_grib2
 
   !> Interpolate vector fields (spectral).
   !>
@@ -1179,7 +1175,7 @@ contains
   !> Output bitmaps will only be created when the output grid extends
   !> outside of the domain of the input grid. The output field is set
   !> to 0 where the output bitmap is off.
-  !>        
+  !>
   !> ### Program History Log
   !> Date | Programmer | Comments
   !> -----|------------|---------
@@ -1219,232 +1215,232 @@ contains
   !> - 42 invalid spectral method parameters
   !>
   !> @author IREDELL @date 96-04-10
-  SUBROUTINE POLATEV4_grib1(IPOPT,KGDSI,KGDSO,MI,MO,KM,IBI,UI,VI, &
-       NO,RLAT,RLON,CROT,SROT,IBO,LO,UO,VO,IRET)
-    INTEGER,          INTENT(IN   ) :: IPOPT(20), IBI(KM)
-    INTEGER,          INTENT(IN   ) :: KM, MI, MO
-    INTEGER,          INTENT(  OUT) :: IRET, IBO(KM)
-    INTEGER,          INTENT(IN) :: KGDSI(200),KGDSO(200)
+  subroutine polatev4_grib1(ipopt,kgdsi,kgdso,mi,mo,km,ibi,ui,vi, &
+                            no,rlat,rlon,crot,srot,ibo,lo,uo,vo,iret)
+    integer,intent(in) :: ipopt(20),ibi(km)
+    integer,intent(in) :: km,mi,mo
+    integer,intent(out) :: iret,ibo(km)
+    integer,intent(in) :: kgdsi(200),kgdso(200)
     !
-    LOGICAL*1,        INTENT(  OUT) :: LO(MO,KM)
+    logical*1,intent(out) :: lo(mo,km)
     !
-    REAL,             INTENT(IN   ) :: UI(MI,KM),VI(MI,KM)
-    REAL,             INTENT(  OUT) :: UO(MO,KM),VO(MO,KM)
-    REAL,             INTENT(INOUT) :: RLAT(MO),RLON(MO)
-    REAL,             INTENT(  OUT) :: CROT(MO),SROT(MO)
+    real,intent(in) :: ui(mi,km),vi(mi,km)
+    real,intent(out) :: uo(mo,km),vo(mo,km)
+    real,intent(inout) :: rlat(mo),rlon(mo)
+    real,intent(out) :: crot(mo),srot(mo)
     !
-    REAL,                 PARAMETER :: FILL=-9999.
-    REAL,                 PARAMETER :: RERTH=6.3712E6
-    REAL,                 PARAMETER :: PI=3.14159265358979
-    REAL,                 PARAMETER :: DPR=180./PI
+    real,parameter :: fill=-9999.
+    real,parameter :: rerth=6.3712e6
+    real,parameter :: pi=3.14159265358979
+    real,parameter :: dpr=180./pi
     !
-    INTEGER                         :: IDRTO, IROMB, ISKIPI, ISPEC
-    INTEGER                         :: IDRTI, IMAXI, JMAXI, IM, JM
-    INTEGER                         :: IPRIME, IG, IMO, JMO, IGO, JGO
-    INTEGER                         :: ISCAN, JSCAN, NSCAN
-    INTEGER                         :: ISCANO, JSCANO, NSCANO
-    INTEGER                         :: IP, IPROJ, JSKIPI, JG
-    INTEGER                         :: K, MAXWV, N, NI, NJ, NO, NPS
+    integer                         :: idrto,iromb,iskipi,ispec
+    integer                         :: idrti,imaxi,jmaxi,im,jm
+    integer                         :: iprime,ig,imo,jmo,igo,jgo
+    integer                         :: iscan,jscan,nscan
+    integer                         :: iscano,jscano,nscano
+    integer                         :: ip,iproj,jskipi,jg
+    integer                         :: k,maxwv,n,ni,nj,no,nps
     !
-    REAL                            :: DLAT, DLON, DLATO, DLONO, DE, DR, DY
-    REAL                            :: H, HI, HJ, DUMM(1)
-    REAL                            :: ORIENT
-    REAL                            :: RLAT1, RLON1, RLAT2, RLON2, RLATI
-    REAL                            :: UROT, VROT, UO2(MO,KM),VO2(MO,KM)
-    REAL                            :: XMESH, XP, YP, XPTS(MO),YPTS(MO)
+    real                            :: dlat,dlon,dlato,dlono,de,dr,dy
+    real                            :: h,hi,hj,dumm(1)
+    real                            :: orient
+    real                            :: rlat1,rlon1,rlat2,rlon2,rlati
+    real                            :: urot,vrot,uo2(mo,km),vo2(mo,km)
+    real                            :: xmesh,xp,yp,xpts(mo),ypts(mo)
 
-    type(grib1_descriptor) :: desc_in, desc_out
-    class(ip_grid), allocatable :: grid_in, grid_out
+    type(grib1_descriptor) :: desc_in,desc_out
+    class(ip_grid),allocatable :: grid_in,grid_out
 
-    desc_in = init_descriptor(kgdsi)
-    desc_out = init_descriptor(kgdso)
+    desc_in=init_descriptor(kgdsi)
+    desc_out=init_descriptor(kgdso)
 
-    call init_grid(grid_in, desc_in)
-    call init_grid(grid_out, desc_out)
+    call init_grid(grid_in,desc_in)
+    call init_grid(grid_out,desc_out)
     ! - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
     !  COMPUTE NUMBER OF OUTPUT POINTS AND THEIR LATITUDES AND LONGITUDES.
-    IRET=0
-    IF(KGDSO(1).GE.0) THEN
-       CALL GDSWZD(grid_out, 0,MO,FILL,XPTS,YPTS,RLON,RLAT,NO,CROT,SROT)
-       IF(NO.EQ.0) IRET=3
-    ENDIF
+    iret=0
+    if(kgdso(1).ge.0) then
+      call gdswzd(grid_out,0,mo,fill,xpts,ypts,rlon,rlat,no,crot,srot)
+      if(no.eq.0) iret=3
+    endif
     ! - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
     !  AFFIRM APPROPRIATE INPUT GRID
     !    LAT/LON OR GAUSSIAN
     !    NO BITMAPS
     !    FULL ZONAL COVERAGE
     !    FULL MERIDIONAL COVERAGE
-    IDRTI=KGDSI(1)
-    IM=KGDSI(2)
-    JM=KGDSI(3)
-    RLON1=KGDSI(5)*1.E-3
-    RLON2=KGDSI(8)*1.E-3
-    ISCAN=MOD(KGDSI(11)/128,2)
-    JSCAN=MOD(KGDSI(11)/64,2)
-    NSCAN=MOD(KGDSI(11)/32,2)
-    IF(IDRTI.NE.0.AND.IDRTI.NE.4) IRET=41
-    DO K=1,KM
-       IF(IBI(K).NE.0) IRET=41
-    ENDDO
-    IF(IRET.EQ.0) THEN
-       IF(ISCAN.EQ.0) THEN
-          DLON=(MOD(RLON2-RLON1-1+3600,360.)+1)/(IM-1)
-       ELSE
-          DLON=-(MOD(RLON1-RLON2-1+3600,360.)+1)/(IM-1)
-       ENDIF
-       IG=NINT(360/ABS(DLON))
-       IPRIME=1+MOD(-NINT(RLON1/DLON)+IG,IG)
-       IMAXI=IG
-       JMAXI=JM
-       IF(MOD(IG,2).NE.0.OR.IM.LT.IG) IRET=41
-    ENDIF
-    IF(IRET.EQ.0.AND.IDRTI.EQ.0) THEN
-       RLAT1=KGDSI(4)*1.E-3
-       RLAT2=KGDSI(7)*1.E-3
-       DLAT=(RLAT2-RLAT1)/(JM-1)
-       JG=NINT(180/ABS(DLAT))
-       IF(JM.EQ.JG) IDRTI=256
-       IF(JM.NE.JG.AND.JM.NE.JG+1) IRET=41
-    ELSEIF(IRET.EQ.0.AND.IDRTI.EQ.4) THEN
-       JG=KGDSI(10)*2
-       IF(JM.NE.JG) IRET=41
-    ENDIF
+    idrti=kgdsi(1)
+    im=kgdsi(2)
+    jm=kgdsi(3)
+    rlon1=kgdsi(5)*1.e-3
+    rlon2=kgdsi(8)*1.e-3
+    iscan=mod(kgdsi(11)/128,2)
+    jscan=mod(kgdsi(11)/64,2)
+    nscan=mod(kgdsi(11)/32,2)
+    if(idrti.ne.0.and.idrti.ne.4) iret=41
+    do k=1,km
+      if(ibi(k).ne.0) iret=41
+    enddo
+    if(iret.eq.0) then
+      if(iscan.eq.0) then
+        dlon=(mod(rlon2-rlon1-1+3600,360.)+1)/(im-1)
+      else
+        dlon=-(mod(rlon1-rlon2-1+3600,360.)+1)/(im-1)
+      endif
+      ig=nint(360/abs(dlon))
+      iprime=1+mod(-nint(rlon1/dlon)+ig,ig)
+      imaxi=ig
+      jmaxi=jm
+      if(mod(ig,2).ne.0.or.im.lt.ig) iret=41
+    endif
+    if(iret.eq.0.and.idrti.eq.0) then
+      rlat1=kgdsi(4)*1.e-3
+      rlat2=kgdsi(7)*1.e-3
+      dlat=(rlat2-rlat1)/(jm-1)
+      jg=nint(180/abs(dlat))
+      if(jm.eq.jg) idrti=256
+      if(jm.ne.jg.and.jm.ne.jg+1) iret=41
+    elseif(iret.eq.0.and.idrti.eq.4) then
+      jg=kgdsi(10)*2
+      if(jm.ne.jg) iret=41
+    endif
     ! - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
     !  SET PARAMETERS
-    IF(IRET.EQ.0) THEN
-       IROMB=IPOPT(1)
-       MAXWV=IPOPT(2)
-       IF(MAXWV.EQ.-1) THEN
-          IF(IROMB.EQ.0.AND.IDRTI.EQ.4) MAXWV=(JMAXI-1)
-          IF(IROMB.EQ.1.AND.IDRTI.EQ.4) MAXWV=(JMAXI-1)/2
-          IF(IROMB.EQ.0.AND.IDRTI.EQ.0) MAXWV=(JMAXI-3)/2
-          IF(IROMB.EQ.1.AND.IDRTI.EQ.0) MAXWV=(JMAXI-3)/4
-          IF(IROMB.EQ.0.AND.IDRTI.EQ.256) MAXWV=(JMAXI-1)/2
-          IF(IROMB.EQ.1.AND.IDRTI.EQ.256) MAXWV=(JMAXI-1)/4
-       ENDIF
-       IF((IROMB.NE.0.AND.IROMB.NE.1).OR.MAXWV.LT.0) IRET=42
-    ENDIF
+    if(iret.eq.0) then
+      iromb=ipopt(1)
+      maxwv=ipopt(2)
+      if(maxwv.eq.-1) then
+        if(iromb.eq.0.and.idrti.eq.4) maxwv=(jmaxi-1)
+        if(iromb.eq.1.and.idrti.eq.4) maxwv=(jmaxi-1)/2
+        if(iromb.eq.0.and.idrti.eq.0) maxwv=(jmaxi-3)/2
+        if(iromb.eq.1.and.idrti.eq.0) maxwv=(jmaxi-3)/4
+        if(iromb.eq.0.and.idrti.eq.256) maxwv=(jmaxi-1)/2
+        if(iromb.eq.1.and.idrti.eq.256) maxwv=(jmaxi-1)/4
+      endif
+      if((iromb.ne.0.and.iromb.ne.1).or.maxwv.lt.0) iret=42
+    endif
     ! - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
     !  INTERPOLATE
-    IF(IRET.EQ.0) THEN
-       IF(NSCAN.EQ.0) THEN
-          ISKIPI=1
-          JSKIPI=IM
-       ELSE
-          ISKIPI=JM
-          JSKIPI=1
-       ENDIF
-       IF(ISCAN.EQ.1) ISKIPI=-ISKIPI
-       IF(JSCAN.EQ.0) JSKIPI=-JSKIPI
-       ISPEC=0
-       !  SPECIAL CASE OF GLOBAL CYLINDRICAL GRID
-       IF((KGDSO(1).EQ.0.OR.KGDSO(1).EQ.4).AND. &
-            MOD(KGDSO(2),2).EQ.0.AND.KGDSO(5).EQ.0.AND. &
-            KGDSO(11).EQ.0) THEN
-          IDRTO=KGDSO(1)
-          IMO=KGDSO(2)
-          JMO=KGDSO(3)
-          RLON2=KGDSO(8)*1.E-3
-          DLONO=(MOD(RLON2-1+3600,360.)+1)/(IMO-1)
-          IGO=NINT(360/ABS(DLONO))
-          IF(IMO.EQ.IGO.AND.IDRTO.EQ.0) THEN
-             RLAT1=KGDSO(4)*1.E-3
-             RLAT2=KGDSO(7)*1.E-3
-             DLAT=(RLAT2-RLAT1)/(JMO-1)
-             JGO=NINT(180/ABS(DLAT))
-             IF(JMO.EQ.JGO) IDRTO=256
-             IF(JMO.EQ.JGO.OR.JMO.EQ.JGO+1) ISPEC=1
-          ELSEIF(IMO.EQ.IGO.AND.IDRTO.EQ.4) THEN
-             JGO=KGDSO(10)*2
-             IF(JMO.EQ.JGO) ISPEC=1
-          ENDIF
-          IF(ISPEC.EQ.1) THEN
-             CALL SPTRUNV(IROMB,MAXWV,IDRTI,IMAXI,JMAXI,IDRTO,IMO,JMO, &
-                  KM,IPRIME,ISKIPI,JSKIPI,MI,0,0,MO,0,UI,VI, &
-                  .TRUE.,UO,VO,.FALSE.,DUMM,DUMM,.FALSE.,DUMM,DUMM)
-          ENDIF
-          !  SPECIAL CASE OF POLAR STEREOGRAPHIC GRID
-       ELSEIF(KGDSO(1).EQ.5.AND. &
-            KGDSO(2).EQ.KGDSO(3).AND.MOD(KGDSO(2),2).EQ.1.AND. &
-            KGDSO(8).EQ.KGDSO(9).AND.KGDSO(11).EQ.64.AND. &
-            MOD(KGDSO(6)/8,2).EQ.1) THEN
-          NPS=KGDSO(2)
-          RLAT1=KGDSO(4)*1.E-3
-          RLON1=KGDSO(5)*1.E-3
-          ORIENT=KGDSO(7)*1.E-3
-          XMESH=KGDSO(8)
-          IPROJ=MOD(KGDSO(10)/128,2)
-          IP=(NPS+1)/2
-          H=(-1.)**IPROJ
-          DE=(1.+SIN(60./DPR))*RERTH
-          DR=DE*COS(RLAT1/DPR)/(1+H*SIN(RLAT1/DPR))
-          XP=1-H*SIN((RLON1-ORIENT)/DPR)*DR/XMESH
-          YP=1+COS((RLON1-ORIENT)/DPR)*DR/XMESH
-          IF(NINT(XP).EQ.IP.AND.NINT(YP).EQ.IP) THEN
-             IF(IPROJ.EQ.0) THEN
-                CALL SPTRUNSV(IROMB,MAXWV,IDRTI,IMAXI,JMAXI,KM,NPS, &
-                     IPRIME,ISKIPI,JSKIPI,MI,MO,0,0,0, &
-                     60.,XMESH,ORIENT,UI,VI,.TRUE.,UO,VO,UO2,VO2, &
-                     .FALSE.,DUMM,DUMM,DUMM,DUMM, &
-                     .FALSE.,DUMM,DUMM,DUMM,DUMM)
-             ELSE
-                CALL SPTRUNSV(IROMB,MAXWV,IDRTI,IMAXI,JMAXI,KM,NPS, &
-                     IPRIME,ISKIPI,JSKIPI,MI,MO,0,0,0, &
-                     60.,XMESH,ORIENT,UI,VI,.TRUE.,UO2,VO2,UO,VO, &
-                     .FALSE.,DUMM,DUMM,DUMM,DUMM, &
-                     .FALSE.,DUMM,DUMM,DUMM,DUMM)
-             ENDIF
-             ISPEC=1
-          ENDIF
-          !  SPECIAL CASE OF MERCATOR GRID
-       ELSEIF(KGDSO(1).EQ.1) THEN
-          NI=KGDSO(2)
-          NJ=KGDSO(3)
-          RLAT1=KGDSO(4)*1.E-3
-          RLON1=KGDSO(5)*1.E-3
-          RLON2=KGDSO(8)*1.E-3
-          RLATI=KGDSO(9)*1.E-3
-          ISCANO=MOD(KGDSO(11)/128,2)
-          JSCANO=MOD(KGDSO(11)/64,2)
-          NSCANO=MOD(KGDSO(11)/32,2)
-          DY=KGDSO(13)
-          HI=(-1.)**ISCANO
-          HJ=(-1.)**(1-JSCANO)
-          DLONO=HI*(MOD(HI*(RLON2-RLON1)-1+3600,360.)+1)/(NI-1)
-          DLATO=HJ*DY/(RERTH*COS(RLATI/DPR))*DPR
-          IF(NSCANO.EQ.0) THEN
-             CALL SPTRUNMV(IROMB,MAXWV,IDRTI,IMAXI,JMAXI,KM,NI,NJ, &
-                  IPRIME,ISKIPI,JSKIPI,MI,MO,0,0,0, &
-                  RLAT1,RLON1,DLATO,DLONO,UI,VI, &
-                  .TRUE.,UO,VO,.FALSE.,DUMM,DUMM,.FALSE.,DUMM,DUMM)
-             ISPEC=1
-          ENDIF
-       ENDIF
-       !  GENERAL SLOW CASE
-       IF(ISPEC.EQ.0) THEN
-          CALL SPTRUNGV(IROMB,MAXWV,IDRTI,IMAXI,JMAXI,KM,NO, &
-               IPRIME,ISKIPI,JSKIPI,MI,MO,0,0,0,RLAT,RLON, &
-               UI,VI,.TRUE.,UO,VO,.FALSE.,DUMM,DUMM,.FALSE.,DUMM,DUMM)
-          DO K=1,KM
-             IBO(K)=0
-             DO N=1,NO
-                LO(N,K)=.TRUE.
-                UROT=CROT(N)*UO(N,K)-SROT(N)*VO(N,K)
-                VROT=SROT(N)*UO(N,K)+CROT(N)*VO(N,K)
-                UO(N,K)=UROT
-                VO(N,K)=VROT
-             ENDDO
-          ENDDO
-       ENDIF
-    ELSE
-       DO K=1,KM
-          IBO(K)=1
-          DO N=1,NO
-             LO(N,K)=.FALSE.
-             UO(N,K)=0.
-             VO(N,K)=0.
-          ENDDO
-       ENDDO
-    ENDIF
-  END SUBROUTINE POLATEV4_GRIB1
-end module spectral_interp_mod
+    if(iret.eq.0) then
+      if(nscan.eq.0) then
+        iskipi=1
+        jskipi=im
+      else
+        iskipi=jm
+        jskipi=1
+      endif
+      if(iscan.eq.1) iskipi=-iskipi
+      if(jscan.eq.0) jskipi=-jskipi
+      ispec=0
+      !  SPECIAL CASE OF GLOBAL CYLINDRICAL GRID
+      if((kgdso(1).eq.0.or.kgdso(1).eq.4).and. &
+         mod(kgdso(2),2).eq.0.and.kgdso(5).eq.0.and. &
+         kgdso(11).eq.0) then
+        idrto=kgdso(1)
+        imo=kgdso(2)
+        jmo=kgdso(3)
+        rlon2=kgdso(8)*1.e-3
+        dlono=(mod(rlon2-1+3600,360.)+1)/(imo-1)
+        igo=nint(360/abs(dlono))
+        if(imo.eq.igo.and.idrto.eq.0) then
+          rlat1=kgdso(4)*1.e-3
+          rlat2=kgdso(7)*1.e-3
+          dlat=(rlat2-rlat1)/(jmo-1)
+          jgo=nint(180/abs(dlat))
+          if(jmo.eq.jgo) idrto=256
+          if(jmo.eq.jgo.or.jmo.eq.jgo+1) ispec=1
+        elseif(imo.eq.igo.and.idrto.eq.4) then
+          jgo=kgdso(10)*2
+          if(jmo.eq.jgo) ispec=1
+        endif
+        if(ispec.eq.1) then
+          call sptrunv(iromb,maxwv,idrti,imaxi,jmaxi,idrto,imo,jmo, &
+                       km,iprime,iskipi,jskipi,mi,0,0,mo,0,ui,vi, &
+                       .true.,uo,vo,.false.,dumm,dumm,.false.,dumm,dumm)
+        endif
+        !  SPECIAL CASE OF POLAR STEREOGRAPHIC GRID
+      elseif(kgdso(1).eq.5.and. &
+             kgdso(2).eq.kgdso(3).and.mod(kgdso(2),2).eq.1.and. &
+             kgdso(8).eq.kgdso(9).and.kgdso(11).eq.64.and. &
+             mod(kgdso(6)/8,2).eq.1) then
+        nps=kgdso(2)
+        rlat1=kgdso(4)*1.e-3
+        rlon1=kgdso(5)*1.e-3
+        orient=kgdso(7)*1.e-3
+        xmesh=kgdso(8)
+        iproj=mod(kgdso(10)/128,2)
+        ip=(nps+1)/2
+        h=(-1.)**iproj
+        de=(1.+sin(60./dpr))*rerth
+        dr=de*cos(rlat1/dpr)/(1+h*sin(rlat1/dpr))
+        xp=1-h*sin((rlon1-orient)/dpr)*dr/xmesh
+        yp=1+cos((rlon1-orient)/dpr)*dr/xmesh
+        if(nint(xp).eq.ip.and.nint(yp).eq.ip) then
+          if(iproj.eq.0) then
+            call sptrunsv(iromb,maxwv,idrti,imaxi,jmaxi,km,nps, &
+                          iprime,iskipi,jskipi,mi,mo,0,0,0, &
+                          60.,xmesh,orient,ui,vi,.true.,uo,vo,uo2,vo2, &
+                          .false.,dumm,dumm,dumm,dumm, &
+                          .false.,dumm,dumm,dumm,dumm)
+          else
+            call sptrunsv(iromb,maxwv,idrti,imaxi,jmaxi,km,nps, &
+                          iprime,iskipi,jskipi,mi,mo,0,0,0, &
+                          60.,xmesh,orient,ui,vi,.true.,uo2,vo2,uo,vo, &
+                          .false.,dumm,dumm,dumm,dumm, &
+                          .false.,dumm,dumm,dumm,dumm)
+          endif
+          ispec=1
+        endif
+        !  SPECIAL CASE OF MERCATOR GRID
+      elseif(kgdso(1).eq.1) then
+        ni=kgdso(2)
+        nj=kgdso(3)
+        rlat1=kgdso(4)*1.e-3
+        rlon1=kgdso(5)*1.e-3
+        rlon2=kgdso(8)*1.e-3
+        rlati=kgdso(9)*1.e-3
+        iscano=mod(kgdso(11)/128,2)
+        jscano=mod(kgdso(11)/64,2)
+        nscano=mod(kgdso(11)/32,2)
+        dy=kgdso(13)
+        hi=(-1.)**iscano
+        hj=(-1.)**(1-jscano)
+        dlono=hi*(mod(hi*(rlon2-rlon1)-1+3600,360.)+1)/(ni-1)
+        dlato=hj*dy/(rerth*cos(rlati/dpr))*dpr
+        if(nscano.eq.0) then
+          call sptrunmv(iromb,maxwv,idrti,imaxi,jmaxi,km,ni,nj, &
+                        iprime,iskipi,jskipi,mi,mo,0,0,0, &
+                        rlat1,rlon1,dlato,dlono,ui,vi, &
+                        .true.,uo,vo,.false.,dumm,dumm,.false.,dumm,dumm)
+          ispec=1
+        endif
+      endif
+      !  GENERAL SLOW CASE
+      if(ispec.eq.0) then
+        call sptrungv(iromb,maxwv,idrti,imaxi,jmaxi,km,no, &
+                      iprime,iskipi,jskipi,mi,mo,0,0,0,rlat,rlon, &
+                      ui,vi,.true.,uo,vo,.false.,dumm,dumm,.false.,dumm,dumm)
+        do k=1,km
+          ibo(k)=0
+          do n=1,no
+            lo(n,k)=.true.
+            urot=crot(n)*uo(n,k)-srot(n)*vo(n,k)
+            vrot=srot(n)*uo(n,k)+crot(n)*vo(n,k)
+            uo(n,k)=urot
+            vo(n,k)=vrot
+          enddo
+        enddo
+      endif
+    else
+      do k=1,km
+        ibo(k)=1
+        do n=1,no
+          lo(n,k)=.false.
+          uo(n,k)=0.
+          vo(n,k)=0.
+        enddo
+      enddo
+    endif
+  endsubroutine polatev4_grib1
+endmodule spectral_interp_mod

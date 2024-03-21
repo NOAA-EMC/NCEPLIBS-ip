@@ -16,15 +16,15 @@ module ipolatev_mod
   implicit none
 
   private
-  public :: ipolatev, ipolatev_grib2, ipolatev_grib1_single_field, ipolatev_grib1, ipolatev_grib2_single_field
+  public :: ipolatev,ipolatev_grib2,ipolatev_grib1_single_field,ipolatev_grib1,ipolatev_grib2_single_field
 
   interface ipolatev
-     module procedure ipolatev_grib1
-     module procedure ipolatev_grib1_single_field
-     module procedure ipolatev_grib2
-     module procedure ipolatev_grib2_single_field
-  end interface ipolatev
-  
+    module procedure ipolatev_grib1
+    module procedure ipolatev_grib1_single_field
+    module procedure ipolatev_grib2
+    module procedure ipolatev_grib2_single_field
+  endinterface ipolatev
+
 contains
 
   !> Interpolates vector fields between grids given ip_grid objects.
@@ -64,60 +64,60 @@ contains
   !> - 4x Invalid spectral method parameters.
   !> @date July 2021
   !> @author Kyle Gerheiser
-  SUBROUTINE ipolatev_grid(IP,IPOPT,grid_in,grid_out, &
-       MI,MO,KM,IBI,LI,UI,VI, &
-       NO,RLAT,RLON,CROT,SROT,IBO,LO,UO,VO,IRET)
-    class(ip_grid), intent(in) :: grid_in, grid_out
-    INTEGER,               INTENT(IN   ) :: IP, IPOPT(20), IBI(KM)
-    INTEGER,               INTENT(IN   ) :: KM, MI, MO
-    INTEGER,               INTENT(  OUT) :: IBO(KM), IRET, NO
+  subroutine ipolatev_grid(ip,ipopt,grid_in,grid_out, &
+                           mi,mo,km,ibi,li,ui,vi, &
+                           no,rlat,rlon,crot,srot,ibo,lo,uo,vo,iret)
+    class(ip_grid),intent(in) :: grid_in,grid_out
+    integer,intent(in) :: ip,ipopt(20),ibi(km)
+    integer,intent(in) :: km,mi,mo
+    integer,intent(out) :: ibo(km),iret,no
     !
-    LOGICAL*1,             INTENT(IN   ) :: LI(MI,KM)
-    LOGICAL*1,             INTENT(  OUT) :: LO(MO,KM)
+    logical*1,intent(in) :: li(mi,km)
+    logical*1,intent(out) :: lo(mo,km)
     !
-    REAL,                  INTENT(IN   ) :: UI(MI,KM),VI(MI,KM)
-    REAL,                  INTENT(INOUT) :: CROT(MO),SROT(MO)
-    REAL,                  INTENT(INOUT) :: RLAT(MO),RLON(MO)
-    REAL,                  INTENT(  OUT) :: UO(MO,KM),VO(MO,KM)
+    real,intent(in) :: ui(mi,km),vi(mi,km)
+    real,intent(inout) :: crot(mo),srot(mo)
+    real,intent(inout) :: rlat(mo),rlon(mo)
+    real,intent(out) :: uo(mo,km),vo(mo,km)
 
     select case(ip)
-    case(BILINEAR_INTERP_ID)
-       CALL interpolate_bilinear(IPOPT,grid_in,grid_out, &
-            MI,MO,KM,IBI,LI,UI,VI,&
-            NO,RLAT,RLON,CROT,SROT,IBO,LO,UO,VO,IRET)
-    case(BICUBIC_INTERP_ID)
-       CALL interpolate_bicubic(IPOPT,grid_in,grid_out,MI,MO,KM,IBI,LI,UI,VI,&
-            NO,RLAT,RLON,CROT,SROT,IBO,LO,UO,VO,IRET)
-    case(NEIGHBOR_INTERP_ID)
-       CALL interpolate_neighbor(IPOPT,grid_in,grid_out,MI,MO,KM,IBI,LI,UI,VI,&
-            NO,RLAT,RLON,CROT,SROT,IBO,LO,UO,VO,IRET)
-    case(BUDGET_INTERP_ID)
-       CALL interpolate_budget(IPOPT,grid_in,grid_out,MI,MO,KM,IBI,LI,UI,VI,&
-            NO,RLAT,RLON,CROT,SROT,IBO,LO,UO,VO,IRET)
-    case(SPECTRAL_INTERP_ID)
-       CALL interpolate_spectral(IPOPT,grid_in,grid_out, &
-            MI,MO,KM,IBI,UI,VI,&
-            NO,RLAT,RLON,CROT,SROT,IBO,LO,UO,VO,IRET)
-    case(NEIGHBOR_BUDGET_INTERP_ID)
-       CALL interpolate_neighbor_budget(IPOPT,grid_in,grid_out,MI,MO,KM,IBI,LI,UI,VI,&
-            NO,RLAT,RLON,CROT,SROT,IBO,LO,UO,VO,IRET)
+    case(bilinear_interp_id)
+      call interpolate_bilinear(ipopt,grid_in,grid_out, &
+                                mi,mo,km,ibi,li,ui,vi, &
+                                no,rlat,rlon,crot,srot,ibo,lo,uo,vo,iret)
+    case(bicubic_interp_id)
+      call interpolate_bicubic(ipopt,grid_in,grid_out,mi,mo,km,ibi,li,ui,vi, &
+                               no,rlat,rlon,crot,srot,ibo,lo,uo,vo,iret)
+    case(neighbor_interp_id)
+      call interpolate_neighbor(ipopt,grid_in,grid_out,mi,mo,km,ibi,li,ui,vi, &
+                                no,rlat,rlon,crot,srot,ibo,lo,uo,vo,iret)
+    case(budget_interp_id)
+      call interpolate_budget(ipopt,grid_in,grid_out,mi,mo,km,ibi,li,ui,vi, &
+                              no,rlat,rlon,crot,srot,ibo,lo,uo,vo,iret)
+    case(spectral_interp_id)
+      call interpolate_spectral(ipopt,grid_in,grid_out, &
+                                mi,mo,km,ibi,ui,vi, &
+                                no,rlat,rlon,crot,srot,ibo,lo,uo,vo,iret)
+    case(neighbor_budget_interp_id)
+      call interpolate_neighbor_budget(ipopt,grid_in,grid_out,mi,mo,km,ibi,li,ui,vi, &
+                                       no,rlat,rlon,crot,srot,ibo,lo,uo,vo,iret)
     case default
-       print *, "unrecognized interpolation option: ", ip
-       error stop
-       ! IF(IGDTNUMO.GE.0) NO=0
-       ! DO K=1,KM
-       !    IBO(K)=1
-       !    DO N=1,NO
-       !       LO(N,K)=.FALSE.
-       !       UO(N,K)=0.
-       !       VO(N,K)=0.
-       !    ENDDO
-       ! ENDDO
-       ! IRET=1
-    end select
+      print*,"unrecognized interpolation option: ",ip
+      error stop
+      ! IF(IGDTNUMO.GE.0) NO=0
+      ! DO K=1,KM
+      !    IBO(K)=1
+      !    DO N=1,NO
+      !       LO(N,K)=.FALSE.
+      !       UO(N,K)=0.
+      !       VO(N,K)=0.
+      !    ENDDO
+      ! ENDDO
+      ! IRET=1
+    endselect
 
-  end subroutine ipolatev_grid
-  
+  endsubroutine ipolatev_grid
+
   !> This subprogram interpolates vector fields from any grid to any
   !> grid given a grib2 descriptor.
   !>
@@ -153,7 +153,7 @@ contains
   !> and their latitudes and longitudes are also returned.
   !>
   !> On the other hand, data may be interpolated to a set of station
-  !> points if "igdtnumo"<0 (or subtracted from 255 for the budget 
+  !> points if "igdtnumo"<0 (or subtracted from 255 for the budget
   !> option), in which case the number of points and
   !> their latitudes and longitudes must be input.
   !>
@@ -380,58 +380,58 @@ contains
   !>
   !> @author Kyle Gerheiser @date July 2021
   subroutine ipolatev_grib2(ip,ipopt,igdtnumi,igdtmpli,igdtleni, &
-       igdtnumo,igdtmplo,igdtleno, &
-       mi,mo,km,ibi,li,ui,vi, &
-       no,rlat,rlon,crot,srot,ibo,lo,uo,vo,iret) bind(c)
-    USE ISO_C_BINDING, ONLY: C_INT, C_FLOAT, C_DOUBLE, C_BOOL, C_LONG
+                            igdtnumo,igdtmplo,igdtleno, &
+                            mi,mo,km,ibi,li,ui,vi, &
+                            no,rlat,rlon,crot,srot,ibo,lo,uo,vo,iret) bind(c)
+    use iso_c_binding,only:c_int,c_float,c_double,c_bool,c_long
 #if (LSIZE==8)
-    INTEGER(C_LONG),               INTENT(IN   ) :: IP, IPOPT(20), IBI(KM)
-    INTEGER(C_LONG),               INTENT(IN   ) :: KM, MI, MO
-    INTEGER(C_LONG),               INTENT(IN   ) :: IGDTNUMI, IGDTLENI
-    INTEGER(C_LONG),               INTENT(IN   ) :: IGDTMPLI(IGDTLENI)
-    INTEGER(C_LONG),               INTENT(IN   ) :: IGDTNUMO, IGDTLENO
-    INTEGER(C_LONG),               INTENT(IN   ) :: IGDTMPLO(IGDTLENO)
-    INTEGER(C_LONG),               INTENT(  OUT) :: IBO(KM), IRET, NO
+    integer(c_long),intent(in) :: ip,ipopt(20),ibi(km)
+    integer(c_long),intent(in) :: km,mi,mo
+    integer(c_long),intent(in) :: igdtnumi,igdtleni
+    integer(c_long),intent(in) :: igdtmpli(igdtleni)
+    integer(c_long),intent(in) :: igdtnumo,igdtleno
+    integer(c_long),intent(in) :: igdtmplo(igdtleno)
+    integer(c_long),intent(out) :: ibo(km),iret,no
 #else
-    INTEGER(C_INT),               INTENT(IN   ) :: IP, IPOPT(20), IBI(KM)
-    INTEGER(C_INT),               INTENT(IN   ) :: KM, MI, MO
-    INTEGER(C_INT),               INTENT(IN   ) :: IGDTNUMI, IGDTLENI
-    INTEGER(C_INT),               INTENT(IN   ) :: IGDTMPLI(IGDTLENI)
-    INTEGER(C_INT),               INTENT(IN   ) :: IGDTNUMO, IGDTLENO
-    INTEGER(C_INT),               INTENT(IN   ) :: IGDTMPLO(IGDTLENO)
-    INTEGER(C_INT),               INTENT(  OUT) :: IBO(KM), IRET, NO
+    integer(c_int),intent(in) :: ip,ipopt(20),ibi(km)
+    integer(c_int),intent(in) :: km,mi,mo
+    integer(c_int),intent(in) :: igdtnumi,igdtleni
+    integer(c_int),intent(in) :: igdtmpli(igdtleni)
+    integer(c_int),intent(in) :: igdtnumo,igdtleno
+    integer(c_int),intent(in) :: igdtmplo(igdtleno)
+    integer(c_int),intent(out) :: ibo(km),iret,no
 #endif
     !
-    LOGICAL(C_BOOL),             INTENT(IN   ) :: LI(MI,KM)
-    LOGICAL(C_BOOL),             INTENT(  OUT) :: LO(MO,KM)
+    logical(c_bool),intent(in) :: li(mi,km)
+    logical(c_bool),intent(out) :: lo(mo,km)
     !
 #if (LSIZE==4)
-    REAL(C_FLOAT),                  INTENT(IN   ) :: UI(MI,KM),VI(MI,KM)
-    REAL(C_FLOAT),                  INTENT(INOUT) :: CROT(MO),SROT(MO)
-    REAL(C_FLOAT),                  INTENT(INOUT) :: RLAT(MO),RLON(MO)
-    REAL(C_FLOAT),                  INTENT(  OUT) :: UO(MO,KM),VO(MO,KM)
+    real(c_float),intent(in) :: ui(mi,km),vi(mi,km)
+    real(c_float),intent(inout) :: crot(mo),srot(mo)
+    real(c_float),intent(inout) :: rlat(mo),rlon(mo)
+    real(c_float),intent(out) :: uo(mo,km),vo(mo,km)
 #else
-    REAL(C_DOUBLE),                  INTENT(IN   ) :: UI(MI,KM),VI(MI,KM)
-    REAL(C_DOUBLE),                  INTENT(INOUT) :: CROT(MO),SROT(MO)
-    REAL(C_DOUBLE),                  INTENT(INOUT) :: RLAT(MO),RLON(MO)
-    REAL(C_DOUBLE),                  INTENT(  OUT) :: UO(MO,KM),VO(MO,KM)
+    real(c_double),intent(in) :: ui(mi,km),vi(mi,km)
+    real(c_double),intent(inout) :: crot(mo),srot(mo)
+    real(c_double),intent(inout) :: rlat(mo),rlon(mo)
+    real(c_double),intent(out) :: uo(mo,km),vo(mo,km)
 #endif
     !
 
-    type(grib2_descriptor) :: desc_in, desc_out
-    class(ip_grid), allocatable :: grid_in, grid_out
+    type(grib2_descriptor) :: desc_in,desc_out
+    class(ip_grid),allocatable :: grid_in,grid_out
 
-    desc_in = init_descriptor(igdtnumi, igdtleni, igdtmpli)
-    desc_out = init_descriptor(igdtnumo, igdtleno, igdtmplo)
+    desc_in=init_descriptor(igdtnumi,igdtleni,igdtmpli)
+    desc_out=init_descriptor(igdtnumo,igdtleno,igdtmplo)
 
-    call init_grid(grid_in, desc_in)
-    call init_grid(grid_out, desc_out)
+    call init_grid(grid_in,desc_in)
+    call init_grid(grid_out,desc_out)
 
-    CALL ipolatev_grid(ip,IPOPT,grid_in,grid_out, &
-         MI,MO,KM,IBI,LI,UI,VI,&
-         NO,RLAT,RLON,CROT,SROT,IBO,LO,UO,VO,IRET)
+    call ipolatev_grid(ip,ipopt,grid_in,grid_out, &
+                       mi,mo,km,ibi,li,ui,vi, &
+                       no,rlat,rlon,crot,srot,ibo,lo,uo,vo,iret)
 
-  end subroutine ipolatev_grib2
+  endsubroutine ipolatev_grib2
 
   !> @brief This subprogram interpolates vector field from any grid
   !> to any grid given a grib1 Grid Descriptor Section.
@@ -563,69 +563,69 @@ contains
   !> @date July 2021
   !> @author Kyle Gerheiser
   subroutine ipolatev_grib1(ip,ipopt,kgdsi,kgdso,mi,mo,km,ibi,li,ui,vi, &
-       no,rlat,rlon,crot,srot,ibo,lo,uo,vo,iret) bind(c)
-    USE ISO_C_BINDING, ONLY: C_INT, C_FLOAT, C_DOUBLE, C_BOOL, C_LONG
-    IMPLICIT NONE
+                            no,rlat,rlon,crot,srot,ibo,lo,uo,vo,iret) bind(c)
+    use iso_c_binding,only:c_int,c_float,c_double,c_bool,c_long
+    implicit none
     !
 #if (LSIZE==8)
-    INTEGER(C_LONG),               INTENT(IN   ):: IP, IPOPT(20), IBI(KM)
-    INTEGER(C_LONG),               INTENT(IN   ):: KM, MI, MO
-    INTEGER(C_LONG),               INTENT(INOUT):: KGDSI(200), KGDSO(200)
-    INTEGER(C_LONG),               INTENT(  OUT):: IBO(KM), IRET, NO
+    integer(c_long),intent(in):: ip,ipopt(20),ibi(km)
+    integer(c_long),intent(in):: km,mi,mo
+    integer(c_long),intent(inout):: kgdsi(200),kgdso(200)
+    integer(c_long),intent(out):: ibo(km),iret,no
 #else
-    INTEGER(C_INT),               INTENT(IN   ):: IP, IPOPT(20), IBI(KM)
-    INTEGER(C_INT),               INTENT(IN   ):: KM, MI, MO
-    INTEGER(C_INT),               INTENT(INOUT):: KGDSI(200), KGDSO(200)
-    INTEGER(C_INT),               INTENT(  OUT):: IBO(KM), IRET, NO
+    integer(c_int),intent(in):: ip,ipopt(20),ibi(km)
+    integer(c_int),intent(in):: km,mi,mo
+    integer(c_int),intent(inout):: kgdsi(200),kgdso(200)
+    integer(c_int),intent(out):: ibo(km),iret,no
 #endif
     !
-    LOGICAL(C_BOOL),             INTENT(IN   ):: LI(MI,KM)
-    LOGICAL(C_BOOL),             INTENT(  OUT):: LO(MO,KM)
+    logical(c_bool),intent(in):: li(mi,km)
+    logical(c_bool),intent(out):: lo(mo,km)
     !
 #if (LSIZE==4)
-    REAL(C_FLOAT),                  INTENT(IN   ):: UI(MI,KM),VI(MI,KM)
-    REAL(C_FLOAT),                  INTENT(INOUT):: CROT(MO),SROT(MO)
-    REAL(C_FLOAT),                  INTENT(INOUT):: RLAT(MO),RLON(MO)
-    REAL(C_FLOAT),                  INTENT(  OUT):: UO(MO,KM),VO(MO,KM)
+    real(c_float),intent(in):: ui(mi,km),vi(mi,km)
+    real(c_float),intent(inout):: crot(mo),srot(mo)
+    real(c_float),intent(inout):: rlat(mo),rlon(mo)
+    real(c_float),intent(out):: uo(mo,km),vo(mo,km)
 #else
-    REAL(C_DOUBLE),                  INTENT(IN   ):: UI(MI,KM),VI(MI,KM)
-    REAL(C_DOUBLE),                  INTENT(INOUT):: CROT(MO),SROT(MO)
-    REAL(C_DOUBLE),                  INTENT(INOUT):: RLAT(MO),RLON(MO)
-    REAL(C_DOUBLE),                  INTENT(  OUT):: UO(MO,KM),VO(MO,KM)
+    real(c_double),intent(in):: ui(mi,km),vi(mi,km)
+    real(c_double),intent(inout):: crot(mo),srot(mo)
+    real(c_double),intent(inout):: rlat(mo),rlon(mo)
+    real(c_double),intent(out):: uo(mo,km),vo(mo,km)
 #endif
     !
-    INTEGER                             :: KGDSI11, KGDSO11
+    integer                             :: kgdsi11,kgdso11
 
-    type(grib1_descriptor) :: desc_in, desc_out
-    class(ip_grid), allocatable :: grid_in, grid_out
+    type(grib1_descriptor) :: desc_in,desc_out
+    class(ip_grid),allocatable :: grid_in,grid_out
 
-    IF(KGDSI(1).EQ.203) THEN
-       KGDSI11=KGDSI(11)
-       KGDSI(11)=IOR(KGDSI(11),256)
-    ENDIF
-    IF(KGDSO(1).EQ.203) THEN
-       KGDSO11=KGDSO(11)
-       KGDSO(11)=IOR(KGDSO(11),256)
-    ENDIF
+    if(kgdsi(1).eq.203) then
+      kgdsi11=kgdsi(11)
+      kgdsi(11)=ior(kgdsi(11),256)
+    endif
+    if(kgdso(1).eq.203) then
+      kgdso11=kgdso(11)
+      kgdso(11)=ior(kgdso(11),256)
+    endif
 
-    desc_in = init_descriptor(kgdsi)
-    desc_out = init_descriptor(kgdso)
+    desc_in=init_descriptor(kgdsi)
+    desc_out=init_descriptor(kgdso)
 
-    call init_grid(grid_in, desc_in)
-    call init_grid(grid_out, desc_out)
+    call init_grid(grid_in,desc_in)
+    call init_grid(grid_out,desc_out)
 
-    CALL ipolatev_grid(ip,IPOPT,grid_in,grid_out, &
-         MI,MO,KM,IBI,LI,UI,VI,&
-         NO,RLAT,RLON,CROT,SROT,IBO,LO,UO,VO,IRET)
+    call ipolatev_grid(ip,ipopt,grid_in,grid_out, &
+                       mi,mo,km,ibi,li,ui,vi, &
+                       no,rlat,rlon,crot,srot,ibo,lo,uo,vo,iret)
 
-    IF(KGDSI(1).EQ.203) THEN
-       KGDSI(11)=KGDSI11
-    ENDIF
-    IF(KGDSO(1).EQ.203) THEN
-       KGDSO(11)=KGDSO11
-    ENDIF
+    if(kgdsi(1).eq.203) then
+      kgdsi(11)=kgdsi11
+    endif
+    if(kgdso(1).eq.203) then
+      kgdso(11)=kgdso11
+    endif
 
-  END SUBROUTINE IPOLATEV_grib1
+  endsubroutine ipolatev_grib1
 
   !> Special case of ipolatev_grib1 when interpolating a single field.
   !>
@@ -678,76 +678,76 @@ contains
   !> @date Jan 2022
   !> @author Kyle Gerheiser
   subroutine ipolatev_grib1_single_field(ip,ipopt,kgdsi,kgdso,mi,mo,km,ibi,li,ui,vi, &
-       no,rlat,rlon,crot,srot,ibo,lo,uo,vo,iret) bind(c)
-    USE ISO_C_BINDING, ONLY: C_INT, C_FLOAT, C_DOUBLE, C_BOOL, C_LONG
-    IMPLICIT NONE
+                                         no,rlat,rlon,crot,srot,ibo,lo,uo,vo,iret) bind(c)
+    use iso_c_binding,only:c_int,c_float,c_double,c_bool,c_long
+    implicit none
     !
 #if (LSIZE==8)
-    INTEGER(C_LONG),               INTENT(IN   ):: IP, IPOPT(20), IBI
-    INTEGER(C_LONG),               INTENT(IN   ):: KM, MI, MO
-    INTEGER(C_LONG),               INTENT(INOUT):: KGDSI(200), KGDSO(200)
-    INTEGER(C_LONG),               INTENT(  OUT):: IBO, IRET, NO
+    integer(c_long),intent(in):: ip,ipopt(20),ibi
+    integer(c_long),intent(in):: km,mi,mo
+    integer(c_long),intent(inout):: kgdsi(200),kgdso(200)
+    integer(c_long),intent(out):: ibo,iret,no
 #else
-    INTEGER(C_INT),               INTENT(IN   ):: IP, IPOPT(20), IBI
-    INTEGER(C_INT),               INTENT(IN   ):: KM, MI, MO
-    INTEGER(C_INT),               INTENT(INOUT):: KGDSI(200), KGDSO(200)
-    INTEGER(C_INT),               INTENT(  OUT):: IBO, IRET, NO
+    integer(c_int),intent(in):: ip,ipopt(20),ibi
+    integer(c_int),intent(in):: km,mi,mo
+    integer(c_int),intent(inout):: kgdsi(200),kgdso(200)
+    integer(c_int),intent(out):: ibo,iret,no
 #endif
     !
-    LOGICAL(C_BOOL),             INTENT(IN   ):: LI(MI)
-    LOGICAL(C_BOOL),             INTENT(  OUT):: LO(MO)
+    logical(c_bool),intent(in):: li(mi)
+    logical(c_bool),intent(out):: lo(mo)
     !
 #if (LSIZE==4)
-    REAL(C_FLOAT),                  INTENT(IN   ):: UI(MI),VI(MI)
-    REAL(C_FLOAT),                  INTENT(INOUT):: CROT(MO),SROT(MO)
-    REAL(C_FLOAT),                  INTENT(INOUT):: RLAT(MO),RLON(MO)
-    REAL(C_FLOAT),                  INTENT(  OUT):: UO(MO),VO(MO)
+    real(c_float),intent(in):: ui(mi),vi(mi)
+    real(c_float),intent(inout):: crot(mo),srot(mo)
+    real(c_float),intent(inout):: rlat(mo),rlon(mo)
+    real(c_float),intent(out):: uo(mo),vo(mo)
 #else
-    REAL(C_DOUBLE),                  INTENT(IN   ):: UI(MI),VI(MI)
-    REAL(C_DOUBLE),                  INTENT(INOUT):: CROT(MO),SROT(MO)
-    REAL(C_DOUBLE),                  INTENT(INOUT):: RLAT(MO),RLON(MO)
-    REAL(C_DOUBLE),                  INTENT(  OUT):: UO(MO),VO(MO)
+    real(c_double),intent(in):: ui(mi),vi(mi)
+    real(c_double),intent(inout):: crot(mo),srot(mo)
+    real(c_double),intent(inout):: rlat(mo),rlon(mo)
+    real(c_double),intent(out):: uo(mo),vo(mo)
 #endif
     !
-    INTEGER                             :: KGDSI11, KGDSO11
+    integer                             :: kgdsi11,kgdso11
 
-    type(grib1_descriptor) :: desc_in, desc_out
-    class(ip_grid), allocatable :: grid_in, grid_out
+    type(grib1_descriptor) :: desc_in,desc_out
+    class(ip_grid),allocatable :: grid_in,grid_out
     integer :: ibo_array(1)
 
     ! Can't pass expression (e.g. [ibo]) to intent(out) argument.
     ! Initialize placeholder array of size 1 to make rank match.
-    ibo_array(1) = ibo
+    ibo_array(1)=ibo
 
-    IF(KGDSI(1).EQ.203) THEN
-       KGDSI11=KGDSI(11)
-       KGDSI(11)=IOR(KGDSI(11),256)
-    ENDIF
-    IF(KGDSO(1).EQ.203) THEN
-       KGDSO11=KGDSO(11)
-       KGDSO(11)=IOR(KGDSO(11),256)
-    ENDIF
+    if(kgdsi(1).eq.203) then
+      kgdsi11=kgdsi(11)
+      kgdsi(11)=ior(kgdsi(11),256)
+    endif
+    if(kgdso(1).eq.203) then
+      kgdso11=kgdso(11)
+      kgdso(11)=ior(kgdso(11),256)
+    endif
 
-    desc_in = init_descriptor(kgdsi)
-    desc_out = init_descriptor(kgdso)
+    desc_in=init_descriptor(kgdsi)
+    desc_out=init_descriptor(kgdso)
 
-    call init_grid(grid_in, desc_in)
-    call init_grid(grid_out, desc_out)
+    call init_grid(grid_in,desc_in)
+    call init_grid(grid_out,desc_out)
 
-    CALL ipolatev_grid(ip,IPOPT,grid_in,grid_out, &
-         MI,MO,KM,[IBI],LI,UI,VI,&
-         NO,RLAT,RLON,CROT,SROT,IBO_array,LO,UO,VO,IRET)
+    call ipolatev_grid(ip,ipopt,grid_in,grid_out, &
+                       mi,mo,km,[ibi],li,ui,vi, &
+                       no,rlat,rlon,crot,srot,ibo_array,lo,uo,vo,iret)
 
-    ibo = ibo_array(1)
+    ibo=ibo_array(1)
 
-    IF(KGDSI(1).EQ.203) THEN
-       KGDSI(11)=KGDSI11
-    ENDIF
-    IF(KGDSO(1).EQ.203) THEN
-       KGDSO(11)=KGDSO11
-    ENDIF
+    if(kgdsi(1).eq.203) then
+      kgdsi(11)=kgdsi11
+    endif
+    if(kgdso(1).eq.203) then
+      kgdso(11)=kgdso11
+    endif
 
-  END SUBROUTINE ipolatev_grib1_single_field
+  endsubroutine ipolatev_grib1_single_field
 
   !> This subprogram interpolates vector fields from any grid to any
   !> grid given a grib2 descriptor.
@@ -830,65 +830,65 @@ contains
   !>
   !> @author Eric Engle @date November 2022
   subroutine ipolatev_grib2_single_field(ip,ipopt,igdtnumi,igdtmpli,igdtleni, &
-       igdtnumo,igdtmplo,igdtleno, &
-       mi,mo,km,ibi,li,ui,vi, &
-       no,rlat,rlon,crot,srot,ibo,lo,uo,vo,iret) bind(c)
-    USE ISO_C_BINDING, ONLY: C_INT, C_FLOAT, C_DOUBLE, C_BOOL, C_LONG
+                                         igdtnumo,igdtmplo,igdtleno, &
+                                         mi,mo,km,ibi,li,ui,vi, &
+                                         no,rlat,rlon,crot,srot,ibo,lo,uo,vo,iret) bind(c)
+    use iso_c_binding,only:c_int,c_float,c_double,c_bool,c_long
 #if (LSIZE==8)
-    INTEGER(C_LONG),               INTENT(IN   ) :: IP, IPOPT(20), IBI
-    INTEGER(C_LONG),               INTENT(IN   ) :: KM, MI, MO
-    INTEGER(C_LONG),               INTENT(IN   ) :: IGDTNUMI, IGDTLENI
-    INTEGER(C_LONG),               INTENT(IN   ) :: IGDTMPLI(IGDTLENI)
-    INTEGER(C_LONG),               INTENT(IN   ) :: IGDTNUMO, IGDTLENO
-    INTEGER(C_LONG),               INTENT(IN   ) :: IGDTMPLO(IGDTLENO)
-    INTEGER(C_LONG),               INTENT(  OUT) :: IBO, IRET, NO
+    integer(c_long),intent(in) :: ip,ipopt(20),ibi
+    integer(c_long),intent(in) :: km,mi,mo
+    integer(c_long),intent(in) :: igdtnumi,igdtleni
+    integer(c_long),intent(in) :: igdtmpli(igdtleni)
+    integer(c_long),intent(in) :: igdtnumo,igdtleno
+    integer(c_long),intent(in) :: igdtmplo(igdtleno)
+    integer(c_long),intent(out) :: ibo,iret,no
 #else
-    INTEGER(C_INT),               INTENT(IN   ) :: IP, IPOPT(20), IBI
-    INTEGER(C_INT),               INTENT(IN   ) :: KM, MI, MO
-    INTEGER(C_INT),               INTENT(IN   ) :: IGDTNUMI, IGDTLENI
-    INTEGER(C_INT),               INTENT(IN   ) :: IGDTMPLI(IGDTLENI)
-    INTEGER(C_INT),               INTENT(IN   ) :: IGDTNUMO, IGDTLENO
-    INTEGER(C_INT),               INTENT(IN   ) :: IGDTMPLO(IGDTLENO)
-    INTEGER(C_INT),               INTENT(  OUT) :: IBO, IRET, NO
+    integer(c_int),intent(in) :: ip,ipopt(20),ibi
+    integer(c_int),intent(in) :: km,mi,mo
+    integer(c_int),intent(in) :: igdtnumi,igdtleni
+    integer(c_int),intent(in) :: igdtmpli(igdtleni)
+    integer(c_int),intent(in) :: igdtnumo,igdtleno
+    integer(c_int),intent(in) :: igdtmplo(igdtleno)
+    integer(c_int),intent(out) :: ibo,iret,no
 #endif
     !
-    LOGICAL(C_BOOL),             INTENT(IN   ) :: LI(MI)
-    LOGICAL(C_BOOL),             INTENT(  OUT) :: LO(MO)
+    logical(c_bool),intent(in) :: li(mi)
+    logical(c_bool),intent(out) :: lo(mo)
     !
 #if (LSIZE==4)
-    REAL(C_FLOAT),                  INTENT(IN   ) :: UI(MI),VI(MI)
-    REAL(C_FLOAT),                  INTENT(INOUT) :: CROT(MO),SROT(MO)
-    REAL(C_FLOAT),                  INTENT(INOUT) :: RLAT(MO),RLON(MO)
-    REAL(C_FLOAT),                  INTENT(  OUT) :: UO(MO),VO(MO)
+    real(c_float),intent(in) :: ui(mi),vi(mi)
+    real(c_float),intent(inout) :: crot(mo),srot(mo)
+    real(c_float),intent(inout) :: rlat(mo),rlon(mo)
+    real(c_float),intent(out) :: uo(mo),vo(mo)
 #else
-    REAL(C_DOUBLE),                  INTENT(IN   ) :: UI(MI),VI(MI)
-    REAL(C_DOUBLE),                  INTENT(INOUT) :: CROT(MO),SROT(MO)
-    REAL(C_DOUBLE),                  INTENT(INOUT) :: RLAT(MO),RLON(MO)
-    REAL(C_DOUBLE),                  INTENT(  OUT) :: UO(MO),VO(MO)
+    real(c_double),intent(in) :: ui(mi),vi(mi)
+    real(c_double),intent(inout) :: crot(mo),srot(mo)
+    real(c_double),intent(inout) :: rlat(mo),rlon(mo)
+    real(c_double),intent(out) :: uo(mo),vo(mo)
 #endif
     !
 
-    type(grib2_descriptor) :: desc_in, desc_out
-    class(ip_grid), allocatable :: grid_in, grid_out
+    type(grib2_descriptor) :: desc_in,desc_out
+    class(ip_grid),allocatable :: grid_in,grid_out
     integer :: ibo_array(1)
 
     ! Can't pass expression (e.g. [ibo]) to intent(out) argument.
     ! Initialize placeholder array of size 1 to make rank match.
-    ibo_array(1) = ibo
+    ibo_array(1)=ibo
 
-    desc_in = init_descriptor(igdtnumi, igdtleni, igdtmpli)
-    desc_out = init_descriptor(igdtnumo, igdtleno, igdtmplo)
+    desc_in=init_descriptor(igdtnumi,igdtleni,igdtmpli)
+    desc_out=init_descriptor(igdtnumo,igdtleno,igdtmplo)
 
-    call init_grid(grid_in, desc_in)
-    call init_grid(grid_out, desc_out)
+    call init_grid(grid_in,desc_in)
+    call init_grid(grid_out,desc_out)
 
-    CALL ipolatev_grid(ip,IPOPT,grid_in,grid_out, &
-         MI,MO,KM,[IBI],LI,UI,VI,&
-         NO,RLAT,RLON,CROT,SROT,IBO_ARRAY,LO,UO,VO,IRET)
+    call ipolatev_grid(ip,ipopt,grid_in,grid_out, &
+                       mi,mo,km,[ibi],li,ui,vi, &
+                       no,rlat,rlon,crot,srot,ibo_array,lo,uo,vo,iret)
 
-    ibo = ibo_array(1)
+    ibo=ibo_array(1)
 
-  end subroutine ipolatev_grib2_single_field
+  endsubroutine ipolatev_grib2_single_field
 
-end module ipolatev_mod
+endmodule ipolatev_mod
 

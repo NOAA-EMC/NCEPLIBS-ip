@@ -12,20 +12,20 @@
 module ipolates_mod
   use ip_interpolators_mod
   use ip_grid_descriptor_mod
-  use ip_grid_factory_mod, only: init_grid
+  use ip_grid_factory_mod,only:init_grid
   use ip_interpolators_mod
   use ip_grid_mod
   implicit none
 
   private
-  public :: ipolates, ipolates_grib2, ipolates_grib1_single_field, ipolates_grib1, ipolates_grib2_single_field
+  public :: ipolates,ipolates_grib2,ipolates_grib1_single_field,ipolates_grib1,ipolates_grib2_single_field
 
   interface ipolates
-     module procedure ipolates_grib1
-     module procedure ipolates_grib1_single_field
-     module procedure ipolates_grib2
-     module procedure ipolates_grib2_single_field
-  end interface ipolates
+    module procedure ipolates_grib1
+    module procedure ipolates_grib1_single_field
+    module procedure ipolates_grib2
+    module procedure ipolates_grib2_single_field
+  endinterface ipolates
 
 contains
 
@@ -60,56 +60,56 @@ contains
   !! - 4x Invalid spectral method parameters.
   !!
   !! @author Mark Iredell, Kyle Gerheiser
-  subroutine ipolates_grid(ip, ipopt, grid_in, grid_out, mi, mo, km,&
-       & ibi, li, gi, no, rlat, rlon, ibo, lo, go, iret)
-    class(ip_grid), intent(in) :: grid_in, grid_out
-    INTEGER,    INTENT(IN   ) :: IP, IPOPT(20), KM, MI, MO
-    INTEGER,    INTENT(IN   ) :: IBI(KM)
-    INTEGER,    INTENT(INOUT) :: NO
-    INTEGER,    INTENT(  OUT) :: IRET, IBO(KM)
+  subroutine ipolates_grid(ip,ipopt,grid_in,grid_out,mi,mo,km,&
+       & ibi,li,gi,no,rlat,rlon,ibo,lo,go,iret)
+    class(ip_grid),intent(in) :: grid_in,grid_out
+    integer,intent(in) :: ip,ipopt(20),km,mi,mo
+    integer,intent(in) :: ibi(km)
+    integer,intent(inout) :: no
+    integer,intent(out) :: iret,ibo(km)
     !
-    LOGICAL*1,  INTENT(IN   ) :: LI(MI,KM)
-    LOGICAL*1,  INTENT(  OUT) :: LO(MO,KM)
+    logical*1,intent(in) :: li(mi,km)
+    logical*1,intent(out) :: lo(mo,km)
     !
-    REAL,       INTENT(IN   ) :: GI(MI,KM)
-    REAL,       INTENT(INOUT) :: RLAT(MO),RLON(MO)
-    REAL,       INTENT(  OUT) :: GO(MO,KM)
+    real,intent(in) :: gi(mi,km)
+    real,intent(inout) :: rlat(mo),rlon(mo)
+    real,intent(out) :: go(mo,km)
     !
 
     select case(ip)
-    case(BILINEAR_INTERP_ID)
-       CALL interpolate_bilinear(IPOPT,grid_in,grid_out,MI,MO,KM,IBI&
-            &,LI,GI,NO,RLAT,RLON,IBO,LO,GO,IRET)
-    case(BICUBIC_INTERP_ID)
-       CALL interpolate_bicubic(IPOPT,grid_in,grid_out,MI,MO,KM,IBI&
-            &,LI,GI,NO,RLAT,RLON,IBO,LO,GO,IRET)
-    case(NEIGHBOR_INTERP_ID)
-       CALL interpolate_neighbor(IPOPT,grid_in,grid_out,MI,MO,KM,IBI&
-            &,LI,GI,NO,RLAT,RLON,IBO,LO,GO,IRET)
-    case(BUDGET_INTERP_ID)
-       CALL interpolate_budget(IPOPT,grid_in,grid_out,MI,MO,KM,IBI,LI&
-            &,GI,NO,RLAT,RLON,IBO,LO,GO,IRET)
-    case(SPECTRAL_INTERP_ID)
-       CALL interpolate_spectral(IPOPT,grid_in,grid_out,MI,MO,KM,IBI&
-            &,GI,NO,RLAT,RLON,IBO,LO,GO,IRET)
-    case(NEIGHBOR_BUDGET_INTERP_ID)
-       CALL interpolate_neighbor_budget(IPOPT,grid_in,grid_out,MI,MO&
-            &,KM,IBI,LI,GI,NO,RLAT,RLON,IBO,LO,GO,IRET)
+    case(bilinear_interp_id)
+      call interpolate_bilinear(ipopt,grid_in,grid_out,mi,mo,km,ibi&
+           &,li,gi,no,rlat,rlon,ibo,lo,go,iret)
+    case(bicubic_interp_id)
+      call interpolate_bicubic(ipopt,grid_in,grid_out,mi,mo,km,ibi&
+           &,li,gi,no,rlat,rlon,ibo,lo,go,iret)
+    case(neighbor_interp_id)
+      call interpolate_neighbor(ipopt,grid_in,grid_out,mi,mo,km,ibi&
+           &,li,gi,no,rlat,rlon,ibo,lo,go,iret)
+    case(budget_interp_id)
+      call interpolate_budget(ipopt,grid_in,grid_out,mi,mo,km,ibi,li&
+           &,gi,no,rlat,rlon,ibo,lo,go,iret)
+    case(spectral_interp_id)
+      call interpolate_spectral(ipopt,grid_in,grid_out,mi,mo,km,ibi&
+           &,gi,no,rlat,rlon,ibo,lo,go,iret)
+    case(neighbor_budget_interp_id)
+      call interpolate_neighbor_budget(ipopt,grid_in,grid_out,mi,mo&
+           &,km,ibi,li,gi,no,rlat,rlon,ibo,lo,go,iret)
     case default
-       ! IF(KGDSO(1).GE.0) NO=0
-       ! DO K=1,KM
-       !    IBO(K)=1
-       !    DO N=1,NO
-       !       LO(N,K)=.FALSE.
-       !       GO(N,K)=0.
-       !    ENDDO
-       ! ENDDO
-       IRET=1
-       print *, "Unrecognized interp option: ", ip
-       error stop
-    end select
+      ! IF(KGDSO(1).GE.0) NO=0
+      ! DO K=1,KM
+      !    IBO(K)=1
+      !    DO N=1,NO
+      !       LO(N,K)=.FALSE.
+      !       GO(N,K)=0.
+      !    ENDDO
+      ! ENDDO
+      iret=1
+      print*,"Unrecognized interp option: ",ip
+      error stop
+    endselect
 
-  end subroutine ipolates_grid
+  endsubroutine ipolates_grid
 
   !> Special case of ipolates_grib1 when interpolating a single field.
   !! Removes the km dimension of input arrays so scalars can be passed to ibi/ibo.
@@ -155,55 +155,55 @@ contains
   !!
   !! @date Jan 2022
   !! @author Kyle Gerheiser
-   subroutine ipolates_grib1_single_field(ip,ipopt,kgdsi,kgdso,mi,mo,km,ibi,li,gi, &
-       no,rlat,rlon,ibo,lo,go,iret) bind(c)
+  subroutine ipolates_grib1_single_field(ip,ipopt,kgdsi,kgdso,mi,mo,km,ibi,li,gi, &
+                                         no,rlat,rlon,ibo,lo,go,iret) bind(c)
     !
-    USE ISO_C_BINDING, ONLY: C_INT, C_FLOAT, C_DOUBLE, C_BOOL, C_LONG
+    use iso_c_binding,only:c_int,c_float,c_double,c_bool,c_long
 #if (LSIZE==8)
-    INTEGER(C_LONG),    INTENT(IN   ) :: IP, IPOPT(20), KM, MI, MO
-    INTEGER(C_LONG),    INTENT(IN   ) :: IBI, KGDSI(200), KGDSO(200)
-    INTEGER(C_LONG),    INTENT(INOUT) :: NO
-    INTEGER(C_LONG),    INTENT(  OUT) :: IRET, IBO
+    integer(c_long),intent(in) :: ip,ipopt(20),km,mi,mo
+    integer(c_long),intent(in) :: ibi,kgdsi(200),kgdso(200)
+    integer(c_long),intent(inout) :: no
+    integer(c_long),intent(out) :: iret,ibo
 #else
-    INTEGER(C_INT),    INTENT(IN   ) :: IP, IPOPT(20), KM, MI, MO
-    INTEGER(C_INT),    INTENT(IN   ) :: IBI, KGDSI(200), KGDSO(200)
-    INTEGER(C_INT),    INTENT(INOUT) :: NO
-    INTEGER(C_INT),    INTENT(  OUT) :: IRET, IBO
+    integer(c_int),intent(in) :: ip,ipopt(20),km,mi,mo
+    integer(c_int),intent(in) :: ibi,kgdsi(200),kgdso(200)
+    integer(c_int),intent(inout) :: no
+    integer(c_int),intent(out) :: iret,ibo
 #endif
     !
-    LOGICAL(C_BOOL),  INTENT(IN   ) :: LI(MI)
-    LOGICAL(C_BOOL),  INTENT(  OUT) :: LO(MO)
+    logical(c_bool),intent(in) :: li(mi)
+    logical(c_bool),intent(out) :: lo(mo)
     !
 #if (LSIZE==4)
-    REAL(C_FLOAT),       INTENT(IN   ) :: GI(MI)
-    REAL(C_FLOAT),       INTENT(INOUT) :: RLAT(MO),RLON(MO)
-    REAL(C_FLOAT),       INTENT(  OUT) :: GO(MO)
+    real(c_float),intent(in) :: gi(mi)
+    real(c_float),intent(inout) :: rlat(mo),rlon(mo)
+    real(c_float),intent(out) :: go(mo)
 #else
-    REAL(C_DOUBLE),       INTENT(IN   ) :: GI(MI)
-    REAL(C_DOUBLE),       INTENT(INOUT) :: RLAT(MO),RLON(MO)
-    REAL(C_DOUBLE),       INTENT(  OUT) :: GO(MO)
+    real(c_double),intent(in) :: gi(mi)
+    real(c_double),intent(inout) :: rlat(mo),rlon(mo)
+    real(c_double),intent(out) :: go(mo)
 #endif
     !
 
-    type(grib1_descriptor) :: desc_in, desc_out
-    class(ip_grid), allocatable :: grid_in, grid_out
+    type(grib1_descriptor) :: desc_in,desc_out
+    class(ip_grid),allocatable :: grid_in,grid_out
     integer :: ibo_array(1)
 
-    desc_in = init_descriptor(kgdsi)
-    desc_out = init_descriptor(kgdso)
+    desc_in=init_descriptor(kgdsi)
+    desc_out=init_descriptor(kgdso)
 
-    call init_grid(grid_in, desc_in)
-    call init_grid(grid_out, desc_out)
+    call init_grid(grid_in,desc_in)
+    call init_grid(grid_out,desc_out)
 
     ! Can't pass expression (e.g. [ibo]) to intent(out) argument.
     ! Initialize placeholder array of size 1 to make rank match.
-    ibo_array(1) = ibo
+    ibo_array(1)=ibo
 
-    call ipolates_grid(ip, ipopt, grid_in, grid_out, mi, mo, km, [ibi], li, gi, no, rlat, rlon, ibo_array, lo, go, iret)
+    call ipolates_grid(ip,ipopt,grid_in,grid_out,mi,mo,km,[ibi],li,gi,no,rlat,rlon,ibo_array,lo,go,iret)
 
-    ibo = ibo_array(1)
+    ibo=ibo_array(1)
 
-  END SUBROUTINE IPOLATES_grib1_single_field
+  endsubroutine ipolates_grib1_single_field
 
   !> This subprogram interpolates scalar field from any grid
   !! to any grid given a grib1 Grid Descriptor Section.
@@ -249,7 +249,7 @@ contains
   !! Output bitmaps will also be created when the output grid
   !! extends outside of the domain of the input grid.
   !! the output field is set to 0 where the output bitmap is off.
-  !!        
+  !!
   !! @param ip Interpolation method
   !! - ip = BILINEAR_INTERP_ID = 0 for bilinear
   !! - ip = BICUBIC_INTERP_ID = 1 for bicubic
@@ -291,48 +291,48 @@ contains
   !!
   !! @author Mark Iredell, Kyle Gerheiser
   subroutine ipolates_grib1(ip,ipopt,kgdsi,kgdso,mi,mo,km,ibi,li,gi, &
-       no,rlat,rlon,ibo,lo,go,iret) bind(c)
+                            no,rlat,rlon,ibo,lo,go,iret) bind(c)
     !
-    USE ISO_C_BINDING, ONLY: C_INT, C_FLOAT, C_DOUBLE, C_BOOL, C_LONG
+    use iso_c_binding,only:c_int,c_float,c_double,c_bool,c_long
 #if (LSIZE==8)
-    INTEGER(C_LONG),    INTENT(IN   ) :: IP, IPOPT(20), KM, MI, MO
-    INTEGER(C_LONG),    INTENT(IN   ) :: IBI(KM), KGDSI(200), KGDSO(200)
-    INTEGER(C_LONG),    INTENT(INOUT) :: NO
-    INTEGER(C_LONG),    INTENT(  OUT) :: IRET, IBO(KM)
+    integer(c_long),intent(in) :: ip,ipopt(20),km,mi,mo
+    integer(c_long),intent(in) :: ibi(km),kgdsi(200),kgdso(200)
+    integer(c_long),intent(inout) :: no
+    integer(c_long),intent(out) :: iret,ibo(km)
 #else
-    INTEGER(C_INT),    INTENT(IN   ) :: IP, IPOPT(20), KM, MI, MO
-    INTEGER(C_INT),    INTENT(IN   ) :: IBI(KM), KGDSI(200), KGDSO(200)
-    INTEGER(C_INT),    INTENT(INOUT) :: NO
-    INTEGER(C_INT),    INTENT(  OUT) :: IRET, IBO(KM)
+    integer(c_int),intent(in) :: ip,ipopt(20),km,mi,mo
+    integer(c_int),intent(in) :: ibi(km),kgdsi(200),kgdso(200)
+    integer(c_int),intent(inout) :: no
+    integer(c_int),intent(out) :: iret,ibo(km)
 #endif
     !
-    LOGICAL(C_BOOL),  INTENT(IN   ) :: LI(MI,KM)
-    LOGICAL(C_BOOL),  INTENT(  OUT) :: LO(MO,KM)
+    logical(c_bool),intent(in) :: li(mi,km)
+    logical(c_bool),intent(out) :: lo(mo,km)
     !
 #if (LSIZE==4)
-    REAL(C_FLOAT),       INTENT(IN   ) :: GI(MI,KM)
-    REAL(C_FLOAT),       INTENT(INOUT) :: RLAT(MO),RLON(MO)
-    REAL(C_FLOAT),       INTENT(  OUT) :: GO(MO,KM)
+    real(c_float),intent(in) :: gi(mi,km)
+    real(c_float),intent(inout) :: rlat(mo),rlon(mo)
+    real(c_float),intent(out) :: go(mo,km)
 #else
-    REAL(C_DOUBLE),       INTENT(IN   ) :: GI(MI,KM)
-    REAL(C_DOUBLE),       INTENT(INOUT) :: RLAT(MO),RLON(MO)
-    REAL(C_DOUBLE),       INTENT(  OUT) :: GO(MO,KM)
+    real(c_double),intent(in) :: gi(mi,km)
+    real(c_double),intent(inout) :: rlat(mo),rlon(mo)
+    real(c_double),intent(out) :: go(mo,km)
 #endif
     !
 
-    type(grib1_descriptor) :: desc_in, desc_out
-    class(ip_grid), allocatable :: grid_in, grid_out
+    type(grib1_descriptor) :: desc_in,desc_out
+    class(ip_grid),allocatable :: grid_in,grid_out
 
-    desc_in = init_descriptor(kgdsi)
-    desc_out = init_descriptor(kgdso)
+    desc_in=init_descriptor(kgdsi)
+    desc_out=init_descriptor(kgdso)
 
-    call init_grid(grid_in, desc_in)
-    call init_grid(grid_out, desc_out)
+    call init_grid(grid_in,desc_in)
+    call init_grid(grid_out,desc_out)
 
-    call ipolates_grid(ip, ipopt, grid_in, grid_out, mi, mo, km, ibi, li, gi, no, rlat, rlon, ibo, lo, go, iret)
+    call ipolates_grid(ip,ipopt,grid_in,grid_out,mi,mo,km,ibi,li,gi,no,rlat,rlon,ibo,lo,go,iret)
 
-  END SUBROUTINE IPOLATES_grib1
-  
+  endsubroutine ipolates_grib1
+
   !> This subprogram interpolates scalar field from any grid to any
   !! grid given a grib2 descriptor.
   !!
@@ -368,7 +368,7 @@ contains
   !! and their latitudes and longitudes are also returned.
   !!
   !! On the other hand, data may be interpolated to a set of station
-  !! points if "igdtnumo"<0 (or subtracted from 255 for the budget 
+  !! points if "igdtnumo"<0 (or subtracted from 255 for the budget
   !! option), in which case the number of points and
   !! their latitudes and longitudes must be input.
   !!
@@ -584,56 +584,56 @@ contains
   !!   N-BUDGET| 6 | -1,-1        | 0.18
   !!
   !! @author Mark Iredell, Kyle Gerheiser
-  SUBROUTINE IPOLATES_grib2(IP,IPOPT,IGDTNUMI,IGDTMPLI,IGDTLENI, &
-       IGDTNUMO,IGDTMPLO,IGDTLENO, &
-       MI,MO,KM,IBI,LI,GI, &
-       NO,RLAT,RLON,IBO,LO,GO,IRET) bind(C)
-    USE ISO_C_BINDING, ONLY: C_INT, C_FLOAT, C_DOUBLE, C_BOOL, C_LONG
+  subroutine ipolates_grib2(ip,ipopt,igdtnumi,igdtmpli,igdtleni, &
+                            igdtnumo,igdtmplo,igdtleno, &
+                            mi,mo,km,ibi,li,gi, &
+                            no,rlat,rlon,ibo,lo,go,iret) bind(c)
+    use iso_c_binding,only:c_int,c_float,c_double,c_bool,c_long
 #if (LSIZE==8)
-    INTEGER(C_LONG),        INTENT(IN   )     :: IP, IPOPT(20), KM, MI, MO
-    INTEGER(C_LONG),        INTENT(IN   )     :: IBI(KM)
-    INTEGER(C_LONG),        INTENT(IN   )     :: IGDTNUMI, IGDTLENI
-    INTEGER(C_LONG),        INTENT(IN   )     :: IGDTMPLI(IGDTLENI)
-    INTEGER(C_LONG),        INTENT(IN   )     :: IGDTNUMO, IGDTLENO
-    INTEGER(C_LONG),        INTENT(IN   )     :: IGDTMPLO(IGDTLENO)
-    INTEGER(C_LONG),        INTENT(  OUT)     :: NO
-    INTEGER(C_LONG),        INTENT(  OUT)     :: IRET, IBO(KM)
+    integer(c_long),intent(in)     :: ip,ipopt(20),km,mi,mo
+    integer(c_long),intent(in)     :: ibi(km)
+    integer(c_long),intent(in)     :: igdtnumi,igdtleni
+    integer(c_long),intent(in)     :: igdtmpli(igdtleni)
+    integer(c_long),intent(in)     :: igdtnumo,igdtleno
+    integer(c_long),intent(in)     :: igdtmplo(igdtleno)
+    integer(c_long),intent(out)     :: no
+    integer(c_long),intent(out)     :: iret,ibo(km)
 #else
-    INTEGER(C_INT),        INTENT(IN   )     :: IP, IPOPT(20), KM, MI, MO
-    INTEGER(C_INT),        INTENT(IN   )     :: IBI(KM)
-    INTEGER(C_INT),        INTENT(IN   )     :: IGDTNUMI, IGDTLENI
-    INTEGER(C_INT),        INTENT(IN   )     :: IGDTMPLI(IGDTLENI)
-    INTEGER(C_INT),        INTENT(IN   )     :: IGDTNUMO, IGDTLENO
-    INTEGER(C_INT),        INTENT(IN   )     :: IGDTMPLO(IGDTLENO)
-    INTEGER(C_INT),        INTENT(  OUT)     :: NO
-    INTEGER(C_INT),        INTENT(  OUT)     :: IRET, IBO(KM)
+    integer(c_int),intent(in)     :: ip,ipopt(20),km,mi,mo
+    integer(c_int),intent(in)     :: ibi(km)
+    integer(c_int),intent(in)     :: igdtnumi,igdtleni
+    integer(c_int),intent(in)     :: igdtmpli(igdtleni)
+    integer(c_int),intent(in)     :: igdtnumo,igdtleno
+    integer(c_int),intent(in)     :: igdtmplo(igdtleno)
+    integer(c_int),intent(out)     :: no
+    integer(c_int),intent(out)     :: iret,ibo(km)
 #endif
     !
-    LOGICAL(C_BOOL),      INTENT(IN   )     :: LI(MI,KM)
-    LOGICAL(C_BOOL),      INTENT(  OUT)     :: LO(MO,KM)
+    logical(c_bool),intent(in)     :: li(mi,km)
+    logical(c_bool),intent(out)     :: lo(mo,km)
     !
 #if (LSIZE==4)
-    REAL(C_FLOAT),       INTENT(IN   ) :: GI(MI,KM)
-    REAL(C_FLOAT),       INTENT(INOUT) :: RLAT(MO),RLON(MO)
-    REAL(C_FLOAT),       INTENT(  OUT) :: GO(MO,KM)
+    real(c_float),intent(in) :: gi(mi,km)
+    real(c_float),intent(inout) :: rlat(mo),rlon(mo)
+    real(c_float),intent(out) :: go(mo,km)
 #else
-    REAL(C_DOUBLE),       INTENT(IN   ) :: GI(MI,KM)
-    REAL(C_DOUBLE),       INTENT(INOUT) :: RLAT(MO),RLON(MO)
-    REAL(C_DOUBLE),       INTENT(  OUT) :: GO(MO,KM)
+    real(c_double),intent(in) :: gi(mi,km)
+    real(c_double),intent(inout) :: rlat(mo),rlon(mo)
+    real(c_double),intent(out) :: go(mo,km)
 #endif
 
-    type(grib2_descriptor) :: desc_in, desc_out
-    class(ip_grid), allocatable :: grid_in, grid_out
+    type(grib2_descriptor) :: desc_in,desc_out
+    class(ip_grid),allocatable :: grid_in,grid_out
 
-    desc_in = init_descriptor(igdtnumi, igdtleni, igdtmpli)
-    desc_out = init_descriptor(igdtnumo, igdtleno, igdtmplo)
+    desc_in=init_descriptor(igdtnumi,igdtleni,igdtmpli)
+    desc_out=init_descriptor(igdtnumo,igdtleno,igdtmplo)
 
-    call init_grid(grid_in, desc_in)
-    call init_grid(grid_out, desc_out)
+    call init_grid(grid_in,desc_in)
+    call init_grid(grid_out,desc_out)
 
-    CALL ipolates_grid(ip,IPOPT,grid_in,grid_out,MI,MO,KM,IBI,LI,GI,NO,RLAT,RLON,IBO,LO,GO,IRET)
+    call ipolates_grid(ip,ipopt,grid_in,grid_out,mi,mo,km,ibi,li,gi,no,rlat,rlon,ibo,lo,go,iret)
 
-  END SUBROUTINE IPOLATES_GRIB2
+  endsubroutine ipolates_grib2
 
   !> Special case of ipolates_grib2 when interpolating a single field.
   !! Removes the km dimension of input arrays so scalars can be passed to ibi/ibo.
@@ -805,63 +805,63 @@ contains
   !! - 4x Invalid spectral method parameters.
   !!
   !! @author Eric Engle @date November 2022
-  SUBROUTINE IPOLATES_GRIB2_SINGLE_FIELD(IP,IPOPT,IGDTNUMI,IGDTMPLI,IGDTLENI, &
-       IGDTNUMO,IGDTMPLO,IGDTLENO, &
-       MI,MO,KM,IBI,LI,GI, &
-       NO,RLAT,RLON,IBO,LO,GO,IRET) bind(C)
-    USE ISO_C_BINDING, ONLY: C_INT, C_FLOAT, C_DOUBLE, C_BOOL, C_LONG
+  subroutine ipolates_grib2_single_field(ip,ipopt,igdtnumi,igdtmpli,igdtleni, &
+                                         igdtnumo,igdtmplo,igdtleno, &
+                                         mi,mo,km,ibi,li,gi, &
+                                         no,rlat,rlon,ibo,lo,go,iret) bind(c)
+    use iso_c_binding,only:c_int,c_float,c_double,c_bool,c_long
 #if (LSIZE==8)
-    INTEGER(C_LONG),        INTENT(IN   )     :: IP, IPOPT(20), KM, MI, MO
-    INTEGER(C_LONG),        INTENT(IN   )     :: IBI
-    INTEGER(C_LONG),        INTENT(IN   )     :: IGDTNUMI, IGDTLENI
-    INTEGER(C_LONG),        INTENT(IN   )     :: IGDTMPLI(IGDTLENI)
-    INTEGER(C_LONG),        INTENT(IN   )     :: IGDTNUMO, IGDTLENO
-    INTEGER(C_LONG),        INTENT(IN   )     :: IGDTMPLO(IGDTLENO)
-    INTEGER(C_LONG),        INTENT(  OUT)     :: NO
-    INTEGER(C_LONG),        INTENT(  OUT)     :: IRET, IBO
+    integer(c_long),intent(in)     :: ip,ipopt(20),km,mi,mo
+    integer(c_long),intent(in)     :: ibi
+    integer(c_long),intent(in)     :: igdtnumi,igdtleni
+    integer(c_long),intent(in)     :: igdtmpli(igdtleni)
+    integer(c_long),intent(in)     :: igdtnumo,igdtleno
+    integer(c_long),intent(in)     :: igdtmplo(igdtleno)
+    integer(c_long),intent(out)     :: no
+    integer(c_long),intent(out)     :: iret,ibo
 #else
-    INTEGER(C_INT),        INTENT(IN   )     :: IP, IPOPT(20), KM, MI, MO
-    INTEGER(C_INT),        INTENT(IN   )     :: IBI
-    INTEGER(C_INT),        INTENT(IN   )     :: IGDTNUMI, IGDTLENI
-    INTEGER(C_INT),        INTENT(IN   )     :: IGDTMPLI(IGDTLENI)
-    INTEGER(C_INT),        INTENT(IN   )     :: IGDTNUMO, IGDTLENO
-    INTEGER(C_INT),        INTENT(IN   )     :: IGDTMPLO(IGDTLENO)
-    INTEGER(C_INT),        INTENT(  OUT)     :: NO
-    INTEGER(C_INT),        INTENT(  OUT)     :: IRET, IBO
+    integer(c_int),intent(in)     :: ip,ipopt(20),km,mi,mo
+    integer(c_int),intent(in)     :: ibi
+    integer(c_int),intent(in)     :: igdtnumi,igdtleni
+    integer(c_int),intent(in)     :: igdtmpli(igdtleni)
+    integer(c_int),intent(in)     :: igdtnumo,igdtleno
+    integer(c_int),intent(in)     :: igdtmplo(igdtleno)
+    integer(c_int),intent(out)     :: no
+    integer(c_int),intent(out)     :: iret,ibo
 #endif
     !
-    LOGICAL(C_BOOL),      INTENT(IN   )     :: LI(MI)
-    LOGICAL(C_BOOL),      INTENT(  OUT)     :: LO(MO)
+    logical(c_bool),intent(in)     :: li(mi)
+    logical(c_bool),intent(out)     :: lo(mo)
     !
 #if (LSIZE==4)
-    REAL(C_FLOAT),       INTENT(IN   ) :: GI(MI)
-    REAL(C_FLOAT),       INTENT(INOUT) :: RLAT(MO),RLON(MO)
-    REAL(C_FLOAT),       INTENT(  OUT) :: GO(MO)
+    real(c_float),intent(in) :: gi(mi)
+    real(c_float),intent(inout) :: rlat(mo),rlon(mo)
+    real(c_float),intent(out) :: go(mo)
 #else
-    REAL(C_DOUBLE),       INTENT(IN   ) :: GI(MI)
-    REAL(C_DOUBLE),       INTENT(INOUT) :: RLAT(MO),RLON(MO)
-    REAL(C_DOUBLE),       INTENT(  OUT) :: GO(MO)
+    real(c_double),intent(in) :: gi(mi)
+    real(c_double),intent(inout) :: rlat(mo),rlon(mo)
+    real(c_double),intent(out) :: go(mo)
 #endif
 
-    type(grib2_descriptor) :: desc_in, desc_out
-    class(ip_grid), allocatable :: grid_in, grid_out
+    type(grib2_descriptor) :: desc_in,desc_out
+    class(ip_grid),allocatable :: grid_in,grid_out
     integer :: ibo_array(1)
 
-    desc_in = init_descriptor(igdtnumi, igdtleni, igdtmpli)
-    desc_out = init_descriptor(igdtnumo, igdtleno, igdtmplo)
+    desc_in=init_descriptor(igdtnumi,igdtleni,igdtmpli)
+    desc_out=init_descriptor(igdtnumo,igdtleno,igdtmplo)
 
-    call init_grid(grid_in, desc_in)
-    call init_grid(grid_out, desc_out)
+    call init_grid(grid_in,desc_in)
+    call init_grid(grid_out,desc_out)
 
     ! Can't pass expression (e.g. [ibo]) to intent(out) argument.
     ! Initialize placeholder array of size 1 to make rank match.
-    ibo_array(1) = ibo
+    ibo_array(1)=ibo
 
     call ipolates_grid(ip,ipopt,grid_in,grid_out,mi,mo,km,[ibi],li,gi,no,rlat,rlon,ibo_array,lo,go,iret)
 
-    ibo = ibo_array(1)
+    ibo=ibo_array(1)
 
-  END SUBROUTINE IPOLATES_GRIB2_SINGLE_FIELD
+  endsubroutine ipolates_grib2_single_field
 
-end module ipolates_mod
+endmodule ipolates_mod
 

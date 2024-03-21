@@ -170,44 +170,44 @@ contains
   !> square of the map factor in the case of conformal projections.)
   !>
   !> @author JOVIC @date 2016-04-10
-  SUBROUTINE GDSWZD_C(IGDTNUM,IGDTMPL,IGDTLEN,IOPT,NPTS,FILL, &
-       XPTS,YPTS,RLON,RLAT,NRET,CROT,SROT, &
-       XLON,XLAT,YLON,YLAT,AREA) BIND(C, NAME='gdswzd')
-    USE, INTRINSIC :: ISO_C_BINDING
+  subroutine gdswzd_c(igdtnum,igdtmpl,igdtlen,iopt,npts,fill, &
+                      xpts,ypts,rlon,rlat,nret,crot,srot, &
+                      xlon,xlat,ylon,ylat,area) bind(c,name='gdswzd')
+    use,intrinsic :: iso_c_binding
 
-    USE GDSWZD_MOD
+    use gdswzd_mod
 
-    IMPLICIT NONE
+    implicit none
 
 #if (LSIZE==8)
-    INTEGER(KIND=C_LONG), INTENT(IN)         :: IGDTMPL(IGDTLEN)
-    INTEGER(KIND=C_LONG), VALUE, INTENT(IN)  :: IGDTNUM, IGDTLEN
-    INTEGER(KIND=C_LONG), VALUE, INTENT(IN)  :: IOPT, NPTS
-    INTEGER(KIND=C_LONG), INTENT(OUT)        :: NRET
+    integer(KIND=c_long),intent(in)         :: igdtmpl(igdtlen)
+    integer(KIND=c_long),value,intent(in)  :: igdtnum,igdtlen
+    integer(KIND=c_long),value,intent(in)  :: iopt,npts
+    integer(KIND=c_long),intent(out)        :: nret
 #else
-    INTEGER(KIND=C_INT),  INTENT(IN)         :: IGDTMPL(IGDTLEN)
-    INTEGER(KIND=C_INT),  VALUE, INTENT(IN)  :: IGDTNUM, IGDTLEN
-    INTEGER(KIND=C_INT),  VALUE, INTENT(IN)  :: IOPT, NPTS
-    INTEGER(KIND=C_INT),  INTENT(OUT)        :: NRET
+    integer(KIND=c_int),intent(in)         :: igdtmpl(igdtlen)
+    integer(KIND=c_int),value,intent(in)  :: igdtnum,igdtlen
+    integer(KIND=c_int),value,intent(in)  :: iopt,npts
+    integer(KIND=c_int),intent(out)        :: nret
 #endif
 
 #if (LSIZE==4)
-    REAL(KIND=C_FLOAT), VALUE, INTENT(IN)    :: FILL
-    REAL(KIND=C_FLOAT), INTENT(INOUT)        :: XPTS(NPTS),YPTS(NPTS),RLON(NPTS),RLAT(NPTS)
-    REAL(KIND=C_FLOAT), INTENT(OUT)          :: CROT(NPTS),SROT(NPTS),XLON(NPTS),XLAT(NPTS)
-    REAL(KIND=C_FLOAT), INTENT(OUT)          :: YLON(NPTS),YLAT(NPTS),AREA(NPTS)
+    real(KIND=c_float),value,intent(in)    :: fill
+    real(KIND=c_float),intent(inout)        :: xpts(npts),ypts(npts),rlon(npts),rlat(npts)
+    real(KIND=c_float),intent(out)          :: crot(npts),srot(npts),xlon(npts),xlat(npts)
+    real(KIND=c_float),intent(out)          :: ylon(npts),ylat(npts),area(npts)
 #else
-    REAL(KIND=C_DOUBLE), VALUE, INTENT(IN)   :: FILL
-    REAL(KIND=C_DOUBLE), INTENT(INOUT)       :: XPTS(NPTS),YPTS(NPTS),RLON(NPTS),RLAT(NPTS)
-    REAL(KIND=C_DOUBLE), INTENT(OUT)         :: CROT(NPTS),SROT(NPTS),XLON(NPTS),XLAT(NPTS)
-    REAL(KIND=C_DOUBLE), INTENT(OUT)         :: YLON(NPTS),YLAT(NPTS),AREA(NPTS)
+    real(KIND=c_double),value,intent(in)   :: fill
+    real(KIND=c_double),intent(inout)       :: xpts(npts),ypts(npts),rlon(npts),rlat(npts)
+    real(KIND=c_double),intent(out)         :: crot(npts),srot(npts),xlon(npts),xlat(npts)
+    real(KIND=c_double),intent(out)         :: ylon(npts),ylat(npts),area(npts)
 #endif
 
-    CALL GDSWZD(IGDTNUM,IGDTMPL,IGDTLEN,IOPT,NPTS,FILL, &
-         XPTS,YPTS,RLON,RLAT,NRET, &
-         CROT,SROT,XLON,XLAT,YLON,YLAT,AREA)
+    call gdswzd(igdtnum,igdtmpl,igdtlen,iopt,npts,fill, &
+                xpts,ypts,rlon,rlat,nret, &
+                crot,srot,xlon,xlat,ylon,ylat,area)
 
-  END SUBROUTINE GDSWZD_C
+  endsubroutine gdswzd_c
 
   !> C wrapper for routine gdswzd.
   !> Use this routine to call 'gdswzd' from a C or C++ program.
@@ -256,41 +256,41 @@ contains
   !> square of the map factor in the case of conformal projections.)
   !>
   !>  @author JOVIC @date 2016-04-10
-  SUBROUTINE GDSWZD_C_grib1(KGDS,IOPT,NPTS,FILL,XPTS,YPTS,RLON,RLAT,NRET, &
-       CROT,SROT,XLON,XLAT,YLON,YLAT,AREA) BIND(C, NAME='gdswzd_grib1')
-    USE, INTRINSIC :: ISO_C_BINDING
+  subroutine gdswzd_c_grib1(kgds,iopt,npts,fill,xpts,ypts,rlon,rlat,nret, &
+                            crot,srot,xlon,xlat,ylon,ylat,area) bind(c,name='gdswzd_grib1')
+    use,intrinsic :: iso_c_binding
 
-    USE GDSWZD_MOD
+    use gdswzd_mod
 
-    IMPLICIT NONE
+    implicit none
 
 #if (LSIZE==8)
-    INTEGER(KIND=C_LONG), INTENT(IN)         :: KGDS(200)
-    INTEGER(KIND=C_LONG), VALUE, INTENT(IN)  :: IOPT
-    INTEGER(KIND=C_LONG), VALUE, INTENT(IN)  :: NPTS
-    INTEGER(KIND=C_LONG), INTENT(OUT)        :: NRET
+    integer(KIND=c_long),intent(in)         :: kgds(200)
+    integer(KIND=c_long),value,intent(in)  :: iopt
+    integer(KIND=c_long),value,intent(in)  :: npts
+    integer(KIND=c_long),intent(out)        :: nret
 #else
-    INTEGER(KIND=C_INT),  INTENT(IN)         :: KGDS(200)
-    INTEGER(KIND=C_INT),  VALUE, INTENT(IN)  :: IOPT
-    INTEGER(KIND=C_INT),  VALUE, INTENT(IN)  :: NPTS
-    INTEGER(KIND=C_INT),  INTENT(OUT)        :: NRET
+    integer(KIND=c_int),intent(in)         :: kgds(200)
+    integer(KIND=c_int),value,intent(in)  :: iopt
+    integer(KIND=c_int),value,intent(in)  :: npts
+    integer(KIND=c_int),intent(out)        :: nret
 #endif
 
 #if (LSIZE==4)
-    REAL(KIND=C_FLOAT), VALUE, INTENT(IN)    :: FILL
-    REAL(KIND=C_FLOAT), INTENT(INOUT)        :: XPTS(NPTS),YPTS(NPTS),RLON(NPTS),RLAT(NPTS)
-    REAL(KIND=C_FLOAT), INTENT(OUT)          :: CROT(NPTS),SROT(NPTS),XLON(NPTS),XLAT(NPTS)
-    REAL(KIND=C_FLOAT), INTENT(OUT)          :: YLON(NPTS),YLAT(NPTS),AREA(NPTS)
+    real(KIND=c_float),value,intent(in)    :: fill
+    real(KIND=c_float),intent(inout)        :: xpts(npts),ypts(npts),rlon(npts),rlat(npts)
+    real(KIND=c_float),intent(out)          :: crot(npts),srot(npts),xlon(npts),xlat(npts)
+    real(KIND=c_float),intent(out)          :: ylon(npts),ylat(npts),area(npts)
 #else
-    REAL(KIND=C_DOUBLE), VALUE, INTENT(IN)   :: FILL
-    REAL(KIND=C_DOUBLE), INTENT(INOUT)       :: XPTS(NPTS),YPTS(NPTS),RLON(NPTS),RLAT(NPTS)
-    REAL(KIND=C_DOUBLE), INTENT(OUT)         :: CROT(NPTS),SROT(NPTS),XLON(NPTS),XLAT(NPTS)
-    REAL(KIND=C_DOUBLE), INTENT(OUT)         :: YLON(NPTS),YLAT(NPTS),AREA(NPTS)
+    real(KIND=c_double),value,intent(in)   :: fill
+    real(KIND=c_double),intent(inout)       :: xpts(npts),ypts(npts),rlon(npts),rlat(npts)
+    real(KIND=c_double),intent(out)         :: crot(npts),srot(npts),xlon(npts),xlat(npts)
+    real(KIND=c_double),intent(out)         :: ylon(npts),ylat(npts),area(npts)
 #endif
 
-    CALL GDSWZD(KGDS,IOPT,NPTS,FILL,XPTS,YPTS,RLON,RLAT,NRET, &
-         CROT,SROT,XLON,XLAT,YLON,YLAT,AREA)
+    call gdswzd(kgds,iopt,npts,fill,xpts,ypts,rlon,rlat,nret, &
+                crot,srot,xlon,xlat,ylon,ylat,area)
 
-  END SUBROUTINE GDSWZD_C_GRIB1
+  endsubroutine gdswzd_c_grib1
 
-end module gdswzd_c_mod
+endmodule gdswzd_c_mod
