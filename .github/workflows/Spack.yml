@@ -37,7 +37,7 @@ jobs:
         package-name: ip
         package-variants: ${{ matrix.variants }}
         spack-compiler: gcc@11
-        cache-secret: ${{ secrets.SPACK3 }}
+        cache-secret: ${{ secrets.GITHUB_TOKEN }}
         upload-artifacts: always
         custom-recipe: spack/package.py
         spack-ref: 6f7eb3750cc100dc9cd6c02730d16ff8eb0c2d9e
