@@ -133,14 +133,6 @@ C  EQUALLY-SPACED LATITUDES INCLUDING POLES
           BWORK(JS)=-D1/(4*(JS-1)**2-1)
         ENDDO
 
-        ! Call LAPACK routines
-#if (LSIZE==4)
-        CALL SGETRF(JHO, JHO, AWORK, JHE, IPVT, INFO)
-        CALL SGETRS('N', JHO, 1, AWORK, JHE, IPVT, BWORK, JHO, INFO)
-#else
-        CALL DGETRF(JHO, JHO, AWORK, JHE, IPVT, INFO)
-        CALL DGETRS('N', JHO, 1, AWORK, JHE, IPVT, BWORK, JHO, INFO)
-#endif
 
         WLAT(1)=0.
         DO J=1,JHO
@@ -176,14 +168,6 @@ C  EQUALLY-SPACED LATITUDES EXCLUDING POLES
           BWORK(JS)=-D1/(4*(JS-1)**2-1)
         ENDDO
 
-        ! Call LAPACK routines
-#if (LSIZE==4)
-        CALL SGETRF(JHO, JHO, AWORK, JHE, IPVT, INFO)
-        CALL SGETRS('N', JHO, 1, AWORK, JHE, IPVT, BWORK, JHO, INFO)
-#else
-        CALL DGETRF(JHO, JHO, AWORK, JHE, IPVT, INFO)
-        CALL DGETRS('N', JHO, 1, AWORK, JHE, IPVT, BWORK, JHO, INFO)
-#endif
 
         WLAT(1)=0.
         DO J=1,JHO

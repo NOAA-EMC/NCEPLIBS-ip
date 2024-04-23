@@ -67,7 +67,6 @@ foreach(kind ${kinds})
   if(OpenMP_Fortran_FOUND)
     target_link_libraries(${lib_name} PUBLIC OpenMP::OpenMP_Fortran)
   endif()
-  target_link_libraries(${lib_name} PUBLIC LAPACK::LAPACK)
   
   list(APPEND LIB_TARGETS ${lib_name})
   
