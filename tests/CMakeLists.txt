@@ -100,6 +100,7 @@ foreach(kind ${kinds})
   add_test(test_rotatedB_spectral_vector_grib2_${kind} test_vector_grib2_${kind} 205 4)
   add_test(test_rotatedE_budget_vector_grib2_${kind} test_vector_grib2_${kind} 203 3)
   add_test(test_rotatedB_direct_spectral_vector_grib2_${kind} test_vector_grib2_${kind} 32769 4)
+  add_test(test_rotatedB_direct_ncep_post_spectral_vector_grib2_${kind} test_vector_grib2_${kind} 32769b 4)
   add_test(test_rotatedE_direct_budget_vector_grib2_${kind} test_vector_grib2_${kind} 32768 3)
 
   # vector station point tests

@@ -3,6 +3,7 @@
 ! Kyle Gerheiser June, 2021
 
   use ip_mod
+  use ip_grid_mod
   implicit none
 
 contains
@@ -547,13 +548,14 @@ contains
        output_gdtmpl=gdtmpl203
        i_output = output_gdtmpl(8)
        j_output = output_gdtmpl(9)
-    case ('32769')
+    case ('32769','32769b')
        output_gdtnum = 32769
        output_gdtlen = gdtlen205
        allocate(output_gdtmpl(output_gdtlen))
        output_gdtmpl=gdtmpl205
        i_output = output_gdtmpl(8)
        j_output = output_gdtmpl(9)
+       if (trim(grid).eq.'32769b') call use_ncep_post_arakawa()
     case default
        print*,"ERROR: ENTER VALID GRID NUMBER."
        stop 55

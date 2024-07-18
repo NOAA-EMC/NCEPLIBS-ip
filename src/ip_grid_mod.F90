@@ -28,10 +28,14 @@ module ip_grid_mod
   integer, public, parameter :: ROT_EQUID_CYLIND_E_GRID_ID_GRIB2 = 32768 !< Integer grid number for rotated equidistant cylindrical E-stagger grid (grib2)
   integer, public, parameter :: ROT_EQUID_CYLIND_B_GRID_ID_GRIB2 = 32769 !< Integer grid number for rotated equidistant cylindrical B-stagger grid (grib2)
 
+  logical, public, save :: ncep_post_arakawa=.false. !< Use ncep_post/wgrib2-compatible version of init_grib2() for non-E Arakawa grids (enable with use_ncep_post_arakawa())
+
   private
   public :: ip_grid
   public :: gdswzd_interface
   public :: operator(==)
+  public :: use_ncep_post_arakawa
+  public :: unuse_ncep_post_arakawa
 
   !> Abstract grid that holds fields and methods common to all grids.
   !! ip_grid is meant to be subclassed when implementing a new grid.
@@ -171,6 +175,26 @@ module ip_grid_mod
   
 
 contains
+
+  !> Enables ncep_post/wgrib2-compatible non-E Arakawa grib2 grids
+  !> by setting 'ncep_post_arakawa=.true.'.
+  !> This subroutine should be called prior to init_grib2().
+  !>
+  !> @author Alex Richert
+  !> @date May 2024
+  subroutine use_ncep_post_arakawa() bind(c)
+    ncep_post_arakawa = .true.
+  end subroutine use_ncep_post_arakawa
+
+  !> Disables ncep_post/wgrib2-compatible non-E Arakawa grib2 grids
+  !> by setting 'ncep_post_arakawa=.false.'.
+  !> This subroutine should be called prior to init_grib2().
+  !>
+  !> @author Alex Richert
+  !> @date May 2024
+  subroutine unuse_ncep_post_arakawa() bind(c)
+    ncep_post_arakawa = .false.
+  end subroutine unuse_ncep_post_arakawa
 
   !> Compares two grids.
   !>
