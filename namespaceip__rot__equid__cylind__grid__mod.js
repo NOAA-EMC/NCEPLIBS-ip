@@ -4,6 +4,8 @@ var namespaceip__rot__equid__cylind__grid__mod =
     [ "gdswzd_rot_equid_cylind", "namespaceip__rot__equid__cylind__grid__mod.html#a55c153201e15205d3f75e4ffb717cc0b", null ],
     [ "init_grib1", "namespaceip__rot__equid__cylind__grid__mod.html#acb27dfdc6f03dea897d509910365afee", null ],
     [ "init_grib2", "namespaceip__rot__equid__cylind__grid__mod.html#add3c6c1dad5748b452d291df6619867d", null ],
+    [ "init_grib2_default", "namespaceip__rot__equid__cylind__grid__mod.html#a9ade5de892a935c3b62c1860b719ce74", null ],
+    [ "init_grib2_ncep_post", "namespaceip__rot__equid__cylind__grid__mod.html#a74abf723e815f9ff196e6d0174fd449b", null ],
     [ "rot_equid_cylind_error", "namespaceip__rot__equid__cylind__grid__mod.html#a1cc09c83f9a3815d8c5f8ed2f239f53f", null ],
     [ "rot_equid_cylind_grid_area", "namespaceip__rot__equid__cylind__grid__mod.html#ad8f1133eb6809705c15337134eafe9fd", null ],
     [ "rot_equid_cylind_map_jacob", "namespaceip__rot__equid__cylind__grid__mod.html#a985f1dc1a20444cef706d4bb20e0841b", null ],

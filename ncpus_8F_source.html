@@ -26,7 +26,7 @@
  <tr style="height: 56px;">
   <td id="projectalign" style="padding-left: 0.5em;">
    <div id="projectname">NCEPLIBS-ip
-   &#160;<span id="projectnumber">5.0.0</span>
+   &#160;<span id="projectnumber">5.1.0</span>
    </div>
   </td>
  </tr>
@@ -109,23 +109,24 @@ $(document).ready(function(){initNavTree('ncpus_8F_source.html',''); initResizab
 <div class="line"><a name="l00021"></a><span class="lineno">   21</span>&#160;<span class="comment">C&gt;</span></div>
 <div class="line"><a name="l00022"></a><span class="lineno">   22</span>&#160;<span class="comment">C&gt; @author Iredell @date 94-08-19</span></div>
 <div class="line"><a name="l00023"></a><span class="lineno"><a class="line" href="ncpus_8F.html#a821a75ee067ea31758a038c0327bd3bd">   23</a></span>&#160;      <span class="keyword">FUNCTION </span><a class="code" href="ncpus_8F.html#a821a75ee067ea31758a038c0327bd3bd">ncpus</a>()</div>
-<div class="line"><a name="l00024"></a><span class="lineno">   24</span>&#160;      <span class="keywordtype">INTEGER</span> nthreads, tid, omp_get_num_threads,omp_get_thread_num</div>
+<div class="line"><a name="l00024"></a><span class="lineno">   24</span>&#160;      <span class="keywordtype">INTEGER</span> tid</div>
 <div class="line"><a name="l00025"></a><span class="lineno">   25</span>&#160;<span class="comment">C    Obtain thread number</span></div>
 <div class="line"><a name="l00026"></a><span class="lineno">   26</span>&#160;#ifdef openmp</div>
-<div class="line"><a name="l00027"></a><span class="lineno">   27</span>&#160;<span class="comment">!$OMP PARALLEL PRIVATE(TID)</span></div>
-<div class="line"><a name="l00028"></a><span class="lineno">   28</span>&#160;      tid = omp_get_thread_num()</div>
-<div class="line"><a name="l00029"></a><span class="lineno">   29</span>&#160;<span class="comment">!      PRINT *, &#39;...............thread # &#39;, TID</span></div>
-<div class="line"><a name="l00030"></a><span class="lineno">   30</span>&#160;    <span class="keywordflow">if</span> (tid. eq. 0) <span class="keywordflow">then</span></div>
-<div class="line"><a name="l00031"></a><span class="lineno">   31</span>&#160;        <a class="code" href="ncpus_8F.html#a821a75ee067ea31758a038c0327bd3bd">ncpus</a>=omp_get_num_threads()</div>
-<div class="line"><a name="l00032"></a><span class="lineno">   32</span>&#160;<span class="comment">!        PRINT *, &#39;totaly #------------------- of threads = &#39;,NCPUS</span></div>
-<div class="line"><a name="l00033"></a><span class="lineno">   33</span>&#160;<span class="keywordflow">    endif</span></div>
-<div class="line"><a name="l00034"></a><span class="lineno">   34</span>&#160;<span class="comment">!$OMP END PARALLEL</span></div>
-<div class="line"><a name="l00035"></a><span class="lineno">   35</span>&#160;<span class="preprocessor">#else</span></div>
-<div class="line"><a name="l00036"></a><span class="lineno">   36</span>&#160;<span class="preprocessor"></span>      tid = 0</div>
-<div class="line"><a name="l00037"></a><span class="lineno">   37</span>&#160;      <a class="code" href="ncpus_8F.html#a821a75ee067ea31758a038c0327bd3bd">ncpus</a> = 1</div>
-<div class="line"><a name="l00038"></a><span class="lineno">   38</span>&#160;<span class="preprocessor">#endif</span></div>
-<div class="line"><a name="l00039"></a><span class="lineno">   39</span>&#160;<span class="preprocessor"></span>      <span class="keywordflow">RETURN</span></div>
-<div class="line"><a name="l00040"></a><span class="lineno">   40</span>&#160;      <span class="keyword">END</span></div>
+<div class="line"><a name="l00027"></a><span class="lineno">   27</span>&#160;      <span class="keywordtype">INTEGER</span> omp_get_num_threads,omp_get_thread_num</div>
+<div class="line"><a name="l00028"></a><span class="lineno">   28</span>&#160;<span class="comment">!$OMP PARALLEL PRIVATE(TID)</span></div>
+<div class="line"><a name="l00029"></a><span class="lineno">   29</span>&#160;      tid = omp_get_thread_num()</div>
+<div class="line"><a name="l00030"></a><span class="lineno">   30</span>&#160;<span class="comment">!      PRINT *, &#39;...............thread # &#39;, TID</span></div>
+<div class="line"><a name="l00031"></a><span class="lineno">   31</span>&#160;      <span class="keywordflow">if</span> (tid. eq. 0) <span class="keywordflow">then</span></div>
+<div class="line"><a name="l00032"></a><span class="lineno">   32</span>&#160;        <a class="code" href="ncpus_8F.html#a821a75ee067ea31758a038c0327bd3bd">ncpus</a>=omp_get_num_threads()</div>
+<div class="line"><a name="l00033"></a><span class="lineno">   33</span>&#160;<span class="comment">!        PRINT *, &#39;totaly #------------------- of threads = &#39;,NCPUS</span></div>
+<div class="line"><a name="l00034"></a><span class="lineno">   34</span>&#160;<span class="keywordflow">      endif</span></div>
+<div class="line"><a name="l00035"></a><span class="lineno">   35</span>&#160;<span class="comment">!$OMP END PARALLEL</span></div>
+<div class="line"><a name="l00036"></a><span class="lineno">   36</span>&#160;<span class="preprocessor">#else</span></div>
+<div class="line"><a name="l00037"></a><span class="lineno">   37</span>&#160;<span class="preprocessor"></span>      tid = 0</div>
+<div class="line"><a name="l00038"></a><span class="lineno">   38</span>&#160;      <a class="code" href="ncpus_8F.html#a821a75ee067ea31758a038c0327bd3bd">ncpus</a> = 1</div>
+<div class="line"><a name="l00039"></a><span class="lineno">   39</span>&#160;<span class="preprocessor">#endif</span></div>
+<div class="line"><a name="l00040"></a><span class="lineno">   40</span>&#160;<span class="preprocessor"></span>      <span class="keywordflow">RETURN</span></div>
+<div class="line"><a name="l00041"></a><span class="lineno">   41</span>&#160;      <span class="keyword">END</span></div>
 <div class="ttc" id="ancpus_8F_html_a821a75ee067ea31758a038c0327bd3bd"><div class="ttname"><a href="ncpus_8F.html#a821a75ee067ea31758a038c0327bd3bd">ncpus</a></div><div class="ttdeci">function ncpus()</div><div class="ttdoc">Set number of CPUs - the number of processors over which to parallelize.</div><div class="ttdef"><b>Definition:</b> <a href="ncpus_8F_source.html#l00023">ncpus.F:24</a></div></div>
 </div><!-- fragment --></div><!-- contents -->
 </div><!-- doc-content -->

@@ -26,7 +26,7 @@
  <tr style="height: 56px;">
   <td id="projectalign" style="padding-left: 0.5em;">
    <div id="projectname">NCEPLIBS-ip
-   &#160;<span id="projectnumber">5.0.0</span>
+   &#160;<span id="projectnumber">5.1.0</span>
    </div>
   </td>
  </tr>
@@ -139,90 +139,93 @@ $(document).ready(function(){initNavTree('spffte_8f_source.html',''); initResiza
 <div class="line"><a name="l00051"></a><span class="lineno">   51</span>&#160;<span class="keywordtype">        REAL</span>,<span class="keywordtype">INTENT(INOUT)</span>:: W(2*INCW,KMAX)</div>
 <div class="line"><a name="l00052"></a><span class="lineno">   52</span>&#160;<span class="keywordtype">        REAL</span>,<span class="keywordtype">INTENT(INOUT)</span>:: G(INCG,KMAX)</div>
 <div class="line"><a name="l00053"></a><span class="lineno">   53</span>&#160;<span class="keywordtype">        REAL</span>(8),<span class="keywordtype">INTENT(INOUT)</span>:: AFFT(50000+4*IMAX)</div>
-<div class="line"><a name="l00054"></a><span class="lineno">   54</span>&#160;        <span class="keywordtype">INTEGER</span>:: INIT,INC2X,INC2Y,N,M,ISIGN,NAUX1,NAUX2,NAUX3</div>
-<div class="line"><a name="l00055"></a><span class="lineno">   55</span>&#160;<span class="comment">C ==EM==       ^(4)</span></div>
-<div class="line"><a name="l00056"></a><span class="lineno">   56</span>&#160;<span class="keywordtype">        REAL</span>:: SCALE</div>
-<div class="line"><a name="l00057"></a><span class="lineno">   57</span>&#160;<span class="keywordtype">        REAL</span>(8):: AUX2(20000+2*IMAX),AUX3</div>
-<div class="line"><a name="l00058"></a><span class="lineno">   58</span>&#160;        <span class="keywordtype">INTEGER</span>:: IACR,IARC</div>
-<div class="line"><a name="l00059"></a><span class="lineno">   59</span>&#160; </div>
-<div class="line"><a name="l00060"></a><span class="lineno">   60</span>&#160;        naux1=25000+2*imax</div>
-<div class="line"><a name="l00061"></a><span class="lineno">   61</span>&#160;        naux2=20000+2*imax</div>
-<div class="line"><a name="l00062"></a><span class="lineno">   62</span>&#160;        naux3=1</div>
-<div class="line"><a name="l00063"></a><span class="lineno">   63</span>&#160;        iacr=1</div>
-<div class="line"><a name="l00064"></a><span class="lineno">   64</span>&#160;        iarc=1+naux1</div>
-<div class="line"><a name="l00065"></a><span class="lineno">   65</span>&#160; </div>
-<div class="line"><a name="l00066"></a><span class="lineno">   66</span>&#160;<span class="comment">C  INITIALIZATION.</span></div>
-<div class="line"><a name="l00067"></a><span class="lineno">   67</span>&#160;<span class="comment">C  FILL AUXILIARY ARRAYS WITH TRIGONOMETRIC DATA</span></div>
-<div class="line"><a name="l00068"></a><span class="lineno">   68</span>&#160;        <span class="keywordflow">SELECT CASE</span>(idir)</div>
-<div class="line"><a name="l00069"></a><span class="lineno">   69</span>&#160;          <span class="keywordflow">CASE</span>(0)</div>
-<div class="line"><a name="l00070"></a><span class="lineno">   70</span>&#160;            init=1</div>
-<div class="line"><a name="l00071"></a><span class="lineno">   71</span>&#160;            inc2x=incw</div>
-<div class="line"><a name="l00072"></a><span class="lineno">   72</span>&#160;            inc2y=incg</div>
-<div class="line"><a name="l00073"></a><span class="lineno">   73</span>&#160;            n=imax</div>
-<div class="line"><a name="l00074"></a><span class="lineno">   74</span>&#160;            m=kmax</div>
-<div class="line"><a name="l00075"></a><span class="lineno">   75</span>&#160;            isign=-1</div>
-<div class="line"><a name="l00076"></a><span class="lineno">   76</span>&#160;            scale=1.</div>
-<div class="line"><a name="l00077"></a><span class="lineno">   77</span>&#160;            <span class="keywordflow">IF</span>(digits(1.).LT.digits(1._8)) <span class="keywordflow">THEN</span></div>
-<div class="line"><a name="l00078"></a><span class="lineno">   78</span>&#160;              <span class="keyword">CALL </span><a class="code" href="fftpack_8F.html#ac69cbd64be972c20a4424f5327fb4b36">scrft</a>(init,w,inc2x,g,inc2y,n,m,isign,scale,</div>
-<div class="line"><a name="l00079"></a><span class="lineno">   79</span>&#160;     &amp;                   afft(iacr),naux1,aux2,naux2,aux3,naux3)</div>
-<div class="line"><a name="l00080"></a><span class="lineno">   80</span>&#160;            <span class="keywordflow">ELSE</span></div>
-<div class="line"><a name="l00081"></a><span class="lineno">   81</span>&#160;              <span class="keyword">CALL </span><a class="code" href="fftpack_8F.html#a713ef445886ad8dc8b16692c6075d225">dcrft</a>(init,w,inc2x,g,inc2y,n,m,isign,scale,</div>
-<div class="line"><a name="l00082"></a><span class="lineno">   82</span>&#160;     &amp;                   afft(iacr),naux1,aux2,naux2)</div>
-<div class="line"><a name="l00083"></a><span class="lineno">   83</span>&#160;<span class="keywordflow">            ENDIF</span></div>
-<div class="line"><a name="l00084"></a><span class="lineno">   84</span>&#160;            init=1</div>
-<div class="line"><a name="l00085"></a><span class="lineno">   85</span>&#160;            inc2x=incg</div>
-<div class="line"><a name="l00086"></a><span class="lineno">   86</span>&#160;            inc2y=incw</div>
-<div class="line"><a name="l00087"></a><span class="lineno">   87</span>&#160;            n=imax</div>
-<div class="line"><a name="l00088"></a><span class="lineno">   88</span>&#160;            m=kmax</div>
-<div class="line"><a name="l00089"></a><span class="lineno">   89</span>&#160;            isign=+1</div>
-<div class="line"><a name="l00090"></a><span class="lineno">   90</span>&#160;            scale=1./imax</div>
-<div class="line"><a name="l00091"></a><span class="lineno">   91</span>&#160;            <span class="keywordflow">IF</span>(digits(1.).LT.digits(1._8)) <span class="keywordflow">THEN</span></div>
-<div class="line"><a name="l00092"></a><span class="lineno">   92</span>&#160;              <span class="keyword">CALL </span><a class="code" href="fftpack_8F.html#acf248c4f27a9fa81cffdfded50eee742">srcft</a>(init,g,inc2x,w,inc2y,n,m,isign,scale,</div>
-<div class="line"><a name="l00093"></a><span class="lineno">   93</span>&#160;     &amp;                   afft(iarc),naux1,aux2,naux2,aux3,naux3)</div>
-<div class="line"><a name="l00094"></a><span class="lineno">   94</span>&#160;            <span class="keywordflow">ELSE</span></div>
-<div class="line"><a name="l00095"></a><span class="lineno">   95</span>&#160;              <span class="keyword">CALL </span><a class="code" href="fftpack_8F.html#a55b05419c0d3bb0595b34c8cacf93be8">drcft</a>(init,g,inc2x,w,inc2y,n,m,isign,scale,</div>
-<div class="line"><a name="l00096"></a><span class="lineno">   96</span>&#160;     &amp;                   afft(iarc),naux1,aux2,naux2)</div>
-<div class="line"><a name="l00097"></a><span class="lineno">   97</span>&#160;<span class="keywordflow">            ENDIF</span></div>
-<div class="line"><a name="l00098"></a><span class="lineno">   98</span>&#160; </div>
-<div class="line"><a name="l00099"></a><span class="lineno">   99</span>&#160;<span class="comment">C  FOURIER TO PHYSICAL TRANSFORM.</span></div>
-<div class="line"><a name="l00100"></a><span class="lineno">  100</span>&#160;          <span class="keywordflow">CASE</span>(1:)</div>
-<div class="line"><a name="l00101"></a><span class="lineno">  101</span>&#160;            init=0</div>
-<div class="line"><a name="l00102"></a><span class="lineno">  102</span>&#160;            inc2x=incw</div>
-<div class="line"><a name="l00103"></a><span class="lineno">  103</span>&#160;            inc2y=incg</div>
-<div class="line"><a name="l00104"></a><span class="lineno">  104</span>&#160;            n=imax</div>
-<div class="line"><a name="l00105"></a><span class="lineno">  105</span>&#160;            m=kmax</div>
-<div class="line"><a name="l00106"></a><span class="lineno">  106</span>&#160;            isign=-1</div>
-<div class="line"><a name="l00107"></a><span class="lineno">  107</span>&#160;            scale=1.</div>
-<div class="line"><a name="l00108"></a><span class="lineno">  108</span>&#160;            <span class="keywordflow">IF</span>(digits(1.).LT.digits(1._8)) <span class="keywordflow">THEN</span></div>
-<div class="line"><a name="l00109"></a><span class="lineno">  109</span>&#160;              <span class="keyword">CALL </span><a class="code" href="fftpack_8F.html#ac69cbd64be972c20a4424f5327fb4b36">scrft</a>(init,w,inc2x,g,inc2y,n,m,isign,scale,</div>
-<div class="line"><a name="l00110"></a><span class="lineno">  110</span>&#160;     &amp;                   afft(iacr),naux1,aux2,naux2,aux3,naux3)</div>
-<div class="line"><a name="l00111"></a><span class="lineno">  111</span>&#160;            <span class="keywordflow">ELSE</span></div>
-<div class="line"><a name="l00112"></a><span class="lineno">  112</span>&#160;              <span class="keyword">CALL </span><a class="code" href="fftpack_8F.html#a713ef445886ad8dc8b16692c6075d225">dcrft</a>(init,w,inc2x,g,inc2y,n,m,isign,scale,</div>
-<div class="line"><a name="l00113"></a><span class="lineno">  113</span>&#160;     &amp;                   afft(iacr),naux1,aux2,naux2)</div>
-<div class="line"><a name="l00114"></a><span class="lineno">  114</span>&#160;<span class="keywordflow">            ENDIF</span></div>
-<div class="line"><a name="l00115"></a><span class="lineno">  115</span>&#160; </div>
-<div class="line"><a name="l00116"></a><span class="lineno">  116</span>&#160;<span class="comment">C  PHYSICAL TO FOURIER TRANSFORM.</span></div>
-<div class="line"><a name="l00117"></a><span class="lineno">  117</span>&#160;          <span class="keywordflow">CASE</span>(:-1)</div>
-<div class="line"><a name="l00118"></a><span class="lineno">  118</span>&#160;            init=0</div>
-<div class="line"><a name="l00119"></a><span class="lineno">  119</span>&#160;            inc2x=incg</div>
-<div class="line"><a name="l00120"></a><span class="lineno">  120</span>&#160;            inc2y=incw</div>
-<div class="line"><a name="l00121"></a><span class="lineno">  121</span>&#160;            n=imax</div>
-<div class="line"><a name="l00122"></a><span class="lineno">  122</span>&#160;            m=kmax</div>
-<div class="line"><a name="l00123"></a><span class="lineno">  123</span>&#160;            isign=+1</div>
-<div class="line"><a name="l00124"></a><span class="lineno">  124</span>&#160;            scale=1./imax</div>
-<div class="line"><a name="l00125"></a><span class="lineno">  125</span>&#160;            <span class="keywordflow">IF</span>(digits(1.).LT.digits(1._8)) <span class="keywordflow">THEN</span></div>
-<div class="line"><a name="l00126"></a><span class="lineno">  126</span>&#160;              <span class="keyword">CALL </span><a class="code" href="fftpack_8F.html#acf248c4f27a9fa81cffdfded50eee742">srcft</a>(init,g,inc2x,w,inc2y,n,m,isign,scale,</div>
-<div class="line"><a name="l00127"></a><span class="lineno">  127</span>&#160;     &amp;                   afft(iarc),naux1,aux2,naux2,aux3,naux3)</div>
-<div class="line"><a name="l00128"></a><span class="lineno">  128</span>&#160;            <span class="keywordflow">ELSE</span></div>
-<div class="line"><a name="l00129"></a><span class="lineno">  129</span>&#160;              <span class="keyword">CALL </span><a class="code" href="fftpack_8F.html#a55b05419c0d3bb0595b34c8cacf93be8">drcft</a>(init,g,inc2x,w,inc2y,n,m,isign,scale,</div>
-<div class="line"><a name="l00130"></a><span class="lineno">  130</span>&#160;     &amp;                   afft(iarc),naux1,aux2,naux2)</div>
-<div class="line"><a name="l00131"></a><span class="lineno">  131</span>&#160;<span class="keywordflow">            ENDIF</span></div>
-<div class="line"><a name="l00132"></a><span class="lineno">  132</span>&#160;<span class="keywordflow">        END SELECT</span></div>
-<div class="line"><a name="l00133"></a><span class="lineno">  133</span>&#160;      <span class="keyword">END SUBROUTINE</span></div>
-<div class="ttc" id="afftpack_8F_html_a55b05419c0d3bb0595b34c8cacf93be8"><div class="ttname"><a href="fftpack_8F.html#a55b05419c0d3bb0595b34c8cacf93be8">drcft</a></div><div class="ttdeci">subroutine drcft(init, x, ldx, y, ldy, n, m, isign, scale, table, n1, wrk, n2, z, nz)</div><div class="ttdoc">drcft</div><div class="ttdef"><b>Definition:</b> <a href="fftpack_8F_source.html#l00158">fftpack.F:160</a></div></div>
+<div class="line"><a name="l00054"></a><span class="lineno">   54</span>&#160;<span class="keywordtype">        REAL</span>:: AFFTR(50000+4*IMAX)</div>
+<div class="line"><a name="l00055"></a><span class="lineno">   55</span>&#160;        <span class="keywordtype">INTEGER</span>:: INIT,INC2X,INC2Y,N,M,ISIGN,NAUX1,NAUX2,NAUX3</div>
+<div class="line"><a name="l00056"></a><span class="lineno">   56</span>&#160;<span class="comment">C ==EM==       ^(4)</span></div>
+<div class="line"><a name="l00057"></a><span class="lineno">   57</span>&#160;<span class="keywordtype">        REAL</span>:: SCALE</div>
+<div class="line"><a name="l00058"></a><span class="lineno">   58</span>&#160;<span class="keywordtype">        REAL</span> :: AUX2(20000+2*IMAX),AUX3</div>
+<div class="line"><a name="l00059"></a><span class="lineno">   59</span>&#160;        <span class="keywordtype">INTEGER</span>:: IACR,IARC</div>
+<div class="line"><a name="l00060"></a><span class="lineno">   60</span>&#160; </div>
+<div class="line"><a name="l00061"></a><span class="lineno">   61</span>&#160;        naux1=25000+2*imax</div>
+<div class="line"><a name="l00062"></a><span class="lineno">   62</span>&#160;        naux2=20000+2*imax</div>
+<div class="line"><a name="l00063"></a><span class="lineno">   63</span>&#160;        naux3=1</div>
+<div class="line"><a name="l00064"></a><span class="lineno">   64</span>&#160;        iacr=1</div>
+<div class="line"><a name="l00065"></a><span class="lineno">   65</span>&#160;        iarc=1+naux1</div>
+<div class="line"><a name="l00066"></a><span class="lineno">   66</span>&#160;        afftr=real(afft)</div>
+<div class="line"><a name="l00067"></a><span class="lineno">   67</span>&#160; </div>
+<div class="line"><a name="l00068"></a><span class="lineno">   68</span>&#160;<span class="comment">C  INITIALIZATION.</span></div>
+<div class="line"><a name="l00069"></a><span class="lineno">   69</span>&#160;<span class="comment">C  FILL AUXILIARY ARRAYS WITH TRIGONOMETRIC DATA</span></div>
+<div class="line"><a name="l00070"></a><span class="lineno">   70</span>&#160;        <span class="keywordflow">SELECT CASE</span>(idir)</div>
+<div class="line"><a name="l00071"></a><span class="lineno">   71</span>&#160;          <span class="keywordflow">CASE</span>(0)</div>
+<div class="line"><a name="l00072"></a><span class="lineno">   72</span>&#160;            init=1</div>
+<div class="line"><a name="l00073"></a><span class="lineno">   73</span>&#160;            inc2x=incw</div>
+<div class="line"><a name="l00074"></a><span class="lineno">   74</span>&#160;            inc2y=incg</div>
+<div class="line"><a name="l00075"></a><span class="lineno">   75</span>&#160;            n=imax</div>
+<div class="line"><a name="l00076"></a><span class="lineno">   76</span>&#160;            m=kmax</div>
+<div class="line"><a name="l00077"></a><span class="lineno">   77</span>&#160;            isign=-1</div>
+<div class="line"><a name="l00078"></a><span class="lineno">   78</span>&#160;            scale=1.</div>
+<div class="line"><a name="l00079"></a><span class="lineno">   79</span>&#160;            <span class="keywordflow">IF</span>(digits(1.).LT.digits(1._8)) <span class="keywordflow">THEN</span></div>
+<div class="line"><a name="l00080"></a><span class="lineno">   80</span>&#160;              <span class="keyword">CALL </span><a class="code" href="fftpack_8F.html#ac69cbd64be972c20a4424f5327fb4b36">scrft</a>(init,w,inc2x,g,inc2y,n,m,isign,scale,</div>
+<div class="line"><a name="l00081"></a><span class="lineno">   81</span>&#160;     &amp;                   afftr(iacr),naux1,aux2,naux2,aux3,naux3)</div>
+<div class="line"><a name="l00082"></a><span class="lineno">   82</span>&#160;            <span class="keywordflow">ELSE</span></div>
+<div class="line"><a name="l00083"></a><span class="lineno">   83</span>&#160;              <span class="keyword">CALL </span><a class="code" href="fftpack_8F.html#a713ef445886ad8dc8b16692c6075d225">dcrft</a>(init,w,inc2x,g,inc2y,n,m,isign,scale,</div>
+<div class="line"><a name="l00084"></a><span class="lineno">   84</span>&#160;     &amp;                   afftr(iacr),naux1,aux2,naux2)</div>
+<div class="line"><a name="l00085"></a><span class="lineno">   85</span>&#160;<span class="keywordflow">            ENDIF</span></div>
+<div class="line"><a name="l00086"></a><span class="lineno">   86</span>&#160;            init=1</div>
+<div class="line"><a name="l00087"></a><span class="lineno">   87</span>&#160;            inc2x=incg</div>
+<div class="line"><a name="l00088"></a><span class="lineno">   88</span>&#160;            inc2y=incw</div>
+<div class="line"><a name="l00089"></a><span class="lineno">   89</span>&#160;            n=imax</div>
+<div class="line"><a name="l00090"></a><span class="lineno">   90</span>&#160;            m=kmax</div>
+<div class="line"><a name="l00091"></a><span class="lineno">   91</span>&#160;            isign=+1</div>
+<div class="line"><a name="l00092"></a><span class="lineno">   92</span>&#160;            scale=1./imax</div>
+<div class="line"><a name="l00093"></a><span class="lineno">   93</span>&#160;            <span class="keywordflow">IF</span>(digits(1.).LT.digits(1._8)) <span class="keywordflow">THEN</span></div>
+<div class="line"><a name="l00094"></a><span class="lineno">   94</span>&#160;              <span class="keyword">CALL </span><a class="code" href="fftpack_8F.html#acf248c4f27a9fa81cffdfded50eee742">srcft</a>(init,g,inc2x,w,inc2y,n,m,isign,scale,</div>
+<div class="line"><a name="l00095"></a><span class="lineno">   95</span>&#160;     &amp;                   afftr(iarc),naux1,aux2,naux2,aux3,naux3)</div>
+<div class="line"><a name="l00096"></a><span class="lineno">   96</span>&#160;            <span class="keywordflow">ELSE</span></div>
+<div class="line"><a name="l00097"></a><span class="lineno">   97</span>&#160;              <span class="keyword">CALL </span><a class="code" href="fftpack_8F.html#a55b05419c0d3bb0595b34c8cacf93be8">drcft</a>(init,g,inc2x,w,inc2y,n,m,isign,scale,</div>
+<div class="line"><a name="l00098"></a><span class="lineno">   98</span>&#160;     &amp;                   afftr(iarc),naux1,aux2,naux2)</div>
+<div class="line"><a name="l00099"></a><span class="lineno">   99</span>&#160;<span class="keywordflow">            ENDIF</span></div>
+<div class="line"><a name="l00100"></a><span class="lineno">  100</span>&#160; </div>
+<div class="line"><a name="l00101"></a><span class="lineno">  101</span>&#160;<span class="comment">C  FOURIER TO PHYSICAL TRANSFORM.</span></div>
+<div class="line"><a name="l00102"></a><span class="lineno">  102</span>&#160;          <span class="keywordflow">CASE</span>(1:)</div>
+<div class="line"><a name="l00103"></a><span class="lineno">  103</span>&#160;            init=0</div>
+<div class="line"><a name="l00104"></a><span class="lineno">  104</span>&#160;            inc2x=incw</div>
+<div class="line"><a name="l00105"></a><span class="lineno">  105</span>&#160;            inc2y=incg</div>
+<div class="line"><a name="l00106"></a><span class="lineno">  106</span>&#160;            n=imax</div>
+<div class="line"><a name="l00107"></a><span class="lineno">  107</span>&#160;            m=kmax</div>
+<div class="line"><a name="l00108"></a><span class="lineno">  108</span>&#160;            isign=-1</div>
+<div class="line"><a name="l00109"></a><span class="lineno">  109</span>&#160;            scale=1.</div>
+<div class="line"><a name="l00110"></a><span class="lineno">  110</span>&#160;            <span class="keywordflow">IF</span>(digits(1.).LT.digits(1._8)) <span class="keywordflow">THEN</span></div>
+<div class="line"><a name="l00111"></a><span class="lineno">  111</span>&#160;              <span class="keyword">CALL </span><a class="code" href="fftpack_8F.html#ac69cbd64be972c20a4424f5327fb4b36">scrft</a>(init,w,inc2x,g,inc2y,n,m,isign,scale,</div>
+<div class="line"><a name="l00112"></a><span class="lineno">  112</span>&#160;     &amp;                   afftr(iacr),naux1,aux2,naux2,aux3,naux3)</div>
+<div class="line"><a name="l00113"></a><span class="lineno">  113</span>&#160;            <span class="keywordflow">ELSE</span></div>
+<div class="line"><a name="l00114"></a><span class="lineno">  114</span>&#160;              <span class="keyword">CALL </span><a class="code" href="fftpack_8F.html#a713ef445886ad8dc8b16692c6075d225">dcrft</a>(init,w,inc2x,g,inc2y,n,m,isign,scale,</div>
+<div class="line"><a name="l00115"></a><span class="lineno">  115</span>&#160;     &amp;                   afftr(iacr),naux1,aux2,naux2)</div>
+<div class="line"><a name="l00116"></a><span class="lineno">  116</span>&#160;<span class="keywordflow">            ENDIF</span></div>
+<div class="line"><a name="l00117"></a><span class="lineno">  117</span>&#160; </div>
+<div class="line"><a name="l00118"></a><span class="lineno">  118</span>&#160;<span class="comment">C  PHYSICAL TO FOURIER TRANSFORM.</span></div>
+<div class="line"><a name="l00119"></a><span class="lineno">  119</span>&#160;          <span class="keywordflow">CASE</span>(:-1)</div>
+<div class="line"><a name="l00120"></a><span class="lineno">  120</span>&#160;            init=0</div>
+<div class="line"><a name="l00121"></a><span class="lineno">  121</span>&#160;            inc2x=incg</div>
+<div class="line"><a name="l00122"></a><span class="lineno">  122</span>&#160;            inc2y=incw</div>
+<div class="line"><a name="l00123"></a><span class="lineno">  123</span>&#160;            n=imax</div>
+<div class="line"><a name="l00124"></a><span class="lineno">  124</span>&#160;            m=kmax</div>
+<div class="line"><a name="l00125"></a><span class="lineno">  125</span>&#160;            isign=+1</div>
+<div class="line"><a name="l00126"></a><span class="lineno">  126</span>&#160;            scale=1./imax</div>
+<div class="line"><a name="l00127"></a><span class="lineno">  127</span>&#160;            <span class="keywordflow">IF</span>(digits(1.).LT.digits(1._8)) <span class="keywordflow">THEN</span></div>
+<div class="line"><a name="l00128"></a><span class="lineno">  128</span>&#160;              <span class="keyword">CALL </span><a class="code" href="fftpack_8F.html#acf248c4f27a9fa81cffdfded50eee742">srcft</a>(init,g,inc2x,w,inc2y,n,m,isign,scale,</div>
+<div class="line"><a name="l00129"></a><span class="lineno">  129</span>&#160;     &amp;                   afftr(iarc),naux1,aux2,naux2,aux3,naux3)</div>
+<div class="line"><a name="l00130"></a><span class="lineno">  130</span>&#160;            <span class="keywordflow">ELSE</span></div>
+<div class="line"><a name="l00131"></a><span class="lineno">  131</span>&#160;              <span class="keyword">CALL </span><a class="code" href="fftpack_8F.html#a55b05419c0d3bb0595b34c8cacf93be8">drcft</a>(init,g,inc2x,w,inc2y,n,m,isign,scale,</div>
+<div class="line"><a name="l00132"></a><span class="lineno">  132</span>&#160;     &amp;                   afftr(iarc),naux1,aux2,naux2)</div>
+<div class="line"><a name="l00133"></a><span class="lineno">  133</span>&#160;<span class="keywordflow">            ENDIF</span></div>
+<div class="line"><a name="l00134"></a><span class="lineno">  134</span>&#160;<span class="keywordflow">        END SELECT</span></div>
+<div class="line"><a name="l00135"></a><span class="lineno">  135</span>&#160;        afft=real(afftr,kind=8)</div>
+<div class="line"><a name="l00136"></a><span class="lineno">  136</span>&#160;      <span class="keyword">END SUBROUTINE</span></div>
+<div class="ttc" id="afftpack_8F_html_a55b05419c0d3bb0595b34c8cacf93be8"><div class="ttname"><a href="fftpack_8F.html#a55b05419c0d3bb0595b34c8cacf93be8">drcft</a></div><div class="ttdeci">subroutine drcft(init, x, ldx, y, ldy, n, m, isign, scale, table, n1, wrk, n2, z, nz)</div><div class="ttdoc">drcft</div><div class="ttdef"><b>Definition:</b> <a href="fftpack_8F_source.html#l00162">fftpack.F:164</a></div></div>
 <div class="ttc" id="afftpack_8F_html_a713ef445886ad8dc8b16692c6075d225"><div class="ttname"><a href="fftpack_8F.html#a713ef445886ad8dc8b16692c6075d225">dcrft</a></div><div class="ttdeci">subroutine dcrft(init, x, ldx, y, ldy, n, m, isign, scale, table, n1, wrk, n2, z, nz)</div><div class="ttdoc">dcrft</div><div class="ttdef"><b>Definition:</b> <a href="fftpack_8F_source.html#l00032">fftpack.F:34</a></div></div>
-<div class="ttc" id="afftpack_8F_html_ac69cbd64be972c20a4424f5327fb4b36"><div class="ttname"><a href="fftpack_8F.html#ac69cbd64be972c20a4424f5327fb4b36">scrft</a></div><div class="ttdeci">subroutine scrft(init, x, ldx, y, ldy, n, m, isign, scale, table, n1, wrk, n2, z, nz)</div><div class="ttdoc">scrft</div><div class="ttdef"><b>Definition:</b> <a href="fftpack_8F_source.html#l00078">fftpack.F:80</a></div></div>
-<div class="ttc" id="afftpack_8F_html_acf248c4f27a9fa81cffdfded50eee742"><div class="ttname"><a href="fftpack_8F.html#acf248c4f27a9fa81cffdfded50eee742">srcft</a></div><div class="ttdeci">subroutine srcft(init, x, ldx, y, ldy, n, m, isign, scale, table, n1, wrk, n2, z, nz)</div><div class="ttdoc">srcft</div><div class="ttdef"><b>Definition:</b> <a href="fftpack_8F_source.html#l00207">fftpack.F:209</a></div></div>
+<div class="ttc" id="afftpack_8F_html_ac69cbd64be972c20a4424f5327fb4b36"><div class="ttname"><a href="fftpack_8F.html#ac69cbd64be972c20a4424f5327fb4b36">scrft</a></div><div class="ttdeci">subroutine scrft(init, x, ldx, y, ldy, n, m, isign, scale, table, n1, wrk, n2, z, nz)</div><div class="ttdoc">scrft</div><div class="ttdef"><b>Definition:</b> <a href="fftpack_8F_source.html#l00080">fftpack.F:82</a></div></div>
+<div class="ttc" id="afftpack_8F_html_acf248c4f27a9fa81cffdfded50eee742"><div class="ttname"><a href="fftpack_8F.html#acf248c4f27a9fa81cffdfded50eee742">srcft</a></div><div class="ttdeci">subroutine srcft(init, x, ldx, y, ldy, n, m, isign, scale, table, n1, wrk, n2, z, nz)</div><div class="ttdoc">srcft</div><div class="ttdef"><b>Definition:</b> <a href="fftpack_8F_source.html#l00213">fftpack.F:215</a></div></div>
 <div class="ttc" id="aspffte_8f_html_af06489254bd3e99030b39744fce32233"><div class="ttname"><a href="spffte_8f.html#af06489254bd3e99030b39744fce32233">spffte</a></div><div class="ttdeci">subroutine spffte(IMAX, INCW, INCG, KMAX, W, G, IDIR, AFFT)</div><div class="ttdoc">This subprogram performs multiple fast Fourier transforms between complex amplitudes in Fourier space...</div><div class="ttdef"><b>Definition:</b> <a href="spffte_8f_source.html#l00048">spffte.f:49</a></div></div>
 </div><!-- fragment --></div><!-- contents -->
 </div><!-- doc-content -->

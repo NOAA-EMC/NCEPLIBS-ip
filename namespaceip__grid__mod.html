@@ -26,7 +26,7 @@
  <tr style="height: 56px;">
   <td id="projectalign" style="padding-left: 0.5em;">
    <div id="projectname">NCEPLIBS-ip
-   &#160;<span id="projectnumber">5.0.0</span>
+   &#160;<span id="projectnumber">5.1.0</span>
    </div>
   </td>
  </tr>
@@ -117,6 +117,12 @@ Functions/Subroutines</h2></td></tr>
 <tr class="memitem:a663bda9af9dd991a09ba0f0de66dc045"><td class="memItemLeft" align="right" valign="top">logical function&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespaceip__grid__mod.html#a663bda9af9dd991a09ba0f0de66dc045">is_same_grid</a> (grid1, grid2)</td></tr>
 <tr class="memdesc:a663bda9af9dd991a09ba0f0de66dc045"><td class="mdescLeft">&#160;</td><td class="mdescRight">Compares two grids.  <a href="namespaceip__grid__mod.html#a663bda9af9dd991a09ba0f0de66dc045">More...</a><br /></td></tr>
 <tr class="separator:a663bda9af9dd991a09ba0f0de66dc045"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ac8e716adbe5c1156bfd20f936a4205de"><td class="memItemLeft" align="right" valign="top">subroutine, public&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespaceip__grid__mod.html#ac8e716adbe5c1156bfd20f936a4205de">unuse_ncep_post_arakawa</a> ()</td></tr>
+<tr class="memdesc:ac8e716adbe5c1156bfd20f936a4205de"><td class="mdescLeft">&#160;</td><td class="mdescRight">Disables ncep_post/wgrib2-compatible non-E Arakawa grib2 grids by setting 'ncep_post_arakawa=.false.  <a href="namespaceip__grid__mod.html#ac8e716adbe5c1156bfd20f936a4205de">More...</a><br /></td></tr>
+<tr class="separator:ac8e716adbe5c1156bfd20f936a4205de"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a1d570947cf124c28ba67305494bff450"><td class="memItemLeft" align="right" valign="top">subroutine, public&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespaceip__grid__mod.html#a1d570947cf124c28ba67305494bff450">use_ncep_post_arakawa</a> ()</td></tr>
+<tr class="memdesc:a1d570947cf124c28ba67305494bff450"><td class="mdescLeft">&#160;</td><td class="mdescRight">Enables ncep_post/wgrib2-compatible non-E Arakawa grib2 grids by setting 'ncep_post_arakawa=.true.  <a href="namespaceip__grid__mod.html#a1d570947cf124c28ba67305494bff450">More...</a><br /></td></tr>
+<tr class="separator:a1d570947cf124c28ba67305494bff450"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="var-members"></a>
 Variables</h2></td></tr>
@@ -144,6 +150,9 @@ Variables</h2></td></tr>
 <tr class="memitem:af9c58af5162d96cb7d1ac5001139b856"><td class="memItemLeft" align="right" valign="top">integer, parameter, public&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespaceip__grid__mod.html#af9c58af5162d96cb7d1ac5001139b856">mercator_grid_id_grib2</a> = 10</td></tr>
 <tr class="memdesc:af9c58af5162d96cb7d1ac5001139b856"><td class="mdescLeft">&#160;</td><td class="mdescRight">Integer grid number for Mercator grid in grib2.  <a href="namespaceip__grid__mod.html#af9c58af5162d96cb7d1ac5001139b856">More...</a><br /></td></tr>
 <tr class="separator:af9c58af5162d96cb7d1ac5001139b856"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a88751d2ee535d807b6d420fcfb99ee71"><td class="memItemLeft" align="right" valign="top">logical, save, public&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespaceip__grid__mod.html#a88751d2ee535d807b6d420fcfb99ee71">ncep_post_arakawa</a> =.false.</td></tr>
+<tr class="memdesc:a88751d2ee535d807b6d420fcfb99ee71"><td class="mdescLeft">&#160;</td><td class="mdescRight">Use ncep_post/wgrib2-compatible version of <a class="el" href="namespaceip__equid__cylind__grid__mod.html#a39d24c9468ecb7effd16972fd72e088a" title="Initializes an equidistant cylindrical grid given a grib2_descriptor object.">init_grib2()</a> for non-E Arakawa grids (enable with <a class="el" href="namespaceip__grid__mod.html#a1d570947cf124c28ba67305494bff450" title="Enables ncep_post/wgrib2-compatible non-E Arakawa grib2 grids by setting &#39;ncep_post_arakawa=....">use_ncep_post_arakawa()</a>)  <a href="namespaceip__grid__mod.html#a88751d2ee535d807b6d420fcfb99ee71">More...</a><br /></td></tr>
+<tr class="separator:a88751d2ee535d807b6d420fcfb99ee71"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:afee73c2f09ea9de43c156dc594ae1df1"><td class="memItemLeft" align="right" valign="top">integer, parameter, public&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespaceip__grid__mod.html#afee73c2f09ea9de43c156dc594ae1df1">polar_stereo_grid_id_grib1</a> = 5</td></tr>
 <tr class="memdesc:afee73c2f09ea9de43c156dc594ae1df1"><td class="mdescLeft">&#160;</td><td class="mdescRight">Integer grid number for polar stereo grid in grib1.  <a href="namespaceip__grid__mod.html#afee73c2f09ea9de43c156dc594ae1df1">More...</a><br /></td></tr>
 <tr class="separator:afee73c2f09ea9de43c156dc594ae1df1"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -153,9 +162,15 @@ Variables</h2></td></tr>
 <tr class="memitem:adb7d7d18410aaae52d7eee2e97f04b14"><td class="memItemLeft" align="right" valign="top">integer, parameter, public&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespaceip__grid__mod.html#adb7d7d18410aaae52d7eee2e97f04b14">rot_equid_cylind_b_grid_id_grib1</a> = 205</td></tr>
 <tr class="memdesc:adb7d7d18410aaae52d7eee2e97f04b14"><td class="mdescLeft">&#160;</td><td class="mdescRight">Integer grid number for rotated equidistant cylindrical B-stagger grid.  <a href="namespaceip__grid__mod.html#adb7d7d18410aaae52d7eee2e97f04b14">More...</a><br /></td></tr>
 <tr class="separator:adb7d7d18410aaae52d7eee2e97f04b14"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:adbda63b51409aaed34a707b222da8c43"><td class="memItemLeft" align="right" valign="top">integer, parameter, public&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespaceip__grid__mod.html#adbda63b51409aaed34a707b222da8c43">rot_equid_cylind_b_grid_id_grib2</a> = 32769</td></tr>
+<tr class="memdesc:adbda63b51409aaed34a707b222da8c43"><td class="mdescLeft">&#160;</td><td class="mdescRight">Integer grid number for rotated equidistant cylindrical B-stagger grid (grib2)  <a href="namespaceip__grid__mod.html#adbda63b51409aaed34a707b222da8c43">More...</a><br /></td></tr>
+<tr class="separator:adbda63b51409aaed34a707b222da8c43"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a4e11ce780c3d165c282684188890af1c"><td class="memItemLeft" align="right" valign="top">integer, parameter, public&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespaceip__grid__mod.html#a4e11ce780c3d165c282684188890af1c">rot_equid_cylind_e_grid_id_grib1</a> = 203</td></tr>
 <tr class="memdesc:a4e11ce780c3d165c282684188890af1c"><td class="mdescLeft">&#160;</td><td class="mdescRight">Integer grid number for rotated equidistant cylindrical E-stagger grid.  <a href="namespaceip__grid__mod.html#a4e11ce780c3d165c282684188890af1c">More...</a><br /></td></tr>
 <tr class="separator:a4e11ce780c3d165c282684188890af1c"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a248f834201bea9295bbe6a99abd038f8"><td class="memItemLeft" align="right" valign="top">integer, parameter, public&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespaceip__grid__mod.html#a248f834201bea9295bbe6a99abd038f8">rot_equid_cylind_e_grid_id_grib2</a> = 32768</td></tr>
+<tr class="memdesc:a248f834201bea9295bbe6a99abd038f8"><td class="mdescLeft">&#160;</td><td class="mdescRight">Integer grid number for rotated equidistant cylindrical E-stagger grid (grib2)  <a href="namespaceip__grid__mod.html#a248f834201bea9295bbe6a99abd038f8">More...</a><br /></td></tr>
+<tr class="separator:a248f834201bea9295bbe6a99abd038f8"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:adc7c650c524eb6425e77b2e0eac0979a"><td class="memItemLeft" align="right" valign="top">integer, parameter, public&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespaceip__grid__mod.html#adc7c650c524eb6425e77b2e0eac0979a">rot_equid_cylind_grid_id_grib2</a> = 1</td></tr>
 <tr class="memdesc:adc7c650c524eb6425e77b2e0eac0979a"><td class="mdescLeft">&#160;</td><td class="mdescRight">Integer grid number for rotated equidistant cylindrical grid in grib2.  <a href="namespaceip__grid__mod.html#adc7c650c524eb6425e77b2e0eac0979a">More...</a><br /></td></tr>
 <tr class="separator:adc7c650c524eb6425e77b2e0eac0979a"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -218,7 +233,7 @@ Variables</h2></td></tr>
 <dl class="section author"><dt>Author</dt><dd>Mark Iredell, George Gayno, Kyle Gerheiser </dd></dl>
 <dl class="section date"><dt>Date</dt><dd>April 1996 </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="ip__grid__mod_8F90_source.html#l00197">197</a> of file <a class="el" href="ip__grid__mod_8F90_source.html">ip_grid_mod.F90</a>.</p>
+<p class="definition">Definition at line <a class="el" href="ip__grid__mod_8F90_source.html#l00223">223</a> of file <a class="el" href="ip__grid__mod_8F90_source.html">ip_grid_mod.F90</a>.</p>
 
 </div>
 </div>
@@ -268,7 +283,53 @@ Variables</h2></td></tr>
 <dl class="section author"><dt>Author</dt><dd>Kyle Gerheiser </dd></dl>
 <dl class="section date"><dt>Date</dt><dd>July 2021 </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="ip__grid__mod_8F90_source.html#l00182">182</a> of file <a class="el" href="ip__grid__mod_8F90_source.html">ip_grid_mod.F90</a>.</p>
+<p class="definition">Definition at line <a class="el" href="ip__grid__mod_8F90_source.html#l00208">208</a> of file <a class="el" href="ip__grid__mod_8F90_source.html">ip_grid_mod.F90</a>.</p>
+
+</div>
+</div>
+<a id="ac8e716adbe5c1156bfd20f936a4205de"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ac8e716adbe5c1156bfd20f936a4205de">&#9670;&nbsp;</a></span>unuse_ncep_post_arakawa()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">subroutine, public ip_grid_mod::unuse_ncep_post_arakawa</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Disables ncep_post/wgrib2-compatible non-E Arakawa grib2 grids by setting 'ncep_post_arakawa=.false. </p>
+<p>'. This subroutine should be called prior to <a class="el" href="namespaceip__equid__cylind__grid__mod.html#a39d24c9468ecb7effd16972fd72e088a" title="Initializes an equidistant cylindrical grid given a grib2_descriptor object.">init_grib2()</a>.</p>
+<dl class="section author"><dt>Author</dt><dd>Alex Richert </dd></dl>
+<dl class="section date"><dt>Date</dt><dd>May 2024 </dd></dl>
+
+<p class="definition">Definition at line <a class="el" href="ip__grid__mod_8F90_source.html#l00195">195</a> of file <a class="el" href="ip__grid__mod_8F90_source.html">ip_grid_mod.F90</a>.</p>
+
+<p class="reference">References <a class="el" href="ip__grid__mod_8F90_source.html#l00031">ncep_post_arakawa</a>.</p>
+
+</div>
+</div>
+<a id="a1d570947cf124c28ba67305494bff450"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a1d570947cf124c28ba67305494bff450">&#9670;&nbsp;</a></span>use_ncep_post_arakawa()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">subroutine, public ip_grid_mod::use_ncep_post_arakawa</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Enables ncep_post/wgrib2-compatible non-E Arakawa grib2 grids by setting 'ncep_post_arakawa=.true. </p>
+<p>'. This subroutine should be called prior to <a class="el" href="namespaceip__equid__cylind__grid__mod.html#a39d24c9468ecb7effd16972fd72e088a" title="Initializes an equidistant cylindrical grid given a grib2_descriptor object.">init_grib2()</a>.</p>
+<dl class="section author"><dt>Author</dt><dd>Alex Richert </dd></dl>
+<dl class="section date"><dt>Date</dt><dd>May 2024 </dd></dl>
+
+<p class="definition">Definition at line <a class="el" href="ip__grid__mod_8F90_source.html#l00185">185</a> of file <a class="el" href="ip__grid__mod_8F90_source.html">ip_grid_mod.F90</a>.</p>
+
+<p class="reference">References <a class="el" href="ip__grid__mod_8F90_source.html#l00031">ncep_post_arakawa</a>.</p>
 
 </div>
 </div>
@@ -433,6 +494,26 @@ Variables</h2></td></tr>
 
 </div>
 </div>
+<a id="a88751d2ee535d807b6d420fcfb99ee71"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a88751d2ee535d807b6d420fcfb99ee71">&#9670;&nbsp;</a></span>ncep_post_arakawa</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">logical, save, public ip_grid_mod::ncep_post_arakawa =.false.</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Use ncep_post/wgrib2-compatible version of <a class="el" href="namespaceip__equid__cylind__grid__mod.html#a39d24c9468ecb7effd16972fd72e088a" title="Initializes an equidistant cylindrical grid given a grib2_descriptor object.">init_grib2()</a> for non-E Arakawa grids (enable with <a class="el" href="namespaceip__grid__mod.html#a1d570947cf124c28ba67305494bff450" title="Enables ncep_post/wgrib2-compatible non-E Arakawa grib2 grids by setting &#39;ncep_post_arakawa=....">use_ncep_post_arakawa()</a>) </p>
+
+<p class="definition">Definition at line <a class="el" href="ip__grid__mod_8F90_source.html#l00031">31</a> of file <a class="el" href="ip__grid__mod_8F90_source.html">ip_grid_mod.F90</a>.</p>
+
+<p class="reference">Referenced by <a class="el" href="ip__grid__mod_8F90_source.html#l00196">unuse_ncep_post_arakawa()</a>, and <a class="el" href="ip__grid__mod_8F90_source.html#l00186">use_ncep_post_arakawa()</a>.</p>
+
+</div>
+</div>
 <a id="afee73c2f09ea9de43c156dc594ae1df1"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#afee73c2f09ea9de43c156dc594ae1df1">&#9670;&nbsp;</a></span>polar_stereo_grid_id_grib1</h2>
 
@@ -493,6 +574,26 @@ Variables</h2></td></tr>
 
 </div>
 </div>
+<a id="adbda63b51409aaed34a707b222da8c43"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#adbda63b51409aaed34a707b222da8c43">&#9670;&nbsp;</a></span>rot_equid_cylind_b_grid_id_grib2</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">integer, parameter, public ip_grid_mod::rot_equid_cylind_b_grid_id_grib2 = 32769</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Integer grid number for rotated equidistant cylindrical B-stagger grid (grib2) </p>
+
+<p class="definition">Definition at line <a class="el" href="ip__grid__mod_8F90_source.html#l00029">29</a> of file <a class="el" href="ip__grid__mod_8F90_source.html">ip_grid_mod.F90</a>.</p>
+
+<p class="reference">Referenced by <a class="el" href="ip__grid__factory__mod_8F90_source.html#l00090">ip_grid_factory_mod::init_grid_grib2()</a>.</p>
+
+</div>
+</div>
 <a id="a4e11ce780c3d165c282684188890af1c"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#a4e11ce780c3d165c282684188890af1c">&#9670;&nbsp;</a></span>rot_equid_cylind_e_grid_id_grib1</h2>
 
@@ -510,6 +611,26 @@ Variables</h2></td></tr>
 <p class="definition">Definition at line <a class="el" href="ip__grid__mod_8F90_source.html#l00019">19</a> of file <a class="el" href="ip__grid__mod_8F90_source.html">ip_grid_mod.F90</a>.</p>
 
 <p class="reference">Referenced by <a class="el" href="ip__grid__factory__mod_8F90_source.html#l00054">ip_grid_factory_mod::init_grid_grib1()</a>.</p>
+
+</div>
+</div>
+<a id="a248f834201bea9295bbe6a99abd038f8"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a248f834201bea9295bbe6a99abd038f8">&#9670;&nbsp;</a></span>rot_equid_cylind_e_grid_id_grib2</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">integer, parameter, public ip_grid_mod::rot_equid_cylind_e_grid_id_grib2 = 32768</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Integer grid number for rotated equidistant cylindrical E-stagger grid (grib2) </p>
+
+<p class="definition">Definition at line <a class="el" href="ip__grid__mod_8F90_source.html#l00028">28</a> of file <a class="el" href="ip__grid__mod_8F90_source.html">ip_grid_mod.F90</a>.</p>
+
+<p class="reference">Referenced by <a class="el" href="ip__grid__factory__mod_8F90_source.html#l00090">ip_grid_factory_mod::init_grid_grib2()</a>.</p>
 
 </div>
 </div>

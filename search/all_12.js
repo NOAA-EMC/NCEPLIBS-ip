@@ -1,4 +1,5 @@
 var searchData=
 [
-  ['wbd_388',['wbd',['../structip__rot__equid__cylind__grid__mod_1_1ip__rot__equid__cylind__grid.html#a33ae1763c4f1267091bee36a9c92e46a',1,'ip_rot_equid_cylind_grid_mod::ip_rot_equid_cylind_grid']]]
+  ['unuse_5fncep_5fpost_5farakawa_390',['unuse_ncep_post_arakawa',['../namespaceip__grid__mod.html#ac8e716adbe5c1156bfd20f936a4205de',1,'ip_grid_mod']]],
+  ['use_5fncep_5fpost_5farakawa_391',['use_ncep_post_arakawa',['../namespaceip__grid__mod.html#a1d570947cf124c28ba67305494bff450',1,'ip_grid_mod']]]
 ];

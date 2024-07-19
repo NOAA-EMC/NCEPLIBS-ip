@@ -26,7 +26,7 @@
  <tr style="height: 56px;">
   <td id="projectalign" style="padding-left: 0.5em;">
    <div id="projectname">NCEPLIBS-ip
-   &#160;<span id="projectnumber">5.0.0</span>
+   &#160;<span id="projectnumber">5.1.0</span>
    </div>
   </td>
  </tr>
@@ -152,64 +152,63 @@ $(document).ready(function(){initNavTree('sptgpm_8f_source.html',''); initResiza
 <div class="line"><a name="l00064"></a><span class="lineno">   64</span>&#160;<span class="keywordtype">      REAL</span> PLN((MAXWV+1)*((IROMB+1)*MAXWV+2)/2),PLNTOP(MAXWV+1)</div>
 <div class="line"><a name="l00065"></a><span class="lineno">   65</span>&#160;<span class="keywordtype">      REAL</span> F(2*MAXWV+3,2,KMAX)</div>
 <div class="line"><a name="l00066"></a><span class="lineno">   66</span>&#160;<span class="keywordtype">      REAL</span> CLAT(MJ),SLAT(MJ),CLON(MAXWV,MI),SLON(MAXWV,MI)</div>
-<div class="line"><a name="l00067"></a><span class="lineno">   67</span>&#160;      parameter(rerth=6.3712e6)</div>
-<div class="line"><a name="l00068"></a><span class="lineno">   68</span>&#160;      parameter(pi=3.14159265358979,dpr=180./pi)</div>
-<div class="line"><a name="l00069"></a><span class="lineno">   69</span>&#160;<span class="comment">C - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -</span></div>
-<div class="line"><a name="l00070"></a><span class="lineno">   70</span>&#160;<span class="comment">C  CALCULATE PRELIMINARY CONSTANTS</span></div>
-<div class="line"><a name="l00071"></a><span class="lineno">   71</span>&#160;      <span class="keyword">CALL </span><a class="code" href="spwget_8f.html#a9b6ce78350f7adf2fed874a18312c7a6">spwget</a>(iromb,maxwv,eps,epstop,enn1,elonn1,eon,eontop)</div>
-<div class="line"><a name="l00072"></a><span class="lineno">   72</span>&#160;      mx=(maxwv+1)*((iromb+1)*maxwv+2)/2</div>
-<div class="line"><a name="l00073"></a><span class="lineno">   73</span>&#160;      mxtop=maxwv+1</div>
-<div class="line"><a name="l00074"></a><span class="lineno">   74</span>&#160;      idim=2*maxwv+3</div>
-<div class="line"><a name="l00075"></a><span class="lineno">   75</span>&#160;      kw=kwskip</div>
-<div class="line"><a name="l00076"></a><span class="lineno">   76</span>&#160;      kg=kgskip</div>
-<div class="line"><a name="l00077"></a><span class="lineno">   77</span>&#160;      ni=niskip</div>
-<div class="line"><a name="l00078"></a><span class="lineno">   78</span>&#160;      nj=njskip</div>
-<div class="line"><a name="l00079"></a><span class="lineno">   79</span>&#160;      <span class="keywordflow">IF</span>(kw.EQ.0) kw=2*mx</div>
-<div class="line"><a name="l00080"></a><span class="lineno">   80</span>&#160;      <span class="keywordflow">IF</span>(kg.EQ.0) kg=mi*mj</div>
-<div class="line"><a name="l00081"></a><span class="lineno">   81</span>&#160;      <span class="keywordflow">IF</span>(ni.EQ.0) ni=1</div>
-<div class="line"><a name="l00082"></a><span class="lineno">   82</span>&#160;      <span class="keywordflow">IF</span>(nj.EQ.0) nj=mi</div>
-<div class="line"><a name="l00083"></a><span class="lineno">   83</span>&#160;      <span class="keywordflow">DO</span> i=1,mi</div>
-<div class="line"><a name="l00084"></a><span class="lineno">   84</span>&#160;        rlon=mod(rlon1+dlon*(i-1)+3600,360.)</div>
-<div class="line"><a name="l00085"></a><span class="lineno">   85</span>&#160;        <span class="keywordflow">DO</span> l=1,maxwv</div>
-<div class="line"><a name="l00086"></a><span class="lineno">   86</span>&#160;          clon(l,i)=cos(l*rlon/dpr)</div>
-<div class="line"><a name="l00087"></a><span class="lineno">   87</span>&#160;          slon(l,i)=sin(l*rlon/dpr)</div>
-<div class="line"><a name="l00088"></a><span class="lineno">   88</span>&#160;<span class="keywordflow">        ENDDO</span></div>
-<div class="line"><a name="l00089"></a><span class="lineno">   89</span>&#160;<span class="keywordflow">      ENDDO</span></div>
-<div class="line"><a name="l00090"></a><span class="lineno">   90</span>&#160;      ye=1-log(tan((rlat1+90)/2/dpr))*dpr/dlat</div>
-<div class="line"><a name="l00091"></a><span class="lineno">   91</span>&#160;      <span class="keywordflow">DO</span> j=1,mj</div>
-<div class="line"><a name="l00092"></a><span class="lineno">   92</span>&#160;        rlat=atan(exp(dlat/dpr*(j-ye)))*2*dpr-90</div>
-<div class="line"><a name="l00093"></a><span class="lineno">   93</span>&#160;        clat(j)=cos(rlat/dpr)</div>
-<div class="line"><a name="l00094"></a><span class="lineno">   94</span>&#160;        slat(j)=sin(rlat/dpr)</div>
-<div class="line"><a name="l00095"></a><span class="lineno">   95</span>&#160;<span class="keywordflow">      ENDDO</span></div>
-<div class="line"><a name="l00096"></a><span class="lineno">   96</span>&#160;      mp=0</div>
-<div class="line"><a name="l00097"></a><span class="lineno">   97</span>&#160;<span class="comment">C$OMP PARALLEL DO</span></div>
-<div class="line"><a name="l00098"></a><span class="lineno">   98</span>&#160;      <span class="keywordflow">DO</span> k=1,kmax</div>
-<div class="line"><a name="l00099"></a><span class="lineno">   99</span>&#160;        wtop(1:2*mxtop,k)=0</div>
-<div class="line"><a name="l00100"></a><span class="lineno">  100</span>&#160;<span class="keywordflow">      ENDDO</span></div>
-<div class="line"><a name="l00101"></a><span class="lineno">  101</span>&#160;<span class="comment">C - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -</span></div>
-<div class="line"><a name="l00102"></a><span class="lineno">  102</span>&#160;<span class="comment">C  TRANSFORM TO GRID</span></div>
-<div class="line"><a name="l00103"></a><span class="lineno">  103</span>&#160;<span class="comment">C$OMP PARALLEL DO PRIVATE(PLN,PLNTOP,F,IJK)</span></div>
-<div class="line"><a name="l00104"></a><span class="lineno">  104</span>&#160;      <span class="keywordflow">DO</span> j=1,mj</div>
-<div class="line"><a name="l00105"></a><span class="lineno">  105</span>&#160;        <span class="keyword">CALL </span><a class="code" href="splegend_8f.html#a9c68adc80e97c43ac983b955dd6cabac">splegend</a>(iromb,maxwv,slat(j),clat(j),eps,epstop,</div>
-<div class="line"><a name="l00106"></a><span class="lineno">  106</span>&#160;     &amp;                pln,plntop)</div>
-<div class="line"><a name="l00107"></a><span class="lineno">  107</span>&#160;        <span class="keyword">CALL </span><a class="code" href="spsynth_8f.html#aa6a8113a459918728c876673520126bf">spsynth</a>(iromb,maxwv,2*maxwv,idim,kw,2*mxtop,kmax,</div>
-<div class="line"><a name="l00108"></a><span class="lineno">  108</span>&#160;     &amp;               clat(j),pln,plntop,mp,wave,wtop,f)</div>
-<div class="line"><a name="l00109"></a><span class="lineno">  109</span>&#160;        <span class="keywordflow">DO</span> k=1,kmax</div>
-<div class="line"><a name="l00110"></a><span class="lineno">  110</span>&#160;          <span class="keywordflow">DO</span> i=1,mi</div>
-<div class="line"><a name="l00111"></a><span class="lineno">  111</span>&#160;            ijk=(i-1)*ni+(j-1)*nj+(k-1)*kg+1</div>
-<div class="line"><a name="l00112"></a><span class="lineno">  112</span>&#160;            gm(ijk)=f(1,1,k)</div>
-<div class="line"><a name="l00113"></a><span class="lineno">  113</span>&#160;<span class="keywordflow">          ENDDO</span></div>
-<div class="line"><a name="l00114"></a><span class="lineno">  114</span>&#160;          <span class="keywordflow">DO</span> l=1,maxwv</div>
-<div class="line"><a name="l00115"></a><span class="lineno">  115</span>&#160;            <span class="keywordflow">DO</span> i=1,mi</div>
-<div class="line"><a name="l00116"></a><span class="lineno">  116</span>&#160;              ijk=(i-1)*ni+(j-1)*nj+(k-1)*kg+1</div>
-<div class="line"><a name="l00117"></a><span class="lineno">  117</span>&#160;              gm(ijk)=gm(ijk)+2.*(f(2*l+1,1,k)*clon(l,i)</div>
-<div class="line"><a name="l00118"></a><span class="lineno">  118</span>&#160;     &amp;                           -f(2*l+2,1,k)*slon(l,i))</div>
-<div class="line"><a name="l00119"></a><span class="lineno">  119</span>&#160;<span class="keywordflow">            ENDDO</span></div>
-<div class="line"><a name="l00120"></a><span class="lineno">  120</span>&#160;<span class="keywordflow">          ENDDO</span></div>
-<div class="line"><a name="l00121"></a><span class="lineno">  121</span>&#160;<span class="keywordflow">        ENDDO</span></div>
-<div class="line"><a name="l00122"></a><span class="lineno">  122</span>&#160;<span class="keywordflow">      ENDDO</span></div>
-<div class="line"><a name="l00123"></a><span class="lineno">  123</span>&#160;<span class="comment">C - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -</span></div>
-<div class="line"><a name="l00124"></a><span class="lineno">  124</span>&#160;      <span class="keyword">END</span></div>
+<div class="line"><a name="l00067"></a><span class="lineno">   67</span>&#160;      parameter(pi=3.14159265358979,dpr=180./pi)</div>
+<div class="line"><a name="l00068"></a><span class="lineno">   68</span>&#160;<span class="comment">C - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -</span></div>
+<div class="line"><a name="l00069"></a><span class="lineno">   69</span>&#160;<span class="comment">C  CALCULATE PRELIMINARY CONSTANTS</span></div>
+<div class="line"><a name="l00070"></a><span class="lineno">   70</span>&#160;      <span class="keyword">CALL </span><a class="code" href="spwget_8f.html#a9b6ce78350f7adf2fed874a18312c7a6">spwget</a>(iromb,maxwv,eps,epstop,enn1,elonn1,eon,eontop)</div>
+<div class="line"><a name="l00071"></a><span class="lineno">   71</span>&#160;      mx=(maxwv+1)*((iromb+1)*maxwv+2)/2</div>
+<div class="line"><a name="l00072"></a><span class="lineno">   72</span>&#160;      mxtop=maxwv+1</div>
+<div class="line"><a name="l00073"></a><span class="lineno">   73</span>&#160;      idim=2*maxwv+3</div>
+<div class="line"><a name="l00074"></a><span class="lineno">   74</span>&#160;      kw=kwskip</div>
+<div class="line"><a name="l00075"></a><span class="lineno">   75</span>&#160;      kg=kgskip</div>
+<div class="line"><a name="l00076"></a><span class="lineno">   76</span>&#160;      ni=niskip</div>
+<div class="line"><a name="l00077"></a><span class="lineno">   77</span>&#160;      nj=njskip</div>
+<div class="line"><a name="l00078"></a><span class="lineno">   78</span>&#160;      <span class="keywordflow">IF</span>(kw.EQ.0) kw=2*mx</div>
+<div class="line"><a name="l00079"></a><span class="lineno">   79</span>&#160;      <span class="keywordflow">IF</span>(kg.EQ.0) kg=mi*mj</div>
+<div class="line"><a name="l00080"></a><span class="lineno">   80</span>&#160;      <span class="keywordflow">IF</span>(ni.EQ.0) ni=1</div>
+<div class="line"><a name="l00081"></a><span class="lineno">   81</span>&#160;      <span class="keywordflow">IF</span>(nj.EQ.0) nj=mi</div>
+<div class="line"><a name="l00082"></a><span class="lineno">   82</span>&#160;      <span class="keywordflow">DO</span> i=1,mi</div>
+<div class="line"><a name="l00083"></a><span class="lineno">   83</span>&#160;        rlon=mod(rlon1+dlon*(i-1)+3600,360.)</div>
+<div class="line"><a name="l00084"></a><span class="lineno">   84</span>&#160;        <span class="keywordflow">DO</span> l=1,maxwv</div>
+<div class="line"><a name="l00085"></a><span class="lineno">   85</span>&#160;          clon(l,i)=cos(l*rlon/dpr)</div>
+<div class="line"><a name="l00086"></a><span class="lineno">   86</span>&#160;          slon(l,i)=sin(l*rlon/dpr)</div>
+<div class="line"><a name="l00087"></a><span class="lineno">   87</span>&#160;<span class="keywordflow">        ENDDO</span></div>
+<div class="line"><a name="l00088"></a><span class="lineno">   88</span>&#160;<span class="keywordflow">      ENDDO</span></div>
+<div class="line"><a name="l00089"></a><span class="lineno">   89</span>&#160;      ye=1-log(tan((rlat1+90)/2/dpr))*dpr/dlat</div>
+<div class="line"><a name="l00090"></a><span class="lineno">   90</span>&#160;      <span class="keywordflow">DO</span> j=1,mj</div>
+<div class="line"><a name="l00091"></a><span class="lineno">   91</span>&#160;        rlat=atan(exp(dlat/dpr*(j-ye)))*2*dpr-90</div>
+<div class="line"><a name="l00092"></a><span class="lineno">   92</span>&#160;        clat(j)=cos(rlat/dpr)</div>
+<div class="line"><a name="l00093"></a><span class="lineno">   93</span>&#160;        slat(j)=sin(rlat/dpr)</div>
+<div class="line"><a name="l00094"></a><span class="lineno">   94</span>&#160;<span class="keywordflow">      ENDDO</span></div>
+<div class="line"><a name="l00095"></a><span class="lineno">   95</span>&#160;      mp=0</div>
+<div class="line"><a name="l00096"></a><span class="lineno">   96</span>&#160;<span class="comment">C$OMP PARALLEL DO</span></div>
+<div class="line"><a name="l00097"></a><span class="lineno">   97</span>&#160;      <span class="keywordflow">DO</span> k=1,kmax</div>
+<div class="line"><a name="l00098"></a><span class="lineno">   98</span>&#160;        wtop(1:2*mxtop,k)=0</div>
+<div class="line"><a name="l00099"></a><span class="lineno">   99</span>&#160;<span class="keywordflow">      ENDDO</span></div>
+<div class="line"><a name="l00100"></a><span class="lineno">  100</span>&#160;<span class="comment">C - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -</span></div>
+<div class="line"><a name="l00101"></a><span class="lineno">  101</span>&#160;<span class="comment">C  TRANSFORM TO GRID</span></div>
+<div class="line"><a name="l00102"></a><span class="lineno">  102</span>&#160;<span class="comment">C$OMP PARALLEL DO PRIVATE(PLN,PLNTOP,F,IJK)</span></div>
+<div class="line"><a name="l00103"></a><span class="lineno">  103</span>&#160;      <span class="keywordflow">DO</span> j=1,mj</div>
+<div class="line"><a name="l00104"></a><span class="lineno">  104</span>&#160;        <span class="keyword">CALL </span><a class="code" href="splegend_8f.html#a9c68adc80e97c43ac983b955dd6cabac">splegend</a>(iromb,maxwv,slat(j),clat(j),eps,epstop,</div>
+<div class="line"><a name="l00105"></a><span class="lineno">  105</span>&#160;     &amp;                pln,plntop)</div>
+<div class="line"><a name="l00106"></a><span class="lineno">  106</span>&#160;        <span class="keyword">CALL </span><a class="code" href="spsynth_8f.html#aa6a8113a459918728c876673520126bf">spsynth</a>(iromb,maxwv,2*maxwv,idim,kw,2*mxtop,kmax,</div>
+<div class="line"><a name="l00107"></a><span class="lineno">  107</span>&#160;     &amp;               clat(j),pln,plntop,mp,wave,wtop,f)</div>
+<div class="line"><a name="l00108"></a><span class="lineno">  108</span>&#160;        <span class="keywordflow">DO</span> k=1,kmax</div>
+<div class="line"><a name="l00109"></a><span class="lineno">  109</span>&#160;          <span class="keywordflow">DO</span> i=1,mi</div>
+<div class="line"><a name="l00110"></a><span class="lineno">  110</span>&#160;            ijk=(i-1)*ni+(j-1)*nj+(k-1)*kg+1</div>
+<div class="line"><a name="l00111"></a><span class="lineno">  111</span>&#160;            gm(ijk)=f(1,1,k)</div>
+<div class="line"><a name="l00112"></a><span class="lineno">  112</span>&#160;<span class="keywordflow">          ENDDO</span></div>
+<div class="line"><a name="l00113"></a><span class="lineno">  113</span>&#160;          <span class="keywordflow">DO</span> l=1,maxwv</div>
+<div class="line"><a name="l00114"></a><span class="lineno">  114</span>&#160;            <span class="keywordflow">DO</span> i=1,mi</div>
+<div class="line"><a name="l00115"></a><span class="lineno">  115</span>&#160;              ijk=(i-1)*ni+(j-1)*nj+(k-1)*kg+1</div>
+<div class="line"><a name="l00116"></a><span class="lineno">  116</span>&#160;              gm(ijk)=gm(ijk)+2.*(f(2*l+1,1,k)*clon(l,i)</div>
+<div class="line"><a name="l00117"></a><span class="lineno">  117</span>&#160;     &amp;                           -f(2*l+2,1,k)*slon(l,i))</div>
+<div class="line"><a name="l00118"></a><span class="lineno">  118</span>&#160;<span class="keywordflow">            ENDDO</span></div>
+<div class="line"><a name="l00119"></a><span class="lineno">  119</span>&#160;<span class="keywordflow">          ENDDO</span></div>
+<div class="line"><a name="l00120"></a><span class="lineno">  120</span>&#160;<span class="keywordflow">        ENDDO</span></div>
+<div class="line"><a name="l00121"></a><span class="lineno">  121</span>&#160;<span class="keywordflow">      ENDDO</span></div>
+<div class="line"><a name="l00122"></a><span class="lineno">  122</span>&#160;<span class="comment">C - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -</span></div>
+<div class="line"><a name="l00123"></a><span class="lineno">  123</span>&#160;      <span class="keyword">END</span></div>
 <div class="ttc" id="asplegend_8f_html_a9c68adc80e97c43ac983b955dd6cabac"><div class="ttname"><a href="splegend_8f.html#a9c68adc80e97c43ac983b955dd6cabac">splegend</a></div><div class="ttdeci">subroutine splegend(I, M, SLAT, CLAT, EPS, EPSTOP, PLN, PLNTOP)</div><div class="ttdoc">Evaluates the orthonormal associated Legendre polynomials in the spectral domain at a given latitude.</div><div class="ttdef"><b>Definition:</b> <a href="splegend_8f_source.html#l00044">splegend.f:45</a></div></div>
 <div class="ttc" id="aspsynth_8f_html_aa6a8113a459918728c876673520126bf"><div class="ttname"><a href="spsynth_8f.html#aa6a8113a459918728c876673520126bf">spsynth</a></div><div class="ttdeci">subroutine spsynth(I, M, IM, IX, NC, NCTOP, KM, CLAT, PLN, PLNTOP, MP, SPC, SPCTOP, F)</div><div class="ttdoc">Synthesizes Fourier coefficients from spectral coefficients for a latitude pair (Northern and Souther...</div><div class="ttdef"><b>Definition:</b> <a href="spsynth_8f_source.html#l00037">spsynth.f:39</a></div></div>
 <div class="ttc" id="asptgpm_8f_html_a6cffaeaa602eaae5c03166f48065158d"><div class="ttname"><a href="sptgpm_8f.html#a6cffaeaa602eaae5c03166f48065158d">sptgpm</a></div><div class="ttdeci">subroutine sptgpm(IROMB, MAXWV, KMAX, MI, MJ, KWSKIP, KGSKIP, NISKIP, NJSKIP, RLAT1, RLON1, DLAT, DLON, WAVE, GM)</div><div class="ttdoc">This subprogram performs a spherical transform from spectral coefficients of scalar quantities to sca...</div><div class="ttdef"><b>Definition:</b> <a href="sptgpm_8f_source.html#l00053">sptgpm.f:56</a></div></div>

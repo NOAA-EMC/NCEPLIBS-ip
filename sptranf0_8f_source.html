@@ -26,7 +26,7 @@
  <tr style="height: 56px;">
   <td id="projectalign" style="padding-left: 0.5em;">
    <div id="projectname">NCEPLIBS-ip
-   &#160;<span id="projectnumber">5.0.0</span>
+   &#160;<span id="projectnumber">5.1.0</span>
    </div>
   </td>
  </tr>
@@ -132,24 +132,26 @@ $(document).ready(function(){initNavTree('sptranf0_8f_source.html',''); initResi
 <div class="line"><a name="l00044"></a><span class="lineno">   44</span>&#160;<span class="keywordtype">      REAL</span> PLN((MAXWV+1)*((IROMB+1)*MAXWV+2)/2,JB:JE)</div>
 <div class="line"><a name="l00045"></a><span class="lineno">   45</span>&#160;<span class="keywordtype">      REAL</span> PLNTOP(MAXWV+1,JB:JE)</div>
 <div class="line"><a name="l00046"></a><span class="lineno">   46</span>&#160;<span class="keywordtype">      REAL</span> SLATX(JMAX),WLATX(JMAX)</div>
-<div class="line"><a name="l00047"></a><span class="lineno">   47</span>&#160; </div>
-<div class="line"><a name="l00048"></a><span class="lineno">   48</span>&#160;      <span class="keyword">CALL </span><a class="code" href="spwget_8f.html#a9b6ce78350f7adf2fed874a18312c7a6">spwget</a>(iromb,maxwv,eps,epstop,enn1,elonn1,eon,eontop)</div>
-<div class="line"><a name="l00049"></a><span class="lineno">   49</span>&#160;      <span class="keyword">CALL </span><a class="code" href="spffte_8f.html#af06489254bd3e99030b39744fce32233">spffte</a>(imax,(imax+2)/2,imax,2,0.,0.,0,afft)</div>
-<div class="line"><a name="l00050"></a><span class="lineno">   50</span>&#160;      <span class="keyword">CALL </span><a class="code" href="splat_8F.html#aa6db21451bb67635e7e4426546140e11">splat</a>(idrt,jmax,slatx,wlatx)</div>
-<div class="line"><a name="l00051"></a><span class="lineno">   51</span>&#160;      jhe=(jmax+1)/2</div>
-<div class="line"><a name="l00052"></a><span class="lineno">   52</span>&#160;      <span class="keywordflow">IF</span>(jhe.GT.jmax/2) wlatx(jhe)=wlatx(jhe)/2</div>
-<div class="line"><a name="l00053"></a><span class="lineno">   53</span>&#160;      <span class="keywordflow">DO</span> j=jb,je</div>
-<div class="line"><a name="l00054"></a><span class="lineno">   54</span>&#160;        clat(j)=sqrt(1.-slatx(j)**2)</div>
-<div class="line"><a name="l00055"></a><span class="lineno">   55</span>&#160;        slat(j)=slatx(j)</div>
-<div class="line"><a name="l00056"></a><span class="lineno">   56</span>&#160;        wlat(j)=wlatx(j)</div>
-<div class="line"><a name="l00057"></a><span class="lineno">   57</span>&#160;<span class="keywordflow">      ENDDO</span></div>
-<div class="line"><a name="l00058"></a><span class="lineno">   58</span>&#160;<span class="comment">C$OMP PARALLEL DO</span></div>
-<div class="line"><a name="l00059"></a><span class="lineno">   59</span>&#160;      <span class="keywordflow">DO</span> j=jb,je</div>
-<div class="line"><a name="l00060"></a><span class="lineno">   60</span>&#160;        <span class="keyword">CALL </span><a class="code" href="splegend_8f.html#a9c68adc80e97c43ac983b955dd6cabac">splegend</a>(iromb,maxwv,slat(j),clat(j),eps,epstop,</div>
-<div class="line"><a name="l00061"></a><span class="lineno">   61</span>&#160;     &amp;                pln(1,j),plntop(1,j))</div>
-<div class="line"><a name="l00062"></a><span class="lineno">   62</span>&#160;<span class="keywordflow">      ENDDO</span></div>
-<div class="line"><a name="l00063"></a><span class="lineno">   63</span>&#160; </div>
-<div class="line"><a name="l00064"></a><span class="lineno">   64</span>&#160;      <span class="keyword">END</span></div>
+<div class="line"><a name="l00047"></a><span class="lineno">   47</span>&#160;<span class="keywordtype">      REAL</span> W(IMAX+2,2),G(IMAX,2)</div>
+<div class="line"><a name="l00048"></a><span class="lineno">   48</span>&#160; </div>
+<div class="line"><a name="l00049"></a><span class="lineno">   49</span>&#160;      w = 0.0</div>
+<div class="line"><a name="l00050"></a><span class="lineno">   50</span>&#160;      <span class="keyword">CALL </span><a class="code" href="spwget_8f.html#a9b6ce78350f7adf2fed874a18312c7a6">spwget</a>(iromb,maxwv,eps,epstop,enn1,elonn1,eon,eontop)</div>
+<div class="line"><a name="l00051"></a><span class="lineno">   51</span>&#160;      <span class="keyword">CALL </span><a class="code" href="spffte_8f.html#af06489254bd3e99030b39744fce32233">spffte</a>(imax,(imax+2)/2,imax,2,w,g,0,afft)</div>
+<div class="line"><a name="l00052"></a><span class="lineno">   52</span>&#160;      <span class="keyword">CALL </span><a class="code" href="splat_8F.html#aa6db21451bb67635e7e4426546140e11">splat</a>(idrt,jmax,slatx,wlatx)</div>
+<div class="line"><a name="l00053"></a><span class="lineno">   53</span>&#160;      jhe=(jmax+1)/2</div>
+<div class="line"><a name="l00054"></a><span class="lineno">   54</span>&#160;      <span class="keywordflow">IF</span>(jhe.GT.jmax/2) wlatx(jhe)=wlatx(jhe)/2</div>
+<div class="line"><a name="l00055"></a><span class="lineno">   55</span>&#160;      <span class="keywordflow">DO</span> j=jb,je</div>
+<div class="line"><a name="l00056"></a><span class="lineno">   56</span>&#160;        clat(j)=sqrt(1.-slatx(j)**2)</div>
+<div class="line"><a name="l00057"></a><span class="lineno">   57</span>&#160;        slat(j)=slatx(j)</div>
+<div class="line"><a name="l00058"></a><span class="lineno">   58</span>&#160;        wlat(j)=wlatx(j)</div>
+<div class="line"><a name="l00059"></a><span class="lineno">   59</span>&#160;<span class="keywordflow">      ENDDO</span></div>
+<div class="line"><a name="l00060"></a><span class="lineno">   60</span>&#160;<span class="comment">C$OMP PARALLEL DO</span></div>
+<div class="line"><a name="l00061"></a><span class="lineno">   61</span>&#160;      <span class="keywordflow">DO</span> j=jb,je</div>
+<div class="line"><a name="l00062"></a><span class="lineno">   62</span>&#160;        <span class="keyword">CALL </span><a class="code" href="splegend_8f.html#a9c68adc80e97c43ac983b955dd6cabac">splegend</a>(iromb,maxwv,slat(j),clat(j),eps,epstop,</div>
+<div class="line"><a name="l00063"></a><span class="lineno">   63</span>&#160;     &amp;                pln(1,j),plntop(1,j))</div>
+<div class="line"><a name="l00064"></a><span class="lineno">   64</span>&#160;<span class="keywordflow">      ENDDO</span></div>
+<div class="line"><a name="l00065"></a><span class="lineno">   65</span>&#160; </div>
+<div class="line"><a name="l00066"></a><span class="lineno">   66</span>&#160;      <span class="keyword">END</span></div>
 <div class="ttc" id="aspffte_8f_html_af06489254bd3e99030b39744fce32233"><div class="ttname"><a href="spffte_8f.html#af06489254bd3e99030b39744fce32233">spffte</a></div><div class="ttdeci">subroutine spffte(IMAX, INCW, INCG, KMAX, W, G, IDIR, AFFT)</div><div class="ttdoc">This subprogram performs multiple fast Fourier transforms between complex amplitudes in Fourier space...</div><div class="ttdef"><b>Definition:</b> <a href="spffte_8f_source.html#l00048">spffte.f:49</a></div></div>
 <div class="ttc" id="asplat_8F_html_aa6db21451bb67635e7e4426546140e11"><div class="ttname"><a href="splat_8F.html#aa6db21451bb67635e7e4426546140e11">splat</a></div><div class="ttdeci">subroutine splat(IDRT, JMAX, SLAT, WLAT)</div><div class="ttdoc">Computes cosines of colatitude and Gaussian weights for one of the following specific global sets of ...</div><div class="ttdef"><b>Definition:</b> <a href="splat_8F_source.html#l00045">splat.F:46</a></div></div>
 <div class="ttc" id="asplegend_8f_html_a9c68adc80e97c43ac983b955dd6cabac"><div class="ttname"><a href="splegend_8f.html#a9c68adc80e97c43ac983b955dd6cabac">splegend</a></div><div class="ttdeci">subroutine splegend(I, M, SLAT, CLAT, EPS, EPSTOP, PLN, PLNTOP)</div><div class="ttdoc">Evaluates the orthonormal associated Legendre polynomials in the spectral domain at a given latitude.</div><div class="ttdef"><b>Definition:</b> <a href="splegend_8f_source.html#l00044">splegend.f:45</a></div></div>

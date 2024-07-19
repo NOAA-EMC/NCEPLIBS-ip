@@ -26,7 +26,7 @@
  <tr style="height: 56px;">
   <td id="projectalign" style="padding-left: 0.5em;">
    <div id="projectname">NCEPLIBS-ip
-   &#160;<span id="projectnumber">5.0.0</span>
+   &#160;<span id="projectnumber">5.1.0</span>
    </div>
   </td>
  </tr>
@@ -87,11 +87,12 @@ $(document).ready(function(){initNavTree('index.html',''); initResizable(); });
 </div><!--header-->
 <div class="contents">
 <!----!>
-<b>Previous versions:</b></h3> <a href="ver-4.4.0/index.html">4.4.0</a>, <a href="ver-4.3.0/index.html">4.3.0</a>, <a href="ver-4.2.0/index.html">4.2.0</a>, <a href="ver-4.1.0/index.html">4.1.0</a>, <a href="ver-4.0.0/index.html">4.0.0</a>
+<b>Previous versions:</b></h3> <a href="ver-5.0.0/index.html">5.0.0</a>, <a href="ver-4.4.0/index.html">4.4.0</a>, <a href="ver-4.3.0/index.html">4.3.0</a>, <a href="ver-4.2.0/index.html">4.2.0</a>, <a href="ver-4.1.0/index.html">4.1.0</a>, <a href="ver-4.0.0/index.html">4.0.0</a>
 <!----!>
 <div class="textblock"><p><a class="anchor" id="md__home_runner_work_NCEPLIBS_ip_NCEPLIBS_ip_ip_docs_user_guide"></a> The NCEP general interpolation library (NCEPLIBS-ip) contains Fortran 90 subprograms to be used for interpolating between nearly all grids used at NCEP. The library is particularly efficient when interpolating many fields at one time. It also contains functionality for interpolating, transforming, and otherwise manipulating spectral data (these functions were formerly contained in the NCEPLIBS-sp library).</p>
 <p>NCEPLIBS-ip supports compilation with the GNU Compiler Collection (gfortran), Intel Classic (ifort), and Intel OneAPI (ifx) compilers. In the case of Intel OneAPI (IntelLLVM), it is recommended to use at least version 2023.2.1 to avoid any number of compiler issues.</p>
 <dl class="section note"><dt>Note</dt><dd>Some routines may behave poorly or unpredictably when using 4-byte reals (libip_4). For instance, there is an ATAN2 function used for polar stereo grids where for certain regions of certain grids, floating point differences between 4-byte output values (~1e-7) can be amplified into sizable differences in output field values. Some applications may therefore benefit from the use of 8-byte reals (libip_d or libip_8).</dd></dl>
+<p>NCEPLIBS-ip uses several BLAS/LAPACK routines in the <a class="el" href="splat_8F.html#aa6db21451bb67635e7e4426546140e11" title="Computes cosines of colatitude and Gaussian weights for one of the following specific global sets of ...">splat()</a> subroutine, and therefore requires an external BLAS/LAPACK provider. In practice, this should generally be OpenBLAS, which is the <a href="https://github.com/JCSDA/spack-stack">spack-stack</a> BLAS/LAPACK provider.</p>
 <h1><a class="anchor" id="autotoc_md1"></a>
 Interpolation</h1>
 <h2><a class="anchor" id="autotoc_md2"></a>

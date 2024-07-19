@@ -26,7 +26,7 @@
  <tr style="height: 56px;">
   <td id="projectalign" style="padding-left: 0.5em;">
    <div id="projectname">NCEPLIBS-ip
-   &#160;<span id="projectnumber">5.0.0</span>
+   &#160;<span id="projectnumber">5.1.0</span>
    </div>
   </td>
  </tr>
@@ -121,32 +121,35 @@ $(document).ready(function(){initNavTree('spfft1_8f_source.html',''); initResiza
 <div class="line"><a name="l00033"></a><span class="lineno">   33</span>&#160;        <span class="keywordtype">IMPLICIT NONE</span></div>
 <div class="line"><a name="l00034"></a><span class="lineno">   34</span>&#160;        <span class="keywordtype">INTEGER</span>,<span class="keywordtype">INTENT(IN)</span>:: IMAX,INCW,INCG,KMAX,IDIR</div>
 <div class="line"><a name="l00035"></a><span class="lineno">   35</span>&#160;        <span class="keywordtype">COMPLEX</span>,<span class="keywordtype">INTENT(INOUT)</span>:: W(INCW,KMAX)</div>
-<div class="line"><a name="l00036"></a><span class="lineno">   36</span>&#160;<span class="keywordtype">        REAL</span>,<span class="keywordtype">INTENT(INOUT)</span>:: G(INCG,KMAX)</div>
-<div class="line"><a name="l00037"></a><span class="lineno">   37</span>&#160;<span class="keywordtype">        REAL</span>:: AUX1(25000+INT(0.82*IMAX))</div>
-<div class="line"><a name="l00038"></a><span class="lineno">   38</span>&#160;<span class="keywordtype">        REAL</span>:: AUX2(20000+INT(0.57*IMAX))</div>
-<div class="line"><a name="l00039"></a><span class="lineno">   39</span>&#160;        <span class="keywordtype">INTEGER</span>:: NAUX1,NAUX2</div>
-<div class="line"><a name="l00040"></a><span class="lineno">   40</span>&#160;<span class="comment">C - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -</span></div>
-<div class="line"><a name="l00041"></a><span class="lineno">   41</span>&#160;        naux1=25000+int(0.82*imax)</div>
-<div class="line"><a name="l00042"></a><span class="lineno">   42</span>&#160;        naux2=20000+int(0.57*imax)</div>
-<div class="line"><a name="l00043"></a><span class="lineno">   43</span>&#160;<span class="comment">C - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -</span></div>
-<div class="line"><a name="l00044"></a><span class="lineno">   44</span>&#160;<span class="comment">C  FOURIER TO PHYSICAL TRANSFORM.</span></div>
-<div class="line"><a name="l00045"></a><span class="lineno">   45</span>&#160;        <span class="keywordflow">SELECT CASE</span>(idir)</div>
-<div class="line"><a name="l00046"></a><span class="lineno">   46</span>&#160;          <span class="keywordflow">CASE</span>(1:)</div>
-<div class="line"><a name="l00047"></a><span class="lineno">   47</span>&#160;            <span class="keyword">CALL </span><a class="code" href="fftpack_8F.html#ac69cbd64be972c20a4424f5327fb4b36">scrft</a>(1,w,incw,g,incg,imax,kmax,-1,1.,</div>
-<div class="line"><a name="l00048"></a><span class="lineno">   48</span>&#160;     &amp;                 aux1,naux1,aux2,naux2,0.,0)</div>
-<div class="line"><a name="l00049"></a><span class="lineno">   49</span>&#160;            <span class="keyword">CALL </span><a class="code" href="fftpack_8F.html#ac69cbd64be972c20a4424f5327fb4b36">scrft</a>(0,w,incw,g,incg,imax,kmax,-1,1.,</div>
+<div class="line"><a name="l00036"></a><span class="lineno">   36</span>&#160;<span class="keywordtype">        REAL</span>:: WREAL(INCW,KMAX)</div>
+<div class="line"><a name="l00037"></a><span class="lineno">   37</span>&#160;<span class="keywordtype">        REAL</span>,<span class="keywordtype">INTENT(INOUT)</span>:: G(INCG,KMAX)</div>
+<div class="line"><a name="l00038"></a><span class="lineno">   38</span>&#160;<span class="keywordtype">        REAL</span>:: AUX1(25000+INT(0.82*IMAX))</div>
+<div class="line"><a name="l00039"></a><span class="lineno">   39</span>&#160;<span class="keywordtype">        REAL</span>:: AUX2(20000+INT(0.57*IMAX))</div>
+<div class="line"><a name="l00040"></a><span class="lineno">   40</span>&#160;        <span class="keywordtype">INTEGER</span>:: NAUX1,NAUX2</div>
+<div class="line"><a name="l00041"></a><span class="lineno">   41</span>&#160;<span class="comment">C - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -</span></div>
+<div class="line"><a name="l00042"></a><span class="lineno">   42</span>&#160;        naux1=25000+int(0.82*imax)</div>
+<div class="line"><a name="l00043"></a><span class="lineno">   43</span>&#160;        naux2=20000+int(0.57*imax)</div>
+<div class="line"><a name="l00044"></a><span class="lineno">   44</span>&#160;        wreal=real(w)</div>
+<div class="line"><a name="l00045"></a><span class="lineno">   45</span>&#160;<span class="comment">C - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -</span></div>
+<div class="line"><a name="l00046"></a><span class="lineno">   46</span>&#160;<span class="comment">C  FOURIER TO PHYSICAL TRANSFORM.</span></div>
+<div class="line"><a name="l00047"></a><span class="lineno">   47</span>&#160;        <span class="keywordflow">SELECT CASE</span>(idir)</div>
+<div class="line"><a name="l00048"></a><span class="lineno">   48</span>&#160;          <span class="keywordflow">CASE</span>(1:)</div>
+<div class="line"><a name="l00049"></a><span class="lineno">   49</span>&#160;            <span class="keyword">CALL </span><a class="code" href="fftpack_8F.html#ac69cbd64be972c20a4424f5327fb4b36">scrft</a>(1,real(w),incw,g,incg,imax,kmax,-1,1.,</div>
 <div class="line"><a name="l00050"></a><span class="lineno">   50</span>&#160;     &amp;                 aux1,naux1,aux2,naux2,0.,0)</div>
-<div class="line"><a name="l00051"></a><span class="lineno">   51</span>&#160;<span class="comment">C - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -</span></div>
-<div class="line"><a name="l00052"></a><span class="lineno">   52</span>&#160;<span class="comment">C  PHYSICAL TO FOURIER TRANSFORM.</span></div>
-<div class="line"><a name="l00053"></a><span class="lineno">   53</span>&#160;          <span class="keywordflow">CASE</span>(:-1)</div>
-<div class="line"><a name="l00054"></a><span class="lineno">   54</span>&#160;            <span class="keyword">CALL </span><a class="code" href="fftpack_8F.html#acf248c4f27a9fa81cffdfded50eee742">srcft</a>(1,g,incg,w,incw,imax,kmax,+1,1./imax,</div>
-<div class="line"><a name="l00055"></a><span class="lineno">   55</span>&#160;     &amp;               aux1,naux1,aux2,naux2,0.,0)</div>
-<div class="line"><a name="l00056"></a><span class="lineno">   56</span>&#160;            <span class="keyword">CALL </span><a class="code" href="fftpack_8F.html#acf248c4f27a9fa81cffdfded50eee742">srcft</a>(0,g,incg,w,incw,imax,kmax,+1,1./imax,</div>
+<div class="line"><a name="l00051"></a><span class="lineno">   51</span>&#160;            <span class="keyword">CALL </span><a class="code" href="fftpack_8F.html#ac69cbd64be972c20a4424f5327fb4b36">scrft</a>(0,real(w),incw,g,incg,imax,kmax,-1,1.,</div>
+<div class="line"><a name="l00052"></a><span class="lineno">   52</span>&#160;     &amp;                 aux1,naux1,aux2,naux2,0.,0)</div>
+<div class="line"><a name="l00053"></a><span class="lineno">   53</span>&#160;<span class="comment">C - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -</span></div>
+<div class="line"><a name="l00054"></a><span class="lineno">   54</span>&#160;<span class="comment">C  PHYSICAL TO FOURIER TRANSFORM.</span></div>
+<div class="line"><a name="l00055"></a><span class="lineno">   55</span>&#160;          <span class="keywordflow">CASE</span>(:-1)</div>
+<div class="line"><a name="l00056"></a><span class="lineno">   56</span>&#160;            <span class="keyword">CALL </span><a class="code" href="fftpack_8F.html#acf248c4f27a9fa81cffdfded50eee742">srcft</a>(1,g,incg,wreal,incw,imax,kmax,+1,1./imax,</div>
 <div class="line"><a name="l00057"></a><span class="lineno">   57</span>&#160;     &amp;               aux1,naux1,aux2,naux2,0.,0)</div>
-<div class="line"><a name="l00058"></a><span class="lineno">   58</span>&#160;<span class="keywordflow">        END SELECT</span></div>
-<div class="line"><a name="l00059"></a><span class="lineno">   59</span>&#160;      <span class="keyword">END SUBROUTINE</span></div>
-<div class="ttc" id="afftpack_8F_html_ac69cbd64be972c20a4424f5327fb4b36"><div class="ttname"><a href="fftpack_8F.html#ac69cbd64be972c20a4424f5327fb4b36">scrft</a></div><div class="ttdeci">subroutine scrft(init, x, ldx, y, ldy, n, m, isign, scale, table, n1, wrk, n2, z, nz)</div><div class="ttdoc">scrft</div><div class="ttdef"><b>Definition:</b> <a href="fftpack_8F_source.html#l00078">fftpack.F:80</a></div></div>
-<div class="ttc" id="afftpack_8F_html_acf248c4f27a9fa81cffdfded50eee742"><div class="ttname"><a href="fftpack_8F.html#acf248c4f27a9fa81cffdfded50eee742">srcft</a></div><div class="ttdeci">subroutine srcft(init, x, ldx, y, ldy, n, m, isign, scale, table, n1, wrk, n2, z, nz)</div><div class="ttdoc">srcft</div><div class="ttdef"><b>Definition:</b> <a href="fftpack_8F_source.html#l00207">fftpack.F:209</a></div></div>
+<div class="line"><a name="l00058"></a><span class="lineno">   58</span>&#160;            <span class="keyword">CALL </span><a class="code" href="fftpack_8F.html#acf248c4f27a9fa81cffdfded50eee742">srcft</a>(0,g,incg,wreal,incw,imax,kmax,+1,1./imax,</div>
+<div class="line"><a name="l00059"></a><span class="lineno">   59</span>&#160;     &amp;               aux1,naux1,aux2,naux2,0.,0)</div>
+<div class="line"><a name="l00060"></a><span class="lineno">   60</span>&#160;<span class="keywordflow">        END SELECT</span></div>
+<div class="line"><a name="l00061"></a><span class="lineno">   61</span>&#160;        w=cmplx(wreal,0.0)</div>
+<div class="line"><a name="l00062"></a><span class="lineno">   62</span>&#160;      <span class="keyword">END SUBROUTINE</span></div>
+<div class="ttc" id="afftpack_8F_html_ac69cbd64be972c20a4424f5327fb4b36"><div class="ttname"><a href="fftpack_8F.html#ac69cbd64be972c20a4424f5327fb4b36">scrft</a></div><div class="ttdeci">subroutine scrft(init, x, ldx, y, ldy, n, m, isign, scale, table, n1, wrk, n2, z, nz)</div><div class="ttdoc">scrft</div><div class="ttdef"><b>Definition:</b> <a href="fftpack_8F_source.html#l00080">fftpack.F:82</a></div></div>
+<div class="ttc" id="afftpack_8F_html_acf248c4f27a9fa81cffdfded50eee742"><div class="ttname"><a href="fftpack_8F.html#acf248c4f27a9fa81cffdfded50eee742">srcft</a></div><div class="ttdeci">subroutine srcft(init, x, ldx, y, ldy, n, m, isign, scale, table, n1, wrk, n2, z, nz)</div><div class="ttdoc">srcft</div><div class="ttdef"><b>Definition:</b> <a href="fftpack_8F_source.html#l00213">fftpack.F:215</a></div></div>
 <div class="ttc" id="aspfft1_8f_html_ac63643472eda83948c0b249b611346d6"><div class="ttname"><a href="spfft1_8f.html#ac63643472eda83948c0b249b611346d6">spfft1</a></div><div class="ttdeci">subroutine spfft1(IMAX, INCW, INCG, KMAX, W, G, IDIR)</div><div class="ttdoc">This subprogram performs multiple fast Fourier transforms between complex amplitudes in Fourier space...</div><div class="ttdef"><b>Definition:</b> <a href="spfft1_8f_source.html#l00032">spfft1.f:33</a></div></div>
 </div><!-- fragment --></div><!-- contents -->
 </div><!-- doc-content -->
