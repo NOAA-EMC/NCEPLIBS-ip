@@ -1,4 +1,4 @@
 var sptgpt_8f =
 [
-    [ "sptgpt", "sptgpt_8f.html#a1b8d333bcc601e5b7e8d3dd1369f54b1", null ]
+    [ "sptgpt", "sptgpt_8f.html#af93cf936e85b91e804de516feb6fb42c", null ]
 ];

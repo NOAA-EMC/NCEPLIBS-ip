@@ -1,10 +1,11 @@
 var structip__polar__stereo__grid__mod_1_1ip__polar__stereo__grid =
 [
-    [ "field_pos", "structip__polar__stereo__grid__mod_1_1ip__polar__stereo__grid.html#ac071b3d3eca9a5fa88ff5dc211d19179", null ],
-    [ "gdswzd", "structip__polar__stereo__grid__mod_1_1ip__polar__stereo__grid.html#a9e97b7352e67dd629f622f292cf0ca21", null ],
-    [ "init", "structip__polar__stereo__grid__mod_1_1ip__polar__stereo__grid.html#a1f3fa40acb8c2ae4a65c00db21872d7c", null ],
-    [ "init_grib1", "structip__polar__stereo__grid__mod_1_1ip__polar__stereo__grid.html#ae2a5a7c08e4578f3d0ff6b85e5a14cce", null ],
-    [ "init_grib2", "structip__polar__stereo__grid__mod_1_1ip__polar__stereo__grid.html#a9622ce9892084b52303f27722572b87c", null ],
+    [ "field_pos", "structip__polar__stereo__grid__mod_1_1ip__polar__stereo__grid.html#ad0430873da72a0a81f9f1086d44dd415", null ],
+    [ "gdswzd", "structip__polar__stereo__grid__mod_1_1ip__polar__stereo__grid.html#ad71855b6293dc7be0d8ff418cad9e7d3", null ],
+    [ "init", "structip__polar__stereo__grid__mod_1_1ip__polar__stereo__grid.html#a99982835dc866faae95d1d5d027e0d80", null ],
+    [ "init", "structip__polar__stereo__grid__mod_1_1ip__polar__stereo__grid.html#a6efe57f024c3d8ac77b5ecd8256c2bdf", null ],
+    [ "init_grib1", "structip__polar__stereo__grid__mod_1_1ip__polar__stereo__grid.html#adcabd864f1c2d0ea18dfa0ffa3e3ecaf", null ],
+    [ "init_grib2", "structip__polar__stereo__grid__mod_1_1ip__polar__stereo__grid.html#a591d405c9ad8520a7030154e627bc461", null ],
     [ "descriptor", "structip__polar__stereo__grid__mod_1_1ip__polar__stereo__grid.html#a4a2a0dab09f05931d12615b0ac74bc51", null ],
     [ "dxs", "structip__polar__stereo__grid__mod_1_1ip__polar__stereo__grid.html#ac009bce0c0c14b3e0970da6c032a11b1", null ],
     [ "dys", "structip__polar__stereo__grid__mod_1_1ip__polar__stereo__grid.html#a95e155383895ad3f56a3876877b5896b", null ],

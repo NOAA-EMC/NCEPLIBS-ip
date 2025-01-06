@@ -1,10 +1,11 @@
 var structip__station__points__grid__mod_1_1ip__station__points__grid =
 [
-    [ "field_pos", "structip__station__points__grid__mod_1_1ip__station__points__grid.html#ac071b3d3eca9a5fa88ff5dc211d19179", null ],
-    [ "gdswzd", "structip__station__points__grid__mod_1_1ip__station__points__grid.html#a9fff8b24553d11177b8c1ee38bfbd91f", null ],
-    [ "init", "structip__station__points__grid__mod_1_1ip__station__points__grid.html#a1f3fa40acb8c2ae4a65c00db21872d7c", null ],
-    [ "init_grib1", "structip__station__points__grid__mod_1_1ip__station__points__grid.html#aa5ec2cbc9bf0dadf20a226e0afeb3d32", null ],
-    [ "init_grib2", "structip__station__points__grid__mod_1_1ip__station__points__grid.html#a69fac68e7a40d5c3106a47bf1851891e", null ],
+    [ "field_pos", "structip__station__points__grid__mod_1_1ip__station__points__grid.html#ad0430873da72a0a81f9f1086d44dd415", null ],
+    [ "gdswzd", "structip__station__points__grid__mod_1_1ip__station__points__grid.html#a807b4676d46bee923d8da142c568a6d9", null ],
+    [ "init", "structip__station__points__grid__mod_1_1ip__station__points__grid.html#a99982835dc866faae95d1d5d027e0d80", null ],
+    [ "init", "structip__station__points__grid__mod_1_1ip__station__points__grid.html#a6efe57f024c3d8ac77b5ecd8256c2bdf", null ],
+    [ "init_grib1", "structip__station__points__grid__mod_1_1ip__station__points__grid.html#afddeaff2580e7f29ad0dc814db4058c6", null ],
+    [ "init_grib2", "structip__station__points__grid__mod_1_1ip__station__points__grid.html#a9ee208a252d14bda751a5a96078da5c7", null ],
     [ "descriptor", "structip__station__points__grid__mod_1_1ip__station__points__grid.html#a4a2a0dab09f05931d12615b0ac74bc51", null ],
     [ "eccen_squared", "structip__station__points__grid__mod_1_1ip__station__points__grid.html#a180a5da6c470fac34b8439d4c0a32d2a", null ],
     [ "im", "structip__station__points__grid__mod_1_1ip__station__points__grid.html#a546a9c3bb8e93ec8e8f7eaf2a14537dc", null ],

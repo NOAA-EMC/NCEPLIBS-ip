@@ -1,4 +1,4 @@
 var sptez_8f =
 [
-    [ "sptez", "sptez_8f.html#a418a7d182834b2e2dafae2fe881ba9fc", null ]
+    [ "sptez", "sptez_8f.html#a2f946d9be4069109163ffad32eae2fe4", null ]
 ];

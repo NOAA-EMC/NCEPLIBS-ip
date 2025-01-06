@@ -1,5 +1,5 @@
 var interfaceneighbor__budget__interp__mod_1_1interpolate__neighbor__budget =
 [
-    [ "interpolate_neighbor_budget_scalar", "interfaceneighbor__budget__interp__mod_1_1interpolate__neighbor__budget.html#a96e4b145a4df6f4948b1d5ae2da6a71a", null ],
-    [ "interpolate_neighbor_budget_vector", "interfaceneighbor__budget__interp__mod_1_1interpolate__neighbor__budget.html#a573bd5ac43484aa6d051e58f37ff7c06", null ]
+    [ "interpolate_neighbor_budget_scalar", "interfaceneighbor__budget__interp__mod_1_1interpolate__neighbor__budget.html#a6933140244e86aa6180274147a44e627", null ],
+    [ "interpolate_neighbor_budget_vector", "interfaceneighbor__budget__interp__mod_1_1interpolate__neighbor__budget.html#a2a1bfdcd1358b287cc336f78a0bb454d", null ]
 ];

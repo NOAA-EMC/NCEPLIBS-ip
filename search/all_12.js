@@ -1,5 +1,5 @@
 var searchData=
 [
-  ['unuse_5fncep_5fpost_5farakawa_390',['unuse_ncep_post_arakawa',['../namespaceip__grid__mod.html#ac8e716adbe5c1156bfd20f936a4205de',1,'ip_grid_mod']]],
-  ['use_5fncep_5fpost_5farakawa_391',['use_ncep_post_arakawa',['../namespaceip__grid__mod.html#a1d570947cf124c28ba67305494bff450',1,'ip_grid_mod']]]
+  ['transformation_0',['transformation',['../index.html#autotoc_md14',1,'Entry Point List: Spectral Interpolation &amp; Transformation'],['../index.html#autotoc_md16',1,'Examples: Spectral Processing &amp; Transformation']]],
+  ['transformation_20processing_1',['Spectral Transformation &amp; Processing',['../index.html#autotoc_md13',1,'']]]
 ];

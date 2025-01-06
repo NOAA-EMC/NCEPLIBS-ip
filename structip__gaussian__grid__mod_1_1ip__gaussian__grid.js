@@ -1,10 +1,11 @@
 var structip__gaussian__grid__mod_1_1ip__gaussian__grid =
 [
-    [ "field_pos", "structip__gaussian__grid__mod_1_1ip__gaussian__grid.html#ac071b3d3eca9a5fa88ff5dc211d19179", null ],
-    [ "gdswzd", "structip__gaussian__grid__mod_1_1ip__gaussian__grid.html#a7ce52d987d2bd2442053042c03f96885", null ],
-    [ "init", "structip__gaussian__grid__mod_1_1ip__gaussian__grid.html#a1f3fa40acb8c2ae4a65c00db21872d7c", null ],
-    [ "init_grib1", "structip__gaussian__grid__mod_1_1ip__gaussian__grid.html#afd3658924783d5dbbd3fe5f07d5b60a7", null ],
-    [ "init_grib2", "structip__gaussian__grid__mod_1_1ip__gaussian__grid.html#a378b72a1b6090acb90a36385ab9eda5a", null ],
+    [ "field_pos", "structip__gaussian__grid__mod_1_1ip__gaussian__grid.html#ad0430873da72a0a81f9f1086d44dd415", null ],
+    [ "gdswzd", "structip__gaussian__grid__mod_1_1ip__gaussian__grid.html#aaca172b2f61460a0d9192fa365c7b690", null ],
+    [ "init", "structip__gaussian__grid__mod_1_1ip__gaussian__grid.html#a99982835dc866faae95d1d5d027e0d80", null ],
+    [ "init", "structip__gaussian__grid__mod_1_1ip__gaussian__grid.html#a6efe57f024c3d8ac77b5ecd8256c2bdf", null ],
+    [ "init_grib1", "structip__gaussian__grid__mod_1_1ip__gaussian__grid.html#a982912dd382254402b4d447b97366e76", null ],
+    [ "init_grib2", "structip__gaussian__grid__mod_1_1ip__gaussian__grid.html#ac36818dd88f306d27107f93dc675220d", null ],
     [ "descriptor", "structip__gaussian__grid__mod_1_1ip__gaussian__grid.html#a4a2a0dab09f05931d12615b0ac74bc51", null ],
     [ "dlon", "structip__gaussian__grid__mod_1_1ip__gaussian__grid.html#a35c454d320c59a6c71c4aebb881abcb8", null ],
     [ "eccen_squared", "structip__gaussian__grid__mod_1_1ip__gaussian__grid.html#a180a5da6c470fac34b8439d4c0a32d2a", null ],

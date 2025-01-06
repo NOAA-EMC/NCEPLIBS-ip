@@ -1,10 +1,11 @@
 var structip__mercator__grid__mod_1_1ip__mercator__grid =
 [
-    [ "field_pos", "structip__mercator__grid__mod_1_1ip__mercator__grid.html#ac071b3d3eca9a5fa88ff5dc211d19179", null ],
-    [ "gdswzd", "structip__mercator__grid__mod_1_1ip__mercator__grid.html#a940420aa99e0fbe51a976f9d0c343f1a", null ],
-    [ "init", "structip__mercator__grid__mod_1_1ip__mercator__grid.html#a1f3fa40acb8c2ae4a65c00db21872d7c", null ],
-    [ "init_grib1", "structip__mercator__grid__mod_1_1ip__mercator__grid.html#a3ae3bbb47f4c03c36404a2b35014d65c", null ],
-    [ "init_grib2", "structip__mercator__grid__mod_1_1ip__mercator__grid.html#a505b0114c7ff5fbb58c4e7ce5ccde3f0", null ],
+    [ "field_pos", "structip__mercator__grid__mod_1_1ip__mercator__grid.html#ad0430873da72a0a81f9f1086d44dd415", null ],
+    [ "gdswzd", "structip__mercator__grid__mod_1_1ip__mercator__grid.html#aac84596473d43673fa523f658f934f3d", null ],
+    [ "init", "structip__mercator__grid__mod_1_1ip__mercator__grid.html#a99982835dc866faae95d1d5d027e0d80", null ],
+    [ "init", "structip__mercator__grid__mod_1_1ip__mercator__grid.html#a6efe57f024c3d8ac77b5ecd8256c2bdf", null ],
+    [ "init_grib1", "structip__mercator__grid__mod_1_1ip__mercator__grid.html#a819d01342cfb040b9e67f61d258cca59", null ],
+    [ "init_grib2", "structip__mercator__grid__mod_1_1ip__mercator__grid.html#a34194cbd2cbec84f1b04cb8ade644f44", null ],
     [ "descriptor", "structip__mercator__grid__mod_1_1ip__mercator__grid.html#a4a2a0dab09f05931d12615b0ac74bc51", null ],
     [ "dlon", "structip__mercator__grid__mod_1_1ip__mercator__grid.html#a455057778c7f2ad677956bdef2d754ee", null ],
     [ "dphi", "structip__mercator__grid__mod_1_1ip__mercator__grid.html#a39168528a2c207b2e2c5373487d705c5", null ],

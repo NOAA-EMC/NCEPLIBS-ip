@@ -25,27 +25,7 @@
 var NAVTREE =
 [
   [ "NCEPLIBS-ip", "index.html", [
-    [ "Introduction", "index.html", [
-      [ "Interpolation", "index.html#autotoc_md1", [
-        [ "Interpolation Methods", "index.html#autotoc_md2", [
-          [ "Bilinear Interpolation Method", "index.html#autotoc_md3", null ],
-          [ "Bicubic Interpolation Method", "index.html#autotoc_md4", null ],
-          [ "Neighbor Interpolation Method", "index.html#autotoc_md5", null ],
-          [ "Budget Interpolation Method", "index.html#autotoc_md6", null ],
-          [ "Spectral Interpolation Method", "index.html#autotoc_md7", null ],
-          [ "Neighbor-Budget Interpolation Method", "index.html#autotoc_md8", null ]
-        ] ],
-        [ "Vectors and Scalars", "index.html#autotoc_md9", null ],
-        [ "Grids", "index.html#autotoc_md10", null ],
-        [ "Return Codes", "index.html#autotoc_md11", null ],
-        [ "Entry point list: interpolation", "index.html#autotoc_md12", null ]
-      ] ],
-      [ "Spectral Transformation & Processing", "index.html#autotoc_md13", [
-        [ "Entry Point List: Spectral Interpolation & Transformation", "index.html#autotoc_md14", null ]
-      ] ],
-      [ "Examples: Interpolation Routines", "index.html#autotoc_md15", null ],
-      [ "Examples: Spectral Processing & Transformation", "index.html#autotoc_md16", null ]
-    ] ],
+    [ "Introduction", "index.html", "index" ],
     [ "Modules", "namespaces.html", [
       [ "Modules List", "namespaces.html", "namespaces_dup" ],
       [ "Module Members", "namespacemembers.html", [
@@ -54,7 +34,7 @@ var NAVTREE =
         [ "Variables", "namespacemembers_vars.html", null ]
       ] ]
     ] ],
-    [ "Data Types List", "annotated.html", [
+    [ "Data Types", "annotated.html", [
       [ "Data Types List", "annotated.html", "annotated_dup" ],
       [ "Class Hierarchy", "hierarchy.html", "hierarchy" ],
       [ "Data Fields", "functions.html", [
@@ -76,9 +56,11 @@ var NAVTREE =
 var NAVTREEINDEX =
 [
 "annotated.html",
-"ip__polar__stereo__grid__mod_8F90.html#ae2694d90ab514a131e083dfba3b173c5",
-"namespaceip__rot__equid__cylind__grid__mod.html#ab43075e39d4e2dde4110e608931a392d",
-"structip__gaussian__grid__mod_1_1ip__gaussian__grid.html"
+"ip__grid__mod_8F90.html#ad96da95d40beceb1a1c405971e8130bb",
+"namespaceip__mercator__grid__mod.html",
+"sptrung_8f.html#a8715a29c9ad05ee81a35642f2ff60a0b",
+"structip__lambert__conf__grid__mod_1_1ip__lambert__conf__grid.html#ae179622b9a4c764a5ca90385330941ed",
+"structip__station__points__grid__mod_1_1ip__station__points__grid.html#a99982835dc866faae95d1d5d027e0d80"
 ];
 
 var SYNCONMSG = 'click to disable panel synchronisation';
