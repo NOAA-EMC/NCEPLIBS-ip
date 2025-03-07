@@ -25,7 +25,7 @@
  <tbody>
  <tr id="projectrow">
   <td id="projectalign">
-   <div id="projectname">NCEPLIBS-ip<span id="projectnumber">&#160;5.2.0</span>
+   <div id="projectname">NCEPLIBS-ip<span id="projectnumber">&#160;5.3.0</span>
    </div>
   </td>
  </tr>
@@ -95,7 +95,7 @@ $(document).ready(function(){initNavTree('fftpack_8F.html',''); initResizable();
 </div><!--header-->
 <div class="contents">
 
-<p>A concatination of the (FFTPACK)[<a href="https://netlib.org/fftpack/">https://netlib.org/fftpack/</a>] library code.  
+<p>A concatenation of several subroutines from the <a href="https://netlib.org/fftpack/" target="_blank">FFTPACK</a> collection.  
 <a href="#details">More...</a></p>
 
 <p><a href="fftpack_8F_source.html">Go to the source code of this file.</a></p>
@@ -103,81 +103,80 @@ $(document).ready(function(){initNavTree('fftpack_8F.html',''); initResizable();
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="func-members" name="func-members"></a>
 Functions/Subroutines</h2></td></tr>
 <tr class="memitem:ad261879c88a7f040e43f1549e65f36e5" id="r_ad261879c88a7f040e43f1549e65f36e5"><td class="memItemLeft" align="right" valign="top">subroutine&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="fftpack_8F.html#ad261879c88a7f040e43f1549e65f36e5">csfft</a> (isign, n, scale, x, y, table, work, isys)</td></tr>
-<tr class="memdesc:ad261879c88a7f040e43f1549e65f36e5"><td class="mdescLeft">&#160;</td><td class="mdescRight">csfft  <br /></td></tr>
+<tr class="memdesc:ad261879c88a7f040e43f1549e65f36e5"><td class="mdescLeft">&#160;</td><td class="mdescRight">Compute a complex discrete Fourier transform of real data.  <br /></td></tr>
 <tr class="separator:ad261879c88a7f040e43f1549e65f36e5"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a713ef445886ad8dc8b16692c6075d225" id="r_a713ef445886ad8dc8b16692c6075d225"><td class="memItemLeft" align="right" valign="top">subroutine&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="fftpack_8F.html#a713ef445886ad8dc8b16692c6075d225">dcrft</a> (init, x, ldx, y, ldy, n, m, isign, scale, table, n1, wrk, n2, z, nz)</td></tr>
-<tr class="memdesc:a713ef445886ad8dc8b16692c6075d225"><td class="mdescLeft">&#160;</td><td class="mdescRight">dcrft  <br /></td></tr>
+<tr class="memdesc:a713ef445886ad8dc8b16692c6075d225"><td class="mdescLeft">&#160;</td><td class="mdescRight">Computes a set of <code>m</code> real discrete <code>n</code>-point Fourier transforms of complex conjugate even data.  <br /></td></tr>
 <tr class="separator:a713ef445886ad8dc8b16692c6075d225"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a55b05419c0d3bb0595b34c8cacf93be8" id="r_a55b05419c0d3bb0595b34c8cacf93be8"><td class="memItemLeft" align="right" valign="top">subroutine&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="fftpack_8F.html#a55b05419c0d3bb0595b34c8cacf93be8">drcft</a> (init, x, ldx, y, ldy, n, m, isign, scale, table, n1, wrk, n2, z, nz)</td></tr>
-<tr class="memdesc:a55b05419c0d3bb0595b34c8cacf93be8"><td class="mdescLeft">&#160;</td><td class="mdescRight">drcft  <br /></td></tr>
+<tr class="memdesc:a55b05419c0d3bb0595b34c8cacf93be8"><td class="mdescLeft">&#160;</td><td class="mdescRight">Compute a set of m complex discrete n-point Fourier transforms of real data.  <br /></td></tr>
 <tr class="separator:a55b05419c0d3bb0595b34c8cacf93be8"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ab6b183d050ed7a278e3d5d1b1df2a518" id="r_ab6b183d050ed7a278e3d5d1b1df2a518"><td class="memItemLeft" align="right" valign="top">subroutine&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="fftpack_8F.html#ab6b183d050ed7a278e3d5d1b1df2a518">radb2</a> (ido, l1, cc, ch, wa1)</td></tr>
-<tr class="memdesc:ab6b183d050ed7a278e3d5d1b1df2a518"><td class="mdescLeft">&#160;</td><td class="mdescRight">RADB2.  <br /></td></tr>
+<tr class="memdesc:ab6b183d050ed7a278e3d5d1b1df2a518"><td class="mdescLeft">&#160;</td><td class="mdescRight">Perform the backward radix-2 FFT step.  <br /></td></tr>
 <tr class="separator:ab6b183d050ed7a278e3d5d1b1df2a518"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:aa93bf6f642853a3350a9144cb1013f4c" id="r_aa93bf6f642853a3350a9144cb1013f4c"><td class="memItemLeft" align="right" valign="top">subroutine&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="fftpack_8F.html#aa93bf6f642853a3350a9144cb1013f4c">radb3</a> (ido, l1, cc, ch, wa1, wa2)</td></tr>
-<tr class="memdesc:aa93bf6f642853a3350a9144cb1013f4c"><td class="mdescLeft">&#160;</td><td class="mdescRight">RADB3 <br  />
-  <br /></td></tr>
+<tr class="memdesc:aa93bf6f642853a3350a9144cb1013f4c"><td class="mdescLeft">&#160;</td><td class="mdescRight">Perform the backward radix-3 FFT step.  <br /></td></tr>
 <tr class="separator:aa93bf6f642853a3350a9144cb1013f4c"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:af12eda15b4d802900d798b8be5cb0c11" id="r_af12eda15b4d802900d798b8be5cb0c11"><td class="memItemLeft" align="right" valign="top">subroutine&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="fftpack_8F.html#af12eda15b4d802900d798b8be5cb0c11">radb4</a> (ido, l1, cc, ch, wa1, wa2, wa3)</td></tr>
-<tr class="memdesc:af12eda15b4d802900d798b8be5cb0c11"><td class="mdescLeft">&#160;</td><td class="mdescRight">RADB4.  <br /></td></tr>
+<tr class="memdesc:af12eda15b4d802900d798b8be5cb0c11"><td class="mdescLeft">&#160;</td><td class="mdescRight">Perform the backward radix-4 FFT step.  <br /></td></tr>
 <tr class="separator:af12eda15b4d802900d798b8be5cb0c11"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a9d1d044f44ab9483c9d25fcaa9d9fa82" id="r_a9d1d044f44ab9483c9d25fcaa9d9fa82"><td class="memItemLeft" align="right" valign="top">subroutine&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="fftpack_8F.html#a9d1d044f44ab9483c9d25fcaa9d9fa82">radb5</a> (ido, l1, cc, ch, wa1, wa2, wa3, wa4)</td></tr>
-<tr class="memdesc:a9d1d044f44ab9483c9d25fcaa9d9fa82"><td class="mdescLeft">&#160;</td><td class="mdescRight">RADB5.  <br /></td></tr>
+<tr class="memdesc:a9d1d044f44ab9483c9d25fcaa9d9fa82"><td class="mdescLeft">&#160;</td><td class="mdescRight">Perform the backward radix-5 FFT step.  <br /></td></tr>
 <tr class="separator:a9d1d044f44ab9483c9d25fcaa9d9fa82"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a068ff557b7f9a3ecca681d4946c0838c" id="r_a068ff557b7f9a3ecca681d4946c0838c"><td class="memItemLeft" align="right" valign="top">subroutine&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="fftpack_8F.html#a068ff557b7f9a3ecca681d4946c0838c">radbg</a> (ido, ip, l1, idl1, cc, c1, c2, ch, ch2, wa)</td></tr>
-<tr class="memdesc:a068ff557b7f9a3ecca681d4946c0838c"><td class="mdescLeft">&#160;</td><td class="mdescRight">RADBG.  <br /></td></tr>
+<tr class="memdesc:a068ff557b7f9a3ecca681d4946c0838c"><td class="mdescLeft">&#160;</td><td class="mdescRight">Computes the backward FFT stage using a generalized FFT algorithm.  <br /></td></tr>
 <tr class="separator:a068ff557b7f9a3ecca681d4946c0838c"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a9dab9f8bdb8c20a1c0ab784960ad74cf" id="r_a9dab9f8bdb8c20a1c0ab784960ad74cf"><td class="memItemLeft" align="right" valign="top">subroutine&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="fftpack_8F.html#a9dab9f8bdb8c20a1c0ab784960ad74cf">radf2</a> (ido, l1, cc, ch, wa1)</td></tr>
-<tr class="memdesc:a9dab9f8bdb8c20a1c0ab784960ad74cf"><td class="mdescLeft">&#160;</td><td class="mdescRight">RADBG.  <br /></td></tr>
+<tr class="memdesc:a9dab9f8bdb8c20a1c0ab784960ad74cf"><td class="mdescLeft">&#160;</td><td class="mdescRight">Perform a radix-2 FFT step for even-odd decomposition of data.  <br /></td></tr>
 <tr class="separator:a9dab9f8bdb8c20a1c0ab784960ad74cf"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a8ace8115be26d3b5d69396a61c35bcba" id="r_a8ace8115be26d3b5d69396a61c35bcba"><td class="memItemLeft" align="right" valign="top">subroutine&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="fftpack_8F.html#a8ace8115be26d3b5d69396a61c35bcba">radf3</a> (ido, l1, cc, ch, wa1, wa2)</td></tr>
-<tr class="memdesc:a8ace8115be26d3b5d69396a61c35bcba"><td class="mdescLeft">&#160;</td><td class="mdescRight">RADF3.  <br /></td></tr>
+<tr class="memdesc:a8ace8115be26d3b5d69396a61c35bcba"><td class="mdescLeft">&#160;</td><td class="mdescRight">Performs a radix-3 FFT step for decomposing the data into three components.  <br /></td></tr>
 <tr class="separator:a8ace8115be26d3b5d69396a61c35bcba"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a73c8f3eae90cf8e31e79e896190e6af6" id="r_a73c8f3eae90cf8e31e79e896190e6af6"><td class="memItemLeft" align="right" valign="top">subroutine&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="fftpack_8F.html#a73c8f3eae90cf8e31e79e896190e6af6">radf4</a> (ido, l1, cc, ch, wa1, wa2, wa3)</td></tr>
-<tr class="memdesc:a73c8f3eae90cf8e31e79e896190e6af6"><td class="mdescLeft">&#160;</td><td class="mdescRight">RADF4.  <br /></td></tr>
+<tr class="memdesc:a73c8f3eae90cf8e31e79e896190e6af6"><td class="mdescLeft">&#160;</td><td class="mdescRight">Perform a radix-4 FFT step for decomposing the data into four components.  <br /></td></tr>
 <tr class="separator:a73c8f3eae90cf8e31e79e896190e6af6"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a015879940c807ba1108d3f5c6273f357" id="r_a015879940c807ba1108d3f5c6273f357"><td class="memItemLeft" align="right" valign="top">subroutine&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="fftpack_8F.html#a015879940c807ba1108d3f5c6273f357">radf5</a> (ido, l1, cc, ch, wa1, wa2, wa3, wa4)</td></tr>
-<tr class="memdesc:a015879940c807ba1108d3f5c6273f357"><td class="mdescLeft">&#160;</td><td class="mdescRight">RADF5.  <br /></td></tr>
+<tr class="memdesc:a015879940c807ba1108d3f5c6273f357"><td class="mdescLeft">&#160;</td><td class="mdescRight">Perform a radix-5 FFT step for decomposing the data into five components.  <br /></td></tr>
 <tr class="separator:a015879940c807ba1108d3f5c6273f357"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a9b1a1683452238fd9720e8316b2064cc" id="r_a9b1a1683452238fd9720e8316b2064cc"><td class="memItemLeft" align="right" valign="top">subroutine&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="fftpack_8F.html#a9b1a1683452238fd9720e8316b2064cc">radfg</a> (ido, ip, l1, idl1, cc, c1, c2, ch, ch2, wa)</td></tr>
-<tr class="memdesc:a9b1a1683452238fd9720e8316b2064cc"><td class="mdescLeft">&#160;</td><td class="mdescRight">RADFG.  <br /></td></tr>
+<tr class="memdesc:a9b1a1683452238fd9720e8316b2064cc"><td class="mdescLeft">&#160;</td><td class="mdescRight">Compute a general radix-based FFT step.  <br /></td></tr>
 <tr class="separator:a9b1a1683452238fd9720e8316b2064cc"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a36dbe2e8cdb99b5c43e8810f95c87c2a" id="r_a36dbe2e8cdb99b5c43e8810f95c87c2a"><td class="memItemLeft" align="right" valign="top">subroutine&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="fftpack_8F.html#a36dbe2e8cdb99b5c43e8810f95c87c2a">rfftb</a> (n, r, wsave)</td></tr>
-<tr class="memdesc:a36dbe2e8cdb99b5c43e8810f95c87c2a"><td class="mdescLeft">&#160;</td><td class="mdescRight">RFFTB.  <br /></td></tr>
+<tr class="memdesc:a36dbe2e8cdb99b5c43e8810f95c87c2a"><td class="mdescLeft">&#160;</td><td class="mdescRight">Compute the real periodic sequence from its Fourier coefs.  <br /></td></tr>
 <tr class="separator:a36dbe2e8cdb99b5c43e8810f95c87c2a"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a5176a5d29194d5bc9125da338ad86cec" id="r_a5176a5d29194d5bc9125da338ad86cec"><td class="memItemLeft" align="right" valign="top">subroutine&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="fftpack_8F.html#a5176a5d29194d5bc9125da338ad86cec">rfftb1</a> (n, c, ch, wa, ifac)</td></tr>
-<tr class="memdesc:a5176a5d29194d5bc9125da338ad86cec"><td class="mdescLeft">&#160;</td><td class="mdescRight">RFFTB1.  <br /></td></tr>
+<tr class="memdesc:a5176a5d29194d5bc9125da338ad86cec"><td class="mdescLeft">&#160;</td><td class="mdescRight">Compute the inverse fast Fourier transform (IFFT) using a mixed-radix algorithm.  <br /></td></tr>
 <tr class="separator:a5176a5d29194d5bc9125da338ad86cec"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a88b14ae8b7022a3596e1a1fb5e109d8a" id="r_a88b14ae8b7022a3596e1a1fb5e109d8a"><td class="memItemLeft" align="right" valign="top">subroutine&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="fftpack_8F.html#a88b14ae8b7022a3596e1a1fb5e109d8a">rfftf</a> (n, r, wsave)</td></tr>
-<tr class="memdesc:a88b14ae8b7022a3596e1a1fb5e109d8a"><td class="mdescLeft">&#160;</td><td class="mdescRight">RFFTF.  <br /></td></tr>
+<tr class="memdesc:a88b14ae8b7022a3596e1a1fb5e109d8a"><td class="mdescLeft">&#160;</td><td class="mdescRight">Compute a forward transform of a real periodic sequence.  <br /></td></tr>
 <tr class="separator:a88b14ae8b7022a3596e1a1fb5e109d8a"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a695a5d7f2d8296ee0c1862da42d96879" id="r_a695a5d7f2d8296ee0c1862da42d96879"><td class="memItemLeft" align="right" valign="top">subroutine&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="fftpack_8F.html#a695a5d7f2d8296ee0c1862da42d96879">rfftf1</a> (n, c, ch, wa, ifac)</td></tr>
-<tr class="memdesc:a695a5d7f2d8296ee0c1862da42d96879"><td class="mdescLeft">&#160;</td><td class="mdescRight">RFFTF1.  <br /></td></tr>
+<tr class="memdesc:a695a5d7f2d8296ee0c1862da42d96879"><td class="mdescLeft">&#160;</td><td class="mdescRight">Compute the real forward fast Fourier transform (FFT) using a mixed-radix algorithm.  <br /></td></tr>
 <tr class="separator:a695a5d7f2d8296ee0c1862da42d96879"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:add6f83f2c4ac91b29547511c4eed0836" id="r_add6f83f2c4ac91b29547511c4eed0836"><td class="memItemLeft" align="right" valign="top">subroutine&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="fftpack_8F.html#add6f83f2c4ac91b29547511c4eed0836">rffti</a> (n, wsave)</td></tr>
-<tr class="memdesc:add6f83f2c4ac91b29547511c4eed0836"><td class="mdescLeft">&#160;</td><td class="mdescRight">RFFTI.  <br /></td></tr>
+<tr class="memdesc:add6f83f2c4ac91b29547511c4eed0836"><td class="mdescLeft">&#160;</td><td class="mdescRight">Initialize the array wsave which is used in both <code><a class="el" href="fftpack_8F.html#a88b14ae8b7022a3596e1a1fb5e109d8a" title="Compute a forward transform of a real periodic sequence.">rfftf()</a></code> and <code><a class="el" href="fftpack_8F.html#a36dbe2e8cdb99b5c43e8810f95c87c2a" title="Compute the real periodic sequence from its Fourier coefs.">rfftb()</a></code>.  <br /></td></tr>
 <tr class="separator:add6f83f2c4ac91b29547511c4eed0836"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a12282309a28f39ee005339825ae90adb" id="r_a12282309a28f39ee005339825ae90adb"><td class="memItemLeft" align="right" valign="top">subroutine&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="fftpack_8F.html#a12282309a28f39ee005339825ae90adb">rffti1</a> (n, wa, ifac)</td></tr>
-<tr class="memdesc:a12282309a28f39ee005339825ae90adb"><td class="mdescLeft">&#160;</td><td class="mdescRight">RFFTI1.  <br /></td></tr>
+<tr class="memdesc:a12282309a28f39ee005339825ae90adb"><td class="mdescLeft">&#160;</td><td class="mdescRight">Compute the initialization factors for the real-input FFT.  <br /></td></tr>
 <tr class="separator:a12282309a28f39ee005339825ae90adb"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a369071ea2d380c9d91ba36d1bf375e33" id="r_a369071ea2d380c9d91ba36d1bf375e33"><td class="memItemLeft" align="right" valign="top">subroutine&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="fftpack_8F.html#a369071ea2d380c9d91ba36d1bf375e33">scfft</a> (isign, n, scale, x, y, table, work, isys)</td></tr>
-<tr class="memdesc:a369071ea2d380c9d91ba36d1bf375e33"><td class="mdescLeft">&#160;</td><td class="mdescRight">scfft  <br /></td></tr>
+<tr class="memdesc:a369071ea2d380c9d91ba36d1bf375e33"><td class="mdescLeft">&#160;</td><td class="mdescRight">Compute a real-to-complex discrete Fourier transform.  <br /></td></tr>
 <tr class="separator:a369071ea2d380c9d91ba36d1bf375e33"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ac69cbd64be972c20a4424f5327fb4b36" id="r_ac69cbd64be972c20a4424f5327fb4b36"><td class="memItemLeft" align="right" valign="top">subroutine&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="fftpack_8F.html#ac69cbd64be972c20a4424f5327fb4b36">scrft</a> (init, x, ldx, y, ldy, n, m, isign, scale, table, n1, wrk, n2, z, nz)</td></tr>
-<tr class="memdesc:ac69cbd64be972c20a4424f5327fb4b36"><td class="mdescLeft">&#160;</td><td class="mdescRight">scrft  <br /></td></tr>
+<tr class="memdesc:ac69cbd64be972c20a4424f5327fb4b36"><td class="mdescLeft">&#160;</td><td class="mdescRight">Compute a set of m real discrete n-point Fourier transforms of complex conjugate even data.  <br /></td></tr>
 <tr class="separator:ac69cbd64be972c20a4424f5327fb4b36"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:acf248c4f27a9fa81cffdfded50eee742" id="r_acf248c4f27a9fa81cffdfded50eee742"><td class="memItemLeft" align="right" valign="top">subroutine&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="fftpack_8F.html#acf248c4f27a9fa81cffdfded50eee742">srcft</a> (init, x, ldx, y, ldy, n, m, isign, scale, table, n1, wrk, n2, z, nz)</td></tr>
-<tr class="memdesc:acf248c4f27a9fa81cffdfded50eee742"><td class="mdescLeft">&#160;</td><td class="mdescRight">srcft  <br /></td></tr>
+<tr class="memdesc:acf248c4f27a9fa81cffdfded50eee742"><td class="mdescLeft">&#160;</td><td class="mdescRight">Compute a set of m complex discrete n-point Fourier transforms of real data.  <br /></td></tr>
 <tr class="separator:acf248c4f27a9fa81cffdfded50eee742"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
-<div class="textblock"><p>A concatination of the (FFTPACK)[<a href="https://netlib.org/fftpack/">https://netlib.org/fftpack/</a>] library code. </p>
+<div class="textblock"><p>A concatenation of several subroutines from the <a href="https://netlib.org/fftpack/" target="_blank">FFTPACK</a> collection. </p>
 <p>FFTPACK is a package of Fortran subprograms for the fast Fourier transform of periodic and other symmetric sequences. It includes complex, real, sine, cosine, and quarter-wave transforms.</p>
+<p>See <a href="https://netlib.org/fftpack/doc" target="_blank">FFTPACK documentation</a>, <a href="https://help.graphica.com.au/irix-6.5.30/man/3S/dzfft" target="_blank">IRIX man pages</a>, and <a href="https://www.ibm.com/docs/en/essl/6.2?topic=subroutines-scrft-dcrft-complex-real-fourier-transform" target="_blank">IBM ESSL documentation</a> for further historical context for various subroutines included in this file.</p>
 <p>Reference:</p><ul>
-<li><p class="startli">P.N. Swarztrauber, Vectorizing the FFTs, in Parallel Computations (G. Rodrigue, ed.), Academic Press, 1982, pp. 51&ndash;83.</p>
-<dl class="section author"><dt>Author</dt><dd>Paul N. Swarztrauber, National Center for Atmospheric Research, Boulder, CO </dd></dl>
-</li>
+<li>P.N. Swarztrauber, Vectorizing the FFTs, in Parallel Computations (G. Rodrigue, ed.), Academic Press, 1982, pp. 51&ndash;83.</li>
 </ul>
+<dl class="section author"><dt>Author</dt><dd>Paul N. Swarztrauber, National Center for Atmospheric Research, Boulder, CO </dd></dl>
 
 <p class="definition">Definition in file <a class="el" href="fftpack_8F_source.html">fftpack.F</a>.</p>
 </div><h2 class="groupheader">Function/Subroutine Documentation</h2>
@@ -243,25 +242,26 @@ Functions/Subroutines</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p>csfft </p>
+<p>Compute a complex discrete Fourier transform of real data. </p>
+<p>This subroutine performs a Fourier transform on real input data. It supports initialization of the trigonometric coefficient table and forward or inverse transformations. The <code>isign</code> parameter determines the operation mode.</p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramname">isign</td><td></td></tr>
-    <tr><td class="paramname">n</td><td></td></tr>
-    <tr><td class="paramname">scale</td><td></td></tr>
-    <tr><td class="paramname">x</td><td></td></tr>
-    <tr><td class="paramname">y</td><td></td></tr>
-    <tr><td class="paramname">table</td><td></td></tr>
-    <tr><td class="paramname">work</td><td></td></tr>
-    <tr><td class="paramname">isys</td><td></td></tr>
+    <tr><td class="paramname">isign</td><td>Operation mode: 0 for initialization, 1 for inverse transform </td></tr>
+    <tr><td class="paramname">n</td><td>Number of data points in the transform </td></tr>
+    <tr><td class="paramname">scale</td><td>Scaling factor applied to the transformed values </td></tr>
+    <tr><td class="paramname">x</td><td>Input array of real values, length at least <code>n+1</code> </td></tr>
+    <tr><td class="paramname">y</td><td>Output array storing the transformed values, length at least <code>n</code> </td></tr>
+    <tr><td class="paramname">table</td><td>Work array used for storing trigonometric coefficients </td></tr>
+    <tr><td class="paramname">work</td><td>Work array used for intermediate computations </td></tr>
+    <tr><td class="paramname">isys</td><td>Dummy parameter</td></tr>
   </table>
   </dd>
 </dl>
 <dl class="section author"><dt>Author</dt><dd>Paul N. Swarztrauber, National Center for Atmospheric Research, Boulder, CO </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="fftpack_8F_source.html#l00120">120</a> of file <a class="el" href="fftpack_8F_source.html">fftpack.F</a>.</p>
+<p class="definition">Definition at line <a class="el" href="fftpack_8F_source.html#l00137">137</a> of file <a class="el" href="fftpack_8F_source.html">fftpack.F</a>.</p>
 
-<p class="reference">References <a class="el" href="fftpack_8F_source.html#l00305">rfftb()</a>, and <a class="el" href="fftpack_8F_source.html#l00318">rffti()</a>.</p>
+<p class="reference">References <a class="el" href="fftpack_8F_source.html#l00352">rfftb()</a>, and <a class="el" href="fftpack_8F_source.html#l00365">rffti()</a>.</p>
 
 </div>
 </div>
@@ -369,32 +369,33 @@ Functions/Subroutines</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p>dcrft </p>
+<p>Computes a set of <code>m</code> real discrete <code>n</code>-point Fourier transforms of complex conjugate even data. </p>
+<p>The 'd' stands for double precision, but this is historical and may be ignored, and this subroutine is identical to <code><a class="el" href="fftpack_8F.html#ac69cbd64be972c20a4424f5327fb4b36" title="Compute a set of m real discrete n-point Fourier transforms of complex conjugate even data.">scrft()</a></code>.</p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramname">init</td><td></td></tr>
-    <tr><td class="paramname">x</td><td></td></tr>
-    <tr><td class="paramname">ldx</td><td></td></tr>
-    <tr><td class="paramname">y</td><td></td></tr>
-    <tr><td class="paramname">ldy</td><td></td></tr>
-    <tr><td class="paramname">n</td><td></td></tr>
-    <tr><td class="paramname">m</td><td></td></tr>
-    <tr><td class="paramname">isign</td><td></td></tr>
-    <tr><td class="paramname">scale</td><td></td></tr>
-    <tr><td class="paramname">table</td><td></td></tr>
-    <tr><td class="paramname">n1</td><td></td></tr>
-    <tr><td class="paramname">wrk</td><td></td></tr>
-    <tr><td class="paramname">n2</td><td></td></tr>
-    <tr><td class="paramname">z</td><td></td></tr>
-    <tr><td class="paramname">nz</td><td></td></tr>
+    <tr><td class="paramname">init</td><td>Initialization flag; if nonzero, initializes the transformation </td></tr>
+    <tr><td class="paramname">x</td><td>Input array of real values, dimensions (<code>2*ldx</code>, <code>m</code>) </td></tr>
+    <tr><td class="paramname">ldx</td><td>Leading dimension of the input array <code>x</code> </td></tr>
+    <tr><td class="paramname">y</td><td>Output array storing the transformed values, dimensions (<code>ldy</code>, <code>m</code>) </td></tr>
+    <tr><td class="paramname">ldy</td><td>Leading dimension of the output array <code>y</code> </td></tr>
+    <tr><td class="paramname">n</td><td>Number of data points in each transform (first dimension of <code>y</code>) </td></tr>
+    <tr><td class="paramname">m</td><td>Number of transforms to be computed (second dimension of <code>y</code>) </td></tr>
+    <tr><td class="paramname">isign</td><td>Sign indicator for the transform direction (not explicitly used) </td></tr>
+    <tr><td class="paramname">scale</td><td>Scaling factor applied to the transformed values after computation </td></tr>
+    <tr><td class="paramname">table</td><td>Work array of size 44002, precomputed during initialization </td></tr>
+    <tr><td class="paramname">n1</td><td>Auxiliary parameter </td></tr>
+    <tr><td class="paramname">wrk</td><td>Work array used for intermediate storage during computation </td></tr>
+    <tr><td class="paramname">n2</td><td>Auxiliary parameter </td></tr>
+    <tr><td class="paramname">z</td><td>Optional dummy parameter for compatibility </td></tr>
+    <tr><td class="paramname">nz</td><td>Optional dummy parameter for compatibility</td></tr>
   </table>
   </dd>
 </dl>
 <dl class="section author"><dt>Author</dt><dd>Paul N. Swarztrauber, National Center for Atmospheric Research, Boulder, CO </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="fftpack_8F_source.html#l00032">32</a> of file <a class="el" href="fftpack_8F_source.html">fftpack.F</a>.</p>
+<p class="definition">Definition at line <a class="el" href="fftpack_8F_source.html#l00042">42</a> of file <a class="el" href="fftpack_8F_source.html">fftpack.F</a>.</p>
 
-<p class="reference">References <a class="el" href="fftpack_8F_source.html#l00305">rfftb()</a>, and <a class="el" href="fftpack_8F_source.html#l00318">rffti()</a>.</p>
+<p class="reference">References <a class="el" href="fftpack_8F_source.html#l00352">rfftb()</a>, and <a class="el" href="fftpack_8F_source.html#l00365">rffti()</a>.</p>
 
 <p class="reference">Referenced by <a class="el" href="spffte_8f_source.html#l00049">spffte()</a>.</p>
 
@@ -504,32 +505,34 @@ Functions/Subroutines</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p>drcft </p>
+<p>Compute a set of m complex discrete n-point Fourier transforms of real data. </p>
+<p>This subroutine performs multiple (<code>m</code>) discrete Fourier transforms of length <code>n</code> on real input data. The transforms are computed using the real-to-complex Fast Fourier Transform (FFT) approach. The subroutine requires two invocations: once with <code>init</code> set to a non-zero value to initialize work storage, the second with <code>init=0</code> to perform the DFT.</p>
+<p>The 'd' stands for double precision, but this is historical and may be ignored, and this subroutine is identical to <code><a class="el" href="fftpack_8F.html#acf248c4f27a9fa81cffdfded50eee742" title="Compute a set of m complex discrete n-point Fourier transforms of real data.">srcft()</a></code>.</p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramname">init</td><td></td></tr>
-    <tr><td class="paramname">x</td><td></td></tr>
-    <tr><td class="paramname">ldx</td><td></td></tr>
-    <tr><td class="paramname">y</td><td></td></tr>
-    <tr><td class="paramname">ldy</td><td></td></tr>
-    <tr><td class="paramname">n</td><td></td></tr>
-    <tr><td class="paramname">m</td><td></td></tr>
-    <tr><td class="paramname">isign</td><td></td></tr>
-    <tr><td class="paramname">scale</td><td></td></tr>
-    <tr><td class="paramname">table</td><td></td></tr>
-    <tr><td class="paramname">n1</td><td></td></tr>
-    <tr><td class="paramname">wrk</td><td></td></tr>
-    <tr><td class="paramname">n2</td><td></td></tr>
-    <tr><td class="paramname">z</td><td></td></tr>
-    <tr><td class="paramname">nz</td><td></td></tr>
+    <tr><td class="paramname">init</td><td>Initialization flag; if nonzero, initializes the transformation </td></tr>
+    <tr><td class="paramname">x</td><td>Input array of real values, dimensions (<code>ldx</code>, <code>m</code>) </td></tr>
+    <tr><td class="paramname">ldx</td><td>Leading dimension of the input array <code>x</code> </td></tr>
+    <tr><td class="paramname">y</td><td>Output array storing the transformed values, dimensions (<code>2*ldy</code>, <code>m</code>) </td></tr>
+    <tr><td class="paramname">ldy</td><td>Leading dimension of the output array <code>y</code> </td></tr>
+    <tr><td class="paramname">n</td><td>Number of data points in each transform (first dimension of <code>y</code>) </td></tr>
+    <tr><td class="paramname">m</td><td>Number of independent transforms to be computed (second dimension of <code>y</code>) </td></tr>
+    <tr><td class="paramname">isign</td><td>Sign indicator for the transform direction (not explicitly used) </td></tr>
+    <tr><td class="paramname">scale</td><td>Scaling factor applied to the transformed values </td></tr>
+    <tr><td class="paramname">table</td><td>Work array of size 44002 </td></tr>
+    <tr><td class="paramname">n1</td><td>Auxiliary parameter </td></tr>
+    <tr><td class="paramname">wrk</td><td>Work array used for intermediate storage during computation </td></tr>
+    <tr><td class="paramname">n2</td><td>Auxiliary parameter </td></tr>
+    <tr><td class="paramname">z</td><td>Optional dummy parameter for compatibility </td></tr>
+    <tr><td class="paramname">nz</td><td>Optional dummy parameter for compatibility</td></tr>
   </table>
   </dd>
 </dl>
 <dl class="section author"><dt>Author</dt><dd>Paul N. Swarztrauber, National Center for Atmospheric Research, Boulder, CO </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="fftpack_8F_source.html#l00162">162</a> of file <a class="el" href="fftpack_8F_source.html">fftpack.F</a>.</p>
+<p class="definition">Definition at line <a class="el" href="fftpack_8F_source.html#l00187">187</a> of file <a class="el" href="fftpack_8F_source.html">fftpack.F</a>.</p>
 
-<p class="reference">References <a class="el" href="fftpack_8F_source.html#l00291">rfftf()</a>, and <a class="el" href="fftpack_8F_source.html#l00318">rffti()</a>.</p>
+<p class="reference">References <a class="el" href="fftpack_8F_source.html#l00335">rfftf()</a>, and <a class="el" href="fftpack_8F_source.html#l00365">rffti()</a>.</p>
 
 <p class="reference">Referenced by <a class="el" href="spffte_8f_source.html#l00049">spffte()</a>.</p>
 
@@ -579,22 +582,23 @@ Functions/Subroutines</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p>RADB2. </p>
+<p>Perform the backward radix-2 FFT step. </p>
+<p>This subroutine computes one stage of the backward Fast Fourier Transform (FFT) using a radix-2 decomposition. It is used as part of the larger FFT process and applies twiddle factors to transform the input data.</p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramname">IDO</td><td></td></tr>
-    <tr><td class="paramname">L1</td><td></td></tr>
-    <tr><td class="paramname">CC</td><td></td></tr>
-    <tr><td class="paramname">CH</td><td></td></tr>
-    <tr><td class="paramname">WA1</td><td></td></tr>
+    <tr><td class="paramname">ido</td><td>The leading dimension, representing the number of data points in a transform section </td></tr>
+    <tr><td class="paramname">l1</td><td>The number of radix-2 stages processed in this step </td></tr>
+    <tr><td class="paramname">cc</td><td>Input complex array containing intermediate FFT data </td></tr>
+    <tr><td class="paramname">ch</td><td>Output complex array storing transformed data </td></tr>
+    <tr><td class="paramname">wa1</td><td>Twiddle factors array for weighting the FFT computation</td></tr>
   </table>
   </dd>
 </dl>
 <dl class="section author"><dt>Author</dt><dd>Paul N. Swarztrauber, National Center for Atmospheric Research, Boulder, CO </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="fftpack_8F_source.html#l00546">546</a> of file <a class="el" href="fftpack_8F_source.html">fftpack.F</a>.</p>
+<p class="definition">Definition at line <a class="el" href="fftpack_8F_source.html#l00613">613</a> of file <a class="el" href="fftpack_8F_source.html">fftpack.F</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="fftpack_8F_source.html#l00334">rfftb1()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="fftpack_8F_source.html#l00387">rfftb1()</a>.</p>
 
 </div>
 </div>
@@ -648,24 +652,24 @@ Functions/Subroutines</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p>RADB3 <br  />
- </p>
+<p>Perform the backward radix-3 FFT step. </p>
+<p>This subroutine computes one stage of the backward Fast Fourier Transform (FFT) using a radix-3 decomposition. It applies twiddle factors and combines intermediate results to reconstruct transformed data.</p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramname">IDO</td><td></td></tr>
-    <tr><td class="paramname">L1</td><td></td></tr>
-    <tr><td class="paramname">CC</td><td></td></tr>
-    <tr><td class="paramname">CH</td><td></td></tr>
-    <tr><td class="paramname">WA1</td><td></td></tr>
-    <tr><td class="paramname">WA2</td><td></td></tr>
+    <tr><td class="paramname">ido</td><td>The leading dimension, representing the number of data points in a transform section </td></tr>
+    <tr><td class="paramname">l1</td><td>The number of radix-3 stages processed in this step </td></tr>
+    <tr><td class="paramname">cc</td><td>Input complex array containing intermediate FFT data </td></tr>
+    <tr><td class="paramname">ch</td><td>Output complex array storing transformed data </td></tr>
+    <tr><td class="paramname">wa1</td><td>Twiddle factors array for the first rotation </td></tr>
+    <tr><td class="paramname">wa2</td><td>Twiddle factors array for the second rotation</td></tr>
   </table>
   </dd>
 </dl>
 <dl class="section author"><dt>Author</dt><dd>Paul N. Swarztrauber, National Center for Atmospheric Research, Boulder, CO </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="fftpack_8F_source.html#l00591">591</a> of file <a class="el" href="fftpack_8F_source.html">fftpack.F</a>.</p>
+<p class="definition">Definition at line <a class="el" href="fftpack_8F_source.html#l00662">662</a> of file <a class="el" href="fftpack_8F_source.html">fftpack.F</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="fftpack_8F_source.html#l00334">rfftb1()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="fftpack_8F_source.html#l00387">rfftb1()</a>.</p>
 
 </div>
 </div>
@@ -725,24 +729,25 @@ Functions/Subroutines</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p>RADB4. </p>
+<p>Perform the backward radix-4 FFT step. </p>
+<p>This subroutine computes one stage of the backward Fast Fourier Transform (FFT) using a radix-4 decomposition. It applies the FFT formulae by processing the input data and performing necessary rotations and twiddle factor multiplications. The result is stored in the output array <code>ch</code>.</p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramname">IDO</td><td></td></tr>
-    <tr><td class="paramname">L1</td><td></td></tr>
-    <tr><td class="paramname">CC</td><td></td></tr>
-    <tr><td class="paramname">CH</td><td></td></tr>
-    <tr><td class="paramname">WA1</td><td></td></tr>
-    <tr><td class="paramname">WA2</td><td></td></tr>
-    <tr><td class="paramname">WA3</td><td></td></tr>
+    <tr><td class="paramname">ido</td><td>The leading dimension, representing the number of data points in a transform section </td></tr>
+    <tr><td class="paramname">l1</td><td>The number of radix-4 stages processed in this step </td></tr>
+    <tr><td class="paramname">cc</td><td>Input complex array containing intermediate FFT data </td></tr>
+    <tr><td class="paramname">ch</td><td>Output complex array storing transformed data </td></tr>
+    <tr><td class="paramname">wa1</td><td>Twiddle factors array for the first rotation </td></tr>
+    <tr><td class="paramname">wa2</td><td>Twiddle factors array for the second rotation </td></tr>
+    <tr><td class="paramname">wa3</td><td>Twiddle factors array for the third rotation</td></tr>
   </table>
   </dd>
 </dl>
 <dl class="section author"><dt>Author</dt><dd>Paul N. Swarztrauber, National Center for Atmospheric Research, Boulder, CO </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="fftpack_8F_source.html#l00641">641</a> of file <a class="el" href="fftpack_8F_source.html">fftpack.F</a>.</p>
+<p class="definition">Definition at line <a class="el" href="fftpack_8F_source.html#l00717">717</a> of file <a class="el" href="fftpack_8F_source.html">fftpack.F</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="fftpack_8F_source.html#l00334">rfftb1()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="fftpack_8F_source.html#l00387">rfftb1()</a>.</p>
 
 </div>
 </div>
@@ -808,25 +813,26 @@ Functions/Subroutines</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p>RADB5. </p>
+<p>Perform the backward radix-5 FFT step. </p>
+<p>This subroutine computes one stage of the backward Fast Fourier Transform (FFT) using a radix-5 decomposition. It processes input data in sections, applies necessary rotations and twiddle factors, and stores the transformed results in the output array <code>ch</code>. The operation involves calculating intermediate results for each data point and applying appropriate scaling and twiddle factor multiplication.</p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramname">IDO</td><td></td></tr>
-    <tr><td class="paramname">L1</td><td></td></tr>
-    <tr><td class="paramname">CC</td><td></td></tr>
-    <tr><td class="paramname">CH</td><td></td></tr>
-    <tr><td class="paramname">WA1</td><td></td></tr>
-    <tr><td class="paramname">WA2</td><td></td></tr>
-    <tr><td class="paramname">WA3</td><td></td></tr>
-    <tr><td class="paramname">WA4</td><td></td></tr>
+    <tr><td class="paramname">ido</td><td>The leading dimension, representing the number of data points in a transform section </td></tr>
+    <tr><td class="paramname">l1</td><td>The number of radix-5 stages processed in this step </td></tr>
+    <tr><td class="paramname">cc</td><td>Input complex array containing intermediate FFT data </td></tr>
+    <tr><td class="paramname">ch</td><td>Output complex array storing transformed data </td></tr>
+    <tr><td class="paramname">wa1</td><td>Twiddle factors array for the first rotation </td></tr>
+    <tr><td class="paramname">wa2</td><td>Twiddle factors array for the second rotation </td></tr>
+    <tr><td class="paramname">wa3</td><td>Twiddle factors array for the third rotation </td></tr>
+    <tr><td class="paramname">wa4</td><td>Twiddle factors array for the fourth rotation</td></tr>
   </table>
   </dd>
 </dl>
 <dl class="section author"><dt>Author</dt><dd>Paul N. Swarztrauber, National Center for Atmospheric Research, Boulder, CO </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="fftpack_8F_source.html#l00718">718</a> of file <a class="el" href="fftpack_8F_source.html">fftpack.F</a>.</p>
+<p class="definition">Definition at line <a class="el" href="fftpack_8F_source.html#l00801">801</a> of file <a class="el" href="fftpack_8F_source.html">fftpack.F</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="fftpack_8F_source.html#l00334">rfftb1()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="fftpack_8F_source.html#l00387">rfftb1()</a>.</p>
 
 </div>
 </div>
@@ -904,27 +910,28 @@ Functions/Subroutines</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p>RADBG. </p>
+<p>Computes the backward FFT stage using a generalized FFT algorithm. </p>
+<p>This subroutine performs a backward Fast Fourier Transform (FFT) step with a generalized radix-<code>ip</code> approach. It computes the necessary intermediate steps, applying the inverse FFT transformation to the complex input data stored in <code>cc</code>, and stores the result in the output arrays <code>ch</code> and <code>c2</code>. Twiddle factors, stored in <code>wa</code>, are used for scaling and rotations at each stage of the computation.</p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramname">IDO</td><td></td></tr>
-    <tr><td class="paramname">IP</td><td></td></tr>
-    <tr><td class="paramname">L1</td><td></td></tr>
-    <tr><td class="paramname">IDL1</td><td></td></tr>
-    <tr><td class="paramname">CC</td><td></td></tr>
-    <tr><td class="paramname">C1</td><td></td></tr>
-    <tr><td class="paramname">C2</td><td></td></tr>
-    <tr><td class="paramname">CH</td><td></td></tr>
-    <tr><td class="paramname">CH2</td><td></td></tr>
-    <tr><td class="paramname">WA</td><td></td></tr>
+    <tr><td class="paramname">ido</td><td>The leading dimension for data points in a transform section </td></tr>
+    <tr><td class="paramname">ip</td><td>The number of subgroups in the FFT (radix) </td></tr>
+    <tr><td class="paramname">l1</td><td>The number of radix stages to process </td></tr>
+    <tr><td class="paramname">idl1</td><td>The leading dimension for another input array </td></tr>
+    <tr><td class="paramname">cc</td><td>Input complex array containing intermediate FFT data </td></tr>
+    <tr><td class="paramname">c1</td><td>Array containing the first set of intermediate FFT results </td></tr>
+    <tr><td class="paramname">c2</td><td>Array to store additional intermediate FFT results </td></tr>
+    <tr><td class="paramname">ch</td><td>Output complex array to store the final transformed data </td></tr>
+    <tr><td class="paramname">ch2</td><td>Output complex array storing intermediate results for the second stage of transformation </td></tr>
+    <tr><td class="paramname">wa</td><td>Array containing the twiddle factors used in the FFT</td></tr>
   </table>
   </dd>
 </dl>
 <dl class="section author"><dt>Author</dt><dd>Paul N. Swarztrauber, National Center for Atmospheric Research, Boulder, CO </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="fftpack_8F_source.html#l00796">796</a> of file <a class="el" href="fftpack_8F_source.html">fftpack.F</a>.</p>
+<p class="definition">Definition at line <a class="el" href="fftpack_8F_source.html#l00887">887</a> of file <a class="el" href="fftpack_8F_source.html">fftpack.F</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="fftpack_8F_source.html#l00334">rfftb1()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="fftpack_8F_source.html#l00387">rfftb1()</a>.</p>
 
 </div>
 </div>
@@ -972,22 +979,23 @@ Functions/Subroutines</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p>RADBG. </p>
+<p>Perform a radix-2 FFT step for even-odd decomposition of data. </p>
+<p>This subroutine computes a single stage of the radix-2 Fast Fourier Transform (FFT) by separating the even and odd indexed values from the input data array <code>cc</code>, and stores the results in the output array <code>ch</code>. It processes intermediate data with the twiddle factors from <code>wa1</code> for scaling and rotation.</p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramname">IDO</td><td></td></tr>
-    <tr><td class="paramname">L1</td><td></td></tr>
-    <tr><td class="paramname">CC</td><td></td></tr>
-    <tr><td class="paramname">CH</td><td></td></tr>
-    <tr><td class="paramname">WA1</td><td></td></tr>
+    <tr><td class="paramname">ido</td><td>The size of the FFT sub-segment (number of data points to process) </td></tr>
+    <tr><td class="paramname">l1</td><td>The number of stages to process in the FFT </td></tr>
+    <tr><td class="paramname">cc</td><td>Input complex array of size <code>ido x l1 x 2</code>, containing the data for the FFT transformation </td></tr>
+    <tr><td class="paramname">ch</td><td>Output complex array of size <code>ido x 2 x l1</code>, where the transformed data will be stored </td></tr>
+    <tr><td class="paramname">wa1</td><td>Array of twiddle factors used to scale and rotate the data during the FFT calculation</td></tr>
   </table>
   </dd>
 </dl>
 <dl class="section author"><dt>Author</dt><dd>Paul N. Swarztrauber, National Center for Atmospheric Research, Boulder, CO </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="fftpack_8F_source.html#l00974">974</a> of file <a class="el" href="fftpack_8F_source.html">fftpack.F</a>.</p>
+<p class="definition">Definition at line <a class="el" href="fftpack_8F_source.html#l01073">1073</a> of file <a class="el" href="fftpack_8F_source.html">fftpack.F</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="fftpack_8F_source.html#l00403">rfftf1()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="fftpack_8F_source.html#l00461">rfftf1()</a>.</p>
 
 </div>
 </div>
@@ -1041,23 +1049,25 @@ Functions/Subroutines</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p>RADF3. </p>
+<p>Performs a radix-3 FFT step for decomposing the data into three components. </p>
+<p>This subroutine computes a single stage of the radix-3 Fast Fourier Transform (FFT) by separating the input data <code>cc</code> into three components (one for each of the three terms in the FFT). The output data is stored in the array <code>ch</code>, with twiddle factors applied from the arrays <code>wa1</code> and <code>wa2</code>. This subroutine operates for various sizes of FFT sub-segments, controlled by the parameter <code>ido</code>.</p>
+<p>The subroutine handles different configurations based on the value of <code>ido</code>, which affects how the data is processed.</p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramname">IDO</td><td></td></tr>
-    <tr><td class="paramname">L1</td><td></td></tr>
-    <tr><td class="paramname">CC</td><td></td></tr>
-    <tr><td class="paramname">CH</td><td></td></tr>
-    <tr><td class="paramname">WA1</td><td></td></tr>
-    <tr><td class="paramname">WA2</td><td></td></tr>
+    <tr><td class="paramname">ido</td><td>The size of the FFT sub-segment (number of data points to process) </td></tr>
+    <tr><td class="paramname">l1</td><td>The number of stages to process in the FFT </td></tr>
+    <tr><td class="paramname">cc</td><td>Input complex array of size <code>ido x l1 x 3</code>, containing the data for the FFT transformation </td></tr>
+    <tr><td class="paramname">ch</td><td>Output complex array of size <code>ido x 3 x l1</code>, where the transformed data will be stored </td></tr>
+    <tr><td class="paramname">wa1</td><td>Array of twiddle factors for the first part of the FFT calculation </td></tr>
+    <tr><td class="paramname">wa2</td><td>Array of twiddle factors for the second part of the FFT calculation</td></tr>
   </table>
   </dd>
 </dl>
 <dl class="section author"><dt>Author</dt><dd>Paul N. Swarztrauber, National Center for Atmospheric Research, Boulder, CO </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="fftpack_8F_source.html#l01018">1018</a> of file <a class="el" href="fftpack_8F_source.html">fftpack.F</a>.</p>
+<p class="definition">Definition at line <a class="el" href="fftpack_8F_source.html#l01129">1129</a> of file <a class="el" href="fftpack_8F_source.html">fftpack.F</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="fftpack_8F_source.html#l00403">rfftf1()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="fftpack_8F_source.html#l00461">rfftf1()</a>.</p>
 
 </div>
 </div>
@@ -1117,24 +1127,25 @@ Functions/Subroutines</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p>RADF4. </p>
+<p>Perform a radix-4 FFT step for decomposing the data into four components. </p>
+<p>This subroutine computes a single stage of the radix-4 Fast Fourier Transform (FFT) by separating the input data <code>cc</code> into four components (one for each of the four terms in the FFT). The output data is stored in the array <code>ch</code>, with twiddle factors applied from the arrays <code>wa1</code>, <code>wa2</code>, and <code>wa3</code>. This subroutine operates for various sizes of FFT sub-segments, controlled by the parameter <code>ido</code>.</p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramname">IDO</td><td></td></tr>
-    <tr><td class="paramname">L1</td><td></td></tr>
-    <tr><td class="paramname">CC</td><td></td></tr>
-    <tr><td class="paramname">CH</td><td></td></tr>
-    <tr><td class="paramname">WA1</td><td></td></tr>
-    <tr><td class="paramname">WA2</td><td></td></tr>
-    <tr><td class="paramname">WA3</td><td></td></tr>
+    <tr><td class="paramname">ido</td><td>The size of the FFT sub-segment (number of data points to process) </td></tr>
+    <tr><td class="paramname">l1</td><td>The number of stages to process in the FFT </td></tr>
+    <tr><td class="paramname">cc</td><td>Input complex array of size <code>ido x l1 x 4</code>, containing the data for the FFT transformation </td></tr>
+    <tr><td class="paramname">ch</td><td>Output complex array of size <code>ido x 4 x l1</code>, where the transformed data will be stored </td></tr>
+    <tr><td class="paramname">wa1</td><td>Array of twiddle factors for the first part of the FFT calculation </td></tr>
+    <tr><td class="paramname">wa2</td><td>Array of twiddle factors for the second part of the FFT calculation </td></tr>
+    <tr><td class="paramname">wa3</td><td>Array of twiddle factors for the third part of the FFT calculation</td></tr>
   </table>
   </dd>
 </dl>
 <dl class="section author"><dt>Author</dt><dd>Paul N. Swarztrauber, National Center for Atmospheric Research, Boulder, CO </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="fftpack_8F_source.html#l01065">1065</a> of file <a class="el" href="fftpack_8F_source.html">fftpack.F</a>.</p>
+<p class="definition">Definition at line <a class="el" href="fftpack_8F_source.html#l01185">1185</a> of file <a class="el" href="fftpack_8F_source.html">fftpack.F</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="fftpack_8F_source.html#l00403">rfftf1()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="fftpack_8F_source.html#l00461">rfftf1()</a>.</p>
 
 </div>
 </div>
@@ -1200,25 +1211,26 @@ Functions/Subroutines</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p>RADF5. </p>
+<p>Perform a radix-5 FFT step for decomposing the data into five components. </p>
+<p>This subroutine computes a single stage of the radix-5 Fast Fourier Transform (FFT) by separating the input data <code>cc</code> into five components (one for each of the five terms in the FFT). The output data is stored in the array <code>ch</code>, with twiddle factors applied from the arrays <code>wa1</code>, <code>wa2</code>, <code>wa3</code>, and <code>wa4</code>. This subroutine operates for various sizes of FFT sub-segments, controlled by the parameter <code>ido</code>.</p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramname">IDO</td><td></td></tr>
-    <tr><td class="paramname">L1</td><td></td></tr>
-    <tr><td class="paramname">CC</td><td></td></tr>
-    <tr><td class="paramname">CH</td><td></td></tr>
-    <tr><td class="paramname">WA1</td><td></td></tr>
-    <tr><td class="paramname">WA2</td><td></td></tr>
-    <tr><td class="paramname">WA3</td><td></td></tr>
-    <tr><td class="paramname">WA4</td><td></td></tr>
+    <tr><td class="paramname">ido</td><td>The size of the FFT sub-segment (number of data points to process) </td></tr>
+    <tr><td class="paramname">l1</td><td>The number of stages to process in the FFT </td></tr>
+    <tr><td class="paramname">cc</td><td>Input complex array of size <code>ido x l1 x 5</code>, containing the data for the FFT transformation </td></tr>
+    <tr><td class="paramname">ch</td><td>Output complex array of size <code>ido x 5 x l1</code>, where the transformed data will be stored </td></tr>
+    <tr><td class="paramname">wa1</td><td>Array of twiddle factors for the first part of the FFT calculation </td></tr>
+    <tr><td class="paramname">wa2</td><td>Array of twiddle factors for the second part of the FFT calculation </td></tr>
+    <tr><td class="paramname">wa3</td><td>Array of twiddle factors for the third part of the FFT calculation </td></tr>
+    <tr><td class="paramname">wa4</td><td>Array of twiddle factors for the fourth part of the FFT calculation</td></tr>
   </table>
   </dd>
 </dl>
 <dl class="section author"><dt>Author</dt><dd>Paul N. Swarztrauber, National Center for Atmospheric Research, Boulder, CO </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="fftpack_8F_source.html#l01138">1138</a> of file <a class="el" href="fftpack_8F_source.html">fftpack.F</a>.</p>
+<p class="definition">Definition at line <a class="el" href="fftpack_8F_source.html#l01267">1267</a> of file <a class="el" href="fftpack_8F_source.html">fftpack.F</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="fftpack_8F_source.html#l00403">rfftf1()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="fftpack_8F_source.html#l00461">rfftf1()</a>.</p>
 
 </div>
 </div>
@@ -1296,27 +1308,29 @@ Functions/Subroutines</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p>RADFG. </p>
+<p>Compute a general radix-based FFT step. </p>
+<p>This subroutine implements a mixed-radix Fast Fourier Transform (FFT) step, decomposing the input data for an arbitrary radix <code>ip</code>. It reorganizes the input data <code>cc</code> and applies twiddle factors from <code>wa</code> to generate the output in <code>ch</code> and <code>ch2</code>.</p>
+<p>The transformation is influenced by <code>ido</code>, which controls the number of data points per FFT sub-segment, and <code>l1</code>, which determines the number of processing stages.</p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramname">IDO</td><td></td></tr>
-    <tr><td class="paramname">IP</td><td></td></tr>
-    <tr><td class="paramname">L1</td><td></td></tr>
-    <tr><td class="paramname">IDL1</td><td></td></tr>
-    <tr><td class="paramname">CC</td><td></td></tr>
-    <tr><td class="paramname">C1</td><td></td></tr>
-    <tr><td class="paramname">C2</td><td></td></tr>
-    <tr><td class="paramname">CH</td><td></td></tr>
-    <tr><td class="paramname">CH2</td><td></td></tr>
-    <tr><td class="paramname">WA</td><td></td></tr>
+    <tr><td class="paramname">ido</td><td>The number of data points per sub-segment </td></tr>
+    <tr><td class="paramname">ip</td><td>The radix of the FFT step </td></tr>
+    <tr><td class="paramname">l1</td><td>The number of stages to process </td></tr>
+    <tr><td class="paramname">idl1</td><td>The transformed data length parameter, dependent on <code>l1</code> </td></tr>
+    <tr><td class="paramname">cc</td><td>Input complex array of size <code>ido x ip x l1</code>, containing the data to transform </td></tr>
+    <tr><td class="paramname">c1</td><td>Temporary working array for intermediate calculations </td></tr>
+    <tr><td class="paramname">c2</td><td>Temporary working array for intermediate calculations </td></tr>
+    <tr><td class="paramname">ch</td><td>Output complex array of size <code>ido x l1 x ip</code>, where transformed data is stored </td></tr>
+    <tr><td class="paramname">ch2</td><td>Another working output array used for intermediate transformations </td></tr>
+    <tr><td class="paramname">wa</td><td>Twiddle factor array used to apply phase shifts in the FFT calculation</td></tr>
   </table>
   </dd>
 </dl>
 <dl class="section author"><dt>Author</dt><dd>Paul N. Swarztrauber, National Center for Atmospheric Research, Boulder, CO </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="fftpack_8F_source.html#l01212">1212</a> of file <a class="el" href="fftpack_8F_source.html">fftpack.F</a>.</p>
+<p class="definition">Definition at line <a class="el" href="fftpack_8F_source.html#l01350">1350</a> of file <a class="el" href="fftpack_8F_source.html">fftpack.F</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="fftpack_8F_source.html#l00403">rfftf1()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="fftpack_8F_source.html#l00461">rfftf1()</a>.</p>
 
 </div>
 </div>
@@ -1352,22 +1366,23 @@ Functions/Subroutines</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p>RFFTB. </p>
+<p>Compute the real periodic sequence from its Fourier coefs. </p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramname">N</td><td></td></tr>
-    <tr><td class="paramname">R</td><td></td></tr>
-    <tr><td class="paramname">WSAVE</td><td></td></tr>
+    <tr><td class="paramname">n</td><td>The length of the array <code>r</code> to be transformed </td></tr>
+    <tr><td class="paramname">r</td><td>A real array of length <code>n</code> which contains the sequence to be transformed </td></tr>
+    <tr><td class="paramname">wsave</td><td>A work array which must be dimensioned at least <code>2*n+15</code>; must not be destroyed between calls of <code><a class="el" href="fftpack_8F.html#a88b14ae8b7022a3596e1a1fb5e109d8a" title="Compute a forward transform of a real periodic sequence.">rfftf()</a></code> or <code><a class="el" href="fftpack_8F.html#a36dbe2e8cdb99b5c43e8810f95c87c2a" title="Compute the real periodic sequence from its Fourier coefs.">rfftb()</a></code></td></tr>
   </table>
   </dd>
 </dl>
+<dl class="section note"><dt>Note</dt><dd>This transform is unnormalized since a call of <code><a class="el" href="fftpack_8F.html#a88b14ae8b7022a3596e1a1fb5e109d8a" title="Compute a forward transform of a real periodic sequence.">rfftf()</a></code> followed by a call of <code><a class="el" href="fftpack_8F.html#a36dbe2e8cdb99b5c43e8810f95c87c2a" title="Compute the real periodic sequence from its Fourier coefs.">rfftb()</a></code> will multiply the input sequence by n.</dd></dl>
 <dl class="section author"><dt>Author</dt><dd>Paul N. Swarztrauber, National Center for Atmospheric Research, Boulder, CO </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="fftpack_8F_source.html#l00304">304</a> of file <a class="el" href="fftpack_8F_source.html">fftpack.F</a>.</p>
+<p class="definition">Definition at line <a class="el" href="fftpack_8F_source.html#l00351">351</a> of file <a class="el" href="fftpack_8F_source.html">fftpack.F</a>.</p>
 
-<p class="reference">References <a class="el" href="fftpack_8F_source.html#l00334">rfftb1()</a>.</p>
+<p class="reference">References <a class="el" href="fftpack_8F_source.html#l00387">rfftb1()</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="fftpack_8F_source.html#l00121">csfft()</a>, <a class="el" href="fftpack_8F_source.html#l00034">dcrft()</a>, and <a class="el" href="fftpack_8F_source.html#l00082">scrft()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="fftpack_8F_source.html#l00138">csfft()</a>, <a class="el" href="fftpack_8F_source.html#l00044">dcrft()</a>, and <a class="el" href="fftpack_8F_source.html#l00094">scrft()</a>.</p>
 
 </div>
 </div>
@@ -1415,24 +1430,25 @@ Functions/Subroutines</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p>RFFTB1. </p>
+<p>Compute the inverse fast Fourier transform (IFFT) using a mixed-radix algorithm. </p>
+<p>This subroutine is a low-level component of the real-to-complex IFFT computation. It applies a series of radix-based backward FFTs (<code><a class="el" href="fftpack_8F.html#ab6b183d050ed7a278e3d5d1b1df2a518" title="Perform the backward radix-2 FFT step.">radb2()</a></code>, <code><a class="el" href="fftpack_8F.html#aa93bf6f642853a3350a9144cb1013f4c" title="Perform the backward radix-3 FFT step.">radb3()</a></code>, <code><a class="el" href="fftpack_8F.html#af12eda15b4d802900d798b8be5cb0c11" title="Perform the backward radix-4 FFT step.">radb4()</a></code>, <code><a class="el" href="fftpack_8F.html#a9d1d044f44ab9483c9d25fcaa9d9fa82" title="Perform the backward radix-5 FFT step.">radb5()</a></code>, and <code><a class="el" href="fftpack_8F.html#a068ff557b7f9a3ecca681d4946c0838c" title="Computes the backward FFT stage using a generalized FFT algorithm.">radbg()</a></code>) to transform real input data back from the frequency domain to the time domain.</p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramname">N</td><td></td></tr>
-    <tr><td class="paramname">C</td><td></td></tr>
-    <tr><td class="paramname">CH</td><td></td></tr>
-    <tr><td class="paramname">WA</td><td></td></tr>
-    <tr><td class="paramname">IFAC</td><td></td></tr>
+    <tr><td class="paramname">n</td><td>Number of data points in the transform </td></tr>
+    <tr><td class="paramname">c</td><td>Input/output array of real values; on input, it contains transformed data, and on output, it stores the inverse-transformed real data </td></tr>
+    <tr><td class="paramname">ch</td><td>Work array used for intermediate calculations </td></tr>
+    <tr><td class="paramname">wa</td><td>Sine and cosine trigonometric table used for the transformation </td></tr>
+    <tr><td class="paramname">ifac</td><td>Integer factorization array used to determine the radix decomposition</td></tr>
   </table>
   </dd>
 </dl>
 <dl class="section author"><dt>Author</dt><dd>Paul N. Swarztrauber, National Center for Atmospheric Research, Boulder, CO </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="fftpack_8F_source.html#l00333">333</a> of file <a class="el" href="fftpack_8F_source.html">fftpack.F</a>.</p>
+<p class="definition">Definition at line <a class="el" href="fftpack_8F_source.html#l00386">386</a> of file <a class="el" href="fftpack_8F_source.html">fftpack.F</a>.</p>
 
-<p class="reference">References <a class="el" href="fftpack_8F_source.html#l00547">radb2()</a>, <a class="el" href="fftpack_8F_source.html#l00592">radb3()</a>, <a class="el" href="fftpack_8F_source.html#l00642">radb4()</a>, <a class="el" href="fftpack_8F_source.html#l00719">radb5()</a>, and <a class="el" href="fftpack_8F_source.html#l00797">radbg()</a>.</p>
+<p class="reference">References <a class="el" href="fftpack_8F_source.html#l00614">radb2()</a>, <a class="el" href="fftpack_8F_source.html#l00663">radb3()</a>, <a class="el" href="fftpack_8F_source.html#l00718">radb4()</a>, <a class="el" href="fftpack_8F_source.html#l00802">radb5()</a>, and <a class="el" href="fftpack_8F_source.html#l00888">radbg()</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="fftpack_8F_source.html#l00305">rfftb()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="fftpack_8F_source.html#l00352">rfftb()</a>.</p>
 
 </div>
 </div>
@@ -1468,22 +1484,24 @@ Functions/Subroutines</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p>RFFTF. </p>
+<p>Compute a forward transform of a real periodic sequence. </p>
+<p>The wsave array must be initialized by calling subroutine rffti(n,wsave) and a different wsave array must be used for each different value of n. This initialization does not have to be repeated so long as n remains unchanged thus subsequent transforms can be obtained faster than the first.</p>
+<dl class="section note"><dt>Note</dt><dd>This transform is unnormalized since a call of <code><a class="el" href="fftpack_8F.html#a88b14ae8b7022a3596e1a1fb5e109d8a" title="Compute a forward transform of a real periodic sequence.">rfftf()</a></code> followed by a call of <code><a class="el" href="fftpack_8F.html#a36dbe2e8cdb99b5c43e8810f95c87c2a" title="Compute the real periodic sequence from its Fourier coefs.">rfftb()</a></code> will multiply the input sequence by n.</dd></dl>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramname">N</td><td></td></tr>
-    <tr><td class="paramname">R</td><td></td></tr>
-    <tr><td class="paramname">WSAVE</td><td></td></tr>
+    <tr><td class="paramname">n</td><td>The length of the array <code>r</code> to be transformed </td></tr>
+    <tr><td class="paramname">r</td><td>A real array of length <code>n</code> which contains the sequence to be transformed </td></tr>
+    <tr><td class="paramname">wsave</td><td>A work array which must be dimensioned at least <code>2*n+15</code>; must not be destroyed between calls of <code><a class="el" href="fftpack_8F.html#a88b14ae8b7022a3596e1a1fb5e109d8a" title="Compute a forward transform of a real periodic sequence.">rfftf()</a></code> or <code><a class="el" href="fftpack_8F.html#a36dbe2e8cdb99b5c43e8810f95c87c2a" title="Compute the real periodic sequence from its Fourier coefs.">rfftb()</a></code></td></tr>
   </table>
   </dd>
 </dl>
 <dl class="section author"><dt>Author</dt><dd>Paul N. Swarztrauber, National Center for Atmospheric Research, Boulder, CO </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="fftpack_8F_source.html#l00290">290</a> of file <a class="el" href="fftpack_8F_source.html">fftpack.F</a>.</p>
+<p class="definition">Definition at line <a class="el" href="fftpack_8F_source.html#l00334">334</a> of file <a class="el" href="fftpack_8F_source.html">fftpack.F</a>.</p>
 
-<p class="reference">References <a class="el" href="fftpack_8F_source.html#l00403">rfftf1()</a>.</p>
+<p class="reference">References <a class="el" href="fftpack_8F_source.html#l00461">rfftf1()</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="fftpack_8F_source.html#l00164">drcft()</a>, <a class="el" href="fftpack_8F_source.html#l00258">scfft()</a>, and <a class="el" href="fftpack_8F_source.html#l00215">srcft()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="fftpack_8F_source.html#l00189">drcft()</a>, <a class="el" href="fftpack_8F_source.html#l00294">scfft()</a>, and <a class="el" href="fftpack_8F_source.html#l00248">srcft()</a>.</p>
 
 </div>
 </div>
@@ -1531,24 +1549,25 @@ Functions/Subroutines</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p>RFFTF1. </p>
+<p>Compute the real forward fast Fourier transform (FFT) using a mixed-radix algorithm. </p>
+<p>This subroutine performs the FFT by applying a sequence of radix-based forward transformations (<code><a class="el" href="fftpack_8F.html#a9dab9f8bdb8c20a1c0ab784960ad74cf" title="Perform a radix-2 FFT step for even-odd decomposition of data.">radf2()</a></code>, <code><a class="el" href="fftpack_8F.html#a8ace8115be26d3b5d69396a61c35bcba" title="Performs a radix-3 FFT step for decomposing the data into three components.">radf3()</a></code>, <code><a class="el" href="fftpack_8F.html#a73c8f3eae90cf8e31e79e896190e6af6" title="Perform a radix-4 FFT step for decomposing the data into four components.">radf4()</a></code>, <code><a class="el" href="fftpack_8F.html#a015879940c807ba1108d3f5c6273f357" title="Perform a radix-5 FFT step for decomposing the data into five components.">radf5()</a></code>, and <code><a class="el" href="fftpack_8F.html#a9b1a1683452238fd9720e8316b2064cc" title="Compute a general radix-based FFT step.">radfg()</a></code>). It is a low-level routine used internally for computing the real-input FFT.</p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramname">N</td><td></td></tr>
-    <tr><td class="paramname">C</td><td></td></tr>
-    <tr><td class="paramname">CH</td><td></td></tr>
-    <tr><td class="paramname">WA</td><td></td></tr>
-    <tr><td class="paramname">IFAC</td><td></td></tr>
+    <tr><td class="paramname">n</td><td>Number of data points in the transform </td></tr>
+    <tr><td class="paramname">c</td><td>Input/output array of real values; on input, it contains time-domain data, and on output, it stores the transformed frequency-domain data </td></tr>
+    <tr><td class="paramname">ch</td><td>Work array used for intermediate calculations </td></tr>
+    <tr><td class="paramname">wa</td><td>Sine and cosine trigonometric table used for the transformation </td></tr>
+    <tr><td class="paramname">ifac</td><td>Integer factorization array used to determine the radix decomposition</td></tr>
   </table>
   </dd>
 </dl>
 <dl class="section author"><dt>Author</dt><dd>Paul N. Swarztrauber, National Center for Atmospheric Research, Boulder, CO </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="fftpack_8F_source.html#l00402">402</a> of file <a class="el" href="fftpack_8F_source.html">fftpack.F</a>.</p>
+<p class="definition">Definition at line <a class="el" href="fftpack_8F_source.html#l00460">460</a> of file <a class="el" href="fftpack_8F_source.html">fftpack.F</a>.</p>
 
-<p class="reference">References <a class="el" href="fftpack_8F_source.html#l00975">radf2()</a>, <a class="el" href="fftpack_8F_source.html#l01019">radf3()</a>, <a class="el" href="fftpack_8F_source.html#l01066">radf4()</a>, <a class="el" href="fftpack_8F_source.html#l01139">radf5()</a>, and <a class="el" href="fftpack_8F_source.html#l01213">radfg()</a>.</p>
+<p class="reference">References <a class="el" href="fftpack_8F_source.html#l01074">radf2()</a>, <a class="el" href="fftpack_8F_source.html#l01130">radf3()</a>, <a class="el" href="fftpack_8F_source.html#l01186">radf4()</a>, <a class="el" href="fftpack_8F_source.html#l01268">radf5()</a>, and <a class="el" href="fftpack_8F_source.html#l01351">radfg()</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="fftpack_8F_source.html#l00291">rfftf()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="fftpack_8F_source.html#l00335">rfftf()</a>.</p>
 
 </div>
 </div>
@@ -1578,21 +1597,21 @@ Functions/Subroutines</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p>RFFTI. </p>
+<p>Initialize the array wsave which is used in both <code><a class="el" href="fftpack_8F.html#a88b14ae8b7022a3596e1a1fb5e109d8a" title="Compute a forward transform of a real periodic sequence.">rfftf()</a></code> and <code><a class="el" href="fftpack_8F.html#a36dbe2e8cdb99b5c43e8810f95c87c2a" title="Compute the real periodic sequence from its Fourier coefs.">rfftb()</a></code>. </p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramname">N</td><td></td></tr>
-    <tr><td class="paramname">WSAVE</td><td></td></tr>
+    <tr><td class="paramname">n</td><td>The length of the sequence to be transformed </td></tr>
+    <tr><td class="paramname">wsave</td><td>A work array which must be dimensioned at least <code>2*n+15</code>; must not be destroyed between calls of <code><a class="el" href="fftpack_8F.html#a88b14ae8b7022a3596e1a1fb5e109d8a" title="Compute a forward transform of a real periodic sequence.">rfftf()</a></code> or <code><a class="el" href="fftpack_8F.html#a36dbe2e8cdb99b5c43e8810f95c87c2a" title="Compute the real periodic sequence from its Fourier coefs.">rfftb()</a></code></td></tr>
   </table>
   </dd>
 </dl>
 <dl class="section author"><dt>Author</dt><dd>Paul N. Swarztrauber, National Center for Atmospheric Research, Boulder, CO </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="fftpack_8F_source.html#l00317">317</a> of file <a class="el" href="fftpack_8F_source.html">fftpack.F</a>.</p>
+<p class="definition">Definition at line <a class="el" href="fftpack_8F_source.html#l00364">364</a> of file <a class="el" href="fftpack_8F_source.html">fftpack.F</a>.</p>
 
-<p class="reference">References <a class="el" href="fftpack_8F_source.html#l00470">rffti1()</a>.</p>
+<p class="reference">References <a class="el" href="fftpack_8F_source.html#l00533">rffti1()</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="fftpack_8F_source.html#l00121">csfft()</a>, <a class="el" href="fftpack_8F_source.html#l00034">dcrft()</a>, <a class="el" href="fftpack_8F_source.html#l00164">drcft()</a>, <a class="el" href="fftpack_8F_source.html#l00258">scfft()</a>, <a class="el" href="fftpack_8F_source.html#l00082">scrft()</a>, and <a class="el" href="fftpack_8F_source.html#l00215">srcft()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="fftpack_8F_source.html#l00138">csfft()</a>, <a class="el" href="fftpack_8F_source.html#l00044">dcrft()</a>, <a class="el" href="fftpack_8F_source.html#l00189">drcft()</a>, <a class="el" href="fftpack_8F_source.html#l00294">scfft()</a>, <a class="el" href="fftpack_8F_source.html#l00094">scrft()</a>, and <a class="el" href="fftpack_8F_source.html#l00248">srcft()</a>.</p>
 
 </div>
 </div>
@@ -1628,20 +1647,21 @@ Functions/Subroutines</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p>RFFTI1. </p>
+<p>Compute the initialization factors for the real-input FFT. </p>
+<p>This subroutine prepares the trigonometric table and factorization for the real-input Fast Fourier Transform (FFT). It determines the prime factorization of N and computes the necessary twiddle factors for efficient computation.</p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramname">N</td><td></td></tr>
-    <tr><td class="paramname">WA</td><td></td></tr>
-    <tr><td class="paramname">IFAC</td><td></td></tr>
+    <tr><td class="paramname">n</td><td>The length of the input data array </td></tr>
+    <tr><td class="paramname">wa</td><td>Output array containing computed trigonometric factors </td></tr>
+    <tr><td class="paramname">ifac</td><td>Output integer array storing the factorization of <code>n</code> for FFT processing</td></tr>
   </table>
   </dd>
 </dl>
 <dl class="section author"><dt>Author</dt><dd>Paul N. Swarztrauber, National Center for Atmospheric Research, Boulder, CO </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="fftpack_8F_source.html#l00469">469</a> of file <a class="el" href="fftpack_8F_source.html">fftpack.F</a>.</p>
+<p class="definition">Definition at line <a class="el" href="fftpack_8F_source.html#l00532">532</a> of file <a class="el" href="fftpack_8F_source.html">fftpack.F</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="fftpack_8F_source.html#l00318">rffti()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="fftpack_8F_source.html#l00365">rffti()</a>.</p>
 
 </div>
 </div>
@@ -1707,25 +1727,26 @@ Functions/Subroutines</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p>scfft </p>
+<p>Compute a real-to-complex discrete Fourier transform. </p>
+<p>This subroutine performs a Fourier transform on real input data. It supports initialization of the trigonometric coefficient table and forward transformation.</p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramname">isign</td><td></td></tr>
-    <tr><td class="paramname">n</td><td></td></tr>
-    <tr><td class="paramname">scale</td><td></td></tr>
-    <tr><td class="paramname">x</td><td></td></tr>
-    <tr><td class="paramname">y</td><td></td></tr>
-    <tr><td class="paramname">table</td><td></td></tr>
-    <tr><td class="paramname">work</td><td></td></tr>
-    <tr><td class="paramname">isys</td><td></td></tr>
+    <tr><td class="paramname">isign</td><td>Operation mode: 0 for initialization, -1 for forward transform </td></tr>
+    <tr><td class="paramname">n</td><td>Number of data points in the transform </td></tr>
+    <tr><td class="paramname">scale</td><td>Scaling factor applied to the transformed values </td></tr>
+    <tr><td class="paramname">x</td><td>Input array of real values, length at least <code>n</code> </td></tr>
+    <tr><td class="paramname">y</td><td>Output array storing the transformed values, length at least <code>n+1</code> </td></tr>
+    <tr><td class="paramname">table</td><td>Work array used for storing trigonometric coefficients </td></tr>
+    <tr><td class="paramname">work</td><td>Work array used for intermediate computations </td></tr>
+    <tr><td class="paramname">isys</td><td>Dummy parameter</td></tr>
   </table>
   </dd>
 </dl>
 <dl class="section author"><dt>Author</dt><dd>Paul N. Swarztrauber, National Center for Atmospheric Research, Boulder, CO </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="fftpack_8F_source.html#l00257">257</a> of file <a class="el" href="fftpack_8F_source.html">fftpack.F</a>.</p>
+<p class="definition">Definition at line <a class="el" href="fftpack_8F_source.html#l00293">293</a> of file <a class="el" href="fftpack_8F_source.html">fftpack.F</a>.</p>
 
-<p class="reference">References <a class="el" href="fftpack_8F_source.html#l00291">rfftf()</a>, and <a class="el" href="fftpack_8F_source.html#l00318">rffti()</a>.</p>
+<p class="reference">References <a class="el" href="fftpack_8F_source.html#l00335">rfftf()</a>, and <a class="el" href="fftpack_8F_source.html#l00365">rffti()</a>.</p>
 
 </div>
 </div>
@@ -1833,32 +1854,33 @@ Functions/Subroutines</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p>scrft </p>
+<p>Compute a set of m real discrete n-point Fourier transforms of complex conjugate even data. </p>
+<p>The 's' stands for single precision, but this is historical and may be ignored, and this subroutine is identical to <code><a class="el" href="fftpack_8F.html#a713ef445886ad8dc8b16692c6075d225" title="Computes a set of m real discrete n-point Fourier transforms of complex conjugate even data.">dcrft()</a></code>.</p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramname">init</td><td></td></tr>
-    <tr><td class="paramname">x</td><td></td></tr>
-    <tr><td class="paramname">ldx</td><td></td></tr>
-    <tr><td class="paramname">y</td><td></td></tr>
-    <tr><td class="paramname">ldy</td><td></td></tr>
-    <tr><td class="paramname">n</td><td></td></tr>
-    <tr><td class="paramname">m</td><td></td></tr>
-    <tr><td class="paramname">isign</td><td></td></tr>
-    <tr><td class="paramname">scale</td><td></td></tr>
-    <tr><td class="paramname">table</td><td></td></tr>
-    <tr><td class="paramname">n1</td><td></td></tr>
-    <tr><td class="paramname">wrk</td><td></td></tr>
-    <tr><td class="paramname">n2</td><td></td></tr>
-    <tr><td class="paramname">z</td><td></td></tr>
-    <tr><td class="paramname">nz</td><td></td></tr>
+    <tr><td class="paramname">init</td><td>Initialization flag; if nonzero, initializes the transformation </td></tr>
+    <tr><td class="paramname">x</td><td>Input array of real values, dimensions (<code>2*ldx</code>, <code>m</code>) </td></tr>
+    <tr><td class="paramname">ldx</td><td>Leading dimension of the input array <code>x</code> </td></tr>
+    <tr><td class="paramname">y</td><td>Output array storing the transformed values, dimensions (<code>ldy</code>, <code>m</code>) </td></tr>
+    <tr><td class="paramname">ldy</td><td>Leading dimension of the output array <code>y</code> </td></tr>
+    <tr><td class="paramname">n</td><td>Number of data points in each transform (first dimension of <code>y</code>) </td></tr>
+    <tr><td class="paramname">m</td><td>Number of transforms to be computed (second dimension of <code>y</code>) </td></tr>
+    <tr><td class="paramname">isign</td><td>Sign indicator for the transform direction (not explicitly used) </td></tr>
+    <tr><td class="paramname">scale</td><td>Scaling factor applied to the transformed values after computation </td></tr>
+    <tr><td class="paramname">table</td><td>Work array of size 44002, precomputed during initialization </td></tr>
+    <tr><td class="paramname">n1</td><td>Auxiliary parameter </td></tr>
+    <tr><td class="paramname">wrk</td><td>Work array used for intermediate storage during computation </td></tr>
+    <tr><td class="paramname">n2</td><td>Auxiliary parameter </td></tr>
+    <tr><td class="paramname">z</td><td>Optional dummy parameter for compatibility </td></tr>
+    <tr><td class="paramname">nz</td><td>Optional dummy parameter for compatibility</td></tr>
   </table>
   </dd>
 </dl>
 <dl class="section author"><dt>Author</dt><dd>Paul N. Swarztrauber, National Center for Atmospheric Research, Boulder, CO </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="fftpack_8F_source.html#l00080">80</a> of file <a class="el" href="fftpack_8F_source.html">fftpack.F</a>.</p>
+<p class="definition">Definition at line <a class="el" href="fftpack_8F_source.html#l00092">92</a> of file <a class="el" href="fftpack_8F_source.html">fftpack.F</a>.</p>
 
-<p class="reference">References <a class="el" href="fftpack_8F_source.html#l00305">rfftb()</a>, and <a class="el" href="fftpack_8F_source.html#l00318">rffti()</a>.</p>
+<p class="reference">References <a class="el" href="fftpack_8F_source.html#l00352">rfftb()</a>, and <a class="el" href="fftpack_8F_source.html#l00365">rffti()</a>.</p>
 
 <p class="reference">Referenced by <a class="el" href="spfft_8f_source.html#l00041">spfft()</a>, <a class="el" href="spfft1_8f_source.html#l00033">spfft1()</a>, and <a class="el" href="spffte_8f_source.html#l00049">spffte()</a>.</p>
 
@@ -1968,32 +1990,34 @@ Functions/Subroutines</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p>srcft </p>
+<p>Compute a set of m complex discrete n-point Fourier transforms of real data. </p>
+<p>This subroutine performs multiple (<code>m</code>) discrete Fourier transforms of length <code>n</code> on real input data. The transforms are computed using the real-to-complex Fast Fourier Transform (FFT) approach. The subroutine requires two invocations: once with <code>init</code> set to a non-zero value to initialize work storage, the second with <code>init=0</code> to perform the DFT.</p>
+<p>The 's' stands for single precision, but this is historical and may be ignored, and this subroutine is identical to <code><a class="el" href="fftpack_8F.html#a55b05419c0d3bb0595b34c8cacf93be8" title="Compute a set of m complex discrete n-point Fourier transforms of real data.">drcft()</a></code>.</p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramname">init</td><td></td></tr>
-    <tr><td class="paramname">x</td><td></td></tr>
-    <tr><td class="paramname">ldx</td><td></td></tr>
-    <tr><td class="paramname">y</td><td></td></tr>
-    <tr><td class="paramname">ldy</td><td></td></tr>
-    <tr><td class="paramname">n</td><td></td></tr>
-    <tr><td class="paramname">m</td><td></td></tr>
-    <tr><td class="paramname">isign</td><td></td></tr>
-    <tr><td class="paramname">scale</td><td></td></tr>
-    <tr><td class="paramname">table</td><td></td></tr>
-    <tr><td class="paramname">n1</td><td></td></tr>
-    <tr><td class="paramname">wrk</td><td></td></tr>
-    <tr><td class="paramname">n2</td><td></td></tr>
-    <tr><td class="paramname">z</td><td></td></tr>
-    <tr><td class="paramname">nz</td><td></td></tr>
+    <tr><td class="paramname">init</td><td>Initialization flag; if nonzero, initializes the transformation </td></tr>
+    <tr><td class="paramname">x</td><td>Input array of real values, dimensions (<code>ldx</code>, <code>m</code>) </td></tr>
+    <tr><td class="paramname">ldx</td><td>Leading dimension of the input array <code>x</code> </td></tr>
+    <tr><td class="paramname">y</td><td>Output array storing the transformed values, dimensions (<code>2*ldy</code>, <code>m</code>) </td></tr>
+    <tr><td class="paramname">ldy</td><td>Leading dimension of the output array <code>y</code> </td></tr>
+    <tr><td class="paramname">n</td><td>Number of data points in each transform (first dimension of <code>y</code>) </td></tr>
+    <tr><td class="paramname">m</td><td>Number of independent transforms to be computed (second dimension of <code>y</code>) </td></tr>
+    <tr><td class="paramname">isign</td><td>Sign indicator for the transform direction (not explicitly used) </td></tr>
+    <tr><td class="paramname">scale</td><td>Scaling factor applied to the transformed values </td></tr>
+    <tr><td class="paramname">table</td><td>Work array of size 44002 </td></tr>
+    <tr><td class="paramname">n1</td><td>Auxiliary parameter </td></tr>
+    <tr><td class="paramname">wrk</td><td>Work array used for intermediate storage during computation </td></tr>
+    <tr><td class="paramname">n2</td><td>Auxiliary parameter </td></tr>
+    <tr><td class="paramname">z</td><td>Optional dummy parameter for compatibility </td></tr>
+    <tr><td class="paramname">nz</td><td>Optional dummy parameter for compatibility</td></tr>
   </table>
   </dd>
 </dl>
 <dl class="section author"><dt>Author</dt><dd>Paul N. Swarztrauber, National Center for Atmospheric Research, Boulder, CO </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="fftpack_8F_source.html#l00213">213</a> of file <a class="el" href="fftpack_8F_source.html">fftpack.F</a>.</p>
+<p class="definition">Definition at line <a class="el" href="fftpack_8F_source.html#l00246">246</a> of file <a class="el" href="fftpack_8F_source.html">fftpack.F</a>.</p>
 
-<p class="reference">References <a class="el" href="fftpack_8F_source.html#l00291">rfftf()</a>, and <a class="el" href="fftpack_8F_source.html#l00318">rffti()</a>.</p>
+<p class="reference">References <a class="el" href="fftpack_8F_source.html#l00335">rfftf()</a>, and <a class="el" href="fftpack_8F_source.html#l00365">rffti()</a>.</p>
 
 <p class="reference">Referenced by <a class="el" href="spfft_8f_source.html#l00041">spfft()</a>, <a class="el" href="spfft1_8f_source.html#l00033">spfft1()</a>, and <a class="el" href="spffte_8f_source.html#l00049">spffte()</a>.</p>
 
