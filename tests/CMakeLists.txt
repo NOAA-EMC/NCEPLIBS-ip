@@ -109,6 +109,13 @@ foreach(kind ${kinds})
   set_target_properties(test_scalar_grib2_${kind} PROPERTIES COMPILE_FLAGS "${fortran_${kind}_flags}")
   set_target_properties(test_vector_grib2_${kind} PROPERTIES COMPILE_FLAGS "${fortran_${kind}_flags}")
 
+  # Test for ncep_post_arakawa C interface
+  add_executable(tst_ncep_post_arakawa_${kind} tst_ncep_post_arakawa.c)
+  target_link_libraries(tst_ncep_post_arakawa_${kind} PUBLIC ip::ip_${kind})
+  set_target_properties(tst_ncep_post_arakawa_${kind} PROPERTIES LINKER_LANGUAGE C)
+  target_compile_definitions(tst_ncep_post_arakawa_${kind} PRIVATE "LSIZE=${kind_definition}")
+  add_test(tst_ncep_post_arakawa_${kind} tst_ncep_post_arakawa_${kind})
+
   # GDSWZD test, GRIB2
   add_test(tst_gdswzd_c_grib2_${kind} tst_gdswzd_grib2_${kind})
 
@@ -244,6 +251,7 @@ foreach(kind ${kinds})
     "test_sptezv"
     "tst_gdswzd_c_grib1"
     "tst_gdswzd_c_grib2"
+    "tst_ncep_post_arakawa"
   )
   foreach(noinputdatatest IN LISTS noinputdatatests)
     set_tests_properties("${noinputdatatest}_${kind}" PROPERTIES LABELS "NO_INPUT_DATA")
