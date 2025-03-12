@@ -32,8 +32,8 @@ Code Manager: [Alex Richert](mailto:alexander.richert@noaa.gov)
 ### Prerequisites
 
 This package requires a BLAS/LAPACK library to provide several LU decomposition-related
-routines, and requires CMake (version 3.15+) to build. In spack-stack, OpenBLAS will
-be used as the provider of BLAS/LAPACK routines for all compilers.
+routines, and requires CMake (version 3.15+) to build. See [documentation](https://noaa-emc.github.io/NCEPLIBS-ip/)
+for details on setting the BLAS/LAPACK library.
 
 ### Installing
 
