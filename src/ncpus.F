@@ -15,8 +15,6 @@ C> @author Iredell @date 94-08-19
 C> Set number of CPUs - the number of processors over which
 C> to parallelize.
 C>
-C> @param[out] ncpus number of CPUs.
-C>
 C> @return Number of CPUs assigned.
 C>
 C> @author Iredell @date 94-08-19

@@ -1,5 +1,0 @@
-sptrungv* files were generated from ip's './test_vector_grib1_4 "205" "4"' test case and modifying spectral_interp_mod.F90 to write out UI, VI, RLAT, and RLON immediately before the SPTRUNGV call, and UO and VO immediately after.
-
-sptrung* files were generated from ip's 'test_scalar_grib2_4 "-1" "4"' test case and modifying spectral_interp_mod.F90 to write out GI.
-
-The other input and reference data can largely be rebuilt using the commented blocks in interp_mod_grib1.F90 and interp_mod_grib2.F90.

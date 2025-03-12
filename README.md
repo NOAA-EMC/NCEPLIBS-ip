@@ -42,7 +42,7 @@ mkdir build
 cd build
 cmake -DCMAKE_INSTALL_PREFIX=/path/to/install /path/to/NCEPLIBS-ip
 make -j2
-make test # (or ctest --verbose)
+make test # or 'ctest --verbose'; use 'ctest -LE SLOW_TEST' to skip long-running tests
 make install
 ```
 

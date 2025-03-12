@@ -32,12 +32,15 @@ module ip_lambert_conf_grid_mod
      real :: h !< Hemisphere flag. 1-NH, minus 1-SH.
      integer :: irot !< vector rotation flag. When "1", vectors are grid relative. When "0", vectors are earth relative. GRIB2, Section 3, octet 55.
    contains
-     !> Initializes a gaussian grid given a grib1_descriptor object. @return N/A
+     !> Initializes a gaussian grid given a grib1_descriptor object.
+     !> @return N/A @copydoc ip_lambert_conf_grid_mod::init_grib1
      procedure :: init_grib1
-     !> Initializes a gaussian grid given a grib2_descriptor object. @return N/A
+     !> Initializes a gaussian grid given a grib2_descriptor object.
+     !> @return N/A @copydoc ip_lambert_conf_grid_mod::init_grib2
      procedure :: init_grib2
      !> Calculates Earth coordinates (iopt = 1) or grid coorindates (iopt = -1)
-     !> for Gaussian grids. @return N/A
+     !> for Gaussian grids.
+     !> @return N/A @copydoc ip_lambert_conf_grid_mod::gdswzd_lambert_conf
      procedure :: gdswzd => gdswzd_lambert_conf
   end type ip_lambert_conf_grid
 

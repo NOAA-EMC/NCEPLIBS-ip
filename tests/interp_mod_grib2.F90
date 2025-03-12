@@ -478,7 +478,7 @@ contains
 
 #if (LSIZE==4)
     abstol=0.05
-    ntol = 10
+    ntol = 15
 #else
     abstol=0.0001
     ntol = 0

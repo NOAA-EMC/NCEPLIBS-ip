@@ -32,9 +32,12 @@ module ip_equid_cylind_grid_mod
      real :: dlat !< Di — i direction increment. GRIB2, Section 3, octets 64-67.
      real :: dlon !< Dj — j direction increment. GRIB2, Section 3, octets 68-71.
    contains
-     procedure :: init_grib1 !< Init GRIB1. @return N/A
-     procedure :: init_grib2 !< Init GRIB2. @return N/A
-     procedure :: gdswzd => gdswzd_equid_cylind !< See gdswzd_equid_cylind(). @return N/A
+     !> @return N/A @copydoc ip_equid_cylind_grid_mod::init_grib1
+     procedure :: init_grib1 !< Init GRIB1.
+     !> @return N/A @copydoc ip_equid_cylind_grid_mod::init_grib2
+     procedure :: init_grib2 !< Init GRIB2.
+     !> @return N/A @copydoc ip_equid_cylind_grid_mod::gdswzd_equid_cylind
+     procedure :: gdswzd => gdswzd_equid_cylind
   end type ip_equid_cylind_grid
 
   REAL :: DLAT !< Grid resolution in degrees n/s direction.

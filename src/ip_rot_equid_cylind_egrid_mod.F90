@@ -49,13 +49,16 @@ module ip_rot_equid_cylind_egrid_mod
      integer :: irot 
    contains
      !> Initializes a rotated equidistant cylindrical grid given a
-     !> grib1_descriptor object. @return N/A
+     !> grib1_descriptor object.
+     !> @return N/A @copydoc ip_rot_equid_cylind_egrid_mod::init_grib1
      procedure :: init_grib1
      !> Initializes a rotated equidistant cylindrical grid given a
-     !> grib2_descriptor object. @return N/A
+     !> grib2_descriptor object.
+     !> @return N/A @copydoc ip_rot_equid_cylind_egrid_mod::init_grib2
      procedure :: init_grib2
      !> Calculates Earth coordinates (iopt = 1) or grid coorindates
-     !> (iopt = -1). @return N/A
+     !> (iopt = -1).
+     !> @return N/A @copydoc ip_rot_equid_cylind_egrid_mod::gdswzd_rot_equid_cylind_egrid
      procedure :: gdswzd => gdswzd_rot_equid_cylind_egrid
   end type ip_rot_equid_cylind_egrid
 

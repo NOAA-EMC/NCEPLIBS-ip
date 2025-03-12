@@ -28,7 +28,8 @@ module ip_grid_descriptor_mod
   type, abstract :: ip_grid_descriptor
      integer :: grid_num !< Integer representing the grid type (see *_GRID_ID_GRIB1/2 in ip_grid_mod).
    contains
-     !> Test whether two grid descriptors are the same. @return N/A
+     !> Test whether two grid descriptors are the same.
+     !> @return N/A @copydoc ip_grid_descriptor_mod::is_same_grid
      procedure :: is_same_grid
   end type ip_grid_descriptor
 
@@ -38,7 +39,8 @@ module ip_grid_descriptor_mod
   type, extends(ip_grid_descriptor) :: grib1_descriptor
      integer :: gds(200) !< Grib-1 grib descriptor section (GDS)
    contains
-     !> Test whether two grid descriptors are the same. @return N/A
+     !> Test whether two grid descriptors are the same.
+     !> @return N/A @copydoc ip_grid_descriptor_mod::is_same_grid_grib1
      procedure :: is_same_grid_grib1
   end type grib1_descriptor
 
@@ -49,7 +51,8 @@ module ip_grid_descriptor_mod
      integer :: gdt_len !< Length of the template.
      integer, allocatable :: gdt_tmpl(:) !< Grib-2 grid definition template.
    contains
-     !> Test whether two grid descriptors are the same. @return N/A
+     !> Test whether two grid descriptors are the same.
+     !> @return N/A @copydoc ip_grid_descriptor_mod::is_same_grid_grib2
      procedure :: is_same_grid_grib2
   end type grib2_descriptor
 

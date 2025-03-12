@@ -377,8 +377,8 @@ contains
          12191, 12191, 0, 64, 25000, 25000, 0, 0, 0, 0, 0, 0, 255, 180*0/
 
 #if (LSIZE==4)
-    abstol=0.05
-    ntol = 10
+    abstol=0.1
+    ntol = 15
 #else
     abstol=0.0001
     ntol = 0

@@ -12,6 +12,11 @@ on:
     branches:
     - develop
 
+# Cancel in-progress workflows when pushing to a branch
+concurrency:
+  group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
+
 jobs:
   Linux:
     runs-on: ubuntu-24.04
@@ -39,11 +44,18 @@ jobs:
       with: 
         path: ip
 
+    - name: Cache test files
+      uses: actions/cache@v4
+      with:
+        path: testfiles.tgz
+        key: NCEPLIBS-ip-test-files-1
+
     - name: build
       run: |
         sudo apt install libopenblas-serial-dev
+        if [ ! -f testfiles.tgz ]; then wget https://ftp.emc.ncep.noaa.gov/static_files/public/NCEPLIBS-ip/ip-test-data-20241230.tgz -O testfiles.tgz ; fi
         export CC=gcc-${{ matrix.gcc-version }} ; export FC=gfortran-${{ matrix.gcc-version }}
-        cmake -S ip -B ip/build -DCMAKE_PREFIX_PATH="~/" -DOPENMP=${{ matrix.openmp }} ${{ matrix.options }} -DCMAKE_INSTALL_PREFIX=~/install -DBLA_VENDOR=OpenBLAS
+        cmake -S ip -B ip/build -DCMAKE_PREFIX_PATH="~/" -DOPENMP=${{ matrix.openmp }} ${{ matrix.options }} -DCMAKE_INSTALL_PREFIX=~/install -DBLA_VENDOR=OpenBLAS -DFTP_TEST_FILES=ON -DTEST_FILES_CACHE=$GITHUB_WORKSPACE/testfiles.tgz
         cmake --build ip/build --parallel 2 --verbose
         cmake --install ip/build
         # Ensure that manual setting of '-DBLA_VENDOR=...' is reflected in output CMake config

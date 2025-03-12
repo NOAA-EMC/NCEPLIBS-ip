@@ -1,33 +1,43 @@
 C> @file
-C> @brief A concatination of the (FFTPACK)[https://netlib.org/fftpack/] library code.
-C>      
+C> @brief A concatenation of several subroutines from the
+C> <a target="_blank" href="https://netlib.org/fftpack/">FFTPACK</a> collection.
 C> FFTPACK is a package of Fortran subprograms for the fast Fourier
 C> transform of periodic and other symmetric sequences. It includes
 C> complex, real, sine, cosine, and quarter-wave transforms.
+C>
+C> See
+C> <a target="_blank" href="https://netlib.org/fftpack/doc">FFTPACK documentation</a>,
+C> <a target="_blank" href="https://help.graphica.com.au/irix-6.5.30/man/3S/dzfft">IRIX man pages</a>, and
+C> <a target="_blank" href="https://www.ibm.com/docs/en/essl/6.2?topic=subroutines-scrft-dcrft-complex-real-fourier-transform">IBM ESSL documentation</a>
+C> for further historical context for various subroutines included in this file.
 C>      
-C>Reference:
-C>- P.N. Swarztrauber, Vectorizing the FFTs, in Parallel Computations
-C>(G. Rodrigue, ed.), Academic Press, 1982, pp. 51--83.
+C> Reference:
+C> - P.N. Swarztrauber, Vectorizing the FFTs, in Parallel Computations
+C> (G. Rodrigue, ed.), Academic Press, 1982, pp. 51--83.
 C> 
 C> @author Paul N. Swarztrauber, National Center for Atmospheric Research, Boulder, CO
 
-C> dcrft
+C> @brief Computes a set of `m` real discrete `n`-point Fourier transforms of complex conjugate even data
 C>
-C> @param init
-C> @param x
-C> @param ldx
-C> @param y
-C> @param ldy
-C> @param n
-C> @param m
-C> @param isign
-C> @param scale
-C> @param  table
-C> @param n1
-C> @param wrk
-C> @param n2
-C> @param z
-C> @param nz
+C> The 'd' stands for double precision, but this is historical and may be ignored,
+C> and this subroutine is identical to `scrft()`.
+C>
+C> @param init  Initialization flag; if nonzero, initializes the transformation
+C> @param x     Input array of real values, dimensions (`2*ldx`, `m`)
+C> @param ldx   Leading dimension of the input array `x`
+C> @param y     Output array storing the transformed values, dimensions (`ldy`, `m`)
+C> @param ldy   Leading dimension of the output array `y`
+C> @param n     Number of data points in each transform (first dimension of `y`)
+C> @param m     Number of transforms to be computed (second dimension of `y`)
+C> @param isign Sign indicator for the transform direction (not explicitly used)
+C> @param scale Scaling factor applied to the transformed values after computation
+C> @param table Work array of size 44002, precomputed during initialization
+C> @param n1    Auxiliary parameter
+C> @param wrk   Work array used for intermediate storage during computation
+C> @param n2    Auxiliary parameter
+C> @param z     Optional dummy parameter for compatibility
+C> @param nz    Optional dummy parameter for compatibility
+C>
 C> @author Paul N. Swarztrauber, National Center for Atmospheric Research, Boulder, CO
       SUBROUTINE dcrft(init,x,ldx,y,ldy,n,m,isign,scale,
      &                 table,n1,wrk,n2,z,nz)
@@ -57,26 +67,28 @@ C> @author Paul N. Swarztrauber, National Center for Atmospheric Research, Bould
       RETURN
       END
 
-C> scrft
+C> @brief Compute a set of m real discrete n-point Fourier transforms of complex conjugate even data
 C>
-C> @param init
-C> @param x
-C> @param ldx
-C> @param y
-C> @param ldy
-C> @param n
-C> @param m
-C> @param isign
-C> @param scale
-C> @param  table
-C> @param n1
-C> @param wrk
-C> @param n2
-C> @param z
-C> @param nz
+C> The 's' stands for single precision, but this is historical and may be ignored,
+C> and this subroutine is identical to `dcrft()`.
+C>
+C> @param init  Initialization flag; if nonzero, initializes the transformation
+C> @param x     Input array of real values, dimensions (`2*ldx`, `m`)
+C> @param ldx   Leading dimension of the input array `x`
+C> @param y     Output array storing the transformed values, dimensions (`ldy`, `m`)
+C> @param ldy   Leading dimension of the output array `y`
+C> @param n     Number of data points in each transform (first dimension of `y`)
+C> @param m     Number of transforms to be computed (second dimension of `y`)
+C> @param isign Sign indicator for the transform direction (not explicitly used)
+C> @param scale Scaling factor applied to the transformed values after computation
+C> @param table Work array of size 44002, precomputed during initialization
+C> @param n1    Auxiliary parameter
+C> @param wrk   Work array used for intermediate storage during computation
+C> @param n2    Auxiliary parameter
+C> @param z     Optional dummy parameter for compatibility
+C> @param nz    Optional dummy parameter for compatibility
 C>
 C> @author Paul N. Swarztrauber, National Center for Atmospheric Research, Boulder, CO
-      
       SUBROUTINE scrft(init,x,ldx,y,ldy,n,m,isign,scale,
      &                 table,n1,wrk,n2,z,nz)
  
@@ -105,16 +117,21 @@ C> @author Paul N. Swarztrauber, National Center for Atmospheric Research, Bould
       RETURN
       END
 
-C> csfft
+C> @brief Compute a complex discrete Fourier transform of real data
 C>
-C> @param isign
-C> @param n
-C> @param scale
-C> @param x
-C> @param y
-C> @param table
-C> @param work
-C> @param isys
+C> This subroutine performs a Fourier transform on real input data.
+C> It supports initialization of the trigonometric coefficient 
+C> table and forward or inverse transformations. The `isign` parameter determines 
+C> the operation mode.
+C>
+C> @param isign  Operation mode: 0 for initialization, 1 for inverse transform
+C> @param n      Number of data points in the transform
+C> @param scale  Scaling factor applied to the transformed values
+C> @param x      Input array of real values, length at least `n+1`
+C> @param y      Output array storing the transformed values, length at least `n`
+C> @param table  Work array used for storing trigonometric coefficients
+C> @param work   Work array used for intermediate computations
+C> @param isys   Dummy parameter
 C>
 C> @author Paul N. Swarztrauber, National Center for Atmospheric Research, Boulder, CO
       SUBROUTINE csfft(isign,n,scale,x,y,table,work,isys)
@@ -140,23 +157,31 @@ C> @author Paul N. Swarztrauber, National Center for Atmospheric Research, Bould
       RETURN
       END
 
-C> drcft
+C> @brief Compute a set of m complex discrete n-point Fourier transforms of real data
 C>
-C> @param init
-C> @param x
-C> @param ldx
-C> @param y
-C> @param ldy
-C> @param n
-C> @param m
-C> @param isign
-C> @param scale
-C> @param table
-C> @param n1
-C> @param wrk
-C> @param n2
-C> @param z
-C> @param nz
+C> This subroutine performs multiple (`m`) discrete Fourier transforms of length `n`
+C> on real input data. The transforms are computed using the real-to-complex Fast Fourier 
+C> Transform (FFT) approach. The subroutine requires two invocations: once with `init` set
+C> to a non-zero value to initialize work storage, the second with `init=0` to perform the DFT.
+C>
+C> The 'd' stands for double precision, but this is historical and may be ignored,
+C> and this subroutine is identical to `srcft()`.
+C>
+C> @param init  Initialization flag; if nonzero, initializes the transformation
+C> @param x     Input array of real values, dimensions (`ldx`, `m`)
+C> @param ldx   Leading dimension of the input array `x`
+C> @param y     Output array storing the transformed values, dimensions (`2*ldy`, `m`)
+C> @param ldy   Leading dimension of the output array `y`
+C> @param n     Number of data points in each transform (first dimension of `y`)
+C> @param m     Number of independent transforms to be computed (second dimension of `y`)
+C> @param isign Sign indicator for the transform direction (not explicitly used)
+C> @param scale Scaling factor applied to the transformed values
+C> @param table Work array of size 44002
+C> @param n1    Auxiliary parameter
+C> @param wrk   Work array used for intermediate storage during computation
+C> @param n2    Auxiliary parameter
+C> @param z     Optional dummy parameter for compatibility
+C> @param nz    Optional dummy parameter for compatibility
 C>
 C> @author Paul N. Swarztrauber, National Center for Atmospheric Research, Boulder, CO
       SUBROUTINE drcft(init,x,ldx,y,ldy,n,m,isign,scale,
@@ -191,23 +216,31 @@ C 01/17/2013 vvvvvvvvvvvvv E.Mirvis added ver 2.0.1 by S.Moorthi request. No +|-
       RETURN
       END
 
-C> srcft
+C> @brief Compute a set of m complex discrete n-point Fourier transforms of real data
 C>
-C> @param init
-C> @param x
-C> @param ldx
-C> @param y
-C> @param ldy
-C> @param n
-C> @param m
-C> @param isign
-C> @param scale
-C> @param table
-C> @param n1
-C> @param wrk
-C> @param n2
-C> @param z
-C> @param nz
+C> This subroutine performs multiple (`m`) discrete Fourier transforms of length `n`
+C> on real input data. The transforms are computed using the real-to-complex Fast Fourier 
+C> Transform (FFT) approach. The subroutine requires two invocations: once with `init` set
+C> to a non-zero value to initialize work storage, the second with `init=0` to perform the DFT.
+C>
+C> The 's' stands for single precision, but this is historical and may be ignored,
+C> and this subroutine is identical to `drcft()`.
+C>
+C> @param init  Initialization flag; if nonzero, initializes the transformation
+C> @param x     Input array of real values, dimensions (`ldx`, `m`)
+C> @param ldx   Leading dimension of the input array `x`
+C> @param y     Output array storing the transformed values, dimensions (`2*ldy`, `m`)
+C> @param ldy   Leading dimension of the output array `y`
+C> @param n     Number of data points in each transform (first dimension of `y`)
+C> @param m     Number of independent transforms to be computed (second dimension of `y`)
+C> @param isign Sign indicator for the transform direction (not explicitly used)
+C> @param scale Scaling factor applied to the transformed values
+C> @param table Work array of size 44002
+C> @param n1    Auxiliary parameter
+C> @param wrk   Work array used for intermediate storage during computation
+C> @param n2    Auxiliary parameter
+C> @param z     Optional dummy parameter for compatibility
+C> @param nz    Optional dummy parameter for compatibility
 C>
 C> @author Paul N. Swarztrauber, National Center for Atmospheric Research, Boulder, CO
       SUBROUTINE srcft(init,x,ldx,y,ldy,n,m,isign,scale,
@@ -242,16 +275,19 @@ C 01/17/2013 ^^^^^^^^^^E.Mirvis added ver 2.0.1 by S.Moorthi request. No +|- dem
       RETURN
       END
 
-C> scfft
+C> @brief Compute a real-to-complex discrete Fourier transform
 C>
-C> @param isign
-C> @param n
-C> @param scale
-C> @param x
-C> @param y
-C> @param table
-C> @param work
-C> @param isys
+C> This subroutine performs a Fourier transform on real input data. 
+C> It supports initialization of the trigonometric coefficient table and forward transformation.
+C>
+C> @param isign  Operation mode: 0 for initialization, -1 for forward transform
+C> @param n      Number of data points in the transform
+C> @param scale  Scaling factor applied to the transformed values
+C> @param x      Input array of real values, length at least `n`
+C> @param y      Output array storing the transformed values, length at least `n+1`
+C> @param table  Work array used for storing trigonometric coefficients
+C> @param work   Work array used for intermediate computations
+C> @param isys   Dummy parameter
 C>
 C> @author Paul N. Swarztrauber, National Center for Atmospheric Research, Boulder, CO
       SUBROUTINE scfft(isign,n,scale,x,y,table,work,isys)
@@ -280,11 +316,19 @@ C> @author Paul N. Swarztrauber, National Center for Atmospheric Research, Bould
       RETURN
       END
 
-C> RFFTF
-C>      
-C> @param N
-C> @param R
-C> @param WSAVE
+C> @brief Compute a forward transform of a real periodic sequence
+C>
+C> The wsave array must be initialized by calling subroutine rffti(n,wsave) and a
+C> different wsave array must be used for each different value of n. This
+C> initialization does not have to be repeated so long as n remains unchanged thus
+C> subsequent transforms can be obtained faster than the first.
+C>
+C> @note This transform is unnormalized since a call of `rfftf()` followed by a
+C> call of `rfftb()` will multiply the input sequence by n.
+C>
+C> @param n     The length of the array `r` to be transformed
+C> @param r     A real array of length `n` which contains the sequence to be transformed
+C> @param wsave A work array which must be dimensioned at least `2*n+15`; must not be destroyed between calls of `rfftf()` or `rfftb()`
 C>
 C> @author Paul N. Swarztrauber, National Center for Atmospheric Research, Boulder, CO
       SUBROUTINE RFFTF (N,R,WSAVE)
@@ -294,11 +338,14 @@ C> @author Paul N. Swarztrauber, National Center for Atmospheric Research, Bould
       RETURN
       END
       
-C> RFFTB
+C> @brief Compute the real periodic sequence from its Fourier coefs
 C>      
-C> @param N
-C> @param R
-C> @param WSAVE
+C> @param n     The length of the array `r` to be transformed
+C> @param r     A real array of length `n` which contains the sequence to be transformed
+C> @param wsave A work array which must be dimensioned at least `2*n+15`; must not be destroyed between calls of `rfftf()` or `rfftb()`
+C>
+C> @note This transform is unnormalized since a call of `rfftf()` followed by a
+C> call of `rfftb()` will multiply the input sequence by n.
 C>
 C> @author Paul N. Swarztrauber, National Center for Atmospheric Research, Boulder, CO
       SUBROUTINE RFFTB (N,R,WSAVE)
@@ -308,10 +355,10 @@ C> @author Paul N. Swarztrauber, National Center for Atmospheric Research, Bould
       RETURN
       END
 
-C> RFFTI
+C> @brief Initialize the array wsave which is used in both `rfftf()` and `rfftb()`.
 C>      
-C> @param N
-C> @param WSAVE
+C> @param n     The length of the sequence to be transformed
+C> @param wsave A work array which must be dimensioned at least `2*n+15`; must not be destroyed between calls of `rfftf()` or `rfftb()`
 C>
 C> @author Paul N. Swarztrauber, National Center for Atmospheric Research, Boulder, CO
       SUBROUTINE RFFTI (N,WSAVE)
@@ -321,13 +368,19 @@ C> @author Paul N. Swarztrauber, National Center for Atmospheric Research, Bould
       RETURN
       END
 
-C> RFFTB1
-C>      
-C> @param N
-C> @param C
-C> @param CH
-C> @param WA
-C> @param IFAC
+C> @brief Compute the inverse fast Fourier transform (IFFT) using a mixed-radix algorithm
+C>
+C> This subroutine is a low-level component of the real-to-complex IFFT computation. 
+C> It applies a series of radix-based backward FFTs
+C> (`radb2()`, `radb3()`, `radb4()`, `radb5()`, and `radbg()`)
+C> to transform real input data back from the frequency domain to the time domain.
+C>
+C> @param n     Number of data points in the transform
+C> @param c     Input/output array of real values; on input, it contains transformed data, 
+C>              and on output, it stores the inverse-transformed real data
+C> @param ch    Work array used for intermediate calculations
+C> @param wa    Sine and cosine trigonometric table used for the transformation
+C> @param ifac  Integer factorization array used to determine the radix decomposition
 C>
 C> @author Paul N. Swarztrauber, National Center for Atmospheric Research, Boulder, CO
       SUBROUTINE RFFTB1 (N,C,CH,WA,IFAC)
@@ -390,13 +443,18 @@ C> @author Paul N. Swarztrauber, National Center for Atmospheric Research, Bould
       RETURN
       END
 
-C> RFFTF1
-C>      
-C> @param N
-C> @param C
-C> @param CH
-C> @param WA
-C> @param IFAC
+C> @brief Compute the real forward fast Fourier transform (FFT) using a mixed-radix algorithm
+C>
+C> This subroutine performs the FFT by applying a sequence of radix-based forward 
+C> transformations (`radf2()`, `radf3()`, `radf4()`, `radf5()`, and `radfg()`).
+C> It is a low-level routine used internally for computing the real-input FFT.
+C>
+C> @param n     Number of data points in the transform
+C> @param c     Input/output array of real values; on input, it contains time-domain data,
+C>              and on output, it stores the transformed frequency-domain data
+C> @param ch    Work array used for intermediate calculations
+C> @param wa    Sine and cosine trigonometric table used for the transformation
+C> @param ifac  Integer factorization array used to determine the radix decomposition
 C>
 C> @author Paul N. Swarztrauber, National Center for Atmospheric Research, Boulder, CO
       SUBROUTINE RFFTF1 (N,C,CH,WA,IFAC)
@@ -459,11 +517,16 @@ C> @author Paul N. Swarztrauber, National Center for Atmospheric Research, Bould
       RETURN
       END
 
-C> RFFTI1
-C>      
-C> @param N
-C> @param WA
-C> @param IFAC
+C> @brief Compute the initialization factors for the real-input FFT
+C>
+C> This subroutine prepares the trigonometric table and factorization 
+C> for the real-input Fast Fourier Transform (FFT). It determines the 
+C> prime factorization of N and computes the necessary twiddle factors 
+C> for efficient computation.
+C>
+C> @param n     The length of the input data array
+C> @param wa    Output array containing computed trigonometric factors
+C> @param ifac  Output integer array storing the factorization of `n` for FFT processing
 C>
 C> @author Paul N. Swarztrauber, National Center for Atmospheric Research, Boulder, CO
       SUBROUTINE RFFTI1 (N,WA,IFAC)
@@ -534,13 +597,17 @@ C> @author Paul N. Swarztrauber, National Center for Atmospheric Research, Bould
       RETURN
       END
 
-C> RADB2
-C>      
-C> @param IDO
-C> @param L1
-C> @param CC
-C> @param CH
-C> @param WA1
+C> @brief Perform the backward radix-2 FFT step
+C>
+C> This subroutine computes one stage of the backward Fast Fourier Transform 
+C> (FFT) using a radix-2 decomposition. It is used as part of the larger 
+C> FFT process and applies twiddle factors to transform the input data.
+C>
+C> @param ido  The leading dimension, representing the number of data points in a transform section
+C> @param l1   The number of radix-2 stages processed in this step
+C> @param cc   Input complex array containing intermediate FFT data
+C> @param ch   Output complex array storing transformed data
+C> @param wa1  Twiddle factors array for weighting the FFT computation
 C>
 C> @author Paul N. Swarztrauber, National Center for Atmospheric Research, Boulder, CO
       SUBROUTINE RADB2 (IDO,L1,CC,CH,WA1)
@@ -578,14 +645,18 @@ C> @author Paul N. Swarztrauber, National Center for Atmospheric Research, Bould
   107 RETURN
       END
 
-C> RADB3      
+C> @brief Perform the backward radix-3 FFT step
 C>
-C> @param IDO
-C> @param L1
-C> @param CC
-C> @param CH
-C> @param WA1
-C> @param WA2
+C> This subroutine computes one stage of the backward Fast Fourier Transform 
+C> (FFT) using a radix-3 decomposition. It applies twiddle factors and combines
+C> intermediate results to reconstruct transformed data.
+C>
+C> @param ido  The leading dimension, representing the number of data points in a transform section
+C> @param l1   The number of radix-3 stages processed in this step
+C> @param cc   Input complex array containing intermediate FFT data
+C> @param ch   Output complex array storing transformed data
+C> @param wa1  Twiddle factors array for the first rotation
+C> @param wa2  Twiddle factors array for the second rotation
 C>
 C> @author Paul N. Swarztrauber, National Center for Atmospheric Research, Boulder, CO
       SUBROUTINE RADB3 (IDO,L1,CC,CH,WA1,WA2)
@@ -627,15 +698,20 @@ C> @author Paul N. Swarztrauber, National Center for Atmospheric Research, Bould
       RETURN
       END
 
-C> RADB4
+C> @brief Perform the backward radix-4 FFT step
 C>
-C> @param IDO
-C> @param L1
-C> @param CC
-C> @param CH
-C> @param WA1
-C> @param WA2
-C> @param WA3
+C> This subroutine computes one stage of the backward Fast Fourier Transform 
+C> (FFT) using a radix-4 decomposition. It applies the FFT formulae by processing 
+C> the input data and performing necessary rotations and twiddle factor multiplications.
+C> The result is stored in the output array `ch`.
+C>
+C> @param ido  The leading dimension, representing the number of data points in a transform section
+C> @param l1   The number of radix-4 stages processed in this step
+C> @param cc   Input complex array containing intermediate FFT data
+C> @param ch   Output complex array storing transformed data
+C> @param wa1  Twiddle factors array for the first rotation
+C> @param wa2  Twiddle factors array for the second rotation
+C> @param wa3  Twiddle factors array for the third rotation
 C>
 C> @author Paul N. Swarztrauber, National Center for Atmospheric Research, Boulder, CO
       SUBROUTINE RADB4 (IDO,L1,CC,CH,WA1,WA2,WA3)
@@ -703,16 +779,23 @@ C> @author Paul N. Swarztrauber, National Center for Atmospheric Research, Bould
   107 RETURN
       END
 
-C> RADB5
+C> @brief Perform the backward radix-5 FFT step
 C>
-C> @param IDO
-C> @param L1
-C> @param CC
-C> @param CH
-C> @param WA1
-C> @param WA2
-C> @param WA3
-C> @param WA4
+C> This subroutine computes one stage of the backward Fast Fourier Transform 
+C> (FFT) using a radix-5 decomposition. It processes input data in sections, 
+C> applies necessary rotations and twiddle factors, and stores the transformed 
+C> results in the output array `ch`. The operation involves calculating 
+C> intermediate results for each data point and applying appropriate scaling and 
+C> twiddle factor multiplication.
+C>
+C> @param ido  The leading dimension, representing the number of data points in a transform section
+C> @param l1   The number of radix-5 stages processed in this step
+C> @param cc   Input complex array containing intermediate FFT data
+C> @param ch   Output complex array storing transformed data
+C> @param wa1  Twiddle factors array for the first rotation
+C> @param wa2  Twiddle factors array for the second rotation
+C> @param wa3  Twiddle factors array for the third rotation
+C> @param wa4  Twiddle factors array for the fourth rotation
 C>
 C> @author Paul N. Swarztrauber, National Center for Atmospheric Research, Boulder, CO
       SUBROUTINE RADB5 (IDO,L1,CC,CH,WA1,WA2,WA3,WA4)
@@ -779,18 +862,26 @@ C> @author Paul N. Swarztrauber, National Center for Atmospheric Research, Bould
       RETURN
       END
 
-C> RADBG
+C> @brief Computes the backward FFT stage using a generalized FFT algorithm.
 C>
-C> @param IDO
-C> @param IP
-C> @param L1
-C> @param IDL1
-C> @param CC
-C> @param C1
-C> @param C2
-C> @param CH
-C> @param CH2
-C> @param WA
+C> This subroutine performs a backward Fast Fourier Transform (FFT) step with 
+C> a generalized radix-`ip` approach. It computes the necessary intermediate 
+C> steps, applying the inverse FFT transformation to the complex input data 
+C> stored in `cc`, and stores the result in the output arrays `ch` and `c2`.
+C> Twiddle factors, stored in `wa`, are used for scaling and rotations at 
+C> each stage of the computation.
+C>
+C> @param ido  The leading dimension for data points in a transform section
+C> @param ip   The number of subgroups in the FFT (radix)
+C> @param l1   The number of radix stages to process
+C> @param idl1 The leading dimension for another input array
+C> @param cc   Input complex array containing intermediate FFT data
+C> @param c1   Array containing the first set of intermediate FFT results
+C> @param c2   Array to store additional intermediate FFT results
+C> @param ch   Output complex array to store the final transformed data
+C> @param ch2  Output complex array storing intermediate results for the 
+C>             second stage of transformation
+C> @param wa   Array containing the twiddle factors used in the FFT
 C>
 C> @author Paul N. Swarztrauber, National Center for Atmospheric Research, Boulder, CO
       SUBROUTINE RADBG (IDO,IP,L1,IDL1,CC,C1,C2,CH,CH2,WA)
@@ -962,13 +1053,21 @@ C> @author Paul N. Swarztrauber, National Center for Atmospheric Research, Bould
   143 RETURN
       END
 
-C> RADBG
+C> @brief Perform a radix-2 FFT step for even-odd decomposition of data
 C>
-C> @param IDO
-C> @param L1
-C> @param CC
-C> @param CH
-C> @param WA1
+C> This subroutine computes a single stage of the radix-2 Fast Fourier Transform 
+C> (FFT) by separating the even and odd indexed values from the input data 
+C> array `cc`, and stores the results in the output array `ch`. It processes 
+C> intermediate data with the twiddle factors from `wa1` for scaling and rotation.
+C>
+C> @param ido  The size of the FFT sub-segment (number of data points to process)
+C> @param l1   The number of stages to process in the FFT
+C> @param cc   Input complex array of size `ido x l1 x 2`, containing the data 
+C>             for the FFT transformation
+C> @param ch   Output complex array of size `ido x 2 x l1`, where the 
+C>             transformed data will be stored
+C> @param wa1  Array of twiddle factors used to scale and rotate the data 
+C>             during the FFT calculation
 C>
 C> @author Paul N. Swarztrauber, National Center for Atmospheric Research, Boulder, CO
       SUBROUTINE RADF2 (IDO,L1,CC,CH,WA1)
@@ -1005,14 +1104,26 @@ C> @author Paul N. Swarztrauber, National Center for Atmospheric Research, Bould
   107 RETURN
       END
 
-C> RADF3
+C> @brief Performs a radix-3 FFT step for decomposing the data into three components.
 C>
-C> @param IDO
-C> @param L1
-C> @param CC
-C> @param CH
-C> @param WA1
-C> @param WA2
+C> This subroutine computes a single stage of the radix-3 Fast Fourier Transform 
+C> (FFT) by separating the input data `cc` into three components (one for each 
+C> of the three terms in the FFT). The output data is stored in the array `ch`, 
+C> with twiddle factors applied from the arrays `wa1` and `wa2`. This subroutine 
+C> operates for various sizes of FFT sub-segments, controlled by the parameter 
+C> `ido`.
+C>
+C> The subroutine handles different configurations based on the value of `ido`, 
+C> which affects how the data is processed.
+C>
+C> @param ido  The size of the FFT sub-segment (number of data points to process)
+C> @param l1   The number of stages to process in the FFT
+C> @param cc   Input complex array of size `ido x l1 x 3`, containing the data 
+C>              for the FFT transformation
+C> @param ch   Output complex array of size `ido x 3 x l1`, where the transformed 
+C>              data will be stored
+C> @param wa1  Array of twiddle factors for the first part of the FFT calculation
+C> @param wa2  Array of twiddle factors for the second part of the FFT calculation
 C>
 C> @author Paul N. Swarztrauber, National Center for Atmospheric Research, Boulder, CO
       SUBROUTINE RADF3 (IDO,L1,CC,CH,WA1,WA2)
@@ -1051,15 +1162,24 @@ C> @author Paul N. Swarztrauber, National Center for Atmospheric Research, Bould
       RETURN
       END
 
-C> RADF4
+C> @brief Perform a radix-4 FFT step for decomposing the data into four components
 C>
-C> @param IDO
-C> @param L1
-C> @param CC
-C> @param CH
-C> @param WA1
-C> @param WA2
-C> @param WA3
+C> This subroutine computes a single stage of the radix-4 Fast Fourier Transform 
+C> (FFT) by separating the input data `cc` into four components (one for each 
+C> of the four terms in the FFT). The output data is stored in the array `ch`, 
+C> with twiddle factors applied from the arrays `wa1`, `wa2`, and `wa3`. This 
+C> subroutine operates for various sizes of FFT sub-segments, controlled by the 
+C> parameter `ido`.
+C>
+C> @param ido  The size of the FFT sub-segment (number of data points to process)
+C> @param l1   The number of stages to process in the FFT
+C> @param cc   Input complex array of size `ido x l1 x 4`, containing the data 
+C>             for the FFT transformation
+C> @param ch   Output complex array of size `ido x 4 x l1`, where the transformed 
+C>             data will be stored
+C> @param wa1  Array of twiddle factors for the first part of the FFT calculation
+C> @param wa2  Array of twiddle factors for the second part of the FFT calculation
+C> @param wa3  Array of twiddle factors for the third part of the FFT calculation
 C>
 C> @author Paul N. Swarztrauber, National Center for Atmospheric Research, Boulder, CO
       SUBROUTINE RADF4 (IDO,L1,CC,CH,WA1,WA2,WA3)
@@ -1123,16 +1243,25 @@ C> @author Paul N. Swarztrauber, National Center for Atmospheric Research, Bould
   107 RETURN
       END
 
-C> RADF5
+C> @brief Perform a radix-5 FFT step for decomposing the data into five components
 C>
-C> @param IDO
-C> @param L1
-C> @param CC
-C> @param CH
-C> @param WA1
-C> @param WA2
-C> @param WA3
-C> @param WA4
+C> This subroutine computes a single stage of the radix-5 Fast Fourier Transform 
+C> (FFT) by separating the input data `cc` into five components (one for each 
+C> of the five terms in the FFT). The output data is stored in the array `ch`, 
+C> with twiddle factors applied from the arrays `wa1`, `wa2`, `wa3`, and `wa4`. 
+C> This subroutine operates for various sizes of FFT sub-segments, controlled by 
+C> the parameter `ido`.
+C>
+C> @param ido  The size of the FFT sub-segment (number of data points to process)
+C> @param l1   The number of stages to process in the FFT
+C> @param cc   Input complex array of size `ido x l1 x 5`, containing the data 
+C>              for the FFT transformation
+C> @param ch   Output complex array of size `ido x 5 x l1`, where the transformed 
+C>              data will be stored
+C> @param wa1  Array of twiddle factors for the first part of the FFT calculation
+C> @param wa2  Array of twiddle factors for the second part of the FFT calculation
+C> @param wa3  Array of twiddle factors for the third part of the FFT calculation
+C> @param wa4  Array of twiddle factors for the fourth part of the FFT calculation
 C>
 C> @author Paul N. Swarztrauber, National Center for Atmospheric Research, Boulder, CO
       SUBROUTINE RADF5 (IDO,L1,CC,CH,WA1,WA2,WA3,WA4)
@@ -1195,18 +1324,27 @@ C> @author Paul N. Swarztrauber, National Center for Atmospheric Research, Bould
       RETURN
       END
 
-C> RADFG
+C> @brief Compute a general radix-based FFT step
 C>
-C> @param IDO
-C> @param IP
-C> @param L1
-C> @param IDL1
-C> @param CC
-C> @param C1
-C> @param C2
-C> @param CH
-C> @param CH2
-C> @param WA
+C> This subroutine implements a mixed-radix Fast Fourier Transform (FFT) step,
+C> decomposing the input data for an arbitrary radix `ip`. It reorganizes the
+C> input data `cc` and applies twiddle factors from `wa` to generate the output
+C> in `ch` and `ch2`.
+C>
+C> The transformation is influenced by `ido`, which controls the number of
+C> data points per FFT sub-segment, and `l1`, which determines the number of
+C> processing stages.
+C>
+C> @param ido  The number of data points per sub-segment
+C> @param ip   The radix of the FFT step
+C> @param l1   The number of stages to process
+C> @param idl1 The transformed data length parameter, dependent on `l1`
+C> @param cc   Input complex array of size `ido x ip x l1`, containing the data to transform
+C> @param c1   Temporary working array for intermediate calculations
+C> @param c2   Temporary working array for intermediate calculations
+C> @param ch   Output complex array of size `ido x l1 x ip`, where transformed data is stored
+C> @param ch2  Another working output array used for intermediate transformations
+C> @param wa   Twiddle factor array used to apply phase shifts in the FFT calculation
 C>
 C> @author Paul N. Swarztrauber, National Center for Atmospheric Research, Boulder, CO
       SUBROUTINE RADFG (IDO,IP,L1,IDL1,CC,C1,C2,CH,CH2,WA)

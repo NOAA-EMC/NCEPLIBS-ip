@@ -9,6 +9,7 @@
 !! @date July 2021
 module ip_grid_mod
   use ip_grid_descriptor_mod
+  use iso_c_binding, only : c_bool
   implicit none
 
   integer, public, parameter :: EQUID_CYLIND_GRID_ID_GRIB1 = 0 !< Integer grid number for equidistant cylindrical grid in grib1
@@ -28,7 +29,7 @@ module ip_grid_mod
   integer, public, parameter :: ROT_EQUID_CYLIND_E_GRID_ID_GRIB2 = 32768 !< Integer grid number for rotated equidistant cylindrical E-stagger grid (grib2)
   integer, public, parameter :: ROT_EQUID_CYLIND_B_GRID_ID_GRIB2 = 32769 !< Integer grid number for rotated equidistant cylindrical B-stagger grid (grib2)
 
-  logical, public, save :: ncep_post_arakawa=.false. !< Use ncep_post/wgrib2-compatible version of init_grib2() for non-E Arakawa grids (enable with use_ncep_post_arakawa())
+  logical(c_bool), public, save, bind(c) :: ncep_post_arakawa=.false. !< Use ncep_post/wgrib2-compatible version of init_grib2() for non-E Arakawa grids (enable with use_ncep_post_arakawa())
 
   private
   public :: ip_grid
@@ -77,14 +78,17 @@ module ip_grid_mod
      real :: rerth !< Radius of the Earth.
      real :: eccen_squared !< Eccentricity of the Earth squared (e^2).
    contains
-     !> Initializer for grib1 input descriptor. @return N/A
+     !> @cond skip
+     !> Initializer for grib1 input descriptor.
      procedure(init_grib1_interface), deferred :: init_grib1
-     !> Initializer for grib2 input descriptor. @return N/A
+     !> Initializer for grib2 input descriptor.
      procedure(init_grib2_interface), deferred :: init_grib2
-     !> Coordinate transformations for the grid. @return N/A
+     !> Coordinate transformations for the grid.
      procedure(gdswzd_interface), deferred :: gdswzd
+     !> @endcond
      !> Field position for a given grid point. @return Integer
      !> position in grib field to locate grid point.
+     !> @copydoc ip_grid_mod::field_pos
      procedure :: field_pos
      !> Init subprogram. @return N/A
      generic :: init => init_grib1, init_grib2

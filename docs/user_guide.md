@@ -24,6 +24,11 @@ therefore requires an external BLAS/LAPACK provider. In practice, this should
 generally be OpenBLAS, which is the [spack-stack](https://github.com/JCSDA/spack-stack)
 BLAS/LAPACK provider.
 
+\note When running unit tests, excluding the CTest label SLOW_TEST may be used
+to avoid slow-running tests (15 seconds to 1 or 2 minutes depending on
+optimization settings). The NO_INPUT_DATA label may be used to run only tests
+which do not require files obtained remotely when FTP_TEST_FILES=ON.
+
 ## Interpolation
 
 ### Interpolation Methods

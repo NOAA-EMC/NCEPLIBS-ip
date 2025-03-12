@@ -17,12 +17,15 @@ module ip_station_points_grid_mod
 
   type, extends(ip_grid) :: ip_station_points_grid
    contains
-     !> Initializes a gaussian grid given a grib1_descriptor object. @return N/A
+     !> Initializes a gaussian grid given a grib1_descriptor object.
+     !> @return N/A @copydoc ip_station_points_grid_mod::init_grib1
      procedure :: init_grib1 
-     !> Initializes a gaussian grid given a grib2_descriptor object. @return N/A
+     !> Initializes a gaussian grid given a grib2_descriptor object.
+     !> @return N/A @copydoc ip_station_points_grid_mod::init_grib2
      procedure :: init_grib2
      !> Calculates Earth coordinates (iopt = 1) or grid coorindates (iopt = -1)
-     !> for IP Station Point grids. @return N/A
+     !> for IP Station Point grids.
+     !> @return N/A @copydoc ip_station_points_grid_mod::gdswzd_station_points
      procedure :: gdswzd => GDSWZD_station_points 
   end type ip_station_points_grid
 

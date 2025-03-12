@@ -34,10 +34,15 @@ module ip_polar_stereo_grid_mod
      !> relative.
      integer :: irot
    contains
-     procedure :: init_grib1 !< Initializes a grid given a grib1_descriptor object. @return N/A
-     procedure :: init_grib2 !< Initializes a grid given a grib2_descriptor object. @return N/A
+     !> Initializes a grid given a grib1_descriptor object.
+     !> @return N/A @copydoc ip_polar_stereo_grid_mod::init_grib1
+     procedure :: init_grib1
+     !> Initializes a grid given a grib2_descriptor object.
+     !> @return N/A @copydoc ip_polar_stereo_grid_mod::init_grib2
+     procedure :: init_grib2
      !> Calculates Earth coordinates (iopt = 1) or grid coorindates
-     !> (iopt = -1). @return N/A
+     !> (iopt = -1).
+     !> @return N/A @copydoc ip_polar_stereo_grid_mod::gdswzd_polar_stereo
      procedure :: gdswzd => gdswzd_polar_stereo
   end type ip_polar_stereo_grid
 

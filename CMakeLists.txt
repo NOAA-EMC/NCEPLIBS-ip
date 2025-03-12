@@ -21,6 +21,9 @@ option(BUILD_D "Build the 8-byte real version of the library, libip_d.{a,so}" ON
 option(BUILD_8 "Build the 8-byte integer & real version of the library, libip_8.{a,so}" OFF)
 option(BUILD_DEPRECATED "Build deprecated spectral processing functions" OFF)
 option(TEST_TIME_LIMIT "Set timeout for tests" OFF)
+option(CMAKE_POSITION_INDEPENDENT_CODE "Enable PIC" ON)
+option(FTP_TEST_FILES "Fetch and test with files on FTP site." OFF)
+option(TEST_FILES_CACHE "Path to local copy of test data tarball." OFF)
 
 # Figure whether user wants a _4, a _d, and/or _8.
 if(BUILD_4)

@@ -12,6 +12,11 @@ on:
     branches:
     - develop
 
+# Cancel in-progress workflows when pushing to a branch
+concurrency:
+  group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
+
 jobs:
   MacOS:
     runs-on: macos-latest
@@ -30,13 +35,20 @@ jobs:
       with: 
         path: ip
 
+    - name: Cache test files
+      uses: actions/cache@v4
+      with:
+        path: testfiles.tgz
+        key: NCEPLIBS-ip-test-files-1
+
     - name: build
       run: |
-        cmake -S ip -B ip/build -DOPENMP=${{ matrix.openmp }} -DBUILD_SHARED_LIBS=${{ matrix.sharedlibs }} -DCMAKE_INSTALL_PREFIX=~/install -DBUILD_8=ON -DCMAKE_BUILD_TYPE=Debug
+        if [ ! -f testfiles.tgz ]; then wget https://ftp.emc.ncep.noaa.gov/static_files/public/NCEPLIBS-ip/ip-test-data-20241230.tgz -O testfiles.tgz ; fi
+        cmake -S ip -B ip/build -DOPENMP=${{ matrix.openmp }} -DBUILD_SHARED_LIBS=${{ matrix.sharedlibs }} -DCMAKE_INSTALL_PREFIX=~/install -DBUILD_8=ON -DCMAKE_BUILD_TYPE=Debug -DFTP_TEST_FILES=ON -DTEST_FILES_CACHE=$GITHUB_WORKSPACE/testfiles.tgz
         cmake --build ip/build --parallel 2 --verbose
         cmake --install ip/build
         ls -l ~/install
         ls -l ~/install/lib
     
     - name: test
-      run: ctest --test-dir ip/build --parallel 2 --verbose --output-on-failure --rerun-failed
+      run: ctest --test-dir ip/build -LE SLOW_TEST --parallel 2 --verbose --output-on-failure --rerun-failed

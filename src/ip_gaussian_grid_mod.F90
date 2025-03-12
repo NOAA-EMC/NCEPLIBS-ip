@@ -32,12 +32,15 @@ module ip_gaussian_grid_mod
      integer :: jg !< Number of parallels between the equator and pole times 2. GRIB2 Section 3, octets 68-71.
      integer :: jscan !< Scanning mode in the 'j' direction. GRIB2 Section 3, octet 72.
    contains
-     !> Initializes a gaussian grid given a grib1_descriptor object. @return N/A
+     !> Initializes a gaussian grid given a grib1_descriptor object.
+     !> @return N/A @copydoc ip_gaussian_grid_mod::init_grib1
      procedure :: init_grib1
-     !> Initializes a gaussian grid given a grib2_descriptor object. @return N/A
+     !> Initializes a gaussian grid given a grib2_descriptor object.
+     !> @return N/A @copydoc ip_gaussian_grid_mod::init_grib2
      procedure :: init_grib2
      !> Calculates Earth coordinates (iopt = 1) or grid coorindates (iopt = -1)
-     !> for Gaussian grids. @return N/A
+     !> for Gaussian grids.
+     !> @return N/A @copydoc ip_gaussian_grid_mod::gdswzd_gaussian
      procedure :: gdswzd => gdswzd_gaussian
   end type ip_gaussian_grid
 

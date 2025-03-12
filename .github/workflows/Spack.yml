@@ -15,14 +15,36 @@ on:
     branches:
     - develop
 
+# Cancel in-progress workflows when pushing to a branch
+concurrency:
+  group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
+
 jobs:
   # This job builds with Spack using every combination of variants and runs the CTest suite each time
   Spack:
+    permissions:
+      packages: read
     strategy:
       matrix:
-        os: ["ubuntu-latest"]
-        variants: ["+openmp +shared +pic precision=d", "+openmp ~shared ~pic precision=4", "~openmp ~shared +pic precision=8"]
-    runs-on: ${{ matrix.os }}
+        config:
+        - {
+            os: "ubuntu-24.04",
+            variants: "precision=d +openmp +shared +pic",
+            cache-key: "A",
+            extrapkgs: "grib-util@develop +tests ^g2c@develop +utils +build_v2_api ^g2@3.5:",
+          }
+        - {
+            os: "ubuntu-24.04",
+            variants: "precision=4 +openmp ~shared ~pic",
+            cache-key: "B",
+          }
+        - {
+            os: "ubuntu-24.04",
+            variants: "precision=8 ~openmp ~shared +pic",
+            cache-key: "C",
+          }
+    runs-on: ${{ matrix.config.os }}
 
     steps:
 
@@ -30,12 +52,12 @@ jobs:
       uses: NOAA-EMC/ci-test-spack-package@test
       with:
         package-name: ip
-        package-variants: ${{ matrix.variants }} ${{ matrix.variants == '+openmp +shared +pic precision=d' && 'grib-util@develop +tests ^g2c@develop +utils +build_v2_api ^g2@3.5:' || '' }}
+        package-variants: ${{ matrix.config.variants }} ${{ matrix.config.extrapkgs }}
         custom-recipe: spack/package.py
         spack-compiler: gcc
-        repo-cache-key-suffix: ${{ matrix.os }}-${{ matrix.variants }}-1
         spack-ref: develop
         cache-secret: ${{ secrets.GITHUB_TOKEN }}
+        repo-cache-key-suffix: ${{ matrix.config.cache-key }}
 
   # This job validates the Spack recipe by making sure each cmake build option is represented
   recipe-check:
@@ -48,4 +70,4 @@ jobs:
       with:
         recipe-file: package/spack/package.py
         cmakelists-txt: package/CMakeLists.txt
-        ignore-list: ENABLE_DOCS,TEST_TIME_LIMIT
+        ignore-list: ENABLE_DOCS,TEST_TIME_LIMIT,TEST_FILES_CACHE

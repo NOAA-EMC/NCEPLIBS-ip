@@ -6,7 +6,7 @@ program test_fft
   use iso_fortran_env, only: real32, real64
   implicit none
 
-#ifdef KIND_d
+#if(LSIZE==d)
   real, parameter :: PI = 3.14159265358979
   integer, parameter :: precision = real64
   integer, parameter :: imax = 256
