@@ -32,26 +32,34 @@ Code Manager: [Alex Richert](mailto:alexander.richert@noaa.gov)
 ### Prerequisites
 
 This package requires a BLAS/LAPACK library to provide several LU decomposition-related
-routines, and requires CMake (version 3.15+) to build. In spack-stack, OpenBLAS will
-be used as the provider of BLAS/LAPACK routines for all compilers.
+routines, and requires CMake (version 3.15+) to build. See [documentation](https://noaa-emc.github.io/NCEPLIBS-ip/)
+for details on setting the BLAS/LAPACK library.
 
 ### Installing
 
+```bash
+git clone https://github.com/NOAA-EMC/NCEPLIBS-ip
+cmake -DCMAKE_INSTALL_PREFIX=/path/to/install -S NCEPLIBS-ip -B NCEPLIBS-ip/build # <add'l CMake options>
+cmake --build NCEPLIBS-ip/build --parallel 4
+ctest --test-dir NCEPLIBS-ip/build --parallel 4 # <add'l CTest options>
+cmake --install NCEPLIBS-ip/build
 ```
-mkdir build
-cd build
-cmake -DCMAKE_INSTALL_PREFIX=/path/to/install /path/to/NCEPLIBS-ip
-make -j2
-make test # or 'ctest --verbose'; use 'ctest -LE SLOW_TEST' to skip long-running tests
-make install
-```
+
+Commonly useful CMake options include:
+ - `-DCMAKE_INSTALL_PREFIX`: path to install directory (default is /usr/local)
+ - `-DBUILD_SHARED_LIBS`: build dynamically linked (shared) libraries (default is static)
+
+Commonly useful CTest options include:
+ - `--output-on-failure`: show verbose output only when a test fails
+ - `-L`/`--label-regex`: only run test labels matching a given regular expression
+ - `-R`/`--tests-regex`: only run tests matching a given regular expression
 
 ### Usage
 
 Most routines and any public interfaces required can be accessed by adding `use
-ip_mod` to your Fortran code. Most spectral transform and processing subroutines
-can be accessed by calling them in your code (no `use` statement) and linking
-to the ip library at build time.
+ip_mod` to your Fortran code. Spectral transform and processing subroutines
+previously associated with the NCEPLIBS-sp library can be accessed by calling
+with `use sp_mod`.
 
 ## Disclaimer
 
