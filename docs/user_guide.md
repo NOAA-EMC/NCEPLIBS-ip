@@ -54,6 +54,12 @@ Commonly useful CTest options include:
  - `-L`/`--label-regex`: only run test labels matching a given regular expression
  - `-R`/`--tests-regex`: only run tests matching a given regular expression
 
+\note When running unit tests, excluding (`-LE`/`--label-exclude`) the CTest
+label SLOW_TEST  may be used to avoid slow-running tests (15 seconds to 1 or 2
+minutes depending on optimization settings). The NO_INPUT_DATA label may be
+used to run only tests which do not require files obtained remotely when
+FTP_TEST_FILES=ON.
+
 ### LAPACK dependency
 NCEPLIBS-ip uses several BLAS/LAPACK routines in the `splat()` subroutine, and
 therefore requires an external BLAS/LAPACK provider. To set the provider in the
@@ -75,13 +81,6 @@ $ cmake -S . -B build
 ```
 The `ldd` command is also useful for verifying which libraries were linked
 when building a shared library.
-
-
-\note When running unit tests, excluding (`-LE`/`--label-exclude`) the CTest
-label SLOW_TEST  may be used to avoid slow-running tests (15 seconds to 1 or 2
-minutes depending on optimization settings). The NO_INPUT_DATA label may be
-used to run only tests which do not require files obtained remotely when
-FTP_TEST_FILES=ON.
 
 ## Interpolation
 
