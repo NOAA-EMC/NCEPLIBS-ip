@@ -40,6 +40,8 @@ if(FTP_TEST_FILES)
   if(NOT TAR_RESULT EQUAL 0)
     message(FATAL_ERROR "Failed to extract ${TAR_FILE}")
   endif()
+else()
+  message(WARNING "FTP_TEST_FILES not enabled. Enable it or run 'ctest -L NO_INPUT_DATA' to avoid a bunch of test failures.") 
 endif()
 
 function(create_sp_test name kind timeout)
