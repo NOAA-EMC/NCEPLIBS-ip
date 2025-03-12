@@ -19,10 +19,63 @@ where for certain regions of certain grids, floating point differences between
 field values. Some applications may therefore benefit from the use of 8-byte
 reals (libip_d or libip_8).
 
-NCEPLIBS-ip uses several BLAS/LAPACK routines in the splat() subroutine, and
-therefore requires an external BLAS/LAPACK provider. In practice, this should
-generally be OpenBLAS, which is the [spack-stack](https://github.com/JCSDA/spack-stack)
-BLAS/LAPACK provider.
+## Installation
+
+```
+git clone https://github.com/NOAA-EMC/NCEPLIBS-ip
+cmake -S NCEPLIBS-ip -B NCEPLIBS-ip/build # <add'l CMake options>
+cmake --build NCEPLIBS-ip/build --parallel 4
+ctest --test-dir NCEPLIBS-ip/build --parallel 4 # <add'l CTest options>
+# Install to CMAKE_INSTALL_PREFIX (/usr/local by default):
+cmake --install NCEPLIBS-ip/build
+```
+
+### CMake & CTest options
+
+The following CMake build options can be used to configure the build by setting them with `-D<OPTION>=<VALUE>`.
+
+| Option | Description | Default |
+|--------|-------------|---------|
+| CMAKE_INSTALL_PREFIX | Installation path | /usr/local |
+| ENABLE_DOCS | Enable generation of Doxygen-based documentation | OFF |
+| OPENMP | Use OpenMP threading | OFF |
+| BUILD_SHARED_LIBS | Build shared libraries | OFF |
+| BUILD_4 | Build the 4-byte real version of the library, libip_4.{a,so} | ON |
+| BUILD_D | Build the 8-byte real version of the library, libip_d.{a,so} | ON |
+| BUILD_8 | Build the 8-byte integer & real version of the library, libip_8.{a,so} | OFF |
+| BUILD_DEPRECATED | Build deprecated spectral processing functions | OFF |
+| TEST_TIME_LIMIT | Set timeout for tests | OFF |
+| CMAKE_POSITION_INDEPENDENT_CODE | Enable PIC | ON |
+| FTP_TEST_FILES | Fetch and test with files on FTP site. | OFF |
+| TEST_FILES_CACHE | Path to local copy of test data tarball. | OFF |
+
+Commonly useful CTest options include:
+ - `--output-on-failure`: show verbose output only when a test fails
+ - `-L`/`--label-regex`: only run test labels matching a given regular expression
+ - `-R`/`--tests-regex`: only run tests matching a given regular expression
+
+### LAPACK dependency
+NCEPLIBS-ip uses several BLAS/LAPACK routines in the `splat()` subroutine, and
+therefore requires an external BLAS/LAPACK provider. To set the provider in the
+CMake configuration, set BLA_VENDOR, for example, `cmake -DBLA_VENDOR=OpenBLAS`
+(see <a
+href="https://cmake.org/cmake/help/latest/module/FindBLAS.html">FindBLAS.cmake
+documentation</a>). For compilers that can link to BLAS/LAPACK libraries
+implicitly (such as the Cray wrappers with cray-libsci), it is recommended to
+use CMake v3.21.1 or above, which supports implicit linking and provides
+informative output. In that case, the expected outputfor the CMake
+configuration step is something like:
+```
+$ cmake -S . -B build
+...
+-- Found BLAS: implicitly linked
+...
+-- Found LAPACK: implicitly linked
+...
+```
+The `ldd` command is also useful for verifying which libraries were linked
+when building a shared library.
+
 
 \note When running unit tests, excluding the CTest label SLOW_TEST may be used
 to avoid slow-running tests (15 seconds to 1 or 2 minutes depending on

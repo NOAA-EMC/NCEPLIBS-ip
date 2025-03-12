@@ -49,7 +49,7 @@ jobs:
     steps:
 
     - name: "Build Spack package"
-      uses: NOAA-EMC/ci-test-spack-package@test
+      uses: NOAA-EMC/ci-test-spack-package@develop
       with:
         package-name: ip
         package-variants: ${{ matrix.config.variants }} ${{ matrix.config.extrapkgs }}
