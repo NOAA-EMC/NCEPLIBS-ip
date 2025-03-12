@@ -55,8 +55,6 @@ jobs:
         package-variants: ${{ matrix.config.variants }} ${{ matrix.config.extrapkgs }}
         custom-recipe: spack/package.py
         spack-compiler: gcc
-        spack-ref: develop
-        cache-secret: ${{ secrets.GITHUB_TOKEN }}
         repo-cache-key-suffix: ${{ matrix.config.cache-key }}
 
   # This job validates the Spack recipe by making sure each cmake build option is represented
