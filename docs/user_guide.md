@@ -63,8 +63,8 @@ href="https://cmake.org/cmake/help/latest/module/FindBLAS.html">FindBLAS.cmake
 documentation</a>). For compilers that can link to BLAS/LAPACK libraries
 implicitly (such as the Cray wrappers with cray-libsci), it is recommended to
 use CMake v3.21.1 or above, which supports implicit linking and provides
-informative output. In that case, the expected outputfor the CMake
-configuration step is something like:
+accurate output. In that case, the expected output for the CMake configuration
+step is something like:
 ```
 $ cmake -S . -B build
 ...
@@ -77,10 +77,11 @@ The `ldd` command is also useful for verifying which libraries were linked
 when building a shared library.
 
 
-\note When running unit tests, excluding the CTest label SLOW_TEST may be used
-to avoid slow-running tests (15 seconds to 1 or 2 minutes depending on
-optimization settings). The NO_INPUT_DATA label may be used to run only tests
-which do not require files obtained remotely when FTP_TEST_FILES=ON.
+\note When running unit tests, excluding (`-LE`/`--label-exclude`) the CTest
+label SLOW_TEST  may be used to avoid slow-running tests (15 seconds to 1 or 2
+minutes depending on optimization settings). The NO_INPUT_DATA label may be
+used to run only tests which do not require files obtained remotely when
+FTP_TEST_FILES=ON.
 
 ## Interpolation
 
