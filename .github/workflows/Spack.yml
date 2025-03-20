@@ -54,7 +54,7 @@ jobs:
         package-name: ip
         package-variants: ${{ matrix.config.variants }} ${{ matrix.config.extrapkgs }}
         custom-recipe: spack/package.py
-        spack-compiler: gcc
+        spack-compiler: gcc@14
         repo-cache-key-suffix: ${{ matrix.config.cache-key }}
 
   # This job validates the Spack recipe by making sure each cmake build option is represented
