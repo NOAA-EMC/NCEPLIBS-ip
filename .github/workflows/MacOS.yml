@@ -43,7 +43,7 @@ jobs:
 
     - name: build
       run: |
-        if [ ! -f testfiles.tgz ]; then wget https://ftp.emc.ncep.noaa.gov/static_files/public/NCEPLIBS-ip/ip-test-data-20241230.tgz -O testfiles.tgz ; fi
+        if [ ! -f testfiles.tgz ]; then wget --no-verbose https://ftp.emc.ncep.noaa.gov/static_files/public/NCEPLIBS-ip/ip-test-data-20241230.tgz -O testfiles.tgz ; fi
         cmake -S ip -B ip/build -DOPENMP=${{ matrix.openmp }} -DBUILD_SHARED_LIBS=${{ matrix.sharedlibs }} -DCMAKE_INSTALL_PREFIX=~/install -DBUILD_8=ON -DCMAKE_BUILD_TYPE=Debug -DFTP_TEST_FILES=ON -DTEST_FILES_CACHE=$GITHUB_WORKSPACE/testfiles.tgz
         cmake --build ip/build --parallel 2 --verbose
         cmake --install ip/build
