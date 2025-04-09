@@ -1,0 +1,24 @@
+name: cdash
+on:
+  push:
+    branches:
+    - develop
+    - add_cdash
+
+jobs:
+  cdash:
+    runs-on: ubuntu-latest
+
+    env:
+      FC: gfortran
+      CC: gcc
+      CDASH_TOKEN: ${{ secrets.CDASH_TOKEN }}
+
+    steps:
+
+    - name: Install dependencies
+      run: |
+        sudo apt-get install libopenblas-dev
+
+    - name: CDash
+      uses: NOAA-EMC/ci-cdash@develop
