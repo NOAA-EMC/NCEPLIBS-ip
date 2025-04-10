@@ -1,0 +1,32 @@
+name: cdash
+on:
+  push:
+    branches:
+    - develop
+
+jobs:
+  cdash:
+    runs-on: ubuntu-latest
+
+    env:
+      FC: gfortran
+      CC: gcc
+      CDASH_TOKEN: ${{ secrets.CDASH_TOKEN }}
+
+    steps:
+
+    - name: Cache test files
+      uses: actions/cache@v4
+      with:
+        path: testfiles.tgz
+        key: NCEPLIBS-ip-test-files-1
+
+    - name: Install dependencies & handle test files
+      run: |
+        sudo apt-get install libopenblas-dev
+        if [ ! -f testfiles.tgz ]; then wget https://ftp.emc.ncep.noaa.gov/static_files/public/NCEPLIBS-ip/ip-test-data-20241230.tgz -O testfiles.tgz ; fi
+
+    - name: CDash
+      uses: NOAA-EMC/ci-cdash@develop
+      with:
+        extra-cmake-options: -DFTP_TEST_FILES=ON -DTEST_FILES_CACHE=$GITHUB_WORKSPACE/testfiles.tgz
