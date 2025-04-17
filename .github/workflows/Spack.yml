@@ -48,6 +48,10 @@ jobs:
 
     steps:
 
+    - name: "Get g2c/jasper deps"
+      if: ${{ matrix.config.cache-key == 'A' }}
+      run: sudo apt-get install libpng-dev zlib1g-dev libjpeg-dev libopenjp2-7-dev libaec-dev
+
     - name: "Build Spack package"
       uses: NOAA-EMC/ci-test-spack-package@develop
       with:
