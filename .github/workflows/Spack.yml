@@ -32,7 +32,7 @@ jobs:
             os: "ubuntu-24.04",
             variants: "precision=d +openmp +shared +pic",
             cache-key: "A",
-            extrapkgs: "grib-util@develop +tests ^g2c@develop +utils +build_v2_api ^g2@develop",
+            extrapkgs: "grib-util@develop +tests ^g2c@develop +utils +build_v2_api ^g2@develop +g2c_compare",
           }
         - {
             os: "ubuntu-24.04",
