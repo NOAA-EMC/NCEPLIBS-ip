@@ -54,6 +54,8 @@ Commonly useful CTest options include:
  - `-L`/`--label-regex`: only run test labels matching a given regular expression
  - `-R`/`--tests-regex`: only run tests matching a given regular expression
 
+NCEPLIBS-ip is also available through Spack as '[ip](https://github.com/spack/spack/tree/develop/var/spack/repos/builtin/packages/ip)'.
+
 ### Usage
 
 Most routines and any public interfaces required can be accessed by adding `use
