@@ -32,7 +32,7 @@ jobs:
             os: "ubuntu-24.04",
             variants: "precision=d +openmp +shared +pic",
             cache-key: "A",
-            extrapkgs: "grib-util@develop +tests ^g2c@develop +utils +build_v2_api ^g2@3.5:",
+            extrapkgs: "grib-util@develop +tests ^g2c@develop +utils +build_v2_api ^g2@develop +g2c_compare",
           }
         - {
             os: "ubuntu-24.04",
@@ -47,6 +47,10 @@ jobs:
     runs-on: ${{ matrix.config.os }}
 
     steps:
+
+    - name: "Get g2c/jasper deps"
+      if: ${{ matrix.config.cache-key == 'A' }}
+      run: sudo apt-get install libpng-dev zlib1g-dev libjpeg-dev libopenjp2-7-dev libaec-dev
 
     - name: "Build Spack package"
       uses: NOAA-EMC/ci-test-spack-package@develop
