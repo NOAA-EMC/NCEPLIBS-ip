@@ -1,0 +1,34 @@
+# This workflow provides reviews for code modifications using AI (large
+# language models) based on the file diffs between the head of develop and the
+# branch for which this workflow is run. This workflow can be triggered
+# manually ('workflow_dispatch' target). Depending how you wish to configure
+# your API keys, you may run this workflow either in your own fork (assuming
+# this workflow exists in the default branch of your forked repository) or in
+# the parent repository. The code reviews are uploaded to a GitHub Actions
+# artifact whose URL can be found at the end of the workflow run.
+#
+# For more documentation, including a list of the available models for
+# producing code reviews and instructions for securely configuring API keys,
+# see https://github.com/NOAA-EMC/ci-llm-code-review.
+#
+# ***DO NOT PUT API KEYS DIRECTLY IN THIS FILE*** (always use GitHub secrets)
+#
+# Alex Richert, Apr 2025
+
+name: llm-code-review
+on: [workflow_dispatch]
+
+jobs:
+  llm-code-review:
+    runs-on: ubuntu-latest
+    env:
+      GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+      MISTRAL_API_KEY: ${{ secrets.MISTRAL_API_KEY }}
+      GH_API_KEY: ${{ secrets.GH_API_KEY }}
+
+    steps:
+
+    - name: "Code review"
+      uses: NOAA-EMC/ci-llm-code-review@develop
+      with:
+        api-key-variable: GH_API_KEY
