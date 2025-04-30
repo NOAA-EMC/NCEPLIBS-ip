@@ -9,7 +9,7 @@ include("${CMAKE_CURRENT_LIST_DIR}/@PROJECT_NAME@-targets.cmake")
 
 include(CMakeFindDependencyMacro)
 
-if(NOT SKIP_NCEPLIBS_DEPS STREQUAL NO)
+if(NOT SKIP_NCEPLIBS_DEPS)
   if(@OPENMP@)
     find_dependency(OpenMP COMPONENTS Fortran)
   endif()
