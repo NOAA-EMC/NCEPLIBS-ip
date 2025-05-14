@@ -69,6 +69,13 @@ elseif(CMAKE_Fortran_COMPILER_ID MATCHES "^(GNU)$")
   set(CMAKE_Fortran_FLAGS_DEBUG "-O0 -ggdb -Wall -Wno-unused-dummy-argument -Wsurprising -Wextra -fcheck=all")
   set(fortran_d_flags "-fdefault-real-8")
   set(fortran_8_flags "-fdefault-integer-8 -fdefault-real-8")
+elseif(CMAKE_Fortran_COMPILER_ID MATCHES "^(LLVMFlang)$")
+  set(CMAKE_Fortran_FLAGS "-g -cpp ${CMAKE_Fortran_FLAGS}")
+  set(CMAKE_Fortran_FLAGS_DEBUG "-O0")
+  set(fortran_d_flags "-fdefault-real-8")
+  set(fortran_8_flags "-fdefault-integer-8 -fdefault-real-8")
+else()
+  message(FATAL_ERROR "Unsupported Fortran compiler '${CMAKE_Fortran_COMPILER_ID}'")
 endif()
 
 # This is the source code directiroy.
