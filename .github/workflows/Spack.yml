@@ -25,6 +25,8 @@ jobs:
   Spack:
     permissions:
       packages: read
+      contents: read
+      actions: read
     strategy:
       matrix:
         config:
