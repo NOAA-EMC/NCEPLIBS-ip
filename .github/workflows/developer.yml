@@ -52,7 +52,6 @@ jobs:
           -DOPENMP=ON \
           -DCMAKE_Fortran_FLAGS="-g -Og --coverage -fsanitize=address" \
           -DCMAKE_C_FLAGS="-g -Og -fsanitize=address" \
-          -DCMAKE_BUILD_TYPE=Debug \
           -DBUILD_SHARED_LIBS=ON -DBUILD_8=ON \
           -DFTP_TEST_FILES=ON -DTEST_FILES_CACHE=$GITHUB_WORKSPACE/testfiles.tgz
         cmake --build ip/build --parallel 2 --verbose
