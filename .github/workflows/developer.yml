@@ -50,8 +50,8 @@ jobs:
         cmake -S ip -B ip/build \
           -DENABLE_DOCS=YES \
           -DOPENMP=ON \
-          -DCMAKE_Fortran_FLAGS="--coverage -fsanitize=address" \
-          -DCMAKE_C_FLAGS="-fsanitize=address" \
+          -DCMAKE_Fortran_FLAGS="--coverage -fsanitize=address -Werror -Wno-error=maybe-uninitialized" \
+          -DCMAKE_C_FLAGS="-fsanitize=address -Werror" \
           -DCMAKE_BUILD_TYPE=Debug \
           -DBUILD_SHARED_LIBS=ON -DBUILD_8=ON \
           -DFTP_TEST_FILES=ON -DTEST_FILES_CACHE=$GITHUB_WORKSPACE/testfiles.tgz
