@@ -94,8 +94,11 @@ int main()
          crot, srot, xlon, xlat, ylon, ylat, area);
 
   int expextedPointsReturned = 50451;
-  
+#if(LSIZE==8)
+  printf("Points returned from gdswzd = %ld \n", nret);
+#else
   printf("Points returned from gdswzd = %d \n", nret);
+#endif
   printf(" Expected points returned    = %d \n\n", expextedPointsReturned);
   
   if (nret != expextedPointsReturned) {
