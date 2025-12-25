@@ -31,6 +31,7 @@ jobs:
       uses: NOAA-EMC/ci-install-intel-toolkit@develop
       with:
         compiler-setup: ${{ matrix.compilers }}
+        oneapi-version: 2025.3
 
     - name: checkout
       uses: actions/checkout@v4
