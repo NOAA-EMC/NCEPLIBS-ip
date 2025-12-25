@@ -28,7 +28,7 @@ jobs:
     steps:
 
     - name: "Install Intel"
-      uses: NOAA-EMC/ci-install-intel-toolkit@develop
+      uses: NOAA-EMC/ci-install-intel-toolkit@env-setup-tweaks
       with:
         compiler-setup: ${{ matrix.compilers }}
         oneapi-version: 2025.3
