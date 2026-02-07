@@ -1,7 +1,8 @@
-# Copyright 2013-2024 Lawrence Livermore National Security, LLC and other
-# Spack Project Developers. See the top-level COPYRIGHT file for details.
+# Copyright Spack Project Developers. See COPYRIGHT file for details.
 #
 # SPDX-License-Identifier: (Apache-2.0 OR MIT)
+
+from spack_repo.builtin.build_systems.cmake import CMakePackage
 
 from spack.package import *
 
@@ -29,11 +30,7 @@ class Ip(CMakePackage):
     version("4.2.0", sha256="9b9f47106822044ff224c6dfd9f140c146dffc833904f2a0c5db7b5d8932e39e")
     version("4.1.0", sha256="b83ca037d9a5ad3eb0fb1acfe665c38b51e01f6bd73ce9fb8bb2a14f5f63cdbe")
     version("4.0.0", sha256="a2ef0cc4e4012f9cb0389fab6097407f4c623eb49772d96eb80c44f804aa86b8")
-    version(
-        "3.3.3",
-        sha256="d5a569ca7c8225a3ade64ef5cd68f3319bcd11f6f86eb3dba901d93842eb3633",
-        preferred=True,
-    )
+    version("3.3.3", sha256="d5a569ca7c8225a3ade64ef5cd68f3319bcd11f6f86eb3dba901d93842eb3633")
 
     variant("openmp", description="Enable OpenMP threading", default=True)
     variant("pic", default=True, description="Build with position-independent-code")
@@ -64,6 +61,9 @@ class Ip(CMakePackage):
     variant("alltests", default=False, description="Run full unit test suite", when="@5.3:")
 
     conflicts("+shared ~pic")
+
+    depends_on("c", type="build")
+    depends_on("fortran", type="build")
 
     depends_on("sp", when="@:4")
     depends_on("sp@:2.3.3", when="@:4.0")
@@ -127,7 +127,7 @@ class Ip(CMakePackage):
 
         return args
 
-    def setup_run_environment(self, env):
+    def setup_run_environment(self, env: EnvironmentModifications) -> None:
         suffixes = (
             self.spec.variants["precision"].value
             if self.spec.satisfies("@4.1:")
