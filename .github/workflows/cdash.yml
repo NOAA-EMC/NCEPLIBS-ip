@@ -28,6 +28,6 @@ jobs:
         if [ ! -f testfiles.tgz ]; then wget https://ftp.emc.ncep.noaa.gov/static_files/public/NCEPLIBS-ip/ip-test-data-20241230.tgz -O testfiles.tgz ; fi
 
     - name: CDash
-      uses: NOAA-EMC/ci-cdash@develop
+      uses: NOAA-EMC/ci-cdash@generalize
       with:
         extra-cmake-options: -DFTP_TEST_FILES=ON -DTEST_FILES_CACHE=$GITHUB_WORKSPACE/testfiles.tgz
