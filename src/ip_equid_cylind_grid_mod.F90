@@ -68,7 +68,7 @@ contains
       self%RLON2=KGDS(8)*1.E-3
       ISCAN=MOD(KGDS(11)/128,2)
       self%HI=(-1.)**ISCAN
-      self%DLON=self%HI*(MOD(self%HI*(self%RLON2-self%RLON1)-1+3600,360.)+1)/(self%IM-1)
+      self%DLON=self%HI*(MOD(self%HI*(self%RLON2-self%RLON1)-1.e-5+3600,360.)+1.e-5)/(self%IM-1)
       self%DLAT=(self%RLAT2-self%RLAT1)/(self%JM-1)
 
       ! defaults
@@ -126,7 +126,7 @@ contains
       self%RLON2=FLOAT(IGDTMPL(16))/FLOAT(ISCALE)
       ISCAN=MOD(IGDTMPL(19)/128,2)
       self%HI=(-1.)**ISCAN
-      self%DLON=self%HI*(MOD(self%HI*(self%RLON2-self%RLON1)-1+3600,360.)+1)/(self%IM-1)
+      self%DLON=self%HI*(MOD(self%HI*(self%RLON2-self%RLON1)-1.e-5+3600,360.)+1.e-5)/(self%IM-1)
       self%DLAT=(self%RLAT2-self%RLAT1)/(self%JM-1)
 
       self%nscan = MOD(IGDTMPL(19)/32,2)
