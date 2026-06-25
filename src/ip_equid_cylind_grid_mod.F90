@@ -15,6 +15,7 @@
 !! @author George Gayno, Mark Iredell, Kyle Gerheiser
 !! @date July 2021
 module ip_equid_cylind_grid_mod
+  use ip_constants_mod, only: dlon_offset
   use ip_grid_descriptor_mod
   use ip_grid_mod
   use earth_radius_mod
@@ -68,7 +69,7 @@ contains
       self%RLON2=KGDS(8)*1.E-3
       ISCAN=MOD(KGDS(11)/128,2)
       self%HI=(-1.)**ISCAN
-      self%DLON=self%HI*(MOD(self%HI*(self%RLON2-self%RLON1)-1.e-3+3600,360.)+1.e-3)/(self%IM-1)
+      self%DLON=self%HI*(MOD(self%HI*(self%RLON2-self%RLON1)-dlon_offset+3600,360.)+dlon_offset)/(self%IM-1)
       self%DLAT=(self%RLAT2-self%RLAT1)/(self%JM-1)
 
       ! defaults
@@ -126,7 +127,7 @@ contains
       self%RLON2=FLOAT(IGDTMPL(16))/FLOAT(ISCALE)
       ISCAN=MOD(IGDTMPL(19)/128,2)
       self%HI=(-1.)**ISCAN
-      self%DLON=self%HI*(MOD(self%HI*(self%RLON2-self%RLON1)-1.e-3+3600,360.)+1.e-3)/(self%IM-1)
+      self%DLON=self%HI*(MOD(self%HI*(self%RLON2-self%RLON1)-dlon_offset+3600,360.)+dlon_offset)/(self%IM-1)
       self%DLAT=(self%RLAT2-self%RLAT1)/(self%JM-1)
 
       self%nscan = MOD(IGDTMPL(19)/32,2)

@@ -6,6 +6,7 @@
 !!
 !! @author Mark Iredell @date 96-04-10
 module spectral_interp_mod
+  use ip_constants_mod, only: dlon_offset
   use gdswzd_mod
   use ip_grid_mod
   use ip_grid_descriptor_mod
@@ -334,9 +335,9 @@ contains
     ENDDO
     IF(IRET.EQ.0) THEN
        IF(ISCAN.EQ.0) THEN
-          DLON=(MOD(RLON2-RLON1-1.e-3+3600,360.)+1.e-3)/(IM-1)
+          DLON=(MOD(RLON2-RLON1-dlon_offset+3600,360.)+dlon_offset)/(IM-1)
        ELSE
-          DLON=-(MOD(RLON1-RLON2-1.e-3+3600,360.)+1.e-3)/(IM-1)
+          DLON=-(MOD(RLON1-RLON2-dlon_offset+3600,360.)+dlon_offset)/(IM-1)
        ENDIF
        IG=NINT(360/ABS(DLON))
        IPRIME=1+MOD(-NINT(RLON1/DLON)+IG,IG)
@@ -628,9 +629,9 @@ contains
     ENDDO
     IF(IRET.EQ.0) THEN
        IF(ISCAN.EQ.0) THEN
-          DLON=(MOD(RLON2-RLON1-1.e-3+3600,360.)+1.e-3)/(IM-1)
+          DLON=(MOD(RLON2-RLON1-dlon_offset+3600,360.)+dlon_offset)/(IM-1)
        ELSE
-          DLON=-(MOD(RLON1-RLON2-1.e-3+3600,360.)+1.e-3)/(IM-1)
+          DLON=-(MOD(RLON1-RLON2-dlon_offset+3600,360.)+dlon_offset)/(IM-1)
        ENDIF
        IG=NINT(360/ABS(DLON))
        IPRIME=1+MOD(-NINT(RLON1/DLON)+IG,IG)
@@ -966,9 +967,9 @@ contains
     ENDDO
     IF(IRET.EQ.0) THEN
        IF(ISCAN.EQ.0) THEN
-          DLON=(MOD(RLON2-RLON1-1.e-3+3600,360.)+1.e-3)/(IM-1)
+          DLON=(MOD(RLON2-RLON1-dlon_offset+3600,360.)+dlon_offset)/(IM-1)
        ELSE
-          DLON=-(MOD(RLON1-RLON2-1.e-3+3600,360.)+1.e-3)/(IM-1)
+          DLON=-(MOD(RLON1-RLON2-dlon_offset+3600,360.)+dlon_offset)/(IM-1)
        ENDIF
        IG=NINT(360/ABS(DLON))
        IPRIME=1+MOD(-NINT(RLON1/DLON)+IG,IG)
@@ -1288,9 +1289,9 @@ contains
     ENDDO
     IF(IRET.EQ.0) THEN
        IF(ISCAN.EQ.0) THEN
-          DLON=(MOD(RLON2-RLON1-1.e-3+3600,360.)+1.e-3)/(IM-1)
+          DLON=(MOD(RLON2-RLON1-dlon_offset+3600,360.)+dlon_offset)/(IM-1)
        ELSE
-          DLON=-(MOD(RLON1-RLON2-1.e-3+3600,360.)+1.e-3)/(IM-1)
+          DLON=-(MOD(RLON1-RLON2-dlon_offset+3600,360.)+dlon_offset)/(IM-1)
        ENDIF
        IG=NINT(360/ABS(DLON))
        IPRIME=1+MOD(-NINT(RLON1/DLON)+IG,IG)
