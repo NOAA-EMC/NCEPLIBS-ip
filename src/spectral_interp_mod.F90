@@ -334,9 +334,9 @@ contains
     ENDDO
     IF(IRET.EQ.0) THEN
        IF(ISCAN.EQ.0) THEN
-          DLON=(MOD(RLON2-RLON1-1.e-5+3600,360.)+1.e-5)/(IM-1)
+          DLON=(MOD(RLON2-RLON1-1.e-3+3600,360.)+1.e-3)/(IM-1)
        ELSE
-          DLON=-(MOD(RLON1-RLON2-1.e-5+3600,360.)+1.e-5)/(IM-1)
+          DLON=-(MOD(RLON1-RLON2-1.e-3+3600,360.)+1.e-3)/(IM-1)
        ENDIF
        IG=NINT(360/ABS(DLON))
        IPRIME=1+MOD(-NINT(RLON1/DLON)+IG,IG)
@@ -628,9 +628,9 @@ contains
     ENDDO
     IF(IRET.EQ.0) THEN
        IF(ISCAN.EQ.0) THEN
-          DLON=(MOD(RLON2-RLON1-1.e-5+3600,360.)+1.e-5)/(IM-1)
+          DLON=(MOD(RLON2-RLON1-1.e-3+3600,360.)+1.e-3)/(IM-1)
        ELSE
-          DLON=-(MOD(RLON1-RLON2-1.e-5+3600,360.)+1.e-5)/(IM-1)
+          DLON=-(MOD(RLON1-RLON2-1.e-3+3600,360.)+1.e-3)/(IM-1)
        ENDIF
        IG=NINT(360/ABS(DLON))
        IPRIME=1+MOD(-NINT(RLON1/DLON)+IG,IG)
@@ -966,9 +966,9 @@ contains
     ENDDO
     IF(IRET.EQ.0) THEN
        IF(ISCAN.EQ.0) THEN
-          DLON=(MOD(RLON2-RLON1-1.e-5+3600,360.)+1.e-5)/(IM-1)
+          DLON=(MOD(RLON2-RLON1-1.e-3+3600,360.)+1.e-3)/(IM-1)
        ELSE
-          DLON=-(MOD(RLON1-RLON2-1.e-5+3600,360.)+1.e-5)/(IM-1)
+          DLON=-(MOD(RLON1-RLON2-1.e-3+3600,360.)+1.e-3)/(IM-1)
        ENDIF
        IG=NINT(360/ABS(DLON))
        IPRIME=1+MOD(-NINT(RLON1/DLON)+IG,IG)
@@ -1288,9 +1288,9 @@ contains
     ENDDO
     IF(IRET.EQ.0) THEN
        IF(ISCAN.EQ.0) THEN
-          DLON=(MOD(RLON2-RLON1-1.e-5+3600,360.)+1.e-5)/(IM-1)
+          DLON=(MOD(RLON2-RLON1-1.e-3+3600,360.)+1.e-3)/(IM-1)
        ELSE
-          DLON=-(MOD(RLON1-RLON2-1.e-5+3600,360.)+1.e-5)/(IM-1)
+          DLON=-(MOD(RLON1-RLON2-1.e-3+3600,360.)+1.e-3)/(IM-1)
        ENDIF
        IG=NINT(360/ABS(DLON))
        IPRIME=1+MOD(-NINT(RLON1/DLON)+IG,IG)

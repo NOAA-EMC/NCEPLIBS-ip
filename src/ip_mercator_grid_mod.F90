@@ -77,7 +77,7 @@ CONTAINS
       DY=KGDS(13)
       self%HI=(-1.)**ISCAN
       HJ=(-1.)**(1-JSCAN)
-      self%DLON=self%HI*(MOD(self%HI*(self%RLON2-self%RLON1)-1.e-5+3600,360.)+1.e-5)/(self%IM-1)
+      self%DLON=self%HI*(MOD(self%HI*(self%RLON2-self%RLON1)-1.e-3+3600,360.)+1.e-3)/(self%IM-1)
       self%DPHI=HJ*DY/(self%RERTH*COS(self%RLATI/DPR))
 
       ! defaults
@@ -125,7 +125,7 @@ CONTAINS
       DY=FLOAT(IGDTMPL(19))*1.0E-3
       self%HI=(-1.)**ISCAN
       HJ=(-1.)**(1-JSCAN)
-      self%DLON=self%HI*(MOD(self%HI*(self%RLON2-self%RLON1)-1.e-5+3600.,360.)+1.e-5)/(self%IM-1)
+      self%DLON=self%HI*(MOD(self%HI*(self%RLON2-self%RLON1)-1.e-3+3600.,360.)+1.e-3)/(self%IM-1)
       self%DPHI=HJ*DY/(self%RERTH*COS(self%RLATI/DPR))
 
       self%jwrap1 = 0
