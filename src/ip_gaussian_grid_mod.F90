@@ -80,7 +80,7 @@ contains
       self%JSCAN=MOD(KGDS(11)/64,2)
       self%HI=(-1.)**ISCAN
       self%JH=(-1)**self%JSCAN
-      self%DLON=self%HI*(MOD(self%HI*(self%RLON2-self%RLON1)-1+3600,360.)+1)/(self%IM-1)
+      self%DLON=self%HI*(MOD(self%HI*(self%RLON2-self%RLON1)-dlon_offset+3600,360.)+dlon_offset)/(self%IM-1)
 
       self%iwrap = 0
       self%jwrap1 = 0

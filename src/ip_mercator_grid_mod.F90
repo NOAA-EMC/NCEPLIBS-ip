@@ -12,7 +12,7 @@
 module ip_mercator_grid_mod
   use ip_grid_descriptor_mod
   use ip_grid_mod
-  use ip_constants_mod, only: DPR, PI
+  use ip_constants_mod, only: DPR, PI, dlon_offset
   use earth_radius_mod
   implicit none
 
@@ -77,7 +77,7 @@ CONTAINS
       DY=KGDS(13)
       self%HI=(-1.)**ISCAN
       HJ=(-1.)**(1-JSCAN)
-      self%DLON=self%HI*(MOD(self%HI*(self%RLON2-self%RLON1)-1+3600,360.)+1)/(self%IM-1)
+      self%DLON=self%HI*(MOD(self%HI*(self%RLON2-self%RLON1)-dlon_offset+3600,360.)+dlon_offset)/(self%IM-1)
       self%DPHI=HJ*DY/(self%RERTH*COS(self%RLATI/DPR))
 
       ! defaults
@@ -125,7 +125,7 @@ CONTAINS
       DY=FLOAT(IGDTMPL(19))*1.0E-3
       self%HI=(-1.)**ISCAN
       HJ=(-1.)**(1-JSCAN)
-      self%DLON=self%HI*(MOD(self%HI*(self%RLON2-self%RLON1)-1+3600,360.)+1)/(self%IM-1)
+      self%DLON=self%HI*(MOD(self%HI*(self%RLON2-self%RLON1)-dlon_offset+3600.,360.)+dlon_offset)/(self%IM-1)
       self%DPHI=HJ*DY/(self%RERTH*COS(self%RLATI/DPR))
 
       self%jwrap1 = 0

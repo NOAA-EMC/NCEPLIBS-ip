@@ -81,6 +81,7 @@
  SUBROUTINE IPXWAFS(IDIR, NUMPTS_THIN, NUMPTS_FULL, KM, NUM_OPT, &
                     OPT_PTS, IGDTLEN, IGDTMPL_THIN, DATA_THIN,  &
                     IGDTMPL_FULL, DATA_FULL, IRET)
+  use ip_constants_mod, only: dlon_offset
  IMPLICIT NONE
 !
  INTEGER,               INTENT(IN   ) :: NUM_OPT
@@ -141,7 +142,7 @@
      RLON2=FLOAT(IGDTMPL_FULL(16))/FLOAT(ISCALE)
      ISCAN=MOD(IGDTMPL_FULL(19)/128,2)
      HI=(-1.)**ISCAN
-     DLON=HI*(MOD(HI*(RLON2-RLON1)-1+3600,360.)+1)/(IM-1)
+     DLON=HI*(MOD(HI*(RLON2-RLON1)-dlon_offset+3600,360.)+dlon_offset)/(IM-1)
      IGDTMPL_FULL(17)=NINT(DLON*FLOAT(ISCALE))
    ELSE
      IRET=1
