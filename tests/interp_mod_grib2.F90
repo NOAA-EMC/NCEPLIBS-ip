@@ -4,6 +4,7 @@
 
   use ip_mod
   use ip_grid_mod
+  use, intrinsic :: ieee_arithmetic
   implicit none
 
 contains
@@ -282,7 +283,7 @@ contains
                     station_ref_output = (/77.59999, 71.00000, 69.40000, 64.20000/)
             end select
             if (maxval(abs(output_data(1,:)-station_ref_output)) .gt. abstol) stop 60
-            if (any(isnan(output_data))) stop 61
+            if (any(ieee_is_nan(output_data))) stop 61
             return
         endif
 
@@ -674,8 +675,8 @@ contains
             end select
             if (maxval(abs(output_u_data(1,:)-station_ref_output_u)) .gt. abstol) stop 160
             if (maxval(abs(output_v_data(1,:)-station_ref_output_v)) .gt. abstol) stop 161
-            if (any(isnan(output_u_data))) stop 162
-            if (any(isnan(output_v_data))) stop 163
+            if (any(ieee_is_nan(output_u_data))) stop 162
+            if (any(ieee_is_nan(output_v_data))) stop 163
             return
         endif
 
