@@ -64,6 +64,9 @@ function(create_sp_test name kind timeout)
     message(FATAL_ERROR "Unsupported Fortran compiler '${CMAKE_Fortran_COMPILER_ID}'")
   endif()
   add_test(NAME ${name}_${kind} COMMAND ${name}_${kind})
+  if(CYGWIN)
+  set_property(TEST ${name}_${kind} PROPERTY ENVIRONMENT PATH=${CMAKE_BINARY_DIR}/src:$ENV{PATH})
+  endif()
   target_compile_definitions(${name}_${kind} PRIVATE "LSIZE=${kind}")
   if(TEST_TIME_LIMIT)
     set_tests_properties(${name}_${kind} PROPERTIES TIMEOUT ${timeout})
@@ -86,6 +89,9 @@ foreach(kind ${kinds})
   target_compile_definitions(test_ipxwafs_${kind} PRIVATE "LSIZE=${kind_definition}")
   set_target_properties(test_ipxwafs_${kind} PROPERTIES COMPILE_FLAGS "${fortran_${kind}_flags}")
   add_test(test_ipxwafs_${kind} test_ipxwafs_${kind})
+  if(CYGWIN)
+    set_property(TEST test_ipxwafs_${kind} PROPERTY ENVIRONMENT PATH=${CMAKE_BINARY_DIR}/src:$ENV{PATH})
+  endif()
 
   ### Test earth_radius_mod.
   add_executable(test_earth_radius_${kind} test_earth_radius.F90)
@@ -93,6 +99,10 @@ foreach(kind ${kinds})
   target_compile_definitions(test_earth_radius_${kind} PRIVATE "LSIZE=${kind_definition}")
   set_target_properties(test_earth_radius_${kind} PROPERTIES COMPILE_FLAGS "${fortran_${kind}_flags}")
   add_test(test_earth_radius_${kind} test_earth_radius_${kind})
+  if(CYGWIN)
+    set_property(TEST test_earth_radius_${kind}
+            PROPERTY ENVIRONMENT PATH=${CMAKE_BINARY_DIR}/src:$ENV{PATH})
+  endif()
 
   ### GRIB2 tests
   # Create mod files by kind, GRIB1
@@ -123,9 +133,17 @@ foreach(kind ${kinds})
   set_target_properties(tst_ncep_post_arakawa_${kind} PROPERTIES LINKER_LANGUAGE C)
   target_compile_definitions(tst_ncep_post_arakawa_${kind} PRIVATE "LSIZE=${kind_definition}")
   add_test(tst_ncep_post_arakawa_${kind} tst_ncep_post_arakawa_${kind})
+  if(CYGWIN)
+    set_property(TEST tst_ncep_post_arakawa_${kind}
+            PROPERTY ENVIRONMENT PATH=${CMAKE_BINARY_DIR}/src:$ENV{PATH})
+  endif()
 
   # GDSWZD test, GRIB2
   add_test(tst_gdswzd_c_grib2_${kind} tst_gdswzd_grib2_${kind})
+  if(CYGWIN)
+    set_property(TEST tst_gdswzd_c_grib2_${kind}
+            PROPERTY ENVIRONMENT PATH=${CMAKE_BINARY_DIR}/src:$ENV{PATH})
+  endif()
 
   # Scalar tests, GRIB2
   add_test(test_lambert_bilinear_scalar_grib2_${kind} test_scalar_grib2_${kind} 218 0)
@@ -135,6 +153,15 @@ foreach(kind ${kinds})
   add_test(test_polar_stereo_neighbor_budget_scalar_grib2_${kind} test_scalar_grib2_${kind} 212 6)
   add_test(test_rotatedB_spectral_scalar_grib2_${kind} test_scalar_grib2_${kind} 205 4)
   add_test(test_rotatedE_budget_scalar_grib2_${kind} test_scalar_grib2_${kind} 203 3)
+  if(CYGWIN)
+    foreach(thistest lambert_bilinear gaussian_neighbor
+              latlon_bilinear mercator_bicubic
+	      polar_stereo_neighbor_budget
+	      rotatedB_spectral rotatedE_budget)
+      set_property(TEST test_${thistest}_scalar_grib2_${kind}
+              PROPERTY ENVIRONMENT PATH=${CMAKE_BINARY_DIR}/src:$ENV{PATH})
+    endforeach()
+  endif()
 
   # Scalar station point tests, GRIB2
   add_test(test_station_points_bilinear_scalar_grib2_${kind} test_scalar_grib2_${kind} -1 0)
@@ -143,6 +170,12 @@ foreach(kind ${kinds})
   add_test(test_station_points_budget_scalar_grib2_${kind} test_scalar_grib2_${kind} -1 3)
   add_test(test_station_points_spectral_scalar_grib2_${kind} test_scalar_grib2_${kind} -1 4)
   add_test(test_station_points_neighbor_budget_scalar_grib2_${kind} test_scalar_grib2_${kind} -1 6)
+  if(CYGWIN)
+    foreach(thistest bilinear bicubic neighbor budget spectral neighbor_budget)
+      set_property(TEST test_station_points_${thistest}_scalar_grib2_${kind}
+              PROPERTY ENVIRONMENT PATH=${CMAKE_BINARY_DIR}/src:$ENV{PATH})
+    endforeach()
+  endif()
 
   # Vector tests, GRIB2
   add_test(test_lambert_bilinear_vector_grib2_${kind} test_vector_grib2_${kind} 218 0)
@@ -155,6 +188,15 @@ foreach(kind ${kinds})
   add_test(test_rotatedB_direct_spectral_vector_grib2_${kind} test_vector_grib2_${kind} 32769 4)
   add_test(test_rotatedB_direct_ncep_post_spectral_vector_grib2_${kind} test_vector_grib2_${kind} 32769b 4)
   add_test(test_rotatedE_direct_budget_vector_grib2_${kind} test_vector_grib2_${kind} 32768 3)
+  if(CYGWIN)
+    foreach(thistest lambert_bilinear gaussian_neighbor latlon_bilinear mercator_bicubic
+                polar_stereo_neighbor_budget rotatedB_spectral rotatedE_budget
+		rotatedB_direct_spectral rotatedB_direct_ncep_post_spectral
+		rotatedE_direct_budget)
+      set_property(TEST test_${thistest}_vector_grib2_${kind}
+              PROPERTY ENVIRONMENT PATH=${CMAKE_BINARY_DIR}/src:$ENV{PATH})
+    endforeach()
+  endif()
 
   # Vector station point tests, GRIB2
   add_test(test_station_points_bilinear_vector_grib2_${kind} test_vector_grib2_${kind} -1 0)
@@ -163,6 +205,12 @@ foreach(kind ${kinds})
   add_test(test_station_points_budget_vector_grib2_${kind} test_vector_grib2_${kind} -1 3)
   add_test(test_station_points_spectral_vector_grib2_${kind} test_vector_grib2_${kind} -1 4)
   add_test(test_station_points_neighbor_budget_vector_grib2_${kind} test_vector_grib2_${kind} -1 6)
+  if(CYGWIN)
+    foreach(thistest bilinear bicubic neighbor budget spectral neighbor_budget)
+      set_property(TEST test_station_points_${thistest}_vector_grib2_${kind}
+              PROPERTY ENVIRONMENT PATH=${CMAKE_BINARY_DIR}/src:$ENV{PATH})
+    endforeach()
+  endif()
 
   ### GRIB1 tests
   # Create mod files by kind, GRIB1
@@ -189,6 +237,10 @@ foreach(kind ${kinds})
 
   # GDSWZD test, GRIB1
   add_test(tst_gdswzd_c_grib1_${kind} tst_gdswzd_grib1_${kind})
+  if(CYGWIN)
+    set_property(TEST tst_gdswzd_c_grib1_${kind}
+            PROPERTY ENVIRONMENT PATH=${CMAKE_BINARY_DIR}/src:$ENV{PATH})
+  endif()
 
   # Scalar tests, GRIB1
   add_test(test_lambert_bilinear_scalar_grib1_${kind} test_scalar_grib1_${kind} 218 0)
@@ -198,6 +250,13 @@ foreach(kind ${kinds})
   add_test(test_polar_stereo_neighbor_budget_scalar_grib1_${kind} test_scalar_grib1_${kind} 212 6)
   add_test(test_rotatedB_spectral_scalar_grib1_${kind} test_scalar_grib1_${kind} 205 4)
   add_test(test_rotatedE_budget_scalar_grib1_${kind} test_scalar_grib1_${kind} 203 3)
+  if(CYGWIN)
+    foreach(thistest lambert_bilinear gaussian_neighbor latlon_bilinear mercator_bicubic
+                polar_stereo_neighbor_budget rotatedB_spectral rotatedE_budget)
+      set_property(TEST test_${thistest}_scalar_grib1_${kind}
+              PROPERTY ENVIRONMENT PATH=${CMAKE_BINARY_DIR}/src:$ENV{PATH})
+    endforeach()
+  endif()
 
   # Vector tests, GRIB1
   add_test(test_lambert_bilinear_vector_grib1_${kind} test_vector_grib1_${kind} 218 0)
@@ -207,6 +266,13 @@ foreach(kind ${kinds})
   add_test(test_polar_stereo_neighbor_budget_vector_grib1_${kind} test_vector_grib1_${kind} 212 6)
   add_test(test_rotatedB_spectral_vector_grib1_${kind} test_vector_grib1_${kind} 205 4)
   add_test(test_rotatedE_budget_vector_grib1_${kind} test_vector_grib1_${kind} 203 3)
+  if(CYGWIN)
+    foreach(thistest lambert_bilinear gaussian_neighbor latlon_bilinear mercator_bicubic
+                polar_stereo_neighbor_budget rotatedB_spectral rotatedE_budget)
+      set_property(TEST test_${thistest}_vector_grib1_${kind}
+              PROPERTY ENVIRONMENT PATH=${CMAKE_BINARY_DIR}/src:$ENV{PATH})
+    endforeach()
+  endif()
 
   ### Various sp_mod tests
   create_sp_test(test_ncpus ${kind} 0.3)
@@ -229,6 +295,9 @@ foreach(kind ${kinds})
   target_include_directories(test_fftpack_${kind} PRIVATE ${CMAKE_CURRENT_BINARY_DIR})
   target_include_directories(test_fftpack_${kind} PRIVATE ${CMAKE_CURRENT_BINARY_DIR}/../src/include_${kind})
   add_test(test_fftpack_${kind} test_fftpack_${kind})
+  if(CYGWIN)
+    set_property(TEST test_fftpack_${kind} PROPERTY ENVIRONMENT PATH=${CMAKE_BINARY_DIR}/src:$ENV{PATH})
+  endif()
 
   ### Add test labels:
 
