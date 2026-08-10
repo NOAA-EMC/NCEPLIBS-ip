@@ -2,8 +2,14 @@
 #
 # Alex Richert, Mark Potts, Kyle Gerheiser, Ed Hartnett, Eric Engle
 
+configure_file(
+  ip_version_mod.F90.in
+  ${CMAKE_CURRENT_BINARY_DIR}/ip_version_mod.F90
+  @ONLY)
+
 # These are the source code filees.
-set(fortran_src gdswzd_c.F90 gdswzd_mod.F90 ipolates.F90 ipolatev.F90
+set(fortran_src ${CMAKE_CURRENT_BINARY_DIR}/ip_version_mod.F90
+gdswzd_c.F90 gdswzd_mod.F90 ipolates.F90 ipolatev.F90
 ipxwafs.F90 ipxwafs2.F90 ipxwafs3.F90 movect.F90
 bilinear_interp_mod.F90 bicubic_interp_mod.F90 neighbor_interp_mod.F90
 budget_interp_mod.F90 spectral_interp_mod.F90 neighbor_budget_interp_mod.F90
