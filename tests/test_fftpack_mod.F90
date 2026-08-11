@@ -53,6 +53,7 @@
 
     !> Initialize the table (required before calling with init=0)
     call rffti(n, table)
+    ! add isign=0 case
  
     !> Assign some test values to the input array x
     x(1,1) = 1.0
@@ -572,6 +573,13 @@
     call test_rfftf()
     print *, "rfftf tests passed."
 
+    ! rfftb1
+    ! rfftf1
+    ! radb2
+    ! radb3
+    ! radbg
+    ! radf5
+    ! radfg
 
     print *, "All fftpack tests completed."
 
