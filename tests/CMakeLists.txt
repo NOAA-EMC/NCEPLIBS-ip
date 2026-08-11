@@ -217,7 +217,11 @@ foreach(kind ${kinds})
   create_sp_test(test_fft ${kind} 0.3)
   create_sp_test(test_sptrung ${kind} 0.3)
   create_sp_test(test_sptrungv ${kind} 2)
-
+  create_sp_test(test_sptezd ${kind} 0.3)
+  create_sp_test(test_sptezmd ${kind} 0.3)
+  create_sp_test(test_sptezmv ${kind} 0.3)
+  create_sp_test(test_sptrand ${kind} 0.3)
+  
   ### Tests for fftpack subroutines
   add_library(test_fftpack_mod_${kind} test_fftpack_mod_${kind}.F90)
   target_link_libraries(test_fftpack_mod_${kind} PRIVATE ip::ip_${kind})
