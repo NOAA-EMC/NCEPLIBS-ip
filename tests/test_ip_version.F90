@@ -13,7 +13,7 @@ program test_ip_version
 
    call get_command_argument(1, ctemp, status=status)
    if (status /= 0) then
-      write(*, '(a)') "Unable to determine command-line argument length"
+      write(*, '(a)') "Unable to determine command-line argument"
       error stop 1
    endif
 
