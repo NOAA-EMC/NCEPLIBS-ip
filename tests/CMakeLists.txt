@@ -232,6 +232,28 @@ foreach(kind ${kinds})
   create_sp_test(test_fft ${kind} 0.3)
   create_sp_test(test_sptrung ${kind} 0.3)
   create_sp_test(test_sptrungv ${kind} 2)
+  create_sp_test(test_spvar ${kind} 0.3)
+
+  ### Test ip_constants_mod
+  add_executable(test_ip_constants_${kind} test_ip_constants.F90)
+  target_link_libraries(test_ip_constants_${kind} PUBLIC ip::ip_${kind})
+  target_compile_definitions(test_ip_constants_${kind} PRIVATE "LSIZE=${kind_definition}")
+  set_target_properties(test_ip_constants_${kind} PROPERTIES COMPILE_FLAGS "${fortran_${kind}_flags}")
+  add_test(test_ip_constants_${kind} test_ip_constants_${kind})
+
+  ### Test MOVECT
+  add_executable(test_movect_${kind} test_movect.F90)
+  target_link_libraries(test_movect_${kind} PUBLIC ip::ip_${kind})
+  target_compile_definitions(test_movect_${kind} PRIVATE "LSIZE=${kind_definition}")
+  set_target_properties(test_movect_${kind} PROPERTIES COMPILE_FLAGS "${fortran_${kind}_flags}")
+  add_test(test_movect_${kind} test_movect_${kind})
+
+  ### Test polfix_mod (POLFIXS, POLFIXV)
+  add_executable(test_polfix_${kind} test_polfix.F90)
+  target_link_libraries(test_polfix_${kind} PUBLIC ip::ip_${kind})
+  target_compile_definitions(test_polfix_${kind} PRIVATE "LSIZE=${kind_definition}")
+  set_target_properties(test_polfix_${kind} PROPERTIES COMPILE_FLAGS "${fortran_${kind}_flags}")
+  add_test(test_polfix_${kind} test_polfix_${kind})
 
   ### Tests for fftpack subroutines
   add_library(test_fftpack_mod_${kind} test_fftpack_mod_${kind}.F90)
@@ -266,14 +288,18 @@ foreach(kind ${kinds})
   set(noinputdatatests
     "test_earth_radius"
     "test_fft"
+    "test_ip_constants"
     "test_ip_version_c"
     "test_ip_version_fortran"
     "test_ipxwafs"
+    "test_movect"
     "test_ncpus"
+    "test_polfix"
     "test_splaplac"
     "test_splat"
     "test_sppad"
     "test_sptezv"
+    "test_spvar"
     "tst_gdswzd_c_grib1"
     "tst_gdswzd_c_grib2"
     "tst_ncep_post_arakawa"
