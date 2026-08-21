@@ -232,7 +232,6 @@ foreach(kind ${kinds})
   create_sp_test(test_fft ${kind} 0.3)
   create_sp_test(test_sptrung ${kind} 0.3)
   create_sp_test(test_sptrungv ${kind} 2)
-  create_sp_test(test_spvar ${kind} 0.3)
 
   ### Test ip_constants_mod
   add_executable(test_ip_constants_${kind} test_ip_constants.F90)
@@ -299,7 +298,6 @@ foreach(kind ${kinds})
     "test_splat"
     "test_sppad"
     "test_sptezv"
-    "test_spvar"
     "tst_gdswzd_c_grib1"
     "tst_gdswzd_c_grib2"
     "tst_ncep_post_arakawa"
@@ -309,3 +307,13 @@ foreach(kind ${kinds})
   endforeach()
 
 endforeach()
+
+# Tests for deprecated spectral routines (spvar.f etc.) — only built when
+# BUILD_DEPRECATED=ON because they live behind #ifdef BUILD_DEPRECATED in sp_mod.F.
+if(BUILD_DEPRECATED)
+  foreach(kind ${kinds})
+    string(TOUPPER ${kind} kind_definition)
+    create_sp_test(test_spvar ${kind} 0.3)
+    set_tests_properties("test_spvar_${kind}" PROPERTIES LABELS "NO_INPUT_DATA")
+  endforeach()
+endif()
