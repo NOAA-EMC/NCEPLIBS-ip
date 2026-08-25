@@ -223,7 +223,7 @@
     scale = 2.0
     isys = 1
 
-    allocate(x(n+2), y(n+2), table(3*n+15), work(2*n))
+    allocate(x(n+2), y(n+2), table(2*n+15), work(2*n))
 
     x = 0.0
     y = 0.0
@@ -252,7 +252,7 @@
     scale = 0.5
     isys = 1
 
-    allocate(x(n+2), y(n+2), table(3*n+15), work(2*n))
+    allocate(x(n+2), y(n+2), table(2*n+15), work(2*n))
 
     x = 2.0
     y = 0.0
@@ -273,7 +273,7 @@
     n = 5
     scale = 1.0
     isys = 1
-    allocate(x(n+2), y(n+2), table(3*n+15), work(2*n))
+    allocate(x(n+2), y(n+2), table(2*n+15), work(2*n))
     table = 0.0
     call csfft(isign, n, scale, x, y, table, work, isys)
     if (all(abs(table) < tolerance)) stop 140
@@ -480,7 +480,7 @@
     scale = 1.0
     isys = 1
 
-    allocate(x(n), y(n+2), table(3*n+15), work(2*n))
+    allocate(x(n), y(n+2), table(2*n+15), work(2*n))
 
     x = 0.0
     y = 0.0
@@ -498,7 +498,7 @@
     scale = 2.0
     isys = 1
 
-    allocate(x(n), y(n+2), table(3*n+15), work(2*n))
+    allocate(x(n), y(n+2), table(2*n+15), work(2*n))
 
     x = 0.0
     y = 0.0
@@ -522,7 +522,7 @@
     scale = 0.5
     isys = 1
 
-    allocate(x(n), y(n+2), table(3*n+15), work(2*n))
+    allocate(x(n), y(n+2), table(2*n+15), work(2*n))
 
     x = 2.0
     y = 0.0
@@ -627,7 +627,7 @@
     real, allocatable :: r(:), wsave(:)
 
     n = 8
-    allocate(r(n), wsave(3*n+15))
+    allocate(r(n), wsave(2*n+15))
     call rffti(n, wsave)
     ! IFAC stored starting at wsave(2*n+1); verify 2 was moved to front: [8,2,2,4]
     if (nint(wsave(2*n+1)) /= 8 .or. nint(wsave(2*n+2)) /= 2 .or. &
@@ -675,7 +675,7 @@
     real, allocatable :: c(:), ch(:), wsave(:)
 
     n = 14
-    allocate(c(n), ch(n), wsave(3*n+15))
+    allocate(c(n), ch(n), wsave(2*n+15))
     call rffti(n, wsave)
     do i=1,n; c(i)=real(i); end do
     ch=0.0
@@ -696,7 +696,7 @@
     real, allocatable :: c(:), ch(:), wsave(:)
 
     n = 25
-    allocate(c(n), ch(n), wsave(3*n+15))
+    allocate(c(n), ch(n), wsave(2*n+15))
     call rffti(n, wsave)
     do i=1,n; c(i)=real(i); end do
     ch=0.0
@@ -718,7 +718,7 @@
     real, allocatable :: c(:), ch(:), wsave(:)
 
     n = 56
-    allocate(c(n), ch(n), wsave(3*n+15))
+    allocate(c(n), ch(n), wsave(2*n+15))
     call rffti(n, wsave)
     ! Standard IFAC=[56,3,2,4,7]; reorder to [56,3,7,4,2] so K1=3 is IP=7,IDO=8,NA=0
     wsave(2*n+1)=56.0; wsave(2*n+2)=3.0; wsave(2*n+3)=7.0
@@ -1219,7 +1219,7 @@
     real, allocatable :: c(:), ch(:), wsave(:)
 
     n = 16
-    allocate(c(n), ch(n), wsave(3*n+15))
+    allocate(c(n), ch(n), wsave(2*n+15))
     call rffti(n, wsave)
     do i=1,n; c(i)=real(i); end do
     ch=0.0
@@ -1239,7 +1239,7 @@
     real, allocatable :: c(:), ch(:), wsave(:)
 
     n = 20
-    allocate(c(n), ch(n), wsave(3*n+15))
+    allocate(c(n), ch(n), wsave(2*n+15))
     call rffti(n, wsave)
     do i=1,n; c(i)=real(i); end do
     ch=0.0
@@ -1259,7 +1259,7 @@
     real, allocatable :: c(:), ch(:), wsave(:)
 
     n = 49
-    allocate(c(n), ch(n), wsave(3*n+15))
+    allocate(c(n), ch(n), wsave(2*n+15))
     call rffti(n, wsave)
     do i=1,n; c(i)=real(i); end do
     ch=0.0
@@ -1280,7 +1280,7 @@
     real, allocatable :: c(:), ch(:), wsave(:)
 
     n = 686
-    allocate(c(n), ch(n), wsave(3*n+15))
+    allocate(c(n), ch(n), wsave(2*n+15))
     call rffti(n, wsave)
     do i=1,n; c(i)=real(i); end do
     ch=0.0
@@ -1300,7 +1300,7 @@
     real, allocatable :: c(:), ch(:), wsave(:)
 
     n = 6
-    allocate(c(n), ch(n), wsave(3*n+15))
+    allocate(c(n), ch(n), wsave(2*n+15))
     call rffti(n, wsave)
     do i = 1, n
       c(i) = real(i)
@@ -1320,7 +1320,7 @@
     real, allocatable :: c(:), ch(:), wsave(:)
 
     n = 7
-    allocate(c(n), ch(n), wsave(3*n+15))
+    allocate(c(n), ch(n), wsave(2*n+15))
     call rffti(n, wsave)
     do i = 1, n
       c(i) = real(i)
@@ -1341,7 +1341,7 @@
     real, allocatable :: c(:), ch(:), wsave(:)
 
     n = 10
-    allocate(c(n), ch(n), wsave(3*n+15))
+    allocate(c(n), ch(n), wsave(2*n+15))
     call rffti(n, wsave)
     do i = 1, n
       c(i) = real(i)
@@ -1362,7 +1362,7 @@
     real, allocatable :: c(:), ch(:), wsave(:)
 
     n = 15
-    allocate(c(n), ch(n), wsave(3*n+15))
+    allocate(c(n), ch(n), wsave(2*n+15))
     call rffti(n, wsave)
     do i = 1, n
       c(i) = real(i)
