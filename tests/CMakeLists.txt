@@ -232,6 +232,7 @@ foreach(kind ${kinds})
   create_sp_test(test_fft ${kind} 0.3)
   create_sp_test(test_sptrung ${kind} 0.3)
   create_sp_test(test_sptrungv ${kind} 2)
+  create_sp_test(test_spectral_interp_mod ${kind} 0.2)
 
   ### Tests for fftpack subroutines
   add_library(test_fftpack_mod_${kind} test_fftpack_mod_${kind}.F90)
