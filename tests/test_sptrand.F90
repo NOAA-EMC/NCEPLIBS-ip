@@ -17,6 +17,7 @@ program test_sptrand
   integer :: KWSKIP, JBEG, IDIR, JCPU
   !
   real :: WAVE(MX,KMAX)
+  real :: GRIDMN(KMAX)
   real :: GRIDXN(IMAX,JMAX,KMAX), GRIDXS(IMAX,JMAX,KMAX)
   real :: GRIDYN(IMAX,JMAX,KMAX), GRIDYS(IMAX,JMAX,KMAX)
   !
