@@ -236,7 +236,28 @@ foreach(kind ${kinds})
   create_sp_test(test_sptezmd ${kind} 0.3)
   create_sp_test(test_sptezmv ${kind} 0.3)
   create_sp_test(test_sptrand ${kind} 0.3)
-  
+
+  ### Test ip_constants_mod
+  add_executable(test_ip_constants_${kind} test_ip_constants.F90)
+  target_link_libraries(test_ip_constants_${kind} PUBLIC ip::ip_${kind})
+  target_compile_definitions(test_ip_constants_${kind} PRIVATE "LSIZE=${kind_definition}")
+  set_target_properties(test_ip_constants_${kind} PROPERTIES COMPILE_FLAGS "${fortran_${kind}_flags}")
+  add_test(test_ip_constants_${kind} test_ip_constants_${kind})
+
+  ### Test MOVECT
+  add_executable(test_movect_${kind} test_movect.F90)
+  target_link_libraries(test_movect_${kind} PUBLIC ip::ip_${kind})
+  target_compile_definitions(test_movect_${kind} PRIVATE "LSIZE=${kind_definition}")
+  set_target_properties(test_movect_${kind} PROPERTIES COMPILE_FLAGS "${fortran_${kind}_flags}")
+  add_test(test_movect_${kind} test_movect_${kind})
+
+  ### Test polfix_mod (POLFIXS, POLFIXV)
+  add_executable(test_polfix_${kind} test_polfix.F90)
+  target_link_libraries(test_polfix_${kind} PUBLIC ip::ip_${kind})
+  target_compile_definitions(test_polfix_${kind} PRIVATE "LSIZE=${kind_definition}")
+  set_target_properties(test_polfix_${kind} PROPERTIES COMPILE_FLAGS "${fortran_${kind}_flags}")
+  add_test(test_polfix_${kind} test_polfix_${kind})
+
   ### Tests for fftpack subroutines
   add_library(test_fftpack_mod_${kind} test_fftpack_mod_${kind}.F90)
   target_link_libraries(test_fftpack_mod_${kind} PRIVATE ip::ip_${kind})
@@ -270,10 +291,13 @@ foreach(kind ${kinds})
   set(noinputdatatests
     "test_earth_radius"
     "test_fft"
+    "test_ip_constants"
     "test_ip_version_c"
     "test_ip_version_fortran"
     "test_ipxwafs"
+    "test_movect"
     "test_ncpus"
+    "test_polfix"
     "test_splaplac"
     "test_splat"
     "test_sppad"
@@ -291,3 +315,13 @@ foreach(kind ${kinds})
   endforeach()
 
 endforeach()
+
+# Tests for deprecated spectral routines (spvar.f etc.) — only built when
+# BUILD_DEPRECATED=ON because they live behind #ifdef BUILD_DEPRECATED in sp_mod.F.
+if(BUILD_DEPRECATED)
+  foreach(kind ${kinds})
+    string(TOUPPER ${kind} kind_definition)
+    create_sp_test(test_spvar ${kind} 0.3)
+    set_tests_properties("test_spvar_${kind}" PROPERTIES LABELS "NO_INPUT_DATA")
+  endforeach()
+endif()
