@@ -232,6 +232,10 @@ foreach(kind ${kinds})
   create_sp_test(test_fft ${kind} 0.3)
   create_sp_test(test_sptrung ${kind} 0.3)
   create_sp_test(test_sptrungv ${kind} 2)
+  create_sp_test(test_sptezd ${kind} 0.3)
+  create_sp_test(test_sptezmd ${kind} 0.3)
+  create_sp_test(test_sptezmv ${kind} 0.3)
+  create_sp_test(test_sptrand ${kind} 0.3)
 
   ### Test ip_constants_mod
   add_executable(test_ip_constants_${kind} test_ip_constants.F90)
@@ -301,6 +305,10 @@ foreach(kind ${kinds})
     "tst_gdswzd_c_grib1"
     "tst_gdswzd_c_grib2"
     "tst_ncep_post_arakawa"
+    "test_sptezd"
+    "test_sptezmd"
+    "test_sptezmv"
+    "test_sptrand"
   )
   foreach(noinputdatatest IN LISTS noinputdatatests)
     set_tests_properties("${noinputdatatest}_${kind}" PROPERTIES LABELS "NO_INPUT_DATA")
