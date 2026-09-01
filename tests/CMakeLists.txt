@@ -264,6 +264,10 @@ foreach(kind ${kinds})
     "tst_gdswzd_c_grib1"
     "tst_gdswzd_c_grib2"
     "tst_ncep_post_arakawa"
+    "test_sptezd"
+    "test_sptezmd"
+    "test_sptezmv"
+    "test_sptrand"
   )
   foreach(noinputdatatest IN LISTS noinputdatatests)
     set_tests_properties("${noinputdatatest}_${kind}" PROPERTIES LABELS "NO_INPUT_DATA")
