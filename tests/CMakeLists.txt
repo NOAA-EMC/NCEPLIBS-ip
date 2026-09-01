@@ -77,8 +77,23 @@ if(CMAKE_Fortran_COMPILER_ID MATCHES "^(Intel|IntelLLVM)$")
   set(CMAKE_C_FLAGS "-std=c99")
 endif()
 
+file(READ "${PROJECT_SOURCE_DIR}/VERSION" expected_version)
+string(STRIP "${expected_version}" expected_version)
+
 foreach(kind ${kinds})
   string(TOUPPER ${kind} kind_definition)
+
+  ### Test version string interfaces
+  add_executable(test_ip_version_c_${kind} test_ip_version.c)
+  target_link_libraries(test_ip_version_c_${kind} PRIVATE ip::ip_${kind})
+  add_test(NAME test_ip_version_c_${kind}
+    COMMAND test_ip_version_c_${kind} "${expected_version}")
+
+  add_executable(test_ip_version_fortran_${kind} test_ip_version.F90)
+  target_link_libraries(test_ip_version_fortran_${kind} PRIVATE ip::ip_${kind})
+  set_target_properties(test_ip_version_fortran_${kind} PROPERTIES COMPILE_FLAGS "${fortran_${kind}_flags}")
+  add_test(NAME test_ip_version_fortran_${kind}
+    COMMAND test_ip_version_fortran_${kind} "${expected_version}")
 
   ### Test ipxwafs routines
   add_executable(test_ipxwafs_${kind} test_ipxwafs.F90)
@@ -255,6 +270,8 @@ foreach(kind ${kinds})
   set(noinputdatatests
     "test_earth_radius"
     "test_fft"
+    "test_ip_version_c"
+    "test_ip_version_fortran"
     "test_ipxwafs"
     "test_ncpus"
     "test_splaplac"

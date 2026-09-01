@@ -189,4 +189,14 @@ void gdswzd_grib1(int *kgds, int iopt, int npts, float fill,
           int *nret, float *crot, float *srot,
           float *xlon, float *xlat, float *ylon, float *ylat, float *area);
 
+/**
+ * Return the NCEPLIBS-ip version string.
+ *
+ * The returned string is null-terminated and owned by the library.
+ * The caller must not modify or free it.
+ *
+ * @return NCEPLIBS-ip version string.
+ */
+const char *ip_get_version(void);
+
 #endif
