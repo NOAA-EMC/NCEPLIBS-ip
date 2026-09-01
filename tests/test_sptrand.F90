@@ -16,25 +16,25 @@ program test_sptrand
   integer :: ISKIP=0, JNSKIP=0, JSSKIP=0, KGSKIP=0
   integer :: KWSKIP, JBEG, IDIR, JCPU
   !
-  real :: WAVE(KMAX*MX)
-  real :: GRIDMN(KMAX), GRIDXN(IMAX*JMAX*KMAX), GRIDXS(IMAX*JMAX*KMAX)
-  real :: GRIDYN(IMAX*JMAX*KMAX), GRIDYS(IMAX*JMAX*KMAX)
+  real :: WAVE(MX,KMAX)
+  real :: GRIDXN(IMAX,JMAX,KMAX), GRIDXS(IMAX,JMAX,KMAX)
+  real :: GRIDYN(IMAX,JMAX,KMAX), GRIDYS(IMAX,JMAX,KMAX)
   !
-  real :: EXP_WAVE(KMAX*MX)
+  real :: EXP_WAVE(MX,KMAX)
   !
-  integer :: I, res
+  integer :: I, J, res
 
   JCPU = NCPUS()
 
   EXP_WAVE = 0.0
-  EXP_WAVE(1) = 12.0 * sqrt(2.0)
+  EXP_WAVE(1,1) = 12.0 * sqrt(2.0)
 
   ! Test Case 1: WAVE => GRID => WAVE with KWSKIP = 0 & JBEG = 0. Expect WAVE to remain unchanged.
   KWSKIP = 0
   JBEG = 0
   IDIR = 1
   WAVE = 0.0
-  WAVE(1) = 12.0 * sqrt(2.0)
+  WAVE(1,1) = 12.0 * sqrt(2.0)
   GRIDMN = 0.0
   GRIDXN = 0.0
   GRIDXS = 0.0
@@ -53,21 +53,23 @@ program test_sptrand
               WAVE,GRIDMN,GRIDXN,GRIDXS,GRIDYN,GRIDYS,IDIR)
 
   res = 0
-  do I = 1, KMAX*MX
-    if (abs(WAVE(I) - EXP_WAVE(I)) > TOL) then
-      print *, 'Mismatch at WAVE(', I, '): expected ', EXP_WAVE(I), ' but got ', WAVE(I)
-      res = 1
-    end if
+  do I = 1, MX
+    do J = 1, KMAX
+      if (abs(WAVE(I,J) - EXP_WAVE(I,J)) > TOL) then
+        print *, 'Mismatch at WAVE(', I, ',', J, '): expected ', EXP_WAVE(I,J), ' but got ', WAVE(I,J)
+        res = 1
+      end if
+    end do
   end do
 
   if (res .ne. 0) stop 1
 
   ! Test Case 2: WAVE => GRID => WAVE with KWSKIP > 0 & JBEG = 0. Expect WAVE to remain unchanged.
-  KWSKIP = 1
+  KWSKIP = MX
   JBEG = 0
   IDIR = 1
   WAVE = 0.0
-  WAVE(1) = 12.0 * sqrt(2.0)
+  WAVE(1,1) = 12.0 * sqrt(2.0)
   GRIDMN = 0.0
   GRIDXN = 0.0
   GRIDXS = 0.0
@@ -86,11 +88,13 @@ program test_sptrand
               WAVE,GRIDMN,GRIDXN,GRIDXS,GRIDYN,GRIDYS,IDIR)
 
   res = 0
-  do I = 1, KMAX*MX
-    if (abs(WAVE(I) - EXP_WAVE(I)) > TOL) then
-      print *, 'Mismatch at WAVE(', I, '): expected ', EXP_WAVE(I), ' but got ', WAVE(I)
-      res = 1
-    end if
+  do I = 1, MX
+    do J = 1, KMAX
+      if (abs(WAVE(I,J) - EXP_WAVE(I,J)) > TOL) then
+        print *, 'Mismatch at WAVE(', I, ',', J, '): expected ', EXP_WAVE(I,J), ' but got ', WAVE(I,J)
+        res = 1
+      end if
+    end do
   end do
 
   if (res .ne. 0) stop 2
@@ -100,7 +104,7 @@ program test_sptrand
   JBEG = 1
   IDIR = 1
   WAVE = 0.0
-  WAVE(1) = 12.0 * sqrt(2.0)
+  WAVE(1,1) = 12.0 * sqrt(2.0)
   GRIDMN = 0.0
   GRIDXN = 0.0
   GRIDXS = 0.0
@@ -119,21 +123,23 @@ program test_sptrand
               WAVE,GRIDMN,GRIDXN,GRIDXS,GRIDYN,GRIDYS,IDIR)
 
   res = 0
-  do I = 1, KMAX*MX
-    if (abs(WAVE(I) - EXP_WAVE(I)) > TOL) then
-      print *, 'Mismatch at WAVE(', I, '): expected ', EXP_WAVE(I), ' but got ', WAVE(I)
-      res = 1
-    end if
+  do I = 1, MX
+    do J = 1, KMAX
+      if (abs(WAVE(I,J) - EXP_WAVE(I,J)) > TOL) then
+        print *, 'Mismatch at WAVE(', I, ',', J, '): expected ', EXP_WAVE(I,J), ' but got ', WAVE(I,J)
+        res = 1
+      end if
+    end do
   end do
 
   if (res .ne. 0) stop 3
 
   ! Test Case 4: WAVE => GRID => WAVE with KWSKIP > 0 & JBEG > 0.
-  KWSKIP = 1
+  KWSKIP = MX
   JBEG = 1
   IDIR = 1
   WAVE = 0.0
-  WAVE(1) = 12.0 * sqrt(2.0)
+  WAVE(1,1) = 12.0 * sqrt(2.0)
   GRIDMN = 0.0
   GRIDXN = 0.0
   GRIDXS = 0.0
@@ -152,11 +158,13 @@ program test_sptrand
               WAVE,GRIDMN,GRIDXN,GRIDXS,GRIDYN,GRIDYS,IDIR)
 
   res = 0
-  do I = 1, KMAX*MX
-    if (abs(WAVE(I) - EXP_WAVE(I)) > TOL) then
-      print *, 'Mismatch at WAVE(', I, '): expected ', EXP_WAVE(I), ' but got ', WAVE(I)
-      res = 1
-    end if
+  do I = 1, MX
+    do J = 1, KMAX
+      if (abs(WAVE(I,J) - EXP_WAVE(I,J)) > TOL) then
+        print *, 'Mismatch at WAVE(', I, ',', J, '): expected ', EXP_WAVE(I,J), ' but got ', WAVE(I,J)
+        res = 1
+      end if
+    end do
   end do
 
   if (res .ne. 0) stop 4
