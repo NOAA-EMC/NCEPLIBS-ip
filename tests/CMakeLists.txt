@@ -109,6 +109,20 @@ foreach(kind ${kinds})
   set_target_properties(test_earth_radius_${kind} PROPERTIES COMPILE_FLAGS "${fortran_${kind}_flags}")
   add_test(test_earth_radius_${kind} test_earth_radius_${kind})
 
+  ### Test ip_grid_mod field_pos() function.
+  add_executable(test_ip_grid_mod_${kind} test_ip_grid_mod.F90)
+  target_link_libraries(test_ip_grid_mod_${kind} PUBLIC ip::ip_${kind})
+  target_compile_definitions(test_ip_grid_mod_${kind} PRIVATE "LSIZE=${kind_definition}")
+  set_target_properties(test_ip_grid_mod_${kind} PROPERTIES COMPILE_FLAGS "${fortran_${kind}_flags}")
+  add_test(test_ip_grid_mod_${kind} test_ip_grid_mod_${kind})
+
+  ### Test ip_rot_equid_cylind_egrid_mod functions.
+  add_executable(test_ip_rot_equid_cylind_egrid_mod_${kind} test_ip_rot_equid_cylind_egrid_mod.F90)
+  target_link_libraries(test_ip_rot_equid_cylind_egrid_mod_${kind} PUBLIC ip::ip_${kind})
+  target_compile_definitions(test_ip_rot_equid_cylind_egrid_mod_${kind} PRIVATE "LSIZE=${kind_definition}")
+  set_target_properties(test_ip_rot_equid_cylind_egrid_mod_${kind} PROPERTIES COMPILE_FLAGS "${fortran_${kind}_flags}")
+  add_test(test_ip_rot_equid_cylind_egrid_mod_${kind} test_ip_rot_equid_cylind_egrid_mod_${kind})
+
   ### GRIB2 tests
   # Create mod files by kind, GRIB1
   add_library(test_input_library_grib2_${kind} input_data_mod_grib2_${kind}.F90)
