@@ -250,6 +250,11 @@ foreach(kind ${kinds})
   create_sp_test(test_sptezmd ${kind} 0.3)
   create_sp_test(test_sptezmv ${kind} 0.3)
   create_sp_test(test_sptrand ${kind} 0.3)
+  create_sp_test(test_sptrun ${kind} 0.3)
+  create_sp_test(test_sptrunv ${kind} 0.3)
+  create_sp_test(test_sptgps ${kind} 0.3)
+  create_sp_test(test_sptgsv ${kind} 0.3)
+  
 
   ### Test ip_constants_mod
   add_executable(test_ip_constants_${kind} test_ip_constants.F90)
