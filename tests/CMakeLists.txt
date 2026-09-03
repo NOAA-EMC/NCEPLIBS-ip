@@ -253,7 +253,7 @@ foreach(kind ${kinds})
   create_sp_test(test_sptrun ${kind} 0.3)
   create_sp_test(test_sptrunv ${kind} 0.3)
   create_sp_test(test_sptgps ${kind} 0.3)
-  create_sp_test(test_sptgsv ${kind} 0.3)
+  create_sp_test(test_sptgpsv ${kind} 0.3)
   
 
   ### Test ip_constants_mod
