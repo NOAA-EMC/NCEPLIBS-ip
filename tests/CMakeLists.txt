@@ -323,6 +323,10 @@ foreach(kind ${kinds})
     "test_sptezmd"
     "test_sptezmv"
     "test_sptrand"
+    "test_sptrun"
+    "test_sptrunv"
+    "test_sptgps"
+    "test_sptgpsv"
   )
   foreach(noinputdatatest IN LISTS noinputdatatests)
     set_tests_properties("${noinputdatatest}_${kind}" PROPERTIES LABELS "NO_INPUT_DATA")
