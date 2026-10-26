@@ -16,7 +16,7 @@ program test_sptrun
   integer :: ISKIPI=0, JSKIPI=0, KSKIPI=IMAXI*JMAXI
   integer :: ISKIPO=0, JSKIPO=0, KSKIPO=IMAXO*JMAXO
   integer :: IPRIME=0, JCPU=0
-  integer :: I, J, res
+  integer :: I, J, res=0
   real :: GRIDI(IMAXI, JMAXI, KMAX)
   real :: GRIDO(IMAXO, JMAXO, KMAX)
   real :: EXP_GRIDO(IMAXO, JMAXO, KMAX)
@@ -29,7 +29,6 @@ program test_sptrun
               KMAX,IPRIME,ISKIPI,JSKIPI,KSKIPI,                 &
               ISKIPO,JSKIPO,KSKIPO,JCPU,GRIDI,GRIDO)
 
-  res = 0
   do J = 1, JMAXO
     do I = 1, IMAXO
       if (abs(GRIDO(I, J, 1) - EXP_GRIDO(I, J, 1)) > TOL) then
