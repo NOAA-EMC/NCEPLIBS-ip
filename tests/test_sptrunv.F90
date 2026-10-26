@@ -7,7 +7,7 @@ program test_sptrunv
   use sp_mod
   implicit none
 
-  real, parameter :: TOL = 1e-4, PI = 3.14159265
+  real, parameter :: TOL = 1e-6
   integer, parameter :: IROMB=0, MAXWV=1
   integer, parameter :: IMAXI=4, JMAXI=7, KMAX=1
   integer, parameter :: IMAXO=4, JMAXO=3
@@ -18,7 +18,6 @@ program test_sptrunv
   integer :: IPRIME=0, JCPU=0
   logical :: LUV, LDZ, LPS
   integer :: I, J, res=0
-  real :: LAT
   real :: GRIDUI(IMAXI, JMAXI, KMAX), GRIDVI(IMAXI, JMAXI, KMAX)
   ! Output grids
   real :: GRIDUO(IMAXO, JMAXO, KMAX), GRIDVO(IMAXO, JMAXO, KMAX)
@@ -32,13 +31,21 @@ program test_sptrunv
   GRIDUI = 0.0
   GRIDVI = 0.0
   
-  do J = 1, JMAXI
-    LAT = -0.5 * PI + PI * real(J - 1) / real(JMAXI - 1)
-    do I = 1, IMAXI
-      GRIDUI(I,J,1) = 60.0 * cos(LAT)
-      GRIDVI(I,J,1) = 60.0 * cos(LAT)
-    end do
-  end do
+  GRIDUI(:, 1, 1) = 0.0
+  GRIDUI(:, 2, 1) = 30.0
+  GRIDUI(:, 3, 1) = 51.0
+  GRIDUI(:, 4, 1) = 60.0
+  GRIDUI(:, 5, 1) = 51.0
+  GRIDUI(:, 6, 1) = 30.0
+  GRIDUI(:, 7, 1) = 0.0
+
+  GRIDVI(:, 1, 1) = 0.0
+  GRIDVI(:, 2, 1) = 30.0
+  GRIDVI(:, 3, 1) = 51.0
+  GRIDVI(:, 4, 1) = 60.0
+  GRIDVI(:, 5, 1) = 51.0
+  GRIDVI(:, 6, 1) = 30.0
+  GRIDVI(:, 7, 1) = 0.0
 
   ! Test Case 1: LUV, LDX, and LPS = FALSE
   GRIDUO = 0.0
@@ -91,7 +98,7 @@ program test_sptrunv
 
   if (res .ne. 0) stop 1
 
-  ! Test Case 2: LUV = TRUE, LDZ and LPS = FALSE
+  ! Test Case 2: LUV, LDX, and LPS = TRUE
   GRIDUO = 0.0
   GRIDVO = 0.0
   GRIDDO = 0.0
@@ -100,18 +107,60 @@ program test_sptrunv
   GRIDSO = 0.0
 
   LUV = .TRUE.
-  LDZ = .FALSE.
-  LPS = .FALSE.
+  LDZ = .TRUE.
+  LPS = .TRUE.
 
-  EXP_GRIDUO(:,1,1) = 37.947331937094837
-  EXP_GRIDUO(:,2,1) = 60.000000023834545
-  EXP_GRIDUO(:,3,1) = 37.947331937094837
+#if (LSIZE==4)
+  EXP_GRIDUO(:,1,1) = 37.6313362
+  EXP_GRIDUO(:,2,1) = 59.5003738
+  EXP_GRIDUO(:,3,1) = 37.6313362 
 
-  EXP_GRIDVO(:,1,1) = 37.947331937094837
-  EXP_GRIDVO(:,2,1) = 60.000000023834545
-  EXP_GRIDVO(:,3,1) = 37.947331937094837
+  EXP_GRIDVO(:,1,1) = 37.6313362
+  EXP_GRIDVO(:,2,1) = 59.5003738
+  EXP_GRIDVO(:,3,1) = 37.6313362 
 
-  print *, "Testing SPTRUNV with LUV = TRUE, LDZ and LPS = FALSE"
+  EXP_GRIDDO(:,1,1) = -1.44678534E-05
+  EXP_GRIDDO(:,2,1) = 0.0
+  EXP_GRIDDO(:,3,1) = 1.44678534E-05
+
+  EXP_GRIDZO(:,1,1) = 1.44678534E-05
+  EXP_GRIDZO(:,2,1) = 0.0
+  EXP_GRIDZO(:,3,1) = -1.44678534E-05
+  
+  EXP_GRIDPO(:,1,1) = 293640928. 
+  EXP_GRIDPO(:,2,1) = 0.0
+  EXP_GRIDPO(:,3,1) = -293640928. 
+
+  EXP_GRIDSO(:,1,1) = -293640928. 
+  EXP_GRIDSO(:,2,1) = 0.0
+  EXP_GRIDSO(:,3,1) = 293640928. 
+# else
+  EXP_GRIDUO(:,1,1) = 37.631342816769383
+  EXP_GRIDUO(:,2,1) = 59.500377355803828
+  EXP_GRIDUO(:,3,1) = 37.631342816769383
+
+  EXP_GRIDVO(:,1,1) = 37.631342816769383
+  EXP_GRIDVO(:,2,1) = 59.500377355803828
+  EXP_GRIDVO(:,3,1) = 37.631342816769383
+
+  EXP_GRIDDO(:,1,1) = -1.4467853502767779E-005
+  EXP_GRIDDO(:,2,1) = 0.0
+  EXP_GRIDDO(:,3,1) = 1.4467853502767779E-005
+
+  EXP_GRIDZO(:,1,1) = 1.4467853502767779E-005
+  EXP_GRIDZO(:,2,1) = 0.0
+  EXP_GRIDZO(:,3,1) = -1.4467853502767779E-005
+  
+  EXP_GRIDPO(:,1,1) = 293640925.08725864 
+  EXP_GRIDPO(:,2,1) = 0.0
+  EXP_GRIDPO(:,3,1) = -293640925.08725864 
+
+  EXP_GRIDSO(:,1,1) = 293640925.08725864 
+  EXP_GRIDSO(:,2,1) = 0.0
+  EXP_GRIDSO(:,3,1) = 293640925.08725864 
+# endif
+
+  print *, "Testing SPTRUNV with LUV, LDZ, and LPS = TRUE"
   call SPTRUNV(IROMB,MAXWV,IDRTI,IMAXI,JMAXI,   &
               IDRTO,IMAXO,JMAXO,KMAX, &
               IPRIME,ISKIPI,JSKIPI,KSKIPI,  &
@@ -122,103 +171,39 @@ program test_sptrunv
   do I = 1, IMAXO
     do J = 1, JMAXO
       if (abs(GRIDUO(I, J, 1)-EXP_GRIDUO(I, J, 1)) > TOL) then
-        print *, "GRIDUO(", I, ",", J, ",1) = ", GRIDUO(I, J, 1)
+        print *, "GRIDUO(", I, ",", J, ",1) = ", GRIDUO(I, J, 1),   &
+                  " EXPECTED: ", EXP_GRIDUO(I, J, 1)
         res = 1
       end if
       if (abs(GRIDVO(I, J, 1)-EXP_GRIDVO(I, J, 1)) > TOL) then
-        print *, "GRIDVO(", I, ",", J, ",1) = ", GRIDVO(I, J, 1)
+        print *, "GRIDVO(", I, ",", J, ",1) = ", GRIDVO(I, J, 1),   &
+                  " EXPECTED: ", EXP_GRIDVO(I, J, 1)
+        res = 1
+      end if
+      if (abs(GRIDDO(I, J, 1)-EXP_GRIDDO(I, J, 1)) > TOL) then
+        print *, "GRIDDO(", I, ",", J, ",1) = ", GRIDDO(I, J, 1),   &
+                  " EXPECTED: ", EXP_GRIDDO(I, J, 1)
+        res = 1
+      end if
+      if (abs(GRIDZO(I, J, 1)-EXP_GRIDZO(I, J, 1)) > TOL) then
+        print *, "GRIDZO(", I, ",", J, ",1) = ", GRIDZO(I, J, 1),   &
+                  " EXPECTED: ", EXP_GRIDZO(I, J, 1)
+        res = 1
+      end if
+      if (abs(GRIDPO(I, J, 1)-EXP_GRIDPO(I, J, 1)) > TOL) then
+        print *, "GRIDPO(", I, ",", J, ",1) = ", GRIDPO(I, J, 1),   &
+                  " EXPECTED: ", EXP_GRIDPO(I, J, 1)
+        res = 1
+      end if
+      if (abs(GRIDSO(I, J, 1)-EXP_GRIDSO(I, J, 1)) > TOL) then
+        print *, "GRIDSO(", I, ",", J, ",1) = ", GRIDSO(I, J, 1),   &
+                  " EXPECTED: ", EXP_GRIDSO(I, J, 1)
         res = 1
       end if
     end do
   end do
 
   if (res .ne. 0) stop 2
-
-  ! Test Case 3: LDZ = TRUE, LUV and LPS = FALSE
-  GRIDUO = 0.0
-  GRIDVO = 0.0
-  GRIDDO = 0.0
-  GRIDZO = 0.0
-  GRIDPO = 0.0
-  GRIDSO = 0.0
-
-  LUV = .FALSE.
-  LDZ = .TRUE.
-  LPS = .FALSE.
-
-  EXP_GRIDDO(:,1,1) = -1.4589339582166993E-005
-  EXP_GRIDDO(:,2,1) = 0.0
-  EXP_GRIDDO(:,3,1) = 1.4589339582166993E-005
-
-  EXP_GRIDZO(:,1,1) = 1.4589339582166993E-005
-  EXP_GRIDZO(:,2,1) = 0.0
-  EXP_GRIDZO(:,3,1) = -1.4589339582166993E-005
-
-  print *, "Testing SPTRUNV with LDZ = TRUE, LUV and LPS = FALSE"
-  call SPTRUNV(IROMB,MAXWV,IDRTI,IMAXI,JMAXI,   &
-              IDRTO,IMAXO,JMAXO,KMAX, &
-              IPRIME,ISKIPI,JSKIPI,KSKIPI,  &
-              ISKIPO,JSKIPO,KSKIPO,JCPU,GRIDUI,GRIDVI,  &
-              LUV,GRIDUO,GRIDVO,LDZ,GRIDDO,GRIDZO,  &
-              LPS,GRIDPO,GRIDSO)
-
-  do I = 1, IMAXO
-    do J = 1, JMAXO
-      if (abs(GRIDDO(I, J, 1)-EXP_GRIDDO(I, J, 1)) > TOL) then
-        print *, "GRIDDO(", I, ",", J, ",1) = ", GRIDDO(I, J, 1)
-        res = 1
-      end if
-      if (abs(GRIDZO(I, J, 1)-EXP_GRIDZO(I, J, 1)) > TOL) then
-        print *, "GRIDZO(", I, ",", J, ",1) = ", GRIDZO(I, J, 1)
-        res = 1
-      end if
-    end do
-  end do
-
-  if (res .ne. 0) stop 3
-
-  ! Test Case 4: LPS = TRUE, LUV and LDZ = FALSE
-  GRIDUO = 0.0
-  GRIDVO = 0.0
-  GRIDDO = 0.0
-  GRIDZO = 0.0
-  GRIDPO = 0.0
-  GRIDSO = 0.0
-
-  LUV = .FALSE.
-  LDZ = .FALSE.
-  LPS = .TRUE.
-
-  EXP_GRIDPO(:,1,1) = 296106618.06190652 
-  EXP_GRIDPO(:,2,1) = 0.0
-  EXP_GRIDPO(:,3,1) = -296106618.06190652 
-
-  EXP_GRIDSO(:,1,1) = -296106618.06190652 
-  EXP_GRIDSO(:,2,1) = 0.0
-  EXP_GRIDSO(:,3,1) = 296106618.06190652 
-
-  print *, "Testing SPTRUNV with LPS = TRUE, LUV and LDZ = FALSE"
-  call SPTRUNV(IROMB,MAXWV,IDRTI,IMAXI,JMAXI,   &
-              IDRTO,IMAXO,JMAXO,KMAX, &
-              IPRIME,ISKIPI,JSKIPI,KSKIPI,  &
-              ISKIPO,JSKIPO,KSKIPO,JCPU,GRIDUI,GRIDVI,  &
-              LUV,GRIDUO,GRIDVO,LDZ,GRIDDO,GRIDZO,  &
-              LPS,GRIDPO,GRIDSO)
-
-  do I = 1, IMAXO
-    do J = 1, JMAXO
-      if (abs(GRIDPO(I, J, 1)-EXP_GRIDPO(I, J, 1)) > TOL) then
-        print *, "GRIDPO(", I, ",", J, ",1) = ", GRIDPO(I, J, 1)
-        res = 1
-      end if
-      if (abs(GRIDSO(I, J, 1)-EXP_GRIDSO(I, J, 1)) > TOL) then
-        print *, "GRIDSO(", I, ",", J, ",1) = ", GRIDSO(I, J, 1)
-        res = 1
-      end if
-    end do
-  end do
-
-  if (res .ne. 0) stop 4
   
   print *, "Success!"
 end program test_sptrunv

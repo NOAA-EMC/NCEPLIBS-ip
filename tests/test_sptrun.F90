@@ -32,7 +32,7 @@ program test_sptrun
   do J = 1, JMAXO
     do I = 1, IMAXO
       if (abs(GRIDO(I, J, 1) - EXP_GRIDO(I, J, 1)) > TOL) then
-        print *, "GRIDO(", I, ",", J, ",1) = ", GRIDO(I, J, 1), " EXP_GRIDO = ", EXP_GRIDO(I, J, 1)
+        print *, "GRIDO(", I, ",", J, ",1) = ", GRIDO(I, J, 1), ", Expected = ", EXP_GRIDO(I, J, 1)
         res = 1
       end if
     end do
