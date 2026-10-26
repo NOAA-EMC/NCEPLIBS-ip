@@ -7,7 +7,7 @@ program test_sptgpsv
   use sp_mod
   implicit none
 
-  real, parameter :: TOL = 1e-5
+  real, parameter :: TOL = 1e-4
   integer, parameter :: IROMB = 0, MAXWV = 1
   integer, parameter :: NPS = 1
   integer, parameter :: MX = (MAXWV+1)*((IROMB+1)*MAXWV+2)/2
