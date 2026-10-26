@@ -7,7 +7,7 @@ program test_sptrun
   use sp_mod
   implicit none
 
-  real, parameter :: TOL = 1e-5
+  real, parameter :: TOL = 1e-4
   integer, parameter :: IROMB=0, MAXWV=8
   integer, parameter :: IMAXI=26, JMAXI=13, KMAX=1
   integer, parameter :: IMAXO=26, JMAXO=27

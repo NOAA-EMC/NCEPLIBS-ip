@@ -252,10 +252,10 @@ foreach(kind ${kinds})
   create_sp_test(test_sptezmd ${kind} 0.3)
   create_sp_test(test_sptezmv ${kind} 0.3)
   create_sp_test(test_sptrand ${kind} 0.3)
-  # create_sp_test(test_sptrun ${kind} 0.3)
-  # create_sp_test(test_sptrunv ${kind} 0.3)
-  # create_sp_test(test_sptgps ${kind} 0.3)
-  # create_sp_test(test_sptgpsv ${kind} 0.3)
+  create_sp_test(test_sptrun ${kind} 0.3)
+  create_sp_test(test_sptrunv ${kind} 0.3)
+  create_sp_test(test_sptgps ${kind} 0.3)
+  create_sp_test(test_sptgpsv ${kind} 0.3)
   
 
   ### Test ip_constants_mod
@@ -330,10 +330,10 @@ foreach(kind ${kinds})
     "test_sptezmd"
     "test_sptezmv"
     "test_sptrand"
-    # "test_sptrun"
-    # "test_sptrunv"
-    # "test_sptgps"
-    # "test_sptgpsv"
+    "test_sptrun"
+    "test_sptrunv"
+    "test_sptgps"
+    "test_sptgpsv"
   )
   foreach(noinputdatatest IN LISTS noinputdatatests)
     set_tests_properties("${noinputdatatest}_${kind}" PROPERTIES LABELS "NO_INPUT_DATA")
