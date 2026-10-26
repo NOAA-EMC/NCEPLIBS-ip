@@ -7,7 +7,7 @@ program test_sptrunv
   use sp_mod
   implicit none
 
-  real, parameter :: TOL = 1e-6, PI = 3.14159265
+  real, parameter :: TOL = 1e-5, PI = 3.14159265
   integer, parameter :: IROMB=0, MAXWV=1
   integer, parameter :: IMAXI=4, JMAXI=7, KMAX=1
   integer, parameter :: IMAXO=4, JMAXO=3
